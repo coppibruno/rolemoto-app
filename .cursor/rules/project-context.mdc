@@ -1,0 +1,43 @@
+---
+description: Contexto geral do Rolemoto App — visão, público-alvo e funcionalidades
+alwaysApply: true
+---
+
+# Rolemoto App — Contexto do Projeto
+
+## Visão Geral
+
+O **Rolemoto App** é um aplicativo PWA gratuito para **motociclistas** que querem encontrar e organizar **rolês (passeios) de moto**. Foco em acessibilidade e facilidade de uso.
+
+## Público-Alvo
+
+Motociclistas de todos os níveis que buscam companhia para passeios, desde trajetos tranquilos até rolês mais intensos.
+
+## Funcionalidades Principais
+
+### 1. Autenticação (Firebase Auth)
+- Login social (Google, Facebook) para entrada rápida
+- Após primeiro login, completar perfil: **apelido, moto, cidade, foto**
+
+### 2. Feed de Rolês
+- Listagem de rolês disponíveis com geolocalização
+- Filtros: **data**, **distância**, **categoria de moto** (até 300cc, acima de 600cc, etc.)
+- Visualização no mapa e em lista
+- Solicitar participação em um rolê (sujeito à aprovação do criador)
+
+### 3. Criação de Rolês
+- Qualquer usuário pode criar rolês com:
+  - **Data e local de saída**
+  - **Destino final**
+  - **Categoria**: acelero, moderado, tranquilo
+  - **Foto do rolê**
+- O criador gerencia as solicitações de participação (aceitar/recusar)
+
+### 4. Perfil do Usuário
+- Apelido, moto, cidade, foto
+- Histórico de rolês participados e criados
+
+## Modelo de Negócio
+
+- App **gratuito** sem monetização inicial
+- Foco em construir base de usuários e comunidade

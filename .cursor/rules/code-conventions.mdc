@@ -1,0 +1,40 @@
+---
+description: Convenções de código e estrutura de pastas do Rolemoto App
+alwaysApply: true
+---
+
+# Convenções de Código
+
+## Idioma
+- Respostas e comentários em **português**
+- Nomes de domínio em português (rolê, moto, apelido, solicitação)
+- Nomes técnicos em inglês (useAuth, Button, formatDate)
+
+## Estrutura de Pastas
+
+```
+src/
+├── app/                  # Rotas do Next.js (App Router)
+│   ├── (auth)/           # Grupo de rotas de autenticação
+│   ├── (app)/            # Grupo de rotas autenticadas
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/               # Componentes reutilizáveis (Button, Input, Card...)
+│   └── ...               # Componentes específicos por feature
+├── lib/
+│   ├── firebase.ts       # Configuração do Firebase
+│   └── utils.ts          # Utilitários
+├── hooks/                # Custom hooks
+├── types/                # Tipos TypeScript
+└── styles/               # Estilos globais
+```
+
+## Padrões
+
+- Componentes: **function components** com arrow functions
+- Hooks customizados prefixados com `use`
+- Tipos em arquivos `.ts` separados em `types/`
+- Imports com alias `@/` (já configurado no tsconfig)
+- Um componente por arquivo
+- Nomes de arquivos: `kebab-case` para rotas, `PascalCase` para componentes

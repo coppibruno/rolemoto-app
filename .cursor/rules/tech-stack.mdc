@@ -1,0 +1,64 @@
+---
+description: Stack técnica e decisões de arquitetura do Rolemoto App
+alwaysApply: true
+---
+
+# Stack Técnica
+
+## Frontend
+- **Next.js 15** (App Router) com **React 19** e **TypeScript**
+- **PWA** — o app deve funcionar como Progressive Web App (installable, offline-first quando possível)
+- Responsivo e mobile-first (público principal usa celular)
+
+## Backend / Serviços
+- **Firebase Authentication** — login social (Google, Facebook)
+- **Firebase Firestore** — banco de dados NoSQL para usuários, rolês e solicitações
+- **Firebase Storage** — upload de fotos (perfil e rolês)
+- **Geolocalização** — API de geolocalização do navegador + integração com mapas
+
+## Decisões de Arquitetura
+- Usar **Server Components** do Next.js onde possível, Client Components apenas quando necessário (interatividade, hooks de browser)
+- Código em **português** para nomes de variáveis de domínio (rolê, moto, apelido), mas código técnico em inglês (hooks, utils, componentes genéricos)
+- Manter a app leve — evitar dependências desnecessárias
+- Priorizar UX mobile — tudo deve funcionar bem em telas pequenas
+
+## Estrutura de Dados (Firestore)
+
+### Coleção `users`
+```
+{
+  uid: string,
+  apelido: string,
+  moto: string,
+  cidade: string,
+  fotoUrl: string,
+  createdAt: timestamp
+}
+```
+
+### Coleção `roles` (rolês)
+```
+{
+  id: string,
+  criadorId: string,
+  dataHoraSaida: timestamp,
+  localSaida: { lat: number, lng: number, endereco: string },
+  destinoFinal: { lat: number, lng: number, endereco: string },
+  categoria: 'acelero' | 'moderado' | 'tranquilo',
+  categoriaMotos: 'ate300cc' | 'acima600cc' | 'todas',
+  fotoUrl: string,
+  participantes: string[],
+  createdAt: timestamp
+}
+```
+
+### Coleção `solicitacoes`
+```
+{
+  id: string,
+  roleId: string,
+  userId: string,
+  status: 'pendente' | 'aceita' | 'recusada',
+  createdAt: timestamp
+}
+```
