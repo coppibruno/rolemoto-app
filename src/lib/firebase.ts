@@ -12,6 +12,7 @@
  * - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
  * - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
  * - NEXT_PUBLIC_FIREBASE_APP_ID
+ * - NEXT_PUBLIC_FUNCTIONS_URL (opcional; default aponta ao emulator em dev)
  *
  * @see .env.example para referência das variáveis
  */
@@ -41,5 +42,21 @@ export const db = getFirestore(app);
 
 /** Instância do Firebase Storage (upload de fotos de perfil e rolês) */
 export const storage = getStorage(app);
+
+const projectId = firebaseConfig.projectId ?? "";
+const functionsRegion = "us-central1";
+
+/**
+ * URL base da function HTTP `api`.
+ * Local (emulator): http://127.0.0.1:5001/<project>/us-central1/api
+ * Produção: https://us-central1-<project>.cloudfunctions.net/api
+ *
+ * Sobrescreva com NEXT_PUBLIC_FUNCTIONS_URL se necessário.
+ */
+export const functionsApiUrl =
+  process.env.NEXT_PUBLIC_FUNCTIONS_URL ??
+  (process.env.NODE_ENV === "development"
+    ? `http://127.0.0.1:5001/${projectId}/${functionsRegion}/api`
+    : `https://${functionsRegion}-${projectId}.cloudfunctions.net/api`);
 
 export default app;

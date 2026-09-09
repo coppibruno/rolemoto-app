@@ -23,11 +23,18 @@ src/
 │   ├── ui/               # Componentes reutilizáveis (Button, Input, Card...)
 │   └── ...               # Componentes específicos por feature
 ├── lib/
-│   ├── firebase.ts       # Configuração do Firebase
-│   └── utils.ts          # Utilitários
-├── hooks/                # Custom hooks
+│   ├── firebase.ts       # Configuração do Firebase (client)
+│   ├── api.ts            # Cliente HTTP das Cloud Functions
+│   └── utils.ts
+├── hooks/                # Custom hooks (useFunctions, useAuth)
 ├── types/                # Tipos TypeScript
-└── styles/               # Estilos globais
+└── styles/
+
+functions/src/            # Backend HTTP (Express na function `api`)
+├── routes/               # Endpoints
+├── repositories/         # Persistência (interfaces + adapter Firestore)
+├── middleware/           # Auth e autorização
+└── types/                # Tipos de domínio do backend
 ```
 
 ## Padrões

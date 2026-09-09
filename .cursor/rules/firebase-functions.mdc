@@ -1,0 +1,74 @@
+---
+description: Backend Firebase Cloud Functions — repositórios, auth, endpoints e consumo no Next.js
+alwaysApply: true
+---
+
+# Cloud Functions (backend)
+
+Uma function HTTP `api` (Express). Rotas **não** importam Firestore. Persistência só via repositórios.
+
+```
+functions/src/
+├── index.ts                 # registra routers; não cria function por rota
+├── lib/firebase-admin.ts    # único initializeApp do Admin
+├── middleware/auth.ts       # Bearer → req.usuario
+├── middleware/authorize.ts  # isAdmin / isDonoOuAdmin
+├── routes/                  # HTTP fino
+├── repositories/
+│   ├── index.ts             # factory — trocar impl. aqui
+│   ├── interfaces/          # contratos sem Firebase
+│   └── firestore/           # único lugar com firebase-admin/firestore
+└── types/                   # domínio (datas em ISO string)
+```
+
+## Rodar local
+
+```bash
+cd functions && npm run build:watch   # terminal 1
+npm run emulators                     # terminal 2 (raiz)
+```
+
+Local: `http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api`
+Prod: `https://us-central1-rolemoto-bc47f.cloudfunctions.net/api`
+
+## Novo endpoint
+
+1. Tipo em `types/` → interface em `repositories/interfaces/`
+2. Impl. Firestore em `repositories/firestore/` → export em `repositories/index.ts`
+3. Router com `autenticar` → `app.use("/recurso", router)` no `index.ts`
+
+Não use `onCall` / `httpsCallable`. Não acesse `firestore.collection` na rota.
+
+## Auth
+
+```
+Authorization: Bearer <idToken>
+```
+
+`autenticar` preenche `req.usuario` (`uid`, `email`, `claims`). Uid de perfil **sempre** do token.
+
+Admin SDK ignora Security Rules — autorizar na function.
+
+## Roles (autorização)
+
+- `isAdmin(usuario)` — custom claim `admin: true`
+- `isDonoOuAdmin(usuario, criadorId)` — PUT/DELETE de rolê
+
+```ts
+await adminAuth.setCustomUserClaims(uid, {admin: true});
+```
+
+## Banco
+
+Rotas: `roleRepository.listar()`, `usuarioRepository.buscarPorId(uid)`.
+Mapper: `Timestamp` ↔ ISO em `repositories/firestore/mapper.ts`.
+
+## Frontend (Next.js)
+
+```ts
+const { get, post, put, del } = useFunctions();
+await get<Role[]>("/roles");
+```
+
+`src/lib/api.ts` envia o token. Em dev, `functionsApiUrl` aponta ao emulator.
+Não use `httpsCallable`. Só chame a API no client (precisa de `auth.currentUser`).

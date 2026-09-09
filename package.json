@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "emulators": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions",
+    "emulators:all": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,firestore,auth"
   },
   "dependencies": {
     "firebase": "^12.18.0",
