@@ -1,0 +1,45 @@
+/**
+ * Configuração e inicialização do Firebase.
+ *
+ * Este módulo é o ponto central de conexão com o Firebase.
+ * Ele garante que apenas **uma instância** do app seja criada (singleton),
+ * evitando erros de inicialização duplicada no Next.js (hot-reload / SSR).
+ *
+ * Variáveis de ambiente necessárias (prefixo NEXT_PUBLIC_ para uso no client):
+ * - NEXT_PUBLIC_FIREBASE_API_KEY
+ * - NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ * - NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ * - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ * - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+ * - NEXT_PUBLIC_FIREBASE_APP_ID
+ *
+ * @see .env.example para referência das variáveis
+ */
+import { initializeApp, getApps } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+/** Singleton — reutiliza a instância existente ou cria uma nova */
+const app =
+  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+
+/** Instância do Firebase Auth (login social, gerenciamento de sessão) */
+export const auth = getAuth(app);
+
+/** Instância do Firestore (banco de dados NoSQL) */
+export const db = getFirestore(app);
+
+/** Instância do Firebase Storage (upload de fotos de perfil e rolês) */
+export const storage = getStorage(app);
+
+export default app;

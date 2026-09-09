@@ -28,10 +28,12 @@ alwaysApply: true
 ```
 {
   uid: string,
+  nome: string,
   apelido: string,
   moto: string,
-  cidade: string,
+  pilotagem: 'agressiva' | 'moderada' | 'tranquila',
   fotoUrl: string,
+  cidade: string,
   createdAt: timestamp
 }
 ```

@@ -1,0 +1,91 @@
+---
+description: Design System do Rolê Moto PWA — tokens de cor, tipografia, espaçamento e componentes extraídos do Stitch
+alwaysApply: true
+---
+
+# Design System — Rolê Moto PWA
+
+Fonte: projeto **Rolê Moto PWA** no Google Stitch (`projects/10654779954297320241`).
+Mobile-first, dark mode, estética cockpit/moto.
+
+## Cores
+
+### Paleta Principal
+| Token | Hex | Uso |
+|---|---|---|
+| primary-container | `#FF6B00` | Botões primários, beacons, waypoints |
+| primary | `#FFB693` | Tints, links, surface-tint |
+| secondary-container | `#FEB300` | Warnings, badges moderado |
+| tertiary-container | `#00A8BB` | Telemetria, GPS, intercom |
+| surface | `#121316` | Background canvas |
+| on-surface | `#E3E2E6` | Texto principal |
+
+### Elevação (Tonal Stacking)
+- **Layer 0 (Canvas):** `#121316`
+- **Layer 1 (Cards):** `#1A1C20` + `1px solid rgba(255,255,255,0.08)`
+- **Layer 2 (Overlays):** `#22252B` + `1px solid rgba(255,107,0,0.22)`
+- **Accent Glow:** `box-shadow: 0 0 16px rgba(255,107,0,0.28)`
+
+### Badges de Ritmo (Pace)
+- **Agressiva:** `#FF334B` bg `rgba(255,51,75,0.15)`, border e texto `#FF334B`
+- **Moderada:** `#FFB300` bg `rgba(255,179,0,0.15)`, border e texto `#FFB300`
+- **Tranquila:** `#00E676` bg `rgba(0,230,118,0.15)`, border e texto `#00E676`
+
+## Tipografia
+
+| Papel | Família | Uso |
+|---|---|---|
+| Headlines / Display | **Barlow Condensed** | Títulos, badges, telemetria |
+| Body | **Plus Jakarta Sans** | Texto corrido, descrições |
+| Labels | **Barlow Condensed** | Labels uppercase, chips |
+
+### Escala
+| Token | Família | Tamanho | Peso | Altura |
+|---|---|---|---|---|
+| display-hero | Barlow Condensed | 48px | 800 | 52px |
+| display-hero-mobile | Barlow Condensed | 36px | 800 | 40px |
+| headline-lg | Barlow Condensed | 32px | 700 | 36px |
+| headline-md | Barlow Condensed | 24px | 700 | 28px |
+| headline-sm | Barlow Condensed | 20px | 600 | 24px |
+| body-lg | Plus Jakarta Sans | 16px | 500 | 24px |
+| body-md | Plus Jakarta Sans | 14px | 400 | 20px |
+| body-sm | Plus Jakarta Sans | 12px | 400 | 16px |
+| telemetry-num | Barlow Condensed | 28px | 800 | 28px |
+| badge-label | Barlow Condensed | 12px | 700 | 12px |
+| label-md | Plus Jakarta Sans | 12px | 600 | 16px |
+
+## Espaçamento
+
+- Grid base: **8px** com micro-steps de 4px
+- Gutter mobile: `16px`
+- Max content width: `560px` (centrado em telas maiores)
+- Touch target mínimo: `48×48px`, primário: `56px`
+- Card padding: sm `12px`, md `16px`, lg `20px`
+
+## Shapes
+
+- Cards/Módulos: `8px` (0.5rem)
+- Pill badges/chips: `9999px`
+- Hero actions: `12px`
+
+## Componentes
+
+### Botões
+- **Primário:** bg `#FF6B00`, texto `#121316`, height `52px`, glow `0 4px 14px rgba(255,107,0,0.35)`, Barlow Condensed bold uppercase
+- **Secundário:** transparente, border `1.5px solid #353A44`, texto `#F5F6F8`
+- **Danger (SOS):** bg `#FF334B` com anel pulsante
+
+### Cards
+- bg `#1A1C20`, border `1px solid rgba(255,255,255,0.08)`
+- Header: título da rota + horário + distância + Pace Tag
+- Row de telemetria com números tabulares
+
+### Inputs
+- bg `#16171B`, border `1px solid #2D323A`
+- Focus: `1.5px solid #FF6B00`
+- Labels flutuantes uppercase
+
+### Chips/Filtros
+- Height `32px`, pill radius, bg `#22252B`
+- Inativo: label `#8E95A2`
+- Ativo: border `#FF6B00`, label `#FF6B00`
