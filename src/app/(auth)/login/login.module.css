@@ -1,97 +1,206 @@
-/* Tela de Login — Mobile-first, responsiva */
+/* ============================
+   Login — Design System Rolê Moto (Stitch)
+   Tokens M3 Dark: surface, primary-container, outline
+   Barlow Condensed (headlines) + Plus Jakarta Sans (body)
+   Material Symbols Outlined (ícones)
+   ============================ */
 
+/* Layout — full viewport, centralizado */
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 1rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: var(--surface);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
-.card {
+.innerWrapper {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 400px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
-  padding: 2.5rem 2rem;
-  text-align: center;
+  max-width: 560px;
+  padding: 0 16px 20px;
+  position: relative;
 }
 
-/* Header: logo + título */
+/* ---- Header: Logo + Ambient Glow ---- */
 .header {
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  position: relative;
 }
 
-.logoIcon {
-  font-size: 3.5rem;
-  margin-bottom: 0.75rem;
-  filter: drop-shadow(0 0 12px rgba(255, 165, 0, 0.4));
+.ambientGlow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 288px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 107, 0, 0.2),
+    rgba(255, 107, 0, 0.05) 50%,
+    transparent
+  );
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.titulo {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-  margin-bottom: 0.5rem;
+.logoContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  z-index: 1;
 }
 
-.subtitulo {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.4;
+.logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(255, 107, 0, 0.35));
 }
 
-/* Formulário de email/senha */
+/* ---- Card principal ---- */
+.card {
+  background: var(--surface-container-low);
+  border-radius: 1.5rem;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 8px 10px -6px rgba(0, 0, 0, 0.25);
+}
+
+.cardEdge {
+  position: absolute;
+  inset: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--primary-container),
+    transparent
+  );
+  opacity: 0.8;
+}
+
+/* ---- Formulário ---- */
 .formulario {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  text-align: left;
-}
-
-.tituloFormulario {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 0.25rem;
+  gap: 16px;
 }
 
 .campo {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 6px;
 }
 
+/* Labels */
 .label {
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface);
+  text-transform: uppercase;
+}
+
+.labelHint {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--outline);
+  text-transform: lowercase;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linkEsqueceu {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--primary-container);
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.linkEsqueceu:hover:not(:disabled) {
+  color: var(--primary);
+}
+
+.linkEsqueceu:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Input wrapper com ícone */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--outline);
+  font-size: 20px;
+  pointer-events: none;
 }
 
 .input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 12px 16px 12px 44px;
+  border: none;
   border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
+  min-height: 48px;
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--outline);
+  opacity: 0.6;
 }
 
 .input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--surface-container);
+  color: var(--primary);
 }
 
 .input:disabled {
@@ -99,164 +208,211 @@
   cursor: not-allowed;
 }
 
-.botaoSubmit {
-  width: 100%;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 0.25rem;
-}
-
-.botaoSubmit:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(233, 69, 96, 0.4);
-}
-
-.botaoSubmit:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.botaoSubmit:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.alternarModo {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-}
-
-.linkAlternar {
-  background: none;
-  border: none;
-  color: #e94560;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-}
-
-.linkAlternar:hover:not(:disabled) {
-  color: #ff6b81;
-}
-
-.linkAlternar:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Divisor "ou" */
-.divisor {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin: 1.5rem 0;
-}
-
-.divisor::before,
-.divisor::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.divisor span {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Botões de login social */
-.botoesContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-}
-
-.botaoLogin {
+/* Toggle senha */
+.toggleSenha {
+  position: absolute;
+  right: 8px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.875rem 1.25rem;
+  background: none;
   border: none;
-  border-radius: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
+  color: var(--outline);
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
-  outline: none;
+  transition: color 0.15s ease;
 }
 
-.botaoLogin:disabled {
+.toggleSenha:hover:not(:disabled) {
+  color: var(--on-surface);
+}
+
+.toggleSenha:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
+.toggleSenha .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ---- Botão CTA primário: "Acelerar / Entrar" ---- */
+.botaoPrimario {
+  width: 100%;
+  height: 52px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--primary-container);
+  color: var(--surface-container-lowest);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.3);
+  transition: all 0.15s ease;
+}
+
+.botaoPrimario:hover:not(:disabled) {
+  background: rgba(255, 107, 0, 0.9);
+  transform: scale(0.99);
+}
+
+.botaoPrimario:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.botaoPrimario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botaoPrimario .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* ---- Divisor slit cutout ---- */
+.divisor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+}
+
+.divisorLinha {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: var(--surface-variant);
+}
+
+.divisorLabel {
+  position: relative;
+  background: var(--surface-container-low);
+  padding: 0 12px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--outline);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---- Botão Google ---- */
 .botaoGoogle {
-  background: #ffffff;
-  color: #3c4043;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  height: 48px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .botaoGoogle:hover:not(:disabled) {
-  background: #f1f3f4;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--surface-bright);
 }
 
 .botaoGoogle:active:not(:disabled) {
-  transform: translateY(0);
+  background: var(--surface-container);
 }
 
-.iconeProvedor {
-  width: 1.25rem;
-  height: 1.25rem;
+.botaoGoogle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.iconeGoogle {
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
-/* Mensagem de erro */
+/* ---- Mensagem de erro ---- */
 .erro {
-  margin-top: 1.25rem;
-  padding: 0.75rem 1rem;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: rgba(147, 0, 10, 0.25);
+  border: 1px solid rgba(255, 180, 171, 0.3);
   border-radius: 0.5rem;
-  color: #fca5a5;
-  font-size: 0.875rem;
+  color: var(--error);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
+  gap: 8px;
 }
 
-/* Loading spinner */
-.loading {
-  margin-top: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.625rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.875rem;
+.erro .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
+/* ---- Link de cadastro / login ---- */
+.cadastroLink {
+  margin-top: 24px;
+  text-align: center;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.linkCadastro {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-left: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.linkCadastro:hover:not(:disabled) {
+  text-decoration: underline;
+  color: var(--primary-container);
+}
+
+.linkCadastro:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Loading spinner ---- */
 .spinner {
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #ffffff;
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid rgba(255, 107, 0, 0.2);
+  border-top-color: var(--primary-container);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -264,28 +420,5 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-/* Rodapé */
-.rodape {
-  margin-top: 2rem;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
-  line-height: 1.4;
-}
-
-/* Responsividade para telas maiores */
-@media (min-width: 768px) {
-  .card {
-    padding: 3rem 2.5rem;
-  }
-
-  .logoIcon {
-    font-size: 4rem;
-  }
-
-  .titulo {
-    font-size: 2.25rem;
   }
 }

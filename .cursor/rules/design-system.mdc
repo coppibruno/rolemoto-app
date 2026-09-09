@@ -1,91 +1,149 @@
----
-description: Design System do Rolê Moto PWA — tokens de cor, tipografia, espaçamento e componentes extraídos do Stitch
-alwaysApply: true
----
-
 # Design System — Rolê Moto PWA
 
-Fonte: projeto **Rolê Moto PWA** no Google Stitch (`projects/10654779954297320241`).
+Fonte: projeto **Rolê Moto PWA** no Google Stitch.
 Mobile-first, dark mode, estética cockpit/moto.
+Referência visual: `pages/` (HTML, PNG e DESIGN.md exportados do Stitch por tela).
 
-## Cores
+## Cores — Material Design 3 (Dark)
 
-### Paleta Principal
+### Superfícies (Tonal Stacking)
 | Token | Hex | Uso |
 |---|---|---|
-| primary-container | `#FF6B00` | Botões primários, beacons, waypoints |
-| primary | `#FFB693` | Tints, links, surface-tint |
-| secondary-container | `#FEB300` | Warnings, badges moderado |
-| tertiary-container | `#00A8BB` | Telemetria, GPS, intercom |
-| surface | `#121316` | Background canvas |
-| on-surface | `#E3E2E6` | Texto principal |
+| surface | `#121316` | Canvas / background principal |
+| surface-dim | `#121316` | Superfície escurecida |
+| surface-bright | `#38393C` | Superfície destacada |
+| surface-container-lowest | `#0D0E11` | Inputs, campos de formulário |
+| surface-container-low | `#1B1B1F` | Cards principais (login, forms) |
+| surface-container | `#1F1F23` | Containers intermediários |
+| surface-container-high | `#292A2D` | Botões secundários (Google), hover |
+| surface-container-highest | `#343538` | Elevação máxima |
+| surface-variant | `#343538` | Dividers, bordas sutis |
 
-### Elevação (Tonal Stacking)
-- **Layer 0 (Canvas):** `#121316`
-- **Layer 1 (Cards):** `#1A1C20` + `1px solid rgba(255,255,255,0.08)`
-- **Layer 2 (Overlays):** `#22252B` + `1px solid rgba(255,107,0,0.22)`
-- **Accent Glow:** `box-shadow: 0 0 16px rgba(255,107,0,0.28)`
+### Conteúdo
+| Token | Hex | Uso |
+|---|---|---|
+| on-surface | `#E3E2E6` | Texto principal, labels |
+| on-surface-variant | `#E2BFB0` | Texto secundário (links "Cadastre-se") |
+| outline | `#A98A7D` | Placeholder, hints (@piloto), ícones input |
+| outline-variant | `#5A4136` | Bordas inativas |
+| inverse-surface | `#E3E2E6` | Superfície invertida |
+| inverse-on-surface | `#2F3034` | Texto em superfície invertida |
+
+### Primária (Orange)
+| Token | Hex | Uso |
+|---|---|---|
+| primary | `#FFB693` | Links, tints, surface-tint |
+| primary-container | `#FF6B00` | Botão CTA, beacons, ações primárias |
+| on-primary | `#561F00` | Texto sobre primary |
+| on-primary-container | `#572000` | Texto sobre primary-container |
+| inverse-primary | `#A04100` | Primary invertido |
+| surface-tint | `#FFB693` | Tint de superfície |
+
+### Secundária (Amber)
+| Token | Hex | Uso |
+|---|---|---|
+| secondary | `#FFD799` | Texto secundário claro |
+| secondary-container | `#FEB300` | Warnings, badges moderado |
+| on-secondary | `#432C00` | Texto sobre secondary |
+| on-secondary-container | `#6A4800` | Texto sobre secondary-container |
+
+### Terciária (Cyan)
+| Token | Hex | Uso |
+|---|---|---|
+| tertiary | `#00DAF3` | Telemetria, GPS, intercom |
+| tertiary-container | `#00A8BB` | Container terciário |
+| on-tertiary | `#00363D` | Texto sobre tertiary |
+| on-tertiary-container | `#00373E` | Texto sobre tertiary-container |
+
+### Erro
+| Token | Hex | Uso |
+|---|---|---|
+| error | `#FFB4AB` | Texto de erro |
+| error-container | `#93000A` | Container de erro |
+| on-error | `#690005` | Texto sobre error |
+| on-error-container | `#FFDAD6` | Texto sobre error-container |
 
 ### Badges de Ritmo (Pace)
-- **Agressiva:** `#FF334B` bg `rgba(255,51,75,0.15)`, border e texto `#FF334B`
-- **Moderada:** `#FFB300` bg `rgba(255,179,0,0.15)`, border e texto `#FFB300`
-- **Tranquila:** `#00E676` bg `rgba(0,230,118,0.15)`, border e texto `#00E676`
+- **Agressiva:** bg `rgba(255,51,75,0.15)`, border e texto `#FF334B`
+- **Moderada:** bg `rgba(255,179,0,0.15)`, border e texto `#FFB300`
+- **Tranquila:** bg `rgba(0,230,118,0.15)`, border e texto `#00E676`
 
 ## Tipografia
 
-| Papel | Família | Uso |
-|---|---|---|
-| Headlines / Display | **Barlow Condensed** | Títulos, badges, telemetria |
-| Body | **Plus Jakarta Sans** | Texto corrido, descrições |
-| Labels | **Barlow Condensed** | Labels uppercase, chips |
+| Token | Família | Tamanho | Peso | Altura | Tracking |
+|---|---|---|---|---|---|
+| display-hero | Barlow Condensed | 48px | 800 | 52px | -0.02em |
+| display-hero-mobile | Barlow Condensed | 36px | 800 | 40px | -0.01em |
+| headline-lg | Barlow Condensed | 32px | 700 | 36px | 0.01em |
+| headline-md | Barlow Condensed | 24px | 700 | 28px | 0.02em |
+| headline-sm | Barlow Condensed | 20px | 600 | 24px | 0.02em |
+| body-lg | Plus Jakarta Sans | 16px | 500 | 24px | — |
+| body-md | Plus Jakarta Sans | 14px | 400 | 20px | — |
+| body-sm | Plus Jakarta Sans | 12px | 400 | 16px | — |
+| telemetry-num | Barlow Condensed | 28px | 800 | 28px | 0.03em |
+| badge-label | Barlow Condensed | 12px | 700 | 12px | 0.08em |
+| label-md | Plus Jakarta Sans | 12px | 600 | 16px | 0.02em |
 
-### Escala
-| Token | Família | Tamanho | Peso | Altura |
-|---|---|---|---|---|
-| display-hero | Barlow Condensed | 48px | 800 | 52px |
-| display-hero-mobile | Barlow Condensed | 36px | 800 | 40px |
-| headline-lg | Barlow Condensed | 32px | 700 | 36px |
-| headline-md | Barlow Condensed | 24px | 700 | 28px |
-| headline-sm | Barlow Condensed | 20px | 600 | 24px |
-| body-lg | Plus Jakarta Sans | 16px | 500 | 24px |
-| body-md | Plus Jakarta Sans | 14px | 400 | 20px |
-| body-sm | Plus Jakarta Sans | 12px | 400 | 16px |
-| telemetry-num | Barlow Condensed | 28px | 800 | 28px |
-| badge-label | Barlow Condensed | 12px | 700 | 12px |
-| label-md | Plus Jakarta Sans | 12px | 600 | 16px |
+## Ícones
+
+Usar **Material Symbols Outlined** (Google Fonts). Importar via CSS:
+```
+https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200
+```
+
+## Arredondamento
+
+| Token | Valor |
+|---|---|
+| sm | 0.25rem (4px) |
+| DEFAULT | 0.5rem (8px) |
+| md | 0.75rem (12px) |
+| lg | 1rem (16px) |
+| xl | 1.5rem (24px) |
+| full | 9999px |
 
 ## Espaçamento
 
 - Grid base: **8px** com micro-steps de 4px
-- Gutter mobile: `16px`
+- Gutter mobile: `16px` | tablet: `24px`
 - Max content width: `560px` (centrado em telas maiores)
 - Touch target mínimo: `48×48px`, primário: `56px`
 - Card padding: sm `12px`, md `16px`, lg `20px`
 
-## Shapes
+## Elevação (Tonal Charcoal Stacking)
 
-- Cards/Módulos: `8px` (0.5rem)
-- Pill badges/chips: `9999px`
-- Hero actions: `12px`
+- **Layer 0 (Canvas):** `#121316`
+- **Layer 1 (Cards):** `#1B1B1F` (surface-container-low)
+- **Layer 2 (Overlays):** `#22252B` + `1px solid rgba(255,107,0,0.22)`
+- **Accent Glow:** `box-shadow: 0 0 16px rgba(255,107,0,0.28)`
+- **Slit Cutouts:** Divider 1px `surface-variant` (`#343538`)
+- **Top Edge Highlight:** `bg-gradient-to-r from-transparent via-primary-container to-transparent` h=2px
 
 ## Componentes
 
 ### Botões
-- **Primário:** bg `#FF6B00`, texto `#121316`, height `52px`, glow `0 4px 14px rgba(255,107,0,0.35)`, Barlow Condensed bold uppercase
-- **Secundário:** transparente, border `1.5px solid #353A44`, texto `#F5F6F8`
-- **Danger (SOS):** bg `#FF334B` com anel pulsante
+- **Primário (CTA):** bg `#FF6B00` (primary-container), texto `#0D0E11` (surface-container-lowest), height `52px`, glow `0 4px 14px rgba(255,107,0,0.35)`, Barlow Condensed bold uppercase, tracking wider
+- **Secundário:** bg `surface-container-high` (`#292A2D`), texto `on-surface`, hover `surface-bright`, rounded-lg
+- **Link/Accent:** texto `primary-container` (`#FF6B00`), hover `primary` (`#FFB693`)
 
 ### Cards
-- bg `#1A1C20`, border `1px solid rgba(255,255,255,0.08)`
-- Header: título da rota + horário + distância + Pace Tag
-- Row de telemetria com números tabulares
+- bg `surface-container-low` (`#1B1B1F`), rounded-xl (`1.5rem`)
+- Top edge: gradient line `from-transparent via-primary-container to-transparent` (2px)
+- Shadow: `shadow-xl`
 
 ### Inputs
-- bg `#16171B`, border `1px solid #2D323A`
-- Focus: `1.5px solid #FF6B00`
-- Labels flutuantes uppercase
+- bg `surface-container-lowest` (`#0D0E11`)
+- Texto: `on-surface` (`#E3E2E6`)
+- Placeholder: `outline` com 60% opacidade
+- Ícone à esquerda: Material Symbols, cor `outline` (`#A98A7D`), 20px
+- Focus: bg `surface-container`, texto `primary`
+- Labels: `label-md` style, uppercase, tracking-wider, cor `on-surface`
+- Hints: `body-sm`, cor `outline`
+
+### Divisor (Slit Cutout)
+- Linha 1px `surface-variant` (`#343538`)
+- Label central: bg do card, `label-md`, cor `outline`, uppercase, tracking-wider
 
 ### Chips/Filtros
 - Height `32px`, pill radius, bg `#22252B`
-- Inativo: label `#8E95A2`
-- Ativo: border `#FF6B00`, label `#FF6B00`
+- Inativo: label `outline` | Ativo: border e label `#FF6B00`
