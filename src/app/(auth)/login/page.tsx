@@ -5,6 +5,7 @@ import { useLoginRedirect } from "./hooks/useLoginRedirect";
 import { LoginHeader } from "./components/LoginHeader";
 import { FormularioLogin } from "./components/FormularioLogin";
 import { BotaoGoogle } from "./components/BotaoGoogle";
+import { CtaInstalarApp } from "./components/CtaInstalarApp";
 import styles from "./login.module.css";
 
 const LoginPage = () => {
@@ -37,6 +38,8 @@ const LoginPage = () => {
 
           <BotaoGoogle desabilitado={loading} />
         </div>
+
+        <CtaInstalarApp />
       </div>
     </main>
   );

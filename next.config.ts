@@ -1,7 +1,20 @@
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
 
 const raizDoProjeto = path.join(__dirname);
+
+const revision =
+  spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).stdout.trim() ||
+  crypto.randomUUID();
+
+const withSerwist = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development",
+  additionalPrecacheEntries: [{ url: "/offline", revision }],
+});
 
 const nextConfig: NextConfig = {
   // Evita o Next inferir a raiz em /home/supero por causa de outros lockfiles.
@@ -22,4 +35,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSerwist(nextConfig);

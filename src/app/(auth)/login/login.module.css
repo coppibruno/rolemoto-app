@@ -425,3 +425,135 @@
     transform: rotate(360deg);
   }
 }
+
+/* ---- CTA instalar PWA ---- */
+.ctaInstalar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.badgeInstalar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+}
+
+.badgeInstalar .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--outline);
+}
+
+.botaoInstalar {
+  width: 100%;
+  min-height: var(--touch-min);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.botaoInstalar .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.linkAgoraNao {
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  background: none;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.overlaySheet {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gutter-md);
+  padding-top: calc(var(--gutter-md) + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(var(--gutter-md) + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.cartaoSheet {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+  border: 1px solid color-mix(in srgb, var(--primary-container) 40%, transparent);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.tituloSheet {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.passosSheet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.passosSheet strong {
+  color: var(--on-surface);
+  font-weight: 600;
+}
+
+.botaoEntendi {
+  width: 100%;
+  min-height: var(--touch-min);
+  height: 48px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--surface-container-lowest);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}

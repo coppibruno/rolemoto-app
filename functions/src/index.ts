@@ -8,6 +8,7 @@
  * - /roles/:id/feedbacks → GET
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
+ * - /dispositivos → POST, DELETE
  * - /perfil  → GET, POST, PUT, DELETE
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
@@ -21,6 +22,7 @@ import {onRequest} from "firebase-functions/https";
 import express, {Request, Response} from "express";
 import {rolesRouter} from "./routes/roles";
 import {aprovacoesRouter} from "./routes/aprovacoes";
+import {dispositivosRouter} from "./routes/dispositivos";
 import {perfilRouter} from "./routes/perfil";
 import {feedbackRouter} from "./routes/feedback";
 
@@ -40,6 +42,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/roles/:id/feedbacks",
       "/feedback/pendente",
       "/aprovacoes",
+      "/dispositivos",
       "/perfil",
       "/perfil/historico",
     ],
@@ -48,6 +51,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);
+app.use("/dispositivos", dispositivosRouter);
 app.use("/perfil", perfilRouter);
 app.use("/feedback", feedbackRouter);
 

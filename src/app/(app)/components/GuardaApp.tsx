@@ -1,7 +1,13 @@
 "use client";
 
+import { useRegistroFcm } from "../hooks/useRegistroFcm";
 import { useProtecaoRotaApp } from "../hooks/useProtecaoRotaApp";
 import styles from "../app.module.css";
+
+const RegistroFcm = () => {
+  useRegistroFcm();
+  return null;
+};
 
 export const GuardaApp = ({ children }: { children: React.ReactNode }) => {
   const { loading, autorizado } = useProtecaoRotaApp();
@@ -14,5 +20,10 @@ export const GuardaApp = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <RegistroFcm />
+      {children}
+    </>
+  );
 };

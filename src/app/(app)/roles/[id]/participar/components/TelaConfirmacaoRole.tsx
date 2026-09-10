@@ -29,7 +29,8 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
 
   const preferencia = usePreferenciaNotificar(
     roleId,
-    detalhe?.minhaParticipacao?.notificar ?? true
+    detalhe?.minhaParticipacao?.notificar ?? true,
+    estado === "aguardando",
   );
 
   const erroSheet = erroAcao ?? preferencia.erro;

@@ -2,7 +2,7 @@
  * Funções de autenticação do Rolemoto App.
  *
  * Utiliza o Firebase Auth com:
- * - **Login social** via Google (popup)
+ * - **Login social** via Google (popup no browser; redirect no iOS/standalone)
  * - **Cadastro manual** com email e senha
  * - **Login manual** com email e senha
  *
@@ -15,19 +15,39 @@
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
+import { obterToken } from "./fcm";
 import { auth } from "./firebase";
 
 const googleProvider = new GoogleAuthProvider();
 
+type NavigatorStandalone = Navigator & { standalone?: boolean };
+
+const deveUsarRedirect = () => {
+  if (typeof window === "undefined") return false;
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as NavigatorStandalone).standalone === true;
+  const ios =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent));
+  return standalone || ios;
+};
+
 /**
- * Realiza login com conta Google via popup.
- * @returns O objeto `User` do Firebase com dados básicos (uid, email, displayName, photoURL)
+ * Login com Google: popup no browser; redirect no iOS ou PWA standalone.
+ * No redirect o `User` só chega no próximo load via `getRedirectResult`.
  */
 export const loginComGoogle = async () => {
+  if (deveUsarRedirect()) {
+    await signInWithRedirect(auth, googleProvider);
+    return;
+  }
   const resultado = await signInWithPopup(auth, googleProvider);
   return resultado.user;
 };
@@ -57,8 +77,16 @@ export const loginComEmail = async (email: string, senha: string) => {
 
 /**
  * Encerra a sessão do usuário atual.
- * O `AuthProvider` detecta automaticamente o logout via `onAuthStateChanged`.
+ * Remove o token FCM deste aparelho (best-effort) antes do signOut.
  */
 export const logout = async () => {
+  try {
+    const token = await obterToken();
+    if (token) {
+      await dispositivosService.remover(token);
+    }
+  } catch {
+    // Falha de rede/401 não bloqueia o logout.
+  }
   await signOut(auth);
 };

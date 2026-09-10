@@ -1,7 +1,7 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
-import {usuarioRepository} from "../repositories";
+import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
   Pilotagem,
@@ -201,6 +201,12 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
     if (!uid) {
       res.status(401).json({erro: "Não autenticado"});
       return;
+    }
+
+    try {
+      await dispositivoRepository.removerPorUid(uid);
+    } catch (error) {
+      console.error(error);
     }
 
     const removido = await usuarioRepository.remover(uid);

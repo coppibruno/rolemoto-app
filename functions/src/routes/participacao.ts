@@ -5,6 +5,7 @@ import {
   roleRepository,
   usuarioRoleRepository,
 } from "../repositories";
+import {notificarPedidoVaga} from "../lib/notificacoes";
 import type {UsuarioRole} from "../types/usuario-role";
 
 /**
@@ -101,6 +102,7 @@ participacaoRouter.post(
         roleId,
         criadorId: role.criadorId,
       });
+      await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
       res.status(201).json(criado);
     } catch (error) {
       responderErro(res, error);

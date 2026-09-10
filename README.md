@@ -32,6 +32,30 @@ Abre em [http://localhost:3000](http://localhost:3000).
 
 ---
 
+## Instalar no celular (PWA)
+
+O Rolemoto é um PWA: o piloto abre o site no celular e usa **Adicionar à tela inicial** — sem Play Store nem App Store.
+
+- **Android (Chrome):** o prompt nativo aparece no login ou em Perfil → Adicionar à tela inicial.
+- **iOS (Safari):** Compartilhar → Adicionar à Tela de Início. O app ensina esses 3 toques; o Safari não instala sozinho.
+
+O service worker **só registra em produção** (`npm run build && npm start` ou deploy). `npm run dev` deixa o SW desligado para não atrapalhar o HMR.
+
+Instalação e a página `/offline` exigem **HTTPS** no mesmo origin do app. `localhost` e o emulator não provam o aceite no iPhone.
+
+### Notificações push
+
+Dois avisos nativos: pedido de vaga (para o organizador) e aceite (para o piloto). Recusa não notifica.
+
+- A chave **VAPID** (`NEXT_PUBLIC_FIREBASE_VAPID_KEY`) sai do Firebase Console → Project settings → Cloud Messaging → Web Push certificates. Sem ela o app não registra o token.
+- Push exige **HTTPS** (ou `localhost`). No **iOS**, Web Push só funciona depois de instalar o PWA (Safari → Adicionar à Tela de Início). No Android Chrome, chega mesmo em aba.
+- O service worker da SPEC 012 (`src/app/sw.ts`) também trata o push em background. Não há um segundo SW.
+- O envio FCM acontece nas Cloud Functions (`POST /roles/:id/participacao` e `PATCH /aprovacoes/:id`). Não há emulator de FCM — o send vai para o FCM de verdade. Tokens de `localhost` e de produção são origins diferentes.
+- Logout tenta `DELETE /dispositivos` antes do `signOut`, para o próximo usuário no mesmo browser não receber push alheio.
+- Opcional nas functions: `APP_ORIGIN` (ex. `https://seu-dominio`) para o clique nativo do Chrome (`webpush.fcmOptions.link`). Sem ela, o service worker abre o deep link.
+
+---
+
 ## Rodar o backend (Cloud Functions) local
 
 O backend **não** sobe com `npm run dev`. Use o Emulator Suite.
@@ -63,14 +87,14 @@ UI do emulator: [http://127.0.0.1:4000](http://127.0.0.1:4000)
 
 ### URLs da API
 
-| Ambiente | Base |
-|---|---|
-| Local | `http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api` |
+| Ambiente | Base                                                        |
+| -------- | ----------------------------------------------------------- |
+| Local    | `http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api`      |
 | Produção | `https://us-central1-rolemoto-bc47f.cloudfunctions.net/api` |
 
 Health check (sem auth): `GET /`
 
-Recursos autenticados: `/roles`, `/perfil`
+Recursos autenticados: `/roles`, `/perfil`, `/aprovacoes`, `/dispositivos`
 
 O frontend em `NODE_ENV=development` já aponta para o emulator. Para forçar outra URL:
 
@@ -142,9 +166,9 @@ functions/src/
 Exemplo mínimo:
 
 ```ts
-import {Router} from "express";
-import {autenticar} from "../middleware/auth";
-import {meuRepository} from "../repositories";
+import { Router } from "express";
+import { autenticar } from "../middleware/auth";
+import { meuRepository } from "../repositories";
 
 export const meuRouter = Router();
 meuRouter.use(autenticar);
@@ -170,7 +194,7 @@ Authorization: Bearer <idToken>
 O middleware `autenticar` chama `adminAuth.verifyIdToken` e preenche:
 
 ```ts
-req.usuario = { uid, email, claims }
+req.usuario = { uid, email, claims };
 ```
 
 Rotas protegidas:
@@ -188,9 +212,9 @@ const uid = req.usuario!.uid;
 
 Duas camadas, em `middleware/authorize.ts`:
 
-| Helper | Quando usar |
-|---|---|
-| `isAdmin(usuario)` | Custom claim `admin: true` no token |
+| Helper                              | Quando usar                                |
+| ----------------------------------- | ------------------------------------------ |
+| `isAdmin(usuario)`                  | Custom claim `admin: true` no token        |
 | `isDonoOuAdmin(usuario, criadorId)` | PUT/DELETE de rolê (só o criador ou admin) |
 
 Perfil: o uid **sempre** vem do token, nunca do body/params.
@@ -198,7 +222,7 @@ Perfil: o uid **sempre** vem do token, nunca do body/params.
 Para promover um admin (uma vez, via script ou console):
 
 ```ts
-await adminAuth.setCustomUserClaims(uid, {admin: true});
+await adminAuth.setCustomUserClaims(uid, { admin: true });
 ```
 
 O usuário precisa sair e entrar de novo (ou `getIdToken(true)`) para o claim ir no token.
@@ -210,7 +234,7 @@ O usuário precisa sair e entrar de novo (ou `getIdToken(true)`) para o claim ir
 Nas rotas:
 
 ```ts
-import {roleRepository} from "../repositories";
+import { roleRepository } from "../repositories";
 
 const roles = await roleRepository.listar();
 ```
@@ -285,11 +309,11 @@ O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/`.
 
 ## Scripts
 
-| Script | O quê |
-|---|---|
-| `npm run dev` | Next.js |
-| `npm run emulators` | Function `api` + Storage locais (portas 5001 e 9199) |
-| `npm run emulators:all` | Functions + Firestore + Auth + Storage locais |
-| `npm run storage:cors` | Aplica `cors.json` no bucket de produção |
-| `cd functions && npm run build:watch` | Recompila o backend a cada save |
-| `cd functions && npm run deploy` | Publica as functions |
+| Script                                | O quê                                                |
+| ------------------------------------- | ---------------------------------------------------- |
+| `npm run dev`                         | Next.js                                              |
+| `npm run emulators`                   | Function `api` + Storage locais (portas 5001 e 9199) |
+| `npm run emulators:all`               | Functions + Firestore + Auth + Storage locais        |
+| `npm run storage:cors`                | Aplica `cors.json` no bucket de produção             |
+| `cd functions && npm run build:watch` | Recompila o backend a cada save                      |
+| `cd functions && npm run deploy`      | Publica as functions                                 |

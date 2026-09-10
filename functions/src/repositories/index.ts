@@ -10,12 +10,14 @@ import {FirestoreUsuarioRoleRepository} from "./firestore/firestore-usuario-role
 import {
   FirestoreUsuarioRoleFeedbackRepository,
 } from "./firestore/firestore-usuario-role-feedback.repository";
+import {FirestoreDispositivoRepository} from "./firestore/firestore-dispositivo.repository";
 import type {UsuarioRepository} from "./interfaces/usuario.repository";
 import type {RoleRepository} from "./interfaces/role.repository";
 import type {UsuarioRoleRepository} from "./interfaces/usuario-role.repository";
 import type {
   UsuarioRoleFeedbackRepository,
 } from "./interfaces/usuario-role-feedback.repository";
+import type {DispositivoRepository} from "./interfaces/dispositivo.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -27,3 +29,6 @@ export const usuarioRoleRepository: UsuarioRoleRepository =
 
 export const usuarioRoleFeedbackRepository: UsuarioRoleFeedbackRepository =
   new FirestoreUsuarioRoleFeedbackRepository();
+
+export const dispositivoRepository: DispositivoRepository =
+  new FirestoreDispositivoRepository();

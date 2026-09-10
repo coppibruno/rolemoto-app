@@ -12,6 +12,7 @@
     "storage:cors": "gcloud storage buckets update gs://rolemoto-bc47f.firebasestorage.app --cors-file=cors.json --project=rolemoto-bc47f"
   },
   "dependencies": {
+    "@serwist/next": "^9.5.12",
     "firebase": "^12.18.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
@@ -21,6 +22,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "serwist": "^9.5.12",
     "typescript": "^5.7.0"
   }
 }

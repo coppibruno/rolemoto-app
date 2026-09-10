@@ -7,7 +7,7 @@
  * 3. **Funções de login/logout** — expõe via Context API
  *
  * Métodos de autenticação disponíveis:
- * - Login social com Google (popup)
+ * - Login social com Google (popup no browser; redirect no iOS/standalone)
  * - Cadastro manual com email e senha
  * - Login manual com email e senha
  *
@@ -29,7 +29,11 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth";
+import {
+  getRedirectResult,
+  onAuthStateChanged,
+  type User as FirebaseUser,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
   loginComGoogle as _loginComGoogle,
@@ -64,9 +68,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    getRedirectResult(auth).catch((error) => {
+      console.error("Erro no redirect do Google:", error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setFirebaseUser(user);
-      console.log('chega aqui66', user);
       if (user) {
         try {
           await carregarPerfil(user.uid);

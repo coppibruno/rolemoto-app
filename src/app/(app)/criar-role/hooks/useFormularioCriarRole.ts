@@ -17,6 +17,7 @@ import {
 import { montarIsoSaida } from "../montar-iso-saida";
 import { rolesService } from "../services/roles.service";
 import type { ErrosCriarRole, LocalizacaoForm } from "../types";
+import { pedirPermissaoERegistrar } from "../../hooks/useRegistroFcm";
 import { useCampoLocalizacao } from "./useCampoLocalizacao";
 import { useFotoCapa } from "./useFotoCapa";
 
@@ -178,6 +179,7 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
         },
       });
       setSucesso(true);
+      void pedirPermissaoERegistrar();
       redirectRef.current = window.setTimeout(() => {
         router.push("/");
       }, REDIRECT_SUCESSO_MS);

@@ -9,6 +9,7 @@ import {
   montarSolicitacaoLider,
   roleAindaNaoSaiu,
 } from "../lib/aprovacoes";
+import {notificarAceite} from "../lib/notificacoes";
 import {roleRepository, usuarioRoleRepository} from "../repositories";
 import type {DecisaoPiloto, StatusAprovacao} from "../types/aprovacao";
 
@@ -120,6 +121,15 @@ aprovacoesRouter.patch("/:id", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Rolê não encontrado"});
       return;
     }
+
+    if (decisao === "aceitar" && atualizado.notificar !== false) {
+      await notificarAceite(
+        atualizado.usuarioId,
+        atualizado.roleId,
+        role.titulo,
+      );
+    }
+
     res.json(item);
   } catch (error) {
     responderErro(res, error);

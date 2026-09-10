@@ -6,6 +6,7 @@ import { useFormularioPerfil } from "../hooks/useFormularioPerfil";
 import { CampoTexto } from "./CampoTexto";
 import { CartaoIdentidade } from "./CartaoIdentidade";
 import { SeletorPilotagem } from "./SeletorPilotagem";
+import { BotaoInstalarApp } from "./BotaoInstalarApp";
 import { BotaoSair } from "./BotaoSair";
 import { BotaoExcluirConta } from "./BotaoExcluirConta";
 import { ToastSucesso } from "./ToastSucesso";
@@ -88,6 +89,7 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
           )}
           {form.salvando ? "Salvando..." : "Salvar Alterações"}
         </button>
+        <BotaoInstalarApp />
         <BotaoSair desabilitado={form.salvando} />
         <BotaoExcluirConta desabilitado={form.salvando} />
       </div>
