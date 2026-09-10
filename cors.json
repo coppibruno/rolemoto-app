@@ -1,0 +1,19 @@
+[
+  {
+    "origin": [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "https://rolemoto-bc47f.web.app",
+      "https://rolemoto-bc47f.firebaseapp.com",
+      "https://1e80-2804-30c-1642-5000-9983-8823-93e4-ce3c.ngrok-free.app"
+    ],
+    "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Content-Length",
+      "x-goog-resumable"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]

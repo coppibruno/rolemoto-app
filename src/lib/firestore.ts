@@ -12,7 +12,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import type { Usuario, UsuarioForm, Pilotagem } from "@/types/user";
+import type { Usuario, UsuarioForm } from "@/types/user";
 import type { Role, RoleForm } from "@/types/role";
 import type { Solicitacao } from "@/types/solicitacao";
 
@@ -30,7 +30,12 @@ export const buscarUsuario = async (
 ): Promise<Usuario | null> => {
   const snap = await getDoc(doc(db, "users", uid));
   if (!snap.exists()) return null;
-  return { uid: snap.id, ...snap.data() } as Usuario;
+  const data = snap.data();
+  return {
+    uid: snap.id,
+    ...data,
+    garupaFrequente: Boolean(data.garupaFrequente),
+  } as Usuario;
 };
 
 export const atualizarUsuario = async (
@@ -40,30 +45,13 @@ export const atualizarUsuario = async (
   await updateDoc(doc(db, "users", uid), dados);
 };
 
-export const criarPerfilPrimeiroAcesso = async (
-  uid: string,
-  dados: {
-    nome: string;
-    apelido: string;
-    moto: string;
-    pilotagem: Pilotagem;
-    fotoUrl: string;
-  }
-) => {
-  await setDoc(doc(db, "users", uid), {
-    ...dados,
-    cidade: "",
-    createdAt: serverTimestamp(),
-  });
-};
-
 // --- Rolês ---
 
 export const criarRole = async (dados: RoleForm): Promise<string> => {
   const docRef = await addDoc(collection(db, "roles"), {
     ...dados,
-    participantes: [dados.criadorId],
     createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
   return docRef.id;
 };

@@ -1,4 +1,7 @@
-import { Timestamp } from "firebase/firestore";
+import type { Pilotagem } from "./user";
+import type { UsuarioRole } from "./usuario-role";
+
+export type { UsuarioRole } from "./usuario-role";
 
 export interface Localizacao {
   lat: number;
@@ -6,20 +9,56 @@ export interface Localizacao {
   endereco: string;
 }
 
-export type CategoriaRole = "acelero" | "moderado" | "tranquilo";
-export type CategoriaMotos = "ate300cc" | "acima600cc" | "todas";
+export type RitmoRole = Pilotagem;
 
 export interface Role {
   id: string;
-  criadorId: string;
-  dataHoraSaida: Timestamp;
+  titulo: string;
+  descricao: string;
+  fotoCapaUrl: string;
+  ritmo: RitmoRole;
+  dataHoraSaida: string;
   localSaida: Localizacao;
   destinoFinal: Localizacao;
-  categoria: CategoriaRole;
-  categoriaMotos: CategoriaMotos;
-  fotoUrl: string;
-  participantes: string[];
-  createdAt: Timestamp;
+  criadorId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type RoleForm = Omit<Role, "id" | "createdAt" | "participantes">;
+export type RoleCriadorResumo = {
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
+};
+
+/** Item do feed — Role + distância da rota (partida → destino) + organizador. */
+export type RoleFeedItem = Role & {
+  distanciaKm: number;
+  criador: RoleCriadorResumo;
+};
+
+export type RoleDetalhe = Role & {
+  criador: RoleCriadorResumo;
+  distanciaKm: number;
+  participantes: { confirmados: number };
+  minhaParticipacao: UsuarioRole | null;
+};
+
+export type RolePublicacao = Omit<
+  Role,
+  "id" | "criadorId" | "createdAt" | "updatedAt"
+>;
+
+/** DTO de clone — GET /roles/:id/modelo. Sem participação nem timestamps. */
+export type RoleModelo = {
+  roleIdOrigem: string;
+  titulo: string;
+  descricao: string;
+  fotoCapaUrl: string;
+  ritmo: RitmoRole;
+  localSaida: Localizacao;
+  destinoFinal: Localizacao;
+  horaSaida: string;
+};
+
+export type RoleForm = RolePublicacao & { criadorId: string };

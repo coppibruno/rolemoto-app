@@ -6,6 +6,15 @@ import type {UsuarioRepository} from "../interfaces/usuario.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "users";
+const CHUNK = 100;
+
+const emChunks = <T>(itens: T[]): T[][] => {
+  const saida: T[][] = [];
+  for (let i = 0; i < itens.length; i += CHUNK) {
+    saida.push(itens.slice(i, i + CHUNK));
+  }
+  return saida;
+};
 
 const toUsuario = (snap: DocumentSnapshot): Usuario => {
   const data = snap.data() ?? {};
@@ -17,6 +26,7 @@ const toUsuario = (snap: DocumentSnapshot): Usuario => {
     pilotagem: data.pilotagem ?? "tranquila",
     fotoUrl: String(data.fotoUrl ?? ""),
     cidade: String(data.cidade ?? ""),
+    garupaFrequente: Boolean(data.garupaFrequente),
     createdAt: toIso(data.createdAt),
   };
 };
@@ -28,6 +38,25 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
       return null;
     }
     return toUsuario(snap);
+  }
+
+  async buscarPorIds(uids: string[]): Promise<Usuario[]> {
+    const unicos = [...new Set(uids)].filter(Boolean);
+    if (unicos.length === 0) {
+      return [];
+    }
+
+    const encontrados: Usuario[] = [];
+    for (const chunk of emChunks(unicos)) {
+      const refs = chunk.map((uid) => firestore.collection(COLECAO).doc(uid));
+      const snaps = await firestore.getAll(...refs);
+      for (const snap of snaps) {
+        if (snap.exists) {
+          encontrados.push(toUsuario(snap));
+        }
+      }
+    }
+    return encontrados;
   }
 
   async criar(uid: string, dados: UsuarioCreate): Promise<Usuario> {

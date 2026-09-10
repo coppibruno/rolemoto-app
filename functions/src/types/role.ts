@@ -1,28 +1,64 @@
+import type {UsuarioRole} from "./usuario-role";
+
+export type RitmoRole = "tranquila" | "moderada" | "agressiva";
+
 export interface Localizacao {
   lat: number;
   lng: number;
   endereco: string;
 }
 
-export type CategoriaRole = "acelero" | "moderado" | "tranquilo";
-export type CategoriaMotos = "ate300cc" | "acima600cc" | "todas";
-
-/** Rolê de moto — sem tipos do Firebase. */
+/** Rolê de moto — sem tipos do Firebase. Datas em ISO. */
 export interface Role {
   id: string;
-  criadorId: string;
+  titulo: string;
+  descricao: string;
+  fotoCapaUrl: string;
+  ritmo: RitmoRole;
   dataHoraSaida: string;
   localSaida: Localizacao;
   destinoFinal: Localizacao;
-  categoria: CategoriaRole;
-  categoriaMotos: CategoriaMotos;
-  fotoUrl: string;
-  participantes: string[];
+  criadorId: string;
   createdAt: string;
+  updatedAt: string;
 }
 
-export type RoleCreate = Omit<Role, "id" | "createdAt" | "participantes"> & {
-  participantes?: string[];
+export type RoleCriadorResumo = {
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
 };
 
-export type RoleUpdate = Partial<Omit<RoleCreate, "criadorId">>;
+/** Item do feed — Role + distância da rota (partida → destino) + organizador. */
+export type RoleFeedItem = Role & {
+  distanciaKm: number;
+  criador: RoleCriadorResumo;
+};
+
+/** Detalhe do rolê — GET /roles/:id. */
+export type RoleDetalhe = Role & {
+  criador: RoleCriadorResumo;
+  distanciaKm: number;
+  participantes: {confirmados: number};
+  minhaParticipacao: UsuarioRole | null;
+};
+
+export type RolePublicacao = Omit<
+  Role,
+  "id" | "criadorId" | "createdAt" | "updatedAt"
+>;
+
+/** DTO de clone — GET /roles/:id/modelo. Sem participação nem timestamps. */
+export type RoleModelo = {
+  roleIdOrigem: string;
+  titulo: string;
+  descricao: string;
+  fotoCapaUrl: string;
+  ritmo: RitmoRole;
+  localSaida: Localizacao;
+  destinoFinal: Localizacao;
+  horaSaida: string;
+};
+
+export type RoleCreate = RolePublicacao & {criadorId: string};
+export type RoleUpdate = Partial<Omit<Role, "id" | "criadorId" | "createdAt">>;

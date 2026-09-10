@@ -9,7 +9,7 @@ import { auth, functionsApiUrl } from "./firebase";
 export class ApiError extends Error {
   constructor(
     public status: number,
-    message: string
+    message: string,
   ) {
     super(message);
     this.name = "ApiError";
@@ -32,9 +32,10 @@ const montarHeaders = async (headersInit?: HeadersInit): Promise<Headers> => {
 
 export const api = async <T = unknown>(
   caminho: string,
-  opcoes?: RequestInit
+  opcoes?: RequestInit,
 ): Promise<T> => {
   const headers = await montarHeaders(opcoes?.headers);
+  console.log(`${functionsApiUrl}${caminho}`);
   const res = await fetch(`${functionsApiUrl}${caminho}`, {
     ...opcoes,
     headers,

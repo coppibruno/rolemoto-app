@@ -14,11 +14,12 @@ export const uploadFotoPerfil = async (
   return getDownloadURL(storageRef);
 };
 
-export const uploadFotoRole = async (
-  roleId: string,
+export const uploadFotoCapaRole = async (
+  uid: string,
   file: File
 ): Promise<string> => {
-  const storageRef = ref(storage, `roles/${roleId}`);
+  const id = crypto.randomUUID();
+  const storageRef = ref(storage, `roles/capas/${uid}/${id}.jpg`);
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
 };

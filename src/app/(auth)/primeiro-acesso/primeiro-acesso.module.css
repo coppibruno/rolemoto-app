@@ -1,344 +1,767 @@
-/* Tela de Primeiro Acesso — Mobile-first, consistente com login */
-
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+.tela {
+  min-height: 100dvh;
+  background: var(--surface);
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.card {
+.coluna {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 440px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1.5rem;
-  padding: 2.5rem 2rem;
-  text-align: center;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 8px var(--gutter-md) 32px;
 }
 
-/* Header: logo + título */
-.header {
-  margin-bottom: 2rem;
-}
-
-.logoIcon {
-  font-size: 3rem;
-  margin-bottom: 0.5rem;
-  filter: drop-shadow(0 0 12px rgba(255, 165, 0, 0.4));
-}
-
-.titulo {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-  margin-bottom: 0.25rem;
-}
-
-.subtitulo {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.4;
-}
-
-/* Foto de perfil */
-.fotoContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.fotoWrapper {
-  position: relative;
-  width: 110px;
-  height: 110px;
-  cursor: pointer;
-}
-
-.fotoPreview {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.fotoPlaceholder {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  border: 3px dashed rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.fotoCameraOverlay {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  border: 2px solid #1a1a2e;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.fotoInput {
-  display: none;
-}
-
-.fotoLabel {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 0.5rem;
-}
-
-.fotoErro {
-  font-size: 0.8rem;
-  color: #fca5a5;
-  margin-top: 0.35rem;
-}
-
-/* Formulário */
-.formulario {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  text-align: left;
-}
-
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  font-size: 0.95rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.input:focus {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.inputErro {
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-.erroInline {
-  font-size: 0.75rem;
-  color: #fca5a5;
-  margin-top: 0.15rem;
-}
-
-/* Seletor de pilotagem */
-.pilotagemLabel {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0.5rem;
-}
-
-.pilotagemContainer {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-
-.pilotagemCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 1rem 0.5rem;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.04);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.pilotagemCard:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.pilotagemCardSelecionado {
-  border-color: #e94560;
-  background: rgba(233, 69, 96, 0.15);
-  box-shadow: 0 0 16px rgba(233, 69, 96, 0.2);
-}
-
-.pilotagemCardSelecionado:hover {
-  border-color: #e94560;
-  background: rgba(233, 69, 96, 0.2);
-}
-
-.pilotagemEmoji {
-  font-size: 1.75rem;
-}
-
-.pilotagemTitulo {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.pilotagemDescricao {
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.3;
-}
-
-.pilotagemErro {
-  font-size: 0.75rem;
-  color: #fca5a5;
-  margin-top: 0.25rem;
-}
-
-/* Botão salvar */
-.botaoSalvar {
-  width: 100%;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 0.5rem;
-  background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.botaoSalvar:hover:not(:disabled) {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(233, 69, 96, 0.4);
-}
-
-.botaoSalvar:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.botaoSalvar:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Spinner inline no botão */
-.spinnerBotao {
-  width: 1.1rem;
-  height: 1.1rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #ffffff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Erro geral */
-.erroGeral {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 0.5rem;
-  color: #fca5a5;
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-/* Loading página inteira */
 .loadingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  color: #ffffff;
+  min-height: 100dvh;
+  background: var(--surface);
 }
 
 .spinnerPagina {
   width: 2rem;
   height: 2rem;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #ffffff;
+  border: 3px solid var(--surface-container-highest);
+  border-top-color: var(--primary-container);
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: girar 0.7s linear infinite;
 }
 
-/* Responsividade para telas maiores */
-@media (min-width: 768px) {
-  .card {
-    padding: 3rem 2.5rem;
-  }
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
 
-  .logoIcon {
-    font-size: 3.5rem;
-  }
+.cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+}
 
+.kickerLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.kickerPulso {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  animation: pulso 1.4s ease-in-out infinite;
+}
+
+.percentual {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--secondary-container);
+  white-space: nowrap;
+}
+
+.trilha {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  overflow: hidden;
+}
+
+.trilhaFill {
+  height: 100%;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.6);
+  transition: width 0.5s ease;
+}
+
+.tituloLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.tituloIcone {
+  color: var(--primary-container);
+  font-size: 26px;
+}
+
+.titulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.subtitulo {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-container-low);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.cardFoto {
+  align-items: center;
+  text-align: center;
+}
+
+.fotoBloco {
+  position: relative;
+  margin-bottom: 4px;
+  padding: 0 8px 8px;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: var(--surface-container-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.25);
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  color: var(--outline);
+  font-size: 40px;
+}
+
+.botaoCamera {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.botaoCameraIcone {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.botaoCameraIcone .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.botaoCamera:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fotoTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.fotoSubtitulo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+  margin-top: -8px;
+}
+
+.botaoAdicionarFoto {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.botaoAdicionarFoto:active:not(:disabled) {
+  background: var(--surface-bright);
+}
+
+.botaoAdicionarFoto:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botaoAdicionarFoto .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.inputFile {
+  display: none;
+}
+
+.secaoCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.secaoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.secaoTitulo .material-symbols-outlined {
+  color: var(--primary-container);
+  font-size: 20px;
+}
+
+.badgeMoto {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--surface-container-highest);
+  color: var(--secondary);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.labelLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.hintDestaque {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--primary);
+}
+
+.inputWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border-radius: 0.5rem;
+  background: var(--surface-container);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.inputWrap:focus-within {
+  background: var(--surface-container-high);
+}
+
+.inputWrapErro {
+  outline: 1px solid var(--error);
+}
+
+.inputIcon,
+.iconeDireita {
+  color: var(--outline);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.iconeDireita {
+  font-size: 18px;
+}
+
+.prefixo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--primary-container);
+}
+
+.input {
+  width: 100%;
+  min-height: var(--touch-min);
+  border: none;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--outline-variant);
+}
+
+.input:disabled {
+  opacity: 0.5;
+}
+
+.hintAbaixo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.erroCampo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--error);
+}
+
+.garupaLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.garupaTextos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.garupaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.garupaHint {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.toggle {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-highest);
+}
+
+.toggleBtn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggleBtnAtivo {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ritmoBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ritmoCabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ritmoSelecione {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.ritmoSubtitulo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+  margin-top: -4px;
+}
+
+.ritmoLista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardRitmo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 16px;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cardRitmo:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.cardRitmoAtivo {
+  background: var(--surface-container);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.18);
+}
+
+.cardRitmo:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.badgeRecomendado {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 4px 10px;
+  border-radius: 0 0.75rem 0 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ritmoTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ritmoIdentidade {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.ritmoIconeBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ritmoIconeBox .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.ritmoNomes {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ritmoLabel {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.telemetria {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  letter-spacing: 0.03em;
+}
+
+.cardRitmoTranquila .ritmoIconeBox,
+.cardRitmoTranquila .telemetria {
+  color: var(--ritmo-tranquila);
+}
+
+.cardRitmoModerada .ritmoIconeBox,
+.cardRitmoModerada .telemetria {
+  color: var(--primary-container);
+}
+
+.cardRitmoModerada .telemetria {
+  color: var(--primary);
+}
+
+.cardRitmoAgressiva .ritmoIconeBox,
+.cardRitmoAgressiva .telemetria {
+  color: var(--ritmo-agressiva);
+}
+
+.radio {
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radioAtivo {
+  background: var(--primary-container);
+}
+
+.radioPonto {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.radioAtivo .radioPonto {
+  width: 8px;
+  height: 8px;
+  background: var(--on-primary-container);
+}
+
+.ritmoDescricao {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.ctaBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.botaoConcluir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 54px;
+  min-height: 54px;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 18px rgba(255, 107, 0, 0.38);
+  cursor: pointer;
+}
+
+.botaoConcluir:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.botaoConcluir:disabled {
+  cursor: not-allowed;
+}
+
+.botaoConcluir:disabled:not(.botaoConcluirSucesso) {
+  opacity: 0.5;
+}
+
+.botaoConcluirSucesso {
+  background: var(--ritmo-tranquila);
+  color: var(--surface);
+  opacity: 1;
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--ritmo-tranquila) 40%, transparent);
+}
+
+.iconeGirando {
+  animation: girar 0.8s linear infinite;
+}
+
+.rodape {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.rodape .material-symbols-outlined {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.erroGeral {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--error) 15%, transparent);
+  color: var(--error);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.erroGeral .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 359px) {
   .titulo {
-    font-size: 2rem;
+    font-size: 28px;
+    line-height: 32px;
   }
 
-  .pilotagemContainer {
-    gap: 1rem;
-  }
-
-  .pilotagemCard {
-    padding: 1.25rem 0.75rem;
+  .garupaLinha {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

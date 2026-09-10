@@ -2,7 +2,8 @@
 
 Fonte: projeto **Rolê Moto PWA** no Google Stitch.
 Mobile-first, dark mode, estética cockpit/moto.
-Referência visual: `pages/` (HTML, PNG e DESIGN.md exportados do Stitch por tela).
+Referência visual: `designs/` (HTML, PNG e DESIGN.md exportados do Stitch por tela).
+Não usar pasta `pages/` na raiz — o Next.js trata isso como Pages Router e quebra o `next build`.
 
 ## Cores — Material Design 3 (Dark)
 

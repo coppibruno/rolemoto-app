@@ -1,0 +1,56 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "roles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ritmo", "order": "ASCENDING" },
+        { "fieldPath": "dataHoraSaida", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersrole",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "roleId", "order": "ASCENDING" },
+        { "fieldPath": "aceito", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "roles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "criadorId", "order": "ASCENDING" },
+        { "fieldPath": "dataHoraSaida", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersrole",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "criadorId", "order": "ASCENDING" },
+        { "fieldPath": "aceito", "order": "ASCENDING" },
+        { "fieldPath": "recusadoEm", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersrole",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "criadorId", "order": "ASCENDING" },
+        { "fieldPath": "aceito", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersrolefeedback",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "roleId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

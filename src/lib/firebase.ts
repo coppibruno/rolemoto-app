@@ -13,6 +13,7 @@
  * - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
  * - NEXT_PUBLIC_FIREBASE_APP_ID
  * - NEXT_PUBLIC_FUNCTIONS_URL (opcional; default aponta ao emulator em dev)
+ * - NEXT_PUBLIC_STORAGE_EMULATOR_HOST (opcional; ex. 127.0.0.1:9199)
  *
  * @see .env.example para referência das variáveis
  */
@@ -20,6 +21,7 @@ import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { conectarStorageEmulator } from "./storage-emulator";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -42,6 +44,11 @@ export const db = getFirestore(app);
 
 /** Instância do Firebase Storage (upload de fotos de perfil e rolês) */
 export const storage = getStorage(app);
+
+const storageEmulatorHost = process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST;
+if (storageEmulatorHost) {
+  conectarStorageEmulator(storage, storageEmulatorHost);
+}
 
 const projectId = firebaseConfig.projectId ?? "";
 const functionsRegion = "us-central1";

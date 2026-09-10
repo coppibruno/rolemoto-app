@@ -1,0 +1,27 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function autenticado() {
+      return request.auth != null;
+    }
+
+    function imagemValida() {
+      return request.resource.size < 2 * 1024 * 1024
+        && request.resource.contentType.matches('image/jpeg|image/png|image/webp');
+    }
+
+    match /avatars/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && arquivo == request.auth.uid + '.jpg'
+        && imagemValida();
+    }
+
+    match /roles/capas/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
+  }
+}

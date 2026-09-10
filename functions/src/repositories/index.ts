@@ -6,10 +6,24 @@
  */
 import {FirestoreUsuarioRepository} from "./firestore/firestore-usuario.repository";
 import {FirestoreRoleRepository} from "./firestore/firestore-role.repository";
+import {FirestoreUsuarioRoleRepository} from "./firestore/firestore-usuario-role.repository";
+import {
+  FirestoreUsuarioRoleFeedbackRepository,
+} from "./firestore/firestore-usuario-role-feedback.repository";
 import type {UsuarioRepository} from "./interfaces/usuario.repository";
 import type {RoleRepository} from "./interfaces/role.repository";
+import type {UsuarioRoleRepository} from "./interfaces/usuario-role.repository";
+import type {
+  UsuarioRoleFeedbackRepository,
+} from "./interfaces/usuario-role-feedback.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
 
 export const roleRepository: RoleRepository = new FirestoreRoleRepository();
+
+export const usuarioRoleRepository: UsuarioRoleRepository =
+  new FirestoreUsuarioRoleRepository();
+
+export const usuarioRoleFeedbackRepository: UsuarioRoleFeedbackRepository =
+  new FirestoreUsuarioRoleFeedbackRepository();

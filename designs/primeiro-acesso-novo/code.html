@@ -1,0 +1,256 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'primary-fixed': '#ffdbcc', 'surface': '#121316', 'inverse-primary': '#a04100', 'surface-tint': '#ffb693', 'on-secondary-fixed': '#281900', 'surface-container': '#1f1f23', 'tertiary-fixed-dim': '#00daf3', 'on-surface-variant': '#e2bfb0', 'tertiary': '#00daf3', 'on-primary-fixed': '#351000', 'on-primary-fixed-variant': '#7a3000', 'outline': '#a98a7d', 'background': '#121316', 'on-tertiary-container': '#00373e', 'primary': '#ffb693', 'surface-dim': '#121316', 'outline-variant': '#5a4136', 'surface-variant': '#343538', 'tertiary-fixed': '#9cf0ff', 'tertiary-container': '#00a8bb', 'on-error': '#690005', 'secondary-container': '#feb300', 'on-secondary-fixed-variant': '#604100', 'on-tertiary-fixed': '#001f24', 'surface-container-lowest': '#0d0e11', 'surface-bright': '#38393c', 'primary-container': '#ff6b00', 'on-primary-container': '#572000', 'inverse-on-surface': '#2f3034', 'on-tertiary': '#00363d', 'on-background': '#e3e2e6', 'surface-container-high': '#292a2d', 'error': '#ffb4ab', 'secondary': '#ffd799', 'primary-fixed-dim': '#ffb693', 'secondary-fixed-dim': '#ffba38', 'secondary-fixed': '#ffdeac', 'on-error-container': '#ffdad6', 'on-surface': '#e3e2e6', 'on-tertiary-fixed-variant': '#004f58', 'on-primary': '#561f00', 'error-container': '#93000a', 'on-secondary': '#432c00', 'surface-container-highest': '#343538', 'inverse-surface': '#e3e2e6', 'on-secondary-container': '#6a4800', 'surface-container-low': '#1b1b1f' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'touch-target': '56px', 'margin-tablet': '24px', 'card-padding-md': '16px', 'card-padding-sm': '12px', 'touch-min': '48px', 'gutter-md': '16px', 'gutter-sm': '12px', 'margin-mobile': '16px', 'card-padding-lg': '20px' }, fontFamily: { 'body-lg': ['Plus Jakarta Sans'], 'telemetry-num': ['Barlow Condensed'], 'headline-md': ['Barlow Condensed'], 'body-md': ['Plus Jakarta Sans'], 'badge-label': ['Barlow Condensed'], 'headline-lg': ['Barlow Condensed'], 'label-md': ['Plus Jakarta Sans'], 'body-sm': ['Plus Jakarta Sans'], 'display-hero-mobile': ['Barlow Condensed'], 'display-hero': ['Barlow Condensed'], 'headline-sm': ['Barlow Condensed'] }, fontSize: { 'body-lg': ['16px', { lineHeight: '24px', fontWeight: '500' }], 'telemetry-num': ['28px', { lineHeight: '28px', letterSpacing: '0.03em', fontWeight: '800' }], 'headline-md': ['24px', { lineHeight: '28px', letterSpacing: '0.02em', fontWeight: '700' }], 'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }], 'badge-label': ['12px', { lineHeight: '12px', letterSpacing: '0.08em', fontWeight: '700' }], 'headline-lg': ['32px', { lineHeight: '36px', letterSpacing: '0.01em', fontWeight: '700' }], 'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.02em', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }], 'display-hero-mobile': ['36px', { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '800' }], 'display-hero': ['48px', { lineHeight: '52px', letterSpacing: '-0.02em', fontWeight: '800' }], 'headline-sm': ['20px', { lineHeight: '24px', letterSpacing: '0.02em', fontWeight: '600' }] } } } }</script></head><body class="bg-surface font-body-md text-on-surface antialiased pt-safe pb-safe flex flex-col min-h-screen"><main class="flex-1 flex flex-col relative w-full max-w-[560px] mx-auto px-margin-mobile bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Progress Header & Tracker -->
+<div class="flex flex-col gap-2 pt-2 pb-4">
+<div class="flex items-center justify-between text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1.5 uppercase font-badge-label text-badge-label tracking-wider text-primary">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+        Passo 1 de 1 • Onboarding
+      </span>
+<span class="font-telemetry-num text-label-md text-secondary-container">90% CONCLUÍDO</span>
+</div>
+<!-- Progress track -->
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full w-[90%] shadow-[0_0_12px_rgba(255,107,0,0.6)] transition-all duration-500"></div>
+</div>
+<div class="mt-3">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-primary-container text-[26px]">two_wheeler</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight uppercase">
+          Monte Seu Perfil de Piloto
+        </h1>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Configure sua identidade para que os líderes e comboios conheçam seu estilo antes de acelerar juntos.
+      </p>
+</div>
+</div>
+<form class="flex flex-col gap-6" id="onboarding-form" onsubmit="event.preventDefault();">
+<!-- Pilot Avatar Upload Section -->
+<div class="bg-surface-container-low rounded-xl p-card-padding-md shadow-md flex flex-col items-center text-center relative overflow-hidden">
+<div class="relative mb-3 group cursor-pointer" id="avatar-trigger">
+<div class="w-24 h-24 rounded-full overflow-hidden bg-surface-container-highest flex items-center justify-center shadow-[0_0_20px_rgba(255,107,0,0.25)]">
+<img class="w-full h-full object-cover" data-alt="Portrait of a confident motorcycle rider wearing a sleek matte carbon-fiber helmet with an open dark-tinted visor, warm sunset asphalt reflections, golden neon rim light, cinematic automotive styling" id="avatar-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrcQ_EjS0DjVJljjEab7FqO_9nnQa0WdJHptGfDFtGxejrawA1q9sqgZWW0NkIOqK144v230379V-5M02a86kWL5rkHDRUnWC0GRUed2fOYz367sp-OD4T40_qyEBnlsq_rTHwLQES2EPtJvhC1gD-9j8vJh8-B4BkTpPrw6_T6vCL6oVlClyiatNYserfqak_NKEQlUSaQmSVuwod1jTzgVFlh3EB8iqdVPvTgiMYrm3yotw6ShOwbg">
+</div>
+<button aria-label="Trocar foto de perfil" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-lg transition-transform active:scale-95" type="button">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+</button>
+</div>
+<span class="font-headline-sm text-headline-sm uppercase tracking-wide text-on-surface">Mostre sua cara no comboio</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Fotos com ou sem capacete ajudam no reconhecimento nos pontos de encontro.</p>
+<button class="mt-3 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-label-md text-primary flex items-center gap-1.5 transition-colors active:bg-surface-bright" type="button">
+<span class="material-symbols-outlined text-[16px]">add_a_photo</span>
+<span class="">Adicionar Foto de Perfil</span>
+</button>
+</div>
+<!-- Personal Identification Credentials -->
+<div class="bg-surface-container-low rounded-xl p-card-padding-md shadow-md flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">badge</span>
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Dados do Piloto</span>
+</div>
+<!-- Nome Completo -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="pilot-name">
+          Nome Completo
+        </label>
+<div class="flex items-center bg-surface-container rounded-lg px-3 py-2.5 shadow-inner focus-within:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2.5">person</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none" id="pilot-name" placeholder="Ex: Rodrigo Silveira" type="text" value="Rodrigo Silveira">
+</div>
+</div>
+<!-- Apelido / Nome nas Pistas -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="pilot-handle">
+            Apelido nas Pistas
+          </label>
+<span class="font-body-sm text-body-sm text-primary">Identificador Único</span>
+</div>
+<div class="flex items-center bg-surface-container rounded-lg px-3 py-2.5 shadow-inner focus-within:bg-surface-container-high transition-colors">
+<span class="font-telemetry-num text-headline-sm text-primary-container mr-1">@</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none" id="pilot-handle" placeholder="apelido_estrada" type="text" value="rodrigo_r1">
+<span class="material-symbols-outlined text-outline text-[18px]">sports_motorsports</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline">Como a turma e os batedores vão te chamar no rádio e no feed.</p>
+</div>
+</div>
+<!-- Machine & Garage Module -->
+<div class="bg-surface-container-low rounded-xl p-card-padding-md shadow-md flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">garage</span>
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Garagem Principal</span>
+</div>
+<span class="font-badge-label text-badge-label uppercase px-2 py-0.5 rounded bg-surface-container-highest text-secondary">
+          Moto Titular
+        </span>
+</div>
+<!-- Modelo / Cilindrada / Ano -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="bike-model">
+          Modelo • Cilindrada • Ano
+        </label>
+<div class="flex items-center bg-surface-container rounded-lg px-3 py-2.5 shadow-inner focus-within:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-outline text-[20px] mr-2.5">motorcycle</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none" id="bike-model" placeholder="Ex: Honda CB 650R 2022" type="text" value="Yamaha YZF-R7 2023">
+</div>
+</div>
+<!-- Garupa Frequente Toggle -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Possui Garupa Frequente?</span>
+<span class="font-body-sm text-body-sm text-outline">Ajusta o cálculo de paradas e autonomia do grupo</span>
+</div>
+<div class="flex bg-surface-container-highest rounded-lg p-1 gap-1" id="passenger-selector">
+<button class="passenger-btn px-3 py-1.5 rounded font-badge-label text-badge-label uppercase text-on-surface-variant transition-all" data-value="nao" type="button">
+            Não
+          </button>
+<button class="passenger-btn px-3 py-1.5 rounded font-badge-label text-badge-label uppercase bg-primary-container text-on-primary-container shadow-sm transition-all" data-value="sim" type="button">
+            Sim
+          </button>
+</div>
+</div>
+</div>
+<!-- Pace Selector Interactive Cards -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">speed</span>
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Ritmo de Pilotagem Habitual</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline">Selecione um</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+        Isso ajuda o algoritmo a sugerir comboios alinhados com o seu estilo de condução.
+      </p>
+<div class="flex flex-col gap-3 mt-1" id="pace-container">
+<!-- Option 1: Tranquila -->
+<div class="pace-card cursor-pointer bg-surface-container-low rounded-xl p-card-padding-md shadow-sm transition-all relative overflow-hidden active:scale-[0.99]" data-pace="tranquila">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-[#00E676]">
+<span class="material-symbols-outlined text-[22px]">photo_camera_front</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Tranquila</span>
+<span class="font-telemetry-num text-label-md text-[#00E676]">Até 90 km/h</span>
+</div>
+</div>
+<div class="pace-radio w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center mt-1"><span class="w-2.5 h-2.5 rounded-full bg-transparent"></span></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2.5">
+            Passeio contemplativo, foco total em segurança, fotos, apreciação de paisagem e paradas para café.
+          </p>
+</div>
+<!-- Option 2: Moderada (Selected by Default / Recommended) -->
+<div class="pace-card cursor-pointer rounded-xl p-card-padding-md transition-all relative overflow-hidden active:scale-[0.99] bg-surface-container shadow-[0_0_16px_rgba(255,107,0,0.18)]" data-pace="moderada">
+<div class="absolute top-0 right-0 bg-primary-container text-on-primary-container font-badge-label text-badge-label uppercase px-2.5 py-0.5 rounded-bl-lg tracking-wider">
+            Recomendado
+          </div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[22px]">alt_route</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Moderada</span>
+<span class="font-telemetry-num text-label-md text-primary">120 a 160 km/h</span>
+</div>
+</div>
+<div class="pace-radio w-5 h-5 rounded-full bg-primary-container flex items-center justify-center mt-1"><span class="w-2 h-2 rounded-full bg-on-primary-container"></span></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2.5">
+            Ritmo constante, fluidez técnica em curvas, ultrapassagens seguras e conscientes em rodovias.
+          </p>
+</div>
+<!-- Option 3: Agressiva / Esportiva -->
+<div class="pace-card cursor-pointer bg-surface-container-low rounded-xl p-card-padding-md shadow-sm transition-all relative overflow-hidden active:scale-[0.99]" data-pace="agressiva">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-[#FF334B]">
+<span class="material-symbols-outlined text-[22px]">sports_score</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm uppercase text-on-surface">Agressiva / Esportiva</span>
+<span class="font-telemetry-num text-label-md text-[#FF334B]">Ritmo de Pista • Serra</span>
+</div>
+</div>
+<div class="pace-radio w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center mt-1"><span class="w-2.5 h-2.5 rounded-full bg-transparent"></span></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2.5">
+            Acelerações fortes, inclinação rápida em curvas e pilotagem técnica dinâmica para condutores experientes.
+          </p>
+</div>
+</div>
+</div>
+<!-- Visual Route Preview Card with Map Telemetry Context -->
+
+<!-- Main Submission CTA & Frictionless Microcopy -->
+<div class="flex flex-col gap-3 pt-2">
+<button class="w-full h-[54px] rounded-xl bg-primary-container text-on-primary-container font-headline-md text-headline-md uppercase tracking-wider flex items-center justify-center gap-2 shadow-[0_4px_18px_rgba(255,107,0,0.38)] active:scale-[0.98] transition-all" id="submit-button" type="submit">
+<span class="">Concluir e Acessar os Rolês</span>
+<span class="material-symbols-outlined text-[24px]">double_arrow</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 text-center px-2">
+<span class="material-symbols-outlined text-outline text-[16px]">lock_reset</span>
+<p class="font-body-sm text-body-sm text-outline">
+          Você poderá editar seus dados e adicionar novas motos a qualquer momento no seu perfil.
+        </p>
+</div>
+</div>
+</form>
+</div>
+<script>
+  (function() {
+    // Interactive Pace Card Selection
+    const paceCards = document.querySelectorAll('.pace-card');
+    paceCards.forEach(card => {
+      card.addEventListener('click', () => {
+        paceCards.forEach(c => {
+          c.classList.remove('bg-surface-container', 'shadow-[0_0_16px_rgba(255,107,0,0.18)]');
+          c.classList.add('bg-surface-container-low');
+          const radio = c.querySelector('.pace-radio');
+          if (radio) {
+            radio.className = 'pace-radio w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center mt-1';
+            radio.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-transparent"></span>';
+          }
+        });
+
+        card.classList.remove('bg-surface-container-low');
+        card.classList.add('bg-surface-container', 'shadow-[0_0_16px_rgba(255,107,0,0.18)]');
+        const activeRadio = card.querySelector('.pace-radio');
+        if (activeRadio) {
+          activeRadio.className = 'pace-radio w-5 h-5 rounded-full bg-primary-container flex items-center justify-center mt-1';
+          activeRadio.innerHTML = '<span class="w-2 h-2 rounded-full bg-on-primary-container"></span>';
+        }
+      });
+    });
+
+    // Passenger Toggle Logic
+    const passengerBtns = document.querySelectorAll('.passenger-btn');
+    passengerBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        passengerBtns.forEach(b => {
+          b.className = 'passenger-btn px-3 py-1.5 rounded font-badge-label text-badge-label uppercase text-on-surface-variant transition-all';
+        });
+        btn.className = 'passenger-btn px-3 py-1.5 rounded font-badge-label text-badge-label uppercase bg-primary-container text-on-primary-container shadow-sm transition-all';
+      });
+    });
+
+    // Feedback Toast Micro-interaction on Submit
+    const submitBtn = document.getElementById('submit-button');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', () => {
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[22px] animate-spin">progress_activity</span><span>Ligando o Motor...</span>';
+        setTimeout(() => {
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[24px]">check_circle</span><span>BEM-VINDO AO ASFALTO!</span>';
+          submitBtn.classList.remove('bg-primary-container');
+          submitBtn.classList.add('bg-[#00E676]', 'text-surface');
+        }, 800);
+      });
+    }
+  })();
+</script></main>
+
+</body></html>

@@ -1,0 +1,632 @@
+.tela {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px var(--gutter-md) 24px;
+}
+
+.hud {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hudTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hudTituloLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.pulso {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  box-shadow: 0 0 10px rgba(255, 107, 0, 0.9);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.hudTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.hudBadge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--primary-container) 15%, transparent);
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hudSubtitulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.hudDestaque {
+  color: var(--primary-container);
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  padding: 6px 12px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip:active {
+  transform: scale(0.95);
+}
+
+.chipAtivo {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.chip .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.chipBolinha {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--secondary-container);
+  flex-shrink: 0;
+}
+
+.chipAtivo .chipBolinha {
+  background: var(--on-primary);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: var(--card-padding-md, 16px);
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 280ms ease, opacity 280ms ease;
+}
+
+.cardSaindoAceite {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.cardSaindoRecusa {
+  transform: translateX(-100px);
+  opacity: 0;
+}
+
+.faixa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -16px -16px 0;
+  padding: 12px 16px 8px;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: var(--surface-container-low);
+}
+
+.faixaRole {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.faixaRole .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--primary-container);
+  flex-shrink: 0;
+}
+
+.faixaTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-container);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faixaConfirmados {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 0.25rem;
+  background: var(--surface-container-highest);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.identidade {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder .material-symbols-outlined {
+  font-size: 32px;
+}
+
+.identidadeTextos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.nomePiloto {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.apelidoPiloto {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.motoPiloto {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.motoPiloto .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--primary-container);
+}
+
+.badgePilotagem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 0.25rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badgePilotagem .material-symbols-outlined {
+  font-size: 12px;
+}
+
+.badgeTranquila {
+  background: color-mix(in srgb, var(--ritmo-tranquila) 15%, transparent);
+  color: var(--ritmo-tranquila);
+}
+
+.badgeModerada {
+  background: color-mix(in srgb, var(--secondary-container) 15%, transparent);
+  color: var(--secondary-container);
+}
+
+.badgeAgressiva {
+  background: color-mix(in srgb, var(--error) 15%, transparent);
+  color: var(--error);
+}
+
+.badgeNaGrade {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--ritmo-tranquila) 15%, transparent);
+  color: var(--ritmo-tranquila);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badgeNaGrade .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.aceitoEm {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.alertaRitmo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--secondary-container) 15%, transparent);
+}
+
+.alertaRitmo .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--secondary-container);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alertaTitulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--secondary-container);
+}
+
+.alertaTexto {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.alertaDestaque {
+  color: var(--secondary-container);
+  font-weight: 700;
+}
+
+.acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.botaoRecusar,
+.botaoAceitar {
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoRecusar:disabled,
+.botaoAceitar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.botaoRecusar {
+  background: var(--surface-container-highest);
+  color: var(--error);
+}
+
+.botaoRecusar:hover:not(:disabled) {
+  background: var(--error-container);
+  color: var(--on-error-container);
+}
+
+.botaoAceitar {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
+}
+
+.botaoRecusar:active:not(:disabled),
+.botaoAceitar:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.botaoRecusar .material-symbols-outlined,
+.botaoAceitar .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 48px 24px;
+  border-radius: 1rem;
+  background: var(--surface-container);
+}
+
+.vazioIcone {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary-container) 20%, transparent);
+  color: var(--primary-container);
+}
+
+.vazioIcone .material-symbols-outlined {
+  font-size: 36px;
+}
+
+.vazioTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.vazioTexto {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+  max-width: 280px;
+}
+
+.vazioCta {
+  margin-top: 8px;
+  min-height: var(--touch-min);
+  padding: 8px 20px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.vazioCta:active {
+  transform: scale(0.95);
+}
+
+.erro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 32px 16px;
+}
+
+.erro .material-symbols-outlined {
+  font-size: 36px;
+  color: var(--on-surface-variant);
+}
+
+.erroTitulo {
+  font-size: 14px;
+  color: var(--on-surface);
+}
+
+.botaoTentar {
+  min-height: var(--touch-min);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.carregando {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeleton {
+  height: 220px;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    90deg,
+    var(--surface-container) 0%,
+    var(--surface-container-high) 50%,
+    var(--surface-container) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(90%, 520px);
+  width: max-content;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%);
+}
+
+.toast .material-symbols-outlined {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toastAceite .material-symbols-outlined {
+  color: var(--primary-container);
+}
+
+.toastRecusa .material-symbols-outlined,
+.toastErro .material-symbols-outlined {
+  color: var(--error);
+}
+
+.toastMsg {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .hudTitulo {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .botaoRecusar,
+  .botaoAceitar,
+  .vazioCta {
+    font-size: 18px;
+  }
+}

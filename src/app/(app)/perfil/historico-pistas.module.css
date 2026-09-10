@@ -1,0 +1,422 @@
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.trilhas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-low);
+}
+
+.aba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: var(--touch-min);
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.abaAtiva {
+  background: var(--surface-container);
+  border-color: color-mix(in srgb, var(--primary-container) 30%, transparent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.abaAtiva .abaLabel {
+  color: var(--primary);
+}
+
+.abaLabel {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.abaBadge {
+  min-width: 18px;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: var(--surface-variant);
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+}
+
+.abaAtiva .abaBadge {
+  background: color-mix(in srgb, var(--primary-container) 20%, transparent);
+  color: var(--primary-container);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardLinha .card {
+  flex: 1;
+  min-width: 0;
+}
+
+.botaoClonar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--primary-container);
+  text-decoration: none;
+}
+
+.botaoClonar .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.botaoClonar:hover {
+  background: var(--surface-container-highest);
+}
+
+.botaoClonar:active {
+  background: var(--surface-container-highest);
+  transform: scale(0.9);
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardPendente {
+  border: 1px solid color-mix(in srgb, var(--secondary-container) 20%, transparent);
+}
+
+.blocoData,
+.blocoPendente,
+.blocoLider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 0.5rem;
+}
+
+.blocoData {
+  background: var(--surface-container-high);
+}
+
+.blocoPendente {
+  background: color-mix(in srgb, var(--secondary-container) 15%, transparent);
+  color: var(--secondary-container);
+}
+
+.blocoLider {
+  background: color-mix(in srgb, var(--primary-container) 20%, transparent);
+  color: var(--primary-container);
+}
+
+.blocoPendente .material-symbols-outlined {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.blocoRotulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.blocoDia {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--primary-container);
+}
+
+.blocoLider .blocoDia {
+  color: var(--primary-container);
+}
+
+.blocoMes {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.blocoLider .blocoMes {
+  color: var(--primary-container);
+}
+
+.cardCorpo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.cardTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cardTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tituloPendente {
+  color: var(--secondary-container);
+}
+
+.tituloConcluido {
+  color: var(--secondary-container);
+}
+
+.tituloConfirmado {
+  color: var(--primary);
+}
+
+.tituloLider {
+  color: var(--primary-container);
+}
+
+.chipAnalise {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--secondary-container) 15%, transparent);
+  color: var(--secondary-container);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+}
+
+.statusConcluido {
+  flex-shrink: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.statusConfirmado {
+  flex-shrink: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--primary);
+}
+
+.statusLider {
+  flex-shrink: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--tertiary);
+}
+
+.cardSubtitulo {
+  margin-top: 2px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.metaItem .material-symbols-outlined {
+  font-size: 13px;
+}
+
+.vazio,
+.erro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 24px 16px;
+}
+
+.vazio .material-symbols-outlined,
+.erro .material-symbols-outlined {
+  font-size: 36px;
+  color: var(--on-surface-variant);
+}
+
+.vazioTitulo,
+.erroTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.vazioTexto,
+.erroTexto {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+  max-width: 280px;
+}
+
+.botaoTentar {
+  min-height: var(--touch-min);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.skeletonCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  min-height: 72px;
+}
+
+.skeletonBloco,
+.skeletonBarra {
+  border-radius: 0.5rem;
+  background: linear-gradient(
+    90deg,
+    var(--surface-container-high) 0%,
+    var(--surface-container-highest) 50%,
+    var(--surface-container-high) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.skeletonBloco {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.skeletonBarras {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeletonBarra {
+  height: 10px;
+}
+
+.skeletonBarraCurta {
+  width: 55%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .abaLabel {
+    font-size: 10px;
+  }
+
+  .cardTitulo {
+    font-size: 11px;
+  }
+}

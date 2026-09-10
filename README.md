@@ -47,13 +47,13 @@ O emulator só recarrega o JavaScript em `functions/lib/`. Sem o `tsc -w`, mudan
 
 ### 2. Subir o emulator (terminal 2)
 
-Só as functions (Auth e Firestore de **produção** do projeto):
+Functions + Storage (fotos). Auth e Firestore de **produção**:
 
 ```bash
 npm run emulators
 ```
 
-Functions + Firestore + Auth 100% locais:
+Functions + Firestore + Auth + Storage 100% locais:
 
 ```bash
 npm run emulators:all
@@ -76,7 +76,20 @@ O frontend em `NODE_ENV=development` já aponta para o emulator. Para forçar ou
 
 ```
 NEXT_PUBLIC_FUNCTIONS_URL=http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
+NEXT_PUBLIC_STORAGE_EMULATOR_HOST=127.0.0.1:9199
 ```
+
+O upload de fotos no localhost usa o **Storage emulator** (porta 9199). Sem ele, o SDK tenta o bucket de produção e o browser bloqueia por CORS.
+
+Para o bucket de produção (`rolemoto-bc47f.firebasestorage.app`), o projeto precisa do plano Blaze. Depois de criar o bucket no console:
+
+```bash
+gcloud auth login
+gcloud config set project rolemoto-bc47f
+npm run storage:cors
+```
+
+Isso aplica o `cors.json` (localhost:3000 e o Hosting do Firebase).
 
 ### Credenciais do Admin SDK no emulator
 
@@ -275,7 +288,8 @@ O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/`.
 | Script | O quê |
 |---|---|
 | `npm run dev` | Next.js |
-| `npm run emulators` | Function `api` local (porta 5001) |
-| `npm run emulators:all` | Functions + Firestore + Auth locais |
+| `npm run emulators` | Function `api` + Storage locais (portas 5001 e 9199) |
+| `npm run emulators:all` | Functions + Firestore + Auth + Storage locais |
+| `npm run storage:cors` | Aplica `cors.json` no bucket de produção |
 | `cd functions && npm run build:watch` | Recompila o backend a cada save |
 | `cd functions && npm run deploy` | Publica as functions |

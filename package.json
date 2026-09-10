@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "emulators": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions",
-    "emulators:all": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,firestore,auth"
+    "emulators": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,storage",
+    "emulators:all": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,firestore,auth,storage",
+    "storage:cors": "gcloud storage buckets update gs://rolemoto-bc47f.firebasestorage.app --cors-file=cors.json --project=rolemoto-bc47f"
   },
   "dependencies": {
     "firebase": "^12.18.0",

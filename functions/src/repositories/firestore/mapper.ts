@@ -14,6 +14,14 @@ export const toIso = (value: unknown): string => {
   return new Date().toISOString();
 };
 
+/** Como `toIso`, mas preserva `null`/`undefined` (campos opcionais). */
+export const toIsoOrNull = (value: unknown): string | null => {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  return toIso(value);
+};
+
 /** Converte ISO/Date do domínio para Timestamp do Firestore. */
 export const toTimestamp = (value: unknown): Timestamp => {
   if (value instanceof Timestamp) {
