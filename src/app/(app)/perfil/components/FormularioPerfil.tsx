@@ -5,6 +5,7 @@ import type { Usuario } from "@/types/user";
 import { useFormularioPerfil } from "../hooks/useFormularioPerfil";
 import { CampoTexto } from "./CampoTexto";
 import { CartaoIdentidade } from "./CartaoIdentidade";
+import { SecaoGaragem } from "./SecaoGaragem";
 import { SeletorPilotagem } from "./SeletorPilotagem";
 import { BotaoInstalarApp } from "./BotaoInstalarApp";
 import { BotaoSair } from "./BotaoSair";
@@ -59,6 +60,15 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
         valor={form.apelido}
         onChange={form.setApelido}
         erro={form.erros.apelido}
+        desabilitado={form.salvando}
+      />
+
+      <SecaoGaragem
+        moto={form.moto}
+        garupaFrequente={form.garupaFrequente}
+        onMoto={form.setMoto}
+        onGarupa={form.setGarupaFrequente}
+        erroMoto={form.erros.moto}
         desabilitado={form.salvando}
       />
 

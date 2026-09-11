@@ -13,6 +13,7 @@ type Props = {
   erro?: string;
   desabilitado?: boolean;
   autoComplete?: string;
+  placeholder?: string;
 };
 
 export const CampoTexto = ({
@@ -26,6 +27,7 @@ export const CampoTexto = ({
   erro,
   desabilitado,
   autoComplete,
+  placeholder,
 }: Props) => {
   const erroId = `${id}-erro`;
 
@@ -49,6 +51,7 @@ export const CampoTexto = ({
           onChange={(e) => onChange(e.target.value)}
           disabled={desabilitado}
           autoComplete={autoComplete}
+          placeholder={placeholder}
           aria-invalid={Boolean(erro)}
           aria-describedby={erro ? erroId : undefined}
         />

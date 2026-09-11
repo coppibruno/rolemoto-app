@@ -20,7 +20,8 @@ export const RoleCard = ({ role }: Props) => {
         titulo={role.titulo}
         fotoCapaUrl={role.fotoCapaUrl}
         ritmo={role.ritmo}
-        distanciaKm={role.distanciaKm}
+        distanciaPartidaKm={role.distanciaPartidaKm}
+        distanciaRotaKm={role.distanciaRotaKm}
         dataHoraSaida={role.dataHoraSaida}
       />
       <div className={styles.cardCorpo}>

@@ -8,7 +8,8 @@ type Props = {
   titulo: string;
   fotoCapaUrl: string;
   ritmo: RitmoRole;
-  distanciaKm: number;
+  distanciaPartidaKm: number;
+  distanciaRotaKm: number;
   dataHoraSaida: string;
 };
 
@@ -27,11 +28,31 @@ const classeTexto = (ritmo: RitmoRole) => {
 const labelRitmo = (ritmo: RitmoRole) =>
   ritmo.charAt(0).toUpperCase() + ritmo.slice(1);
 
+const BadgeKm = ({
+  icone,
+  km,
+  label,
+}: {
+  icone: string;
+  km: number;
+  label: string;
+}) => (
+  <div className={styles.badge} aria-label={label}>
+    <span className="material-symbols-outlined" aria-hidden>
+      {icone}
+    </span>
+    <span className={styles.badgeKm} aria-hidden>
+      {km} km
+    </span>
+  </div>
+);
+
 export const CapaRole = ({
   titulo,
   fotoCapaUrl,
   ritmo,
-  distanciaKm,
+  distanciaPartidaKm,
+  distanciaRotaKm,
   dataHoraSaida,
 }: Props) => {
   const animacao =
@@ -49,9 +70,17 @@ export const CapaRole = ({
           {labelRitmo(ritmo)}
         </span>
       </div>
-      <div className={`${styles.badge} ${styles.badgeDir}`}>
-        <span className="material-symbols-outlined">route</span>
-        <span className={styles.badgeKm}>{distanciaKm} KM</span>
+      <div className={styles.badgeDir}>
+        <BadgeKm
+          icone="near_me"
+          km={distanciaPartidaKm}
+          label={`${distanciaPartidaKm} quilômetros até a partida`}
+        />
+        <BadgeKm
+          icone="route"
+          km={distanciaRotaKm}
+          label={`${distanciaRotaKm} quilômetros de rota`}
+        />
       </div>
       <div className={styles.capaTitulos}>
         <span className={styles.capaTitulo}>{titulo}</span>

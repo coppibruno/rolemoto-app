@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -57,16 +57,19 @@ export const useFormularioPrimeiroAcesso = () => {
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erroGeral, setErroGeral] = useState<string | null>(null);
+  const nomeHidratado = useRef(Boolean(firebaseUser?.displayName));
 
   const setApelido = (valor: string) => {
     setApelidoEstado(valor.replace(/^@+/, ""));
   };
 
   useEffect(() => {
-    if (firebaseUser?.displayName && !nome) {
+    if (nomeHidratado.current || !firebaseUser) return;
+    nomeHidratado.current = true;
+    if (firebaseUser.displayName) {
       setNome(firebaseUser.displayName);
     }
-  }, [firebaseUser, nome]);
+  }, [firebaseUser]);
 
   useEffect(() => {
     const id = nome.trim().length >= 2 ? "apelido" : "nome-completo";

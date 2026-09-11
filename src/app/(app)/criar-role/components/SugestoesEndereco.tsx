@@ -11,6 +11,17 @@ type Props = {
   onEscolher: (item: SugestaoEndereco) => void;
 };
 
+const unicas = (lista: SugestaoEndereco[]) =>
+  lista.filter(
+    (item, index) =>
+      lista.findIndex(
+        (outro) =>
+          outro.lat === item.lat &&
+          outro.lng === item.lng &&
+          outro.label === item.label,
+      ) === index,
+  );
+
 export const SugestoesEndereco = ({
   termo,
   sugestoes,
@@ -21,8 +32,8 @@ export const SugestoesEndereco = ({
 
   return (
     <ul className={styles.sugestoes} role="listbox">
-      {sugestoes.map((item) => (
-        <li key={`${item.lat}-${item.lng}-${item.label}`}>
+      {unicas(sugestoes).map((item, index) => (
+        <li key={`${item.lat}-${item.lng}-${index}`}>
           <button
             type="button"
             className={styles.sugestao}

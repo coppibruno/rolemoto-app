@@ -92,12 +92,15 @@ export const useInstalacaoPwa = () => {
 
   const fecharSheet = useCallback(() => setSheetAberto(false), []);
 
+  const podePromptNativo = eventoNativo !== null;
+
   return {
     eStandalone,
     eIos,
-    podePromptNativo: eventoNativo !== null,
-    mostrarCtaLogin: pronto && !eStandalone && !dispensado,
-    mostrarItemPerfil: pronto && !eStandalone,
+    podePromptNativo,
+    mostrarCtaLogin:
+      pronto && !eStandalone && !dispensado && (podePromptNativo || eIos),
+    mostrarItemPerfil: pronto && !eStandalone && (podePromptNativo || eIos),
     sheetAberto,
     instalar,
     dispensar,

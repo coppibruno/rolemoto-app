@@ -382,6 +382,9 @@
   line-height: 20px;
   outline: none;
   transition: background 0.15s ease, border-color 0.15s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .input::placeholder,

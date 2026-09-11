@@ -50,18 +50,28 @@ export const SeletorLocalizacao = ({ onFechar, onUsarGps, onEscolher }: Props) =
           aria-label="Buscar endereço"
         />
         <ul className={styles.sugestoes} role="listbox">
-          {sugestoes.map((item) => (
-            <li key={`${item.lat}-${item.lng}-${item.label}`}>
-              <button
-                type="button"
-                className={styles.sugestao}
-                role="option"
-                onClick={() => onEscolher(item.lat, item.lng, item.label)}
-              >
-                {item.label}
-              </button>
-            </li>
-          ))}
+          {sugestoes
+            .filter(
+              (item, index, lista) =>
+                lista.findIndex(
+                  (outro) =>
+                    outro.lat === item.lat &&
+                    outro.lng === item.lng &&
+                    outro.label === item.label,
+                ) === index,
+            )
+            .map((item, index) => (
+              <li key={`${item.lat}-${item.lng}-${index}`}>
+                <button
+                  type="button"
+                  className={styles.sugestao}
+                  role="option"
+                  onClick={() => onEscolher(item.lat, item.lng, item.label)}
+                >
+                  {item.label}
+                </button>
+              </li>
+            ))}
         </ul>
         {buscando ? (
           <p className={styles.sugestaoVazia}>Buscando…</p>

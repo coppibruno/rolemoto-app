@@ -3,9 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { traduzirErroFirebase, extrairCodigoErro } from "../utils/erros-firebase";
+import { ApiError } from "@/lib/api";
+import {
+  traduzirErroFirebase,
+  extrairCodigoErro,
+} from "../utils/erros-firebase";
+import {
+  normalizarIdentificador,
+  resolverEmailDaConta,
+} from "../services/identificador.service";
 
 type Modo = "login" | "cadastro";
+
+const ERRO_CREDENCIAL = "Email ou senha incorretos.";
 
 export const useLoginForm = () => {
   const { cadastrarComEmail, loginComEmail } = useAuth();
@@ -43,13 +53,24 @@ export const useLoginForm = () => {
 
     setCarregando(true);
     try {
+      console.log("aqui2");
       if (modo === "cadastro") {
         await cadastrarComEmail(email, senha);
       } else {
-        await loginComEmail(email, senha);
+        const emailConta = await resolverEmailDaConta(email);
+        await loginComEmail(emailConta, senha);
       }
       router.replace("/");
     } catch (error: unknown) {
+      console.log("aqui1", error);
+      const apelido = !normalizarIdentificador(email).includes("@");
+      if (
+        modo === "login" &&
+        (apelido || error instanceof ApiError || error instanceof TypeError)
+      ) {
+        setErro(ERRO_CREDENCIAL);
+        return;
+      }
       setErro(traduzirErroFirebase(extrairCodigoErro(error)));
     } finally {
       setCarregando(false);
@@ -58,7 +79,14 @@ export const useLoginForm = () => {
 
   return {
     modo,
-    campos: { email, setEmail, senha, setSenha, confirmarSenha, setConfirmarSenha },
+    campos: {
+      email,
+      setEmail,
+      senha,
+      setSenha,
+      confirmarSenha,
+      setConfirmarSenha,
+    },
     mostrarSenha,
     toggleSenha,
     erro,

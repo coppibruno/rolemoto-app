@@ -44,10 +44,12 @@ export type UsuarioPrimeiroAcesso = {
   garupaFrequente: boolean;
 };
 
-/** Payload de edição de perfil — os quatro campos são obrigatórios. */
+/** Payload de edição de perfil. */
 export type UsuarioEdicao = {
   nome: string;
   apelido: string;
   fotoUrl: string;
   pilotagem: Pilotagem;
+  moto: string;
+  garupaFrequente: boolean;
 };

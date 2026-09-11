@@ -26,10 +26,12 @@ export type UsuarioPrimeiroAcesso = {
   garupaFrequente: boolean;
 };
 
-/** Edição autenticada do próprio perfil — quatro campos obrigatórios. */
+/** Edição autenticada do próprio perfil — campos obrigatórios. */
 export type UsuarioEdicao = {
   nome: string;
   apelido: string;
   fotoUrl: string;
   pilotagem: Pilotagem;
+  moto: string;
+  garupaFrequente: boolean;
 };

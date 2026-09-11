@@ -18,6 +18,7 @@ import {
   signInWithRedirect,
   signOut,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
@@ -44,11 +45,14 @@ const deveUsarRedirect = () => {
  * No redirect o `User` só chega no próximo load via `getRedirectResult`.
  */
 export const loginComGoogle = async () => {
+  console.log("loginComGoogle 1");
   if (deveUsarRedirect()) {
     await signInWithRedirect(auth, googleProvider);
     return;
   }
+  console.log("loginComGoogle 2", auth, googleProvider);
   const resultado = await signInWithPopup(auth, googleProvider);
+  console.log("loginComGoogle 3", resultado);
   return resultado.user;
 };
 
@@ -74,6 +78,9 @@ export const loginComEmail = async (email: string, senha: string) => {
   const resultado = await signInWithEmailAndPassword(auth, email, senha);
   return resultado.user;
 };
+
+export const enviarResetSenha = (email: string) =>
+  sendPasswordResetEmail(auth, email);
 
 /**
  * Encerra a sessão do usuário atual.

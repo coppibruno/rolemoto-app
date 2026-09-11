@@ -102,14 +102,18 @@ const enriquecerCriadores = async (
 const paraFeedItem = (
   role: Role,
   criadores: Map<string, RoleCriadorResumo>,
+  origem: {lat: number; lng: number},
 ): RoleFeedItem => {
-  const distanciaKm = distanciaRotaKm(role.localSaida, role.destinoFinal);
+  const distanciaPartidaKm = Math.round(
+    haversineKm(origem.lat, origem.lng, role.localSaida.lat, role.localSaida.lng),
+  );
+  const rotaKm = distanciaRotaKm(role.localSaida, role.destinoFinal);
   const criador = criadores.get(role.criadorId) ?? {
     uid: role.criadorId,
     apelido: "piloto",
     fotoUrl: "",
   };
-  return {...role, distanciaKm, criador};
+  return {...role, distanciaPartidaKm, distanciaRotaKm: rotaKm, criador};
 };
 
 const resumoCriador = async (criadorId: string): Promise<RoleCriadorResumo> => {
@@ -266,7 +270,9 @@ rolesRouter.get("/", async (req: Request, res: Response) => {
     filtrados.sort((a, b) => a.dataHoraSaida.localeCompare(b.dataHoraSaida));
 
     const criadores = await enriquecerCriadores(filtrados);
-    const itens = filtrados.map((role) => paraFeedItem(role, criadores));
+    const itens = filtrados.map((role) =>
+      paraFeedItem(role, criadores, query),
+    );
     res.json(itens);
   } catch (error) {
     responderErro(res, error);

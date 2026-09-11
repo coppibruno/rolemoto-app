@@ -25,8 +25,8 @@ export const CampoBusca = ({ valor, onChange }: Props) => {
         type="search"
         value={valor}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Buscar destino, serra ou motogrupo…"
-        aria-label="Buscar destino, serra ou motogrupo"
+        placeholder="Buscar destino ou serra…"
+        aria-label="Buscar destino ou serra"
       />
       <button
         type="button"

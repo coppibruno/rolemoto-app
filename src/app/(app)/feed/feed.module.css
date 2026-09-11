@@ -257,6 +257,9 @@
   font-size: 14px;
   line-height: 20px;
   outline: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .buscaInput::placeholder {
@@ -328,7 +331,12 @@
   align-items: center;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 0;
+  padding: 4px 28px 4px 0;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
 }
 
 .chip {
@@ -496,8 +504,6 @@
 }
 
 .badge {
-  position: absolute;
-  top: 12px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -508,11 +514,19 @@
 }
 
 .badgeEsq {
+  position: absolute;
+  top: 12px;
   left: 12px;
 }
 
 .badgeDir {
+  position: absolute;
+  top: 12px;
   right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
 }
 
 .badgeLabel {
@@ -531,6 +545,7 @@
   line-height: 16px;
   letter-spacing: 0.03em;
   color: var(--on-surface);
+  white-space: nowrap;
 }
 
 .badge .material-symbols-outlined {

@@ -196,6 +196,12 @@
   min-height: 48px;
 }
 
+.inputEllipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .input::placeholder {
   color: var(--outline);
   opacity: 0.6;
@@ -556,4 +562,33 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.botaoEntendi:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.corpoSheet {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.formSheet {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.formSheet .input {
+  padding-left: 16px;
+}
+
+.erroSheet {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--error);
 }

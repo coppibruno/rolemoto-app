@@ -11,7 +11,7 @@ import type {
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
 const ERRO_CAMPOS_OBRIGATORIOS =
-  "nome, apelido, fotoUrl e pilotagem são obrigatórios";
+  "nome, apelido, fotoUrl, pilotagem, moto e garupaFrequente são obrigatórios";
 
 type ResultadoEdicao =
   | {ok: true; dados: UsuarioEdicao}
@@ -30,10 +30,19 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
   const nome = typeof bruto.nome === "string" ? bruto.nome.trim() : "";
   const apelido = typeof bruto.apelido === "string" ? bruto.apelido.trim() : "";
   const fotoUrl = typeof bruto.fotoUrl === "string" ? bruto.fotoUrl.trim() : "";
+  const moto = typeof bruto.moto === "string" ? bruto.moto.trim() : "";
   const pilotagem = bruto.pilotagem;
 
   if (nome.length < 2 || apelido.length < 2 || fotoUrl.length === 0) {
     return {ok: false, erro: ERRO_CAMPOS_OBRIGATORIOS};
+  }
+
+  if (moto.length < 2) {
+    return {ok: false, erro: "moto é obrigatório"};
+  }
+
+  if (typeof bruto.garupaFrequente !== "boolean") {
+    return {ok: false, erro: "garupaFrequente é obrigatório"};
   }
 
   if (typeof pilotagem !== "string" || !pilotagem) {
@@ -46,7 +55,14 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
 
   return {
     ok: true,
-    dados: {nome, apelido, fotoUrl, pilotagem: pilotagem as Pilotagem},
+    dados: {
+      nome,
+      apelido,
+      fotoUrl,
+      pilotagem: pilotagem as Pilotagem,
+      moto,
+      garupaFrequente: bruto.garupaFrequente,
+    },
   };
 };
 

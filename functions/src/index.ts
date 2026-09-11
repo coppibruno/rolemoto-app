@@ -2,6 +2,7 @@
  * Firebase Cloud Functions — Backend do Rolemoto
  *
  * Uma única function `api` com Express. Os recursos ficam em routers:
+ * - /auth/resolver → POST (público, sem Bearer)
  * - /roles   → GET, POST, PUT, DELETE
  * - /roles/:id/participacao → GET, POST, PATCH, DELETE
  * - /roles/:id/feedback → POST
@@ -20,6 +21,7 @@
 import {setGlobalOptions} from "firebase-functions";
 import {onRequest} from "firebase-functions/https";
 import express, {Request, Response} from "express";
+import {authRouter} from "./routes/auth";
 import {rolesRouter} from "./routes/roles";
 import {aprovacoesRouter} from "./routes/aprovacoes";
 import {dispositivosRouter} from "./routes/dispositivos";
@@ -36,6 +38,7 @@ app.get("/", (_req: Request, res: Response) => {
     status: "ok",
     mensagem: "API do Rolemoto",
     rotas: [
+      "/auth/resolver",
       "/roles",
       "/roles/:id/modelo",
       "/roles/:id/feedback",
@@ -49,6 +52,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
+app.use("/auth", authRouter);
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);
 app.use("/dispositivos", dispositivosRouter);

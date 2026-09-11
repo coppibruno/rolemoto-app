@@ -40,7 +40,7 @@ export const SecaoDadosPiloto = ({
         onChange={onNome}
         erro={erroNome}
         desabilitado={desabilitado}
-        autoComplete="name"
+        autoComplete="off"
       />
       <CampoTexto
         id="apelido"

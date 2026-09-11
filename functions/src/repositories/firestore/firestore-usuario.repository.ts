@@ -59,6 +59,15 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
     return encontrados;
   }
 
+  async buscarPorApelido(apelido: string): Promise<Usuario[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("apelido", "==", apelido)
+      .limit(2)
+      .get();
+    return snap.docs.map((doc) => toUsuario(doc));
+  }
+
   async criar(uid: string, dados: UsuarioCreate): Promise<Usuario> {
     const ref = firestore.collection(COLECAO).doc(uid);
     await ref.set({

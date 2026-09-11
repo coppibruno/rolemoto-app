@@ -1,6 +1,8 @@
 "use client";
 
 import { useLoginForm } from "../hooks/useLoginForm";
+import { useRecuperarSenha } from "../hooks/useRecuperarSenha";
+import { SheetRecuperarSenha } from "./SheetRecuperarSenha";
 import styles from "../login.module.css";
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 export const FormularioLogin = ({ desabilitado }: Props) => {
   const { modo, campos, mostrarSenha, toggleSenha, erro, carregando, alternarModo, submeter } =
     useLoginForm();
+  const reset = useRecuperarSenha(campos.email);
 
   const bloqueado = desabilitado || carregando;
   const eCadastro = modo === "cadastro";
@@ -17,7 +20,6 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
   return (
     <>
       <form className={styles.formulario} onSubmit={submeter}>
-        {/* Campo: E-mail ou Apelido */}
         <div className={styles.campo}>
           <label htmlFor="login-id" className={styles.label}>
             <span>{eCadastro ? "E-mail" : "E-mail ou Apelido"}</span>
@@ -30,7 +32,7 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
             <input
               id="login-id"
               type={eCadastro ? "email" : "text"}
-              className={styles.input}
+              className={`${styles.input} ${styles.inputEllipsis}`}
               placeholder={eCadastro ? "seu@email.com" : "ex: ghost_rider ou piloto@rolemoto.com"}
               value={campos.email}
               onChange={(e) => campos.setEmail(e.target.value)}
@@ -40,14 +42,18 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
           </div>
         </div>
 
-        {/* Campo: Senha */}
         <div className={styles.campo}>
           <div className={styles.labelRow}>
             <label htmlFor="login-pass" className={styles.label}>
               Senha
             </label>
             {!eCadastro && (
-              <button type="button" className={styles.linkEsqueceu} disabled={bloqueado}>
+              <button
+                type="button"
+                className={styles.linkEsqueceu}
+                disabled={bloqueado}
+                onClick={reset.abrir}
+              >
                 Esqueceu a senha?
               </button>
             )}
@@ -80,7 +86,6 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
           </div>
         </div>
 
-        {/* Campo: Confirmar senha (apenas cadastro) */}
         {eCadastro && (
           <div className={styles.campo}>
             <label htmlFor="confirmar-senha" className={styles.label}>
@@ -104,7 +109,6 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
           </div>
         )}
 
-        {/* Botão CTA */}
         <button type="submit" className={styles.botaoPrimario} disabled={bloqueado}>
           <span>{eCadastro ? "Criar conta" : "Acelerar / Entrar"}</span>
           <span className="material-symbols-outlined">
@@ -113,7 +117,6 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
         </button>
       </form>
 
-      {/* Mensagem de erro */}
       {erro && (
         <div className={styles.erro}>
           <span className="material-symbols-outlined">warning</span>
@@ -121,7 +124,6 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
         </div>
       )}
 
-      {/* Alternar entre login e cadastro */}
       <p className={styles.cadastroLink}>
         {eCadastro ? "Já tem uma conta?" : "Não tem uma conta?"}{" "}
         <button
@@ -133,6 +135,18 @@ export const FormularioLogin = ({ desabilitado }: Props) => {
           {eCadastro ? "Fazer login" : "Cadastre-se"}
         </button>
       </p>
+
+      {reset.aberto ? (
+        <SheetRecuperarSenha
+          identificador={reset.identificador}
+          enviando={reset.enviando}
+          sucesso={reset.sucesso}
+          erro={reset.erro}
+          onIdentificador={reset.setIdentificador}
+          onEnviar={reset.enviar}
+          onFechar={reset.fechar}
+        />
+      ) : null}
     </>
   );
 };

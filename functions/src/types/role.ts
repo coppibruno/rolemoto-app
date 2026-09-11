@@ -29,9 +29,10 @@ export type RoleCriadorResumo = {
   fotoUrl: string;
 };
 
-/** Item do feed — Role + distância da rota (partida → destino) + organizador. */
+/** Item do feed — km até a saída + comprimento da rota + organizador. */
 export type RoleFeedItem = Role & {
-  distanciaKm: number;
+  distanciaPartidaKm: number;
+  distanciaRotaKm: number;
   criador: RoleCriadorResumo;
 };
 

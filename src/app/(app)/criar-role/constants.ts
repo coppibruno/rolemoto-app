@@ -15,8 +15,7 @@ export const HORA_PADRAO = "07:30";
 
 export const PLACEHOLDER_TITULO = "Ex: Café com Curvas na Serra Negra";
 export const PLACEHOLDER_PARTIDA = "Posto Shell Rodovia km 22";
-export const PLACEHOLDER_DESTINO =
-  "Ex: Mirante Alto da Serra ou Restaurante do Lago";
+export const PLACEHOLDER_DESTINO = "Ex: Mirante Alto da Serra";
 export const PLACEHOLDER_DESCRICAO =
   "Dicas de pedágio, abastecimento, canal do rádio comunicador e regras de ultrapassagem...";
 

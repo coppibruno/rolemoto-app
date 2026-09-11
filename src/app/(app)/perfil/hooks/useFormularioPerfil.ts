@@ -10,6 +10,7 @@ import { useFotoPerfil } from "./useFotoPerfil";
 export type ErrosEdicaoPerfil = {
   nome?: string;
   apelido?: string;
+  moto?: string;
   foto?: string;
   pilotagem?: string;
 };
@@ -17,6 +18,7 @@ export type ErrosEdicaoPerfil = {
 const validar = (campos: {
   nome: string;
   apelido: string;
+  moto: string;
   fotoUrlAtual: string;
   photoFile: File | null;
   pilotagem: Pilotagem | null;
@@ -24,12 +26,16 @@ const validar = (campos: {
   const erros: ErrosEdicaoPerfil = {};
   const nome = campos.nome.trim();
   const apelido = campos.apelido.trim();
+  const moto = campos.moto.trim();
 
   if (!nome) erros.nome = "Informe o nome";
   else if (nome.length < 2) erros.nome = "Mínimo 2 caracteres";
 
   if (!apelido) erros.apelido = "Informe o apelido";
   else if (apelido.length < 2) erros.apelido = "Mínimo 2 caracteres";
+
+  if (!moto) erros.moto = "Informe a moto";
+  else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
 
   if (!campos.fotoUrlAtual.trim() && !campos.photoFile) {
     erros.foto = "Inclua uma foto de perfil";
@@ -48,6 +54,10 @@ export const useFormularioPerfil = (usuario: Usuario) => {
 
   const [nome, setNome] = useState(usuario.nome);
   const [apelido, setApelido] = useState(usuario.apelido);
+  const [moto, setMoto] = useState(usuario.moto ?? "");
+  const [garupaFrequente, setGarupaFrequente] = useState(
+    Boolean(usuario.garupaFrequente),
+  );
   const [pilotagem, setPilotagem] = useState<Pilotagem | null>(usuario.pilotagem);
   const [erros, setErros] = useState<ErrosEdicaoPerfil>({});
   const [salvando, setSalvando] = useState(false);
@@ -62,6 +72,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     const errosAtuais = validar({
       nome,
       apelido,
+      moto,
       fotoUrlAtual: foto.previewUrl,
       photoFile: foto.arquivo,
       pilotagem,
@@ -79,6 +90,8 @@ export const useFormularioPerfil = (usuario: Usuario) => {
         apelido: apelido.trim(),
         fotoUrl,
         pilotagem,
+        moto: moto.trim(),
+        garupaFrequente,
       });
       await recarregarPerfil();
       foto.limparArquivo();
@@ -102,6 +115,10 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     setNome,
     apelido,
     setApelido,
+    moto,
+    setMoto,
+    garupaFrequente,
+    setGarupaFrequente,
     pilotagem,
     setPilotagem,
     foto,

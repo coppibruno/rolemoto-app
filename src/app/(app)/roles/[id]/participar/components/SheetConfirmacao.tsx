@@ -47,6 +47,8 @@ export const SheetConfirmacao = ({
       role="dialog"
       aria-modal="true"
       aria-labelledby="titulo-confirmacao"
+      tabIndex={-1}
+      data-foco-inicial
     >
       <div className={styles.faixa} />
       <div className={styles.handle} />

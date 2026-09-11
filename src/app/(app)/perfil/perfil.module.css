@@ -335,6 +335,70 @@
   color: var(--error);
 }
 
+.garupaLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.garupaTextos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.garupaLabel {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.garupaHint {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.toggle {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-highest);
+}
+
+.toggleBtn {
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggleBtnAtivo {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .gridPilotagem {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
