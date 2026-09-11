@@ -7,11 +7,13 @@ import styles from "../login.module.css";
 
 interface Props {
   desabilitado: boolean;
+  next: string | null;
+  modoCadastro: boolean;
 }
 
-export const FormularioLogin = ({ desabilitado }: Props) => {
+export const FormularioLogin = ({ desabilitado, next, modoCadastro }: Props) => {
   const { modo, campos, mostrarSenha, toggleSenha, erro, carregando, alternarModo, submeter } =
-    useLoginForm();
+    useLoginForm(next, modoCadastro);
   const reset = useRecuperarSenha(campos.email);
 
   const bloqueado = desabilitado || carregando;

@@ -112,6 +112,19 @@ export class FirestoreUsuarioRoleRepository implements UsuarioRoleRepository {
     return snap.data().count;
   }
 
+  async listarConfirmadosDoRole(
+    roleId: string,
+    limite: number,
+  ): Promise<UsuarioRole[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("roleId", "==", roleId)
+      .where("aceito", "==", true)
+      .limit(limite)
+      .get();
+    return snap.docs.map(toUsuarioRole);
+  }
+
   async criar(dados: UsuarioRoleCreate): Promise<UsuarioRole> {
     const id = idUsuarioRole(dados.usuarioId, dados.roleId);
     const ref = firestore.collection(COLECAO).doc(id);

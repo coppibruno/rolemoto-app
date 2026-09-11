@@ -9,8 +9,8 @@ import { SecaoGaragem } from "./SecaoGaragem";
 import { SeletorRitmoHabitual } from "./SeletorRitmoHabitual";
 import styles from "../primeiro-acesso.module.css";
 
-export const FormularioPrimeiroAcesso = () => {
-  const form = useFormularioPrimeiroAcesso();
+export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
+  const form = useFormularioPrimeiroAcesso(next);
   const ocupado = form.salvando || form.sucesso;
 
   return (

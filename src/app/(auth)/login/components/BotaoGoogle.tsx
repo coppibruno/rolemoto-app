@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { destinoSeguro } from "@/lib/destino-pos-auth";
 import { traduzirErroFirebase, extrairCodigoErro } from "../utils/erros-firebase";
 import styles from "../login.module.css";
 
 interface Props {
   desabilitado: boolean;
+  next: string | null;
 }
 
-export const BotaoGoogle = ({ desabilitado }: Props) => {
+export const BotaoGoogle = ({ desabilitado, next }: Props) => {
   const { loginComGoogle } = useAuth();
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
@@ -21,7 +23,7 @@ export const BotaoGoogle = ({ desabilitado }: Props) => {
     setCarregando(true);
     try {
       await loginComGoogle();
-      router.replace("/");
+      router.replace(destinoSeguro(next));
     } catch (error: unknown) {
       const codigo = extrairCodigoErro(error);
       if (codigo !== "auth/popup-closed-by-user") {

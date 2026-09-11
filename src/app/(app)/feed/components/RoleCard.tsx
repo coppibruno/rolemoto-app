@@ -2,6 +2,7 @@
 
 import type { RoleFeedItem } from "@/types/role";
 import { BotaoParticipar } from "./BotaoParticipar";
+import { BotaoCompartilharRole } from "./BotaoCompartilharRole";
 import { CapaRole } from "./CapaRole";
 import { OrganizadorRole } from "./OrganizadorRole";
 import { RotaRole } from "./RotaRole";
@@ -32,7 +33,10 @@ export const RoleCard = ({ role }: Props) => {
         />
         {descricao ? <p className={styles.descricao}>{descricao}</p> : null}
         <OrganizadorRole criador={role.criador} />
-        <BotaoParticipar id={role.id} criadorId={role.criadorId} />
+        <div className={styles.cardAcoes}>
+          <BotaoParticipar id={role.id} criadorId={role.criadorId} />
+          <BotaoCompartilharRole role={role} />
+        </div>
       </div>
     </article>
   );

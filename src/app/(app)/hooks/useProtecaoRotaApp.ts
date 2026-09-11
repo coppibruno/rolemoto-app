@@ -1,25 +1,33 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  destinoSeguro,
+  urlLoginComNext,
+  urlPrimeiroAcessoComNext,
+} from "@/lib/destino-pos-auth";
 
 export const useProtecaoRotaApp = () => {
   const { firebaseUser, usuario, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (loading) return;
 
+    const destino = destinoSeguro(pathname);
+
     if (!firebaseUser) {
-      router.replace("/login");
+      router.replace(urlLoginComNext(destino));
       return;
     }
 
     if (!usuario) {
-      router.replace("/primeiro-acesso");
+      router.replace(urlPrimeiroAcessoComNext(destino));
     }
-  }, [loading, firebaseUser, usuario, router]);
+  }, [loading, firebaseUser, usuario, pathname, router]);
 
   const autorizado = !loading && Boolean(firebaseUser) && Boolean(usuario);
 

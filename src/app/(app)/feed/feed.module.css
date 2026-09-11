@@ -711,6 +711,7 @@
 }
 
 .botaoParticipar {
+  flex: 1;
   width: 100%;
   min-height: var(--touch-target);
   height: var(--touch-target);
@@ -728,6 +729,54 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+}
+
+.cardAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wrapCompartilhar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.botaoCompartilhar {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.botaoCompartilhar:active {
+  transform: scale(0.96);
+}
+
+.botaoCompartilhar .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.toastCopiado {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .botaoParticipar:active {

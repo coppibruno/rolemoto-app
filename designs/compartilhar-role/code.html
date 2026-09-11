@@ -1,0 +1,345 @@
+<!DOCTYPE html><html class="dark" lang="pt-BR" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+<title>Rolê Moto - Subida da Serra de Campos &amp; Curvas do Alto</title>
+<!-- Google Fonts: Barlow Condensed & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;0,900;1,700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#ff6b00',
+              orangeHover: '#ff8533',
+              darkBg: '#121316',
+              cardBg: '#1b1b1f',
+              cardSubtle: '#1f2024',
+              border: '#2d2e33'
+            }
+          },
+          fontFamily: {
+            display: ['"Barlow Condensed"', 'sans-serif'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+<!-- Custom Base Styles for iOS Mobile App Feel -->
+<style data-purpose="custom-styling">
+    body {
+      background-color: #121316;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .font-sport {
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.03em;
+    }
+    /* Safe-area insets for iOS bottom sticky bar */
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 1.25rem);
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 0.75rem);
+    }
+  </style>
+</head>
+<body class="bg-brand-darkBg text-gray-100 antialiased min-h-screen flex justify-center selection:bg-brand-orange selection:text-white">
+<!-- Main Mobile Frame (~390px viewport container) -->
+<div class="w-full max-w-md min-h-screen bg-brand-darkBg flex flex-col relative pb-32 border-x border-brand-border/40 shadow-2xl">
+<!-- BEGIN: TopPublicHeader -->
+<!-- Barra de Topo Pública para visitante deslogado com logo esportiva e botão de login -->
+<header class="sticky top-0 z-40 bg-brand-darkBg/95 backdrop-blur-md border-b border-brand-border px-4 py-3 pt-safe flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<!-- Ícone de Moto Esportiva Laranja -->
+<div class="w-9 h-9 rounded-lg bg-brand-orange/15 border border-brand-orange/30 flex items-center justify-center text-brand-orange">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center space-x-1.5 leading-none">
+<span class="font-sport font-black text-xl text-white tracking-wider">ROLÊ<span class="text-brand-orange">MOTO</span></span>
+</div>
+<span class="inline-block text-[10px] uppercase font-sport font-bold tracking-widest text-brand-orange bg-brand-orange/10 px-1.5 py-0.5 rounded border border-brand-orange/20">
+            CONVITE ABERTO
+          </span>
+</div>
+</div>
+<!-- Botão Secundário Entrar -->
+<a class="text-xs font-semibold px-3.5 py-1.5 rounded-full border border-brand-border bg-brand-cardBg text-gray-200 hover:text-white hover:border-brand-orange transition-colors" href="#login">
+        Entrar
+      </a>
+</header>
+<!-- END: TopPublicHeader -->
+<!-- BEGIN: HeroRouteCover -->
+<!-- Hero com Imagem da Rota, Overlays escuros, Tags e Horário da Expedição -->
+<section class="relative w-full overflow-hidden bg-brand-cardBg">
+<!-- Imagem de Capa Panorâmica da Serra -->
+<div class="relative h-64 w-full">
+<img alt="Scenic mountain winding asphalt road viewpoint with dramatic sunset light, group of sports motorcycles parked at the vista point overlooking cloudy valley, high quality travel motorcycle photography" class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ0giAwwSo6M6THiDy8wC7P6ARxmWgvM_OV487XjI7YKh8bQuu97pmvLWBfsd9z3aSrPak5XVz2GvCEZUohawqqvVtpMV7vxyBXiE5Ro2izL5LW9vvdSbML_O-J9irPArL_jiYkUMdOsAXZz84jdCMmxdBrVFgkMj2fdp4PF1b1_0Kq_HZajmFKP0wXORbk6qyoP1MRRtpsHp2Q0xInJfZ0HRRlthpuPCmf8l7OgQQlmVdWhEqTew2rQ">
+<!-- Gradiente escuro para legibilidade perfeita -->
+<div class="absolute inset-0 bg-gradient-to-t from-brand-darkBg via-brand-darkBg/50 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-brand-darkBg/60 via-transparent to-transparent"></div>
+<!-- Badges Flutuantes sobre a foto -->
+<div class="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[85%]">
+<span class="text-[11px] font-sport font-extrabold uppercase bg-black/70 backdrop-blur-sm text-brand-orange px-2 py-0.5 rounded border border-brand-orange/40 shadow-sm">
+            Subida de Serra
+          </span>
+<span class="text-[11px] font-sport font-extrabold uppercase bg-black/70 backdrop-blur-sm text-gray-200 px-2 py-0.5 rounded border border-white/20">
+            120 KM Total
+          </span>
+<span class="text-[11px] font-sport font-extrabold uppercase bg-black/70 backdrop-blur-sm text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">
+            Ritmo Moderado
+          </span>
+</div>
+<!-- Data e Horário em Destaque na base da imagem -->
+<div class="absolute bottom-3 left-3 right-3 flex items-center space-x-2 text-xs bg-brand-cardSubtle/90 backdrop-blur-md px-3 py-2 rounded-lg border border-brand-border/70 text-gray-300">
+<svg class="w-4 h-4 text-brand-orange shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<rect height="18" rx="2" ry="2" width="18" x="3" y="4"></rect>
+<line x1="16" x2="16" y1="2" y2="6"></line>
+<line x1="8" x2="8" y1="2" y2="6"></line>
+<line x1="3" x2="21" y1="10" y2="10"></line>
+</svg>
+<span class="font-medium text-white">
+<strong class="font-bold text-white">Domingo, 24 de Novembro</strong> • Encontro às 06:30h
+          </span>
+</div>
+</div>
+</section>
+<!-- END: HeroRouteCover -->
+<!-- BEGIN: TitleAndLeader -->
+<!-- Título Principal do Rolê e Cartão do Organizador -->
+<main class="px-4 pt-3 flex flex-col space-y-4">
+<!-- Título Esportivo -->
+<section data-purpose="ride-title-block">
+<h1 class="font-sport font-black text-2xl uppercase tracking-wide text-white leading-tight">
+          SUBIDA DA SERRA DE CAMPOS &amp; CURVAS DO ALTO
+        </h1>
+<p class="text-xs text-gray-400 mt-1 flex items-center space-x-1.5">
+<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="">Vagas abertas para novos participantes</span>
+</p>
+</section>
+<!-- Mini Card do Líder Organizador -->
+<section class="bg-brand-cardBg border border-brand-border rounded-xl p-3 flex items-center justify-between shadow-sm" data-purpose="leader-card">
+<div class="flex items-center space-x-3">
+<!-- Avatar do Líder -->
+<div class="relative">
+<div class="w-12 h-12 rounded-full bg-neutral-700 border-2 border-brand-orange overflow-hidden flex items-center justify-center font-sport font-black text-lg text-white">
+              RS
+            </div>
+<span class="absolute -bottom-1 -right-1 bg-brand-orange text-black p-0.5 rounded-full" title="Líder Verificado">
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+<path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path>
+</svg>
+</span>
+</div>
+<!-- Informações do Líder -->
+<div>
+<div class="flex items-center space-x-1.5">
+<h2 class="text-sm font-bold text-white leading-snug">Rodrigo Silveira</h2>
+<span class="text-[11px] text-gray-400">(@rodrigo_r1)</span>
+</div>
+<div class="flex items-center space-x-2 text-[11px] mt-0.5 text-gray-300">
+
+<span class="text-gray-600">•</span>
+<span class="text-brand-orange font-medium">Yamaha YZF-R7</span>
+</div>
+</div>
+</div>
+<span class="text-[10px] font-sport font-bold uppercase tracking-wider text-brand-orange bg-brand-orange/10 px-2 py-1 rounded border border-brand-orange/20 self-start">
+          ORGANIZADOR</span>
+</section>
+<!-- END: TitleAndLeader -->
+<!-- BEGIN: WhatsAppBanner -->
+<!-- Banner de Compartilhamento via WhatsApp -->
+<section class="bg-gradient-to-r from-emerald-950/40 via-brand-cardBg to-brand-cardBg border border-emerald-500/30 rounded-xl p-3.5 flex flex-col space-y-2.5" data-purpose="whatsapp-share-notice">
+<div class="flex items-start space-x-2.5">
+<div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+<!-- WhatsApp Vector Icon -->
+<svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+<path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.705 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"></path>
+</svg>
+</div>
+<div>
+<p class="text-xs text-gray-300 leading-relaxed">
+              Você recebeu este convite via WhatsApp. Conheça os detalhes do comboio e garanta sua vaga antes que esgote!
+            </p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/40 text-xs font-semibold tracking-wide transition-all active:scale-[0.98]" type="button">
+<svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+<path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path>
+</svg>
+<span class="">Compartilhar Convite com Pilotos</span>
+</button>
+</section>
+<!-- END: WhatsAppBanner -->
+<!-- BEGIN: RideSpecifications -->
+<!-- Ficha Técnica do Rolê com Informações Essenciais -->
+<section class="space-y-3 pt-1" data-purpose="ride-specifications">
+<div class="flex items-center justify-between">
+<h3 class="font-sport font-bold text-base uppercase text-gray-200 tracking-wider flex items-center space-x-2">
+<span class="w-1.5 h-4 bg-brand-orange rounded-full"></span>
+<span class="">Ficha Técnica do Comboio</span>
+</h3>
+<span class="text-[11px] text-gray-400 font-medium">Briefing obrigatório</span>
+</div>
+<div class="bg-brand-cardBg border border-brand-border rounded-xl divide-y divide-brand-border/60 overflow-hidden">
+<!-- Ponto de Encontro -->
+<div class="p-3.5 flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-brand-cardSubtle border border-brand-border flex items-center justify-center text-brand-orange shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="flex-1 text-xs">
+<span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Ponto de Encontro</span>
+<p class="font-semibold text-white mt-0.5">Posto Shell Rodoanel km 24 (Café e Abastecimento)</p>
+<p class="text-brand-orange font-medium mt-0.5 flex items-center">
+<span class="w-1.5 h-1.5 rounded-full bg-brand-orange mr-1.5"></span>
+                Saída pontual às 07:00h
+              </p>
+</div>
+</div>
+<!-- Destino Final -->
+<div class="p-3.5 flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-brand-cardSubtle border border-brand-border flex items-center justify-center text-emerald-400 shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+</div>
+<div class="flex-1 text-xs">
+<span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Destino &amp; Parada Final</span>
+<p class="font-semibold text-white mt-0.5">Mirante da Serra &amp; Café dos Pilotos</p>
+<p class="text-gray-400 mt-0.5">Campos do Jordão - SP (Vista panorâmica e brunch)</p>
+</div>
+</div>
+<!-- Nível e Exigências -->
+<div class="p-3.5 flex items-start space-x-3">
+<div class="w-8 h-8 rounded-lg bg-brand-cardSubtle border border-brand-border flex items-center justify-center text-amber-400 shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="flex-1 text-xs">
+<span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider block">Nível &amp; Requisitos</span>
+<p class="font-semibold text-white mt-0.5">Ritmo Moderado (100 - 130 km/h)</p>
+<p class="text-gray-300 mt-0.5">Cilindrada Mínima: <span class="text-white font-medium">300cc</span> • Comunicador Cardo Canal 4 opcional</p>
+</div>
+</div>
+<!-- Clima & Condições da Pista -->
+
+</div>
+</section>
+<!-- END: RideSpecifications -->
+<!-- BEGIN: RouteHighlights -->
+<!-- Chips de Destaques Rápidos da Rota -->
+<section class="space-y-2" data-purpose="route-highlights">
+
+
+</section>
+<!-- END: RouteHighlights -->
+<!-- BEGIN: PilotRosterStatus -->
+<!-- Grade de Ocupação & Pilotos Confirmados com Avatares Sobrepostos -->
+<section class="bg-brand-cardBg border border-brand-border rounded-xl p-4 space-y-3" data-purpose="pilots-status-block">
+<!-- Cabeçalho de Vagas -->
+<div class="flex justify-between items-end">
+<div>
+
+
+</div>
+
+</div>
+<!-- Barra de Progresso / Ocupação -->
+<div class="w-full bg-brand-cardSubtle rounded-full h-2.5 overflow-hidden border border-brand-border/60">
+<div class="bg-gradient-to-r from-brand-orange to-amber-500 h-2.5 rounded-full" style="width: 73.3%"></div>
+</div>
+<!-- Lista de Pilotos Confirmados (Avatares e Motos) -->
+<div class="pt-2 border-t border-brand-border/60">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] text-gray-400">Pilotos na formação:</span>
+<span class="text-[11px] text-brand-orange font-medium">Ver lista completa</span>
+</div>
+<div class="flex items-center space-x-3">
+<!-- Avatares Sobrepostos -->
+<div class="flex -space-x-2 overflow-hidden py-1">
+<!-- Piloto 1 -->
+<div class="inline-flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-brand-cardBg bg-neutral-800 text-[10px] font-bold text-orange-400" title="Marcos B. (BMW S1000RR)">
+                MB
+              </div>
+<!-- Piloto 2 -->
+<div class="inline-flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-brand-cardBg bg-neutral-700 text-[10px] font-bold text-sky-400" title="Gabriel K. (Kawasaki ZX-6R)">
+                GK
+              </div>
+<!-- Piloto 3 -->
+<div class="inline-flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-brand-cardBg bg-neutral-800 text-[10px] font-bold text-emerald-400" title="Luciano T. (Triumph Street Triple)">
+                LT
+              </div>
+<!-- Piloto 4 -->
+<div class="inline-flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-brand-cardBg bg-neutral-700 text-[10px] font-bold text-purple-400" title="Felipe D. (Ducati Panigale V2)">
+                FD
+              </div>
+<!-- Contador adicional -->
+<div class="inline-flex items-center justify-center w-8 h-8 rounded-full ring-2 ring-brand-cardBg bg-brand-cardSubtle text-[10px] font-bold text-gray-300 border border-brand-border">
+                +7
+              </div>
+</div>
+<!-- Resumo das Motos do Comboio -->
+<div class="text-[11px] text-gray-400 border-l border-brand-border/80 pl-3 leading-tight">
+              Motos: <strong class="text-gray-200">S1000RR, ZX-6R, Street Triple, MT-09, Panigale</strong>
+</div>
+</div>
+</div>
+</section>
+<!-- END: PilotRosterStatus -->
+</main>
+<!-- BEGIN: StickyConversionFooter -->
+<!-- Barra Fixa Inferior para Visitante Deslogado com CTA Primário Gigante -->
+<footer class="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-brand-darkBg/95 backdrop-blur-lg border-t border-brand-border px-4 py-3 pb-safe">
+<div class="w-full max-w-md flex flex-col space-y-2">
+<!-- Botão Primário Gigante de Ação / Conversão -->
+<a class="w-full bg-gradient-to-r from-brand-orange to-brand-orangeHover hover:opacity-95 text-black font-sport font-black uppercase text-lg tracking-wider py-3.5 px-4 rounded-xl shadow-lg shadow-brand-orange/20 flex flex-col items-center justify-center transition-all active:scale-[0.98]" href="#solicitar-entrada">
+<span class="leading-none">PARTICIPAR DO ROLÊ</span>
+<span class="font-sans font-medium text-[11px] text-black/80 normal-case tracking-normal mt-0.5">
+            Solicitar entrada no comboio
+          </span>
+</a>
+<!-- Botão Secundário / Link de Conta -->
+<div class="flex items-center justify-between px-1 text-xs">
+<a class="text-gray-400 hover:text-white transition-colors" href="#login">
+            Já tem conta? <span class="text-brand-orange font-semibold underline underline-offset-2">Entrar</span>
+</a>
+<span class="text-gray-600">•</span>
+<a class="text-gray-300 hover:text-white font-medium" href="#signup">
+            Cadastre-se em 1 min
+          </a>
+</div>
+<!-- Indicação de Segurança e Moderação -->
+<p class="text-[10px] text-center text-gray-400 leading-tight flex items-center justify-center space-x-1">
+<svg class="w-3 h-3 text-brand-orange shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Necessário aprovação do organizador para garantir a vaga no rolê</span>
+</p>
+</div>
+</footer>
+<!-- END: StickyConversionFooter -->
+</div>
+
+
+
+
+</body></html>

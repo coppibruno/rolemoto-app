@@ -1,34 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 
-export const useProtecaoRotaPrimeiroAcesso = () => {
+export const useProtecaoRotaPrimeiroAcesso = (next: string | null) => {
   const { firebaseUser, usuario, loading } = useAuth();
   const router = useRouter();
-  const [formLiberado, setFormLiberado] = useState(false);
 
   useEffect(() => {
     if (loading) return;
 
     if (!firebaseUser) {
-      router.replace("/login");
+      router.replace(urlLoginComNext(destinoSeguro(next)));
       return;
     }
 
-    if (usuario && !formLiberado) {
-      router.replace("/");
-      return;
+    if (usuario) {
+      router.replace(destinoSeguro(next));
     }
+  }, [loading, firebaseUser, usuario, next, router]);
 
-    if (!usuario) {
-      setFormLiberado(true);
-    }
-  }, [loading, firebaseUser, usuario, formLiberado, router]);
-
-  const bloqueado =
-    loading || !firebaseUser || (Boolean(usuario) && !formLiberado);
+  const bloqueado = loading || !firebaseUser || Boolean(usuario);
 
   return { bloqueado };
 };

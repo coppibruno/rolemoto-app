@@ -19,6 +19,10 @@ export interface UsuarioRoleRepository {
   contarPendentesDoCriador(criadorId: string): Promise<number>;
   contarAceitosDoCriador(criadorId: string): Promise<number>;
   contarConfirmados(roleId: string): Promise<number>;
+  listarConfirmadosDoRole(
+    roleId: string,
+    limite: number,
+  ): Promise<UsuarioRole[]>;
   listarPorUsuario(usuarioId: string): Promise<UsuarioRole[]>;
   criar(dados: UsuarioRoleCreate): Promise<UsuarioRole>;
   atualizarNotificar(

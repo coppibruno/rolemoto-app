@@ -1,9 +1,16 @@
 import { TelaPrimeiroAcesso } from "./components/TelaPrimeiroAcesso";
 
-const PrimeiroAcessoPage = () => {
+type Props = {
+  searchParams: Promise<{ next?: string }>;
+};
+
+const PrimeiroAcessoPage = async ({ searchParams }: Props) => {
+  const params = await searchParams;
+  const next = typeof params.next === "string" ? params.next : null;
+
   return (
     <main>
-      <TelaPrimeiroAcesso />
+      <TelaPrimeiroAcesso next={next} />
     </main>
   );
 };

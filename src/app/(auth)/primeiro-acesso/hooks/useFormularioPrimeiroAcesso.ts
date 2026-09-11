@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
+import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 import { useAuth } from "@/hooks/useAuth";
 import type { ErrosPrimeiroAcesso, Pilotagem } from "@/types/user";
 import {
@@ -43,7 +44,7 @@ const validar = (campos: {
   return erros;
 };
 
-export const useFormularioPrimeiroAcesso = () => {
+export const useFormularioPrimeiroAcesso = (next: string | null) => {
   const { firebaseUser, recarregarPerfil } = useAuth();
   const router = useRouter();
   const foto = useFotoPrimeiroAcesso(firebaseUser?.photoURL ?? "");
@@ -125,15 +126,15 @@ export const useFormularioPrimeiroAcesso = () => {
       setSucesso(true);
       await esperar(DELAY_SUCESSO_MS);
       await recarregarPerfil();
-      router.replace("/");
+      router.replace(destinoSeguro(next));
     } catch (erro) {
       if (erro instanceof ApiError && erro.status === 409) {
         await recarregarPerfil();
-        router.replace("/");
+        router.replace(destinoSeguro(next));
         return;
       }
       if (erro instanceof ApiError && erro.status === 401) {
-        router.replace("/login");
+        router.replace(urlLoginComNext(destinoSeguro(next)));
         return;
       }
       setErroGeral(

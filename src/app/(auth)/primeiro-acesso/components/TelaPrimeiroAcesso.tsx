@@ -4,8 +4,12 @@ import { useProtecaoRotaPrimeiroAcesso } from "../hooks/useProtecaoRotaPrimeiroA
 import { FormularioPrimeiroAcesso } from "./FormularioPrimeiroAcesso";
 import styles from "../primeiro-acesso.module.css";
 
-export const TelaPrimeiroAcesso = () => {
-  const { bloqueado } = useProtecaoRotaPrimeiroAcesso();
+type Props = {
+  next: string | null;
+};
+
+export const TelaPrimeiroAcesso = ({ next }: Props) => {
+  const { bloqueado } = useProtecaoRotaPrimeiroAcesso(next);
 
   if (bloqueado) {
     return (
@@ -18,7 +22,7 @@ export const TelaPrimeiroAcesso = () => {
   return (
     <div className={styles.tela}>
       <div className={styles.coluna}>
-        <FormularioPrimeiroAcesso />
+        <FormularioPrimeiroAcesso next={next} />
       </div>
     </div>
   );

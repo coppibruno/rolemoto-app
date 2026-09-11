@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/lib/api";
+import { destinoSeguro } from "@/lib/destino-pos-auth";
 import {
   traduzirErroFirebase,
   extrairCodigoErro,
@@ -17,11 +18,11 @@ type Modo = "login" | "cadastro";
 
 const ERRO_CREDENCIAL = "Email ou senha incorretos.";
 
-export const useLoginForm = () => {
+export const useLoginForm = (next: string | null, modoCadastro: boolean) => {
   const { cadastrarComEmail, loginComEmail } = useAuth();
   const router = useRouter();
 
-  const [modo, setModo] = useState<Modo>("login");
+  const [modo, setModo] = useState<Modo>(modoCadastro ? "cadastro" : "login");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
@@ -53,16 +54,14 @@ export const useLoginForm = () => {
 
     setCarregando(true);
     try {
-      console.log("aqui2");
       if (modo === "cadastro") {
         await cadastrarComEmail(email, senha);
       } else {
         const emailConta = await resolverEmailDaConta(email);
         await loginComEmail(emailConta, senha);
       }
-      router.replace("/");
+      router.replace(destinoSeguro(next));
     } catch (error: unknown) {
-      console.log("aqui1", error);
       const apelido = !normalizarIdentificador(email).includes("@");
       if (
         modo === "login" &&
