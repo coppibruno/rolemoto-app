@@ -76,9 +76,9 @@ const validarUsuarioPrimeiroAcesso = (
   const bruto = body as Record<string, unknown>;
   const nome = typeof bruto.nome === "string" ? bruto.nome.trim() : "";
   const apelido =
-    typeof bruto.apelido === "string"
-      ? bruto.apelido.trim().replace(/^@+/, "")
-      : "";
+    typeof bruto.apelido === "string" ?
+      bruto.apelido.trim().replace(/^@+/, "") :
+      "";
   const moto = typeof bruto.moto === "string" ? bruto.moto.trim() : "";
   const fotoUrl = typeof bruto.fotoUrl === "string" ? bruto.fotoUrl : "";
   const pilotagem = bruto.pilotagem;
