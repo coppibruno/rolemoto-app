@@ -62,6 +62,7 @@ export const useLoginForm = (next: string | null, modoCadastro: boolean) => {
       }
       router.replace(destinoSeguro(next));
     } catch (error: unknown) {
+      console.error(error);
       const apelido = !normalizarIdentificador(email).includes("@");
       if (
         modo === "login" &&

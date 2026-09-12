@@ -68,6 +68,7 @@ export const useDecisaoPiloto = ({ onDecidido }: Params) => {
               : toastRecusa(item.usuario.nome),
         });
       } catch (erro) {
+        console.error(erro);
         setToast({
           tipo: "erro",
           mensagem: erro instanceof ApiError ? erro.message : ERRO_DECISAO,

@@ -25,6 +25,7 @@ export const BotaoGoogle = ({ desabilitado, next }: Props) => {
       await loginComGoogle();
       router.replace(destinoSeguro(next));
     } catch (error: unknown) {
+      console.error(error);
       const codigo = extrairCodigoErro(error);
       if (codigo !== "auth/popup-closed-by-user") {
         setErro(traduzirErroFirebase(codigo));

@@ -3,7 +3,9 @@
  *
  * Uma única function `api` com Express. Os recursos ficam em routers:
  * - /auth/resolver → POST (público, sem Bearer)
+ * - /auth/recuperar-senha → POST (público, sem Bearer)
  * - /publico/roles/:id → GET (público, sem Bearer)
+ * - /meus-roles → GET
  * - /roles   → GET, POST, PUT, DELETE
  * - /roles/:id/participacao → GET, POST, PATCH, DELETE
  * - /roles/:id/feedback → POST
@@ -29,6 +31,7 @@ import {dispositivosRouter} from "./routes/dispositivos";
 import {perfilRouter} from "./routes/perfil";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
+import {meusRolesRouter} from "./routes/meus-roles";
 
 setGlobalOptions({maxInstances: 10});
 
@@ -41,7 +44,9 @@ app.get("/", (_req: Request, res: Response) => {
     mensagem: "API do Rolemoto",
     rotas: [
       "/auth/resolver",
+      "/auth/recuperar-senha",
       "/publico/roles/:id",
+      "/meus-roles",
       "/roles",
       "/roles/:id/modelo",
       "/roles/:id/feedback",
@@ -57,6 +62,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.use("/auth", authRouter);
 app.use("/publico/roles", rolesPublicoRouter);
+app.use("/meus-roles", meusRolesRouter);
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);
 app.use("/dispositivos", dispositivosRouter);

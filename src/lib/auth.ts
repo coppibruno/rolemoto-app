@@ -18,7 +18,6 @@ import {
   signInWithRedirect,
   signOut,
   createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
@@ -78,9 +77,6 @@ export const loginComEmail = async (email: string, senha: string) => {
   const resultado = await signInWithEmailAndPassword(auth, email, senha);
   return resultado.user;
 };
-
-export const enviarResetSenha = (email: string) =>
-  sendPasswordResetEmail(auth, email);
 
 /**
  * Encerra a sessão do usuário atual.

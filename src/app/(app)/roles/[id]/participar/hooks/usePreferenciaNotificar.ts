@@ -44,7 +44,8 @@ export const usePreferenciaNotificar = (
         void pedirPermissaoERegistrar();
       }
       await participacaoService.atualizarNotificar(roleId, proximo);
-    } catch {
+    } catch (erro) {
+      console.error(erro);
       setNotificar(!proximo);
       setErro(ERRO_NOTIFICAR);
     } finally {

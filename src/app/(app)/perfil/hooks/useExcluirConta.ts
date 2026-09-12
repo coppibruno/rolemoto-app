@@ -47,6 +47,7 @@ export const useExcluirConta = () => {
       await perfilService.excluir();
       await logout();
     } catch (e) {
+      console.error(e);
       if (e instanceof ApiError && e.status === 404) {
         await logout();
         return;

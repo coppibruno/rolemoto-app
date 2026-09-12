@@ -1,20 +1,15 @@
 "use client";
 
-import type { RoleFeedItem } from "@/types/role";
+import type { DadosConvite } from "@/lib/convite";
 import { useCompartilharConvite } from "@/app/(publico)/r/[id]/hooks/useCompartilharConvite";
 import styles from "../feed.module.css";
 
 type Props = {
-  role: RoleFeedItem;
+  dados: DadosConvite;
 };
 
-export const BotaoCompartilharRole = ({ role }: Props) => {
-  const { compartilhar, feedback } = useCompartilharConvite({
-    id: role.id,
-    titulo: role.titulo,
-    dataHoraSaida: role.dataHoraSaida,
-    localSaidaEndereco: role.localSaida.endereco,
-  });
+export const BotaoCompartilharRole = ({ dados }: Props) => {
+  const { compartilhar, feedback } = useCompartilharConvite(dados);
 
   return (
     <div className={styles.wrapCompartilhar}>

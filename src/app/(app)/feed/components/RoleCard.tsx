@@ -35,7 +35,14 @@ export const RoleCard = ({ role }: Props) => {
         <OrganizadorRole criador={role.criador} />
         <div className={styles.cardAcoes}>
           <BotaoParticipar id={role.id} criadorId={role.criadorId} />
-          <BotaoCompartilharRole role={role} />
+          <BotaoCompartilharRole
+            dados={{
+              id: role.id,
+              titulo: role.titulo,
+              dataHoraSaida: role.dataHoraSaida,
+              localSaidaEndereco: role.localSaida.endereco,
+            }}
+          />
         </div>
       </div>
     </article>

@@ -78,6 +78,7 @@ export const useFeedbackRole = (roleId: string) => {
         setRelatos(lista);
         setVisao(obtido.criadorId === uid || meuRelato ? "lista" : "form");
       } catch (falha) {
+        console.error(falha);
         if (cancelado) return;
         if (falha instanceof ApiError && falha.status === 401) {
           router.replace("/login");
@@ -126,6 +127,7 @@ export const useFeedbackRole = (roleId: string) => {
         setVisao("enviado");
         window.setTimeout(() => setVisao("lista"), DURACAO_ENVIADO_MS);
       } catch (falha) {
+        console.error(falha);
         if (falha instanceof ApiError && falha.status === 409) {
           try {
             const lista = await feedbackService.listar(roleId);

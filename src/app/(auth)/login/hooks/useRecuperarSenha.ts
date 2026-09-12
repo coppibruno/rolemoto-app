@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { enviarResetSenha } from "@/lib/auth";
-import {
-  normalizarIdentificador,
-  resolverEmailDaConta,
-} from "../services/identificador.service";
+import { ApiError } from "@/lib/api";
+import { normalizarIdentificador } from "../services/identificador.service";
+import { solicitarResetSenha } from "../services/recuperar-senha.service";
 
 export const useRecuperarSenha = (identificadorInicial: string) => {
   const [aberto, setAberto] = useState(false);
@@ -33,12 +31,15 @@ export const useRecuperarSenha = (identificadorInicial: string) => {
     setEnviando(true);
     setErro(null);
     try {
-      const email = await resolverEmailDaConta(identificador);
-      await enviarResetSenha(email);
-    } catch {
-      // Conta inexistente ou falha de rede: mesma copy, não enumerar usuários.
-    } finally {
+      await solicitarResetSenha(identificador);
       setSucesso(true);
+    } catch (falha) {
+      if (falha instanceof ApiError && falha.status === 400) {
+        setErro("Preencha o e-mail ou o apelido.");
+      } else {
+        setSucesso(true);
+      }
+    } finally {
       setEnviando(false);
     }
   };

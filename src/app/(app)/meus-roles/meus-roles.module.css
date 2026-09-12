@@ -1,0 +1,826 @@
+.tela {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.cabecalhoInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 0 var(--gutter-md);
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.avatarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 9999px;
+}
+
+.avatarImg {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+}
+
+.corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px var(--gutter-md) 24px;
+}
+
+.introTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kickerPulso {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--primary);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.titulo {
+  margin-top: 8px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.titulo span {
+  color: var(--primary-container);
+}
+
+.subtitulo {
+  margin-top: 4px;
+  max-width: 340px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.tune {
+  flex-shrink: 0;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.tune:hover {
+  color: var(--primary-container);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stat {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 88px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+}
+
+.statTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--on-surface-variant);
+}
+
+.statRotulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.statValor {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.statNum {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 28px;
+  letter-spacing: 0.03em;
+  color: var(--on-surface);
+}
+
+.statIcone_ciano,
+.statUnidade_ciano {
+  color: var(--tertiary);
+}
+
+.statIcone_ambar,
+.statUnidade_ambar {
+  color: var(--secondary-container);
+}
+
+.statIcone_laranja,
+.statUnidade_laranja {
+  color: var(--primary);
+}
+
+.statUnidade_ciano,
+.statUnidade_ambar,
+.statUnidade_laranja {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.statFaixa {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+}
+
+.statFaixa_ciano {
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--tertiary) 40%, transparent), transparent);
+}
+
+.statFaixa_ambar {
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--secondary-container) 40%, transparent), transparent);
+}
+
+.statFaixa_laranja {
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--primary) 40%, transparent), transparent);
+}
+
+.trilhas {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+}
+
+.aba {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: var(--touch-min);
+  padding: 8px 4px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.abaAtiva {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.abaLabel {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.abaBadge {
+  min-width: 18px;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.abaAtiva .abaBadge {
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  color: var(--on-primary);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heroCard,
+.card {
+  border-radius: 1rem;
+  background: var(--surface-container);
+  overflow: hidden;
+}
+
+.heroCapa {
+  position: relative;
+  display: block;
+  height: 176px;
+  background: var(--surface-container-highest);
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.heroPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: var(--surface-container-highest);
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--surface-container), color-mix(in srgb, var(--surface-container) 40%, transparent), transparent);
+}
+
+.badgeConfirmada,
+.badgeLider,
+.badgeAssegurada,
+.pillPendente,
+.pillConcluido {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badgeConfirmada {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: color-mix(in srgb, var(--tertiary-container) 90%, transparent);
+  color: var(--on-tertiary);
+}
+
+.badgeLider {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.ping {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--tertiary);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.heroTituloWrap {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 12px;
+}
+
+.heroTitulo,
+.cardTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.heroData,
+.cardData,
+.cardMeta {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.heroCorpo,
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+}
+
+.metaRotulo {
+  display: block;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.metaValor {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.ritmo_tranquila { color: var(--ritmo-tranquila); }
+.ritmo_moderada { color: var(--secondary-container); }
+.ritmo_agressiva { color: var(--error); }
+
+.heroLider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.liderFoto,
+.liderIniciais {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+}
+
+.liderIniciais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-container-high);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.liderNome {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.liderMeta {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.ctaHero,
+.botaoSecundario,
+.botaoAcessar,
+.botaoCancelar,
+.botaoTentar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 0.75rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ctaHero {
+  height: var(--touch-target);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.linkDesistir {
+  align-self: flex-end;
+  border: none;
+  background: none;
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: var(--touch-min);
+  cursor: pointer;
+}
+
+.linkDesistir:hover {
+  color: var(--error);
+}
+
+.card {
+  position: relative;
+}
+
+.cardAguardando {
+  overflow: hidden;
+}
+
+.glowAmbar {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 128px;
+  height: 128px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--secondary-container) 10%, transparent);
+  filter: blur(32px);
+  pointer-events: none;
+}
+
+.cardTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.badgeAssegurada {
+  color: var(--tertiary);
+}
+
+.bolinhaCiano {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--tertiary);
+}
+
+.cardTituloLink {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: inherit;
+}
+
+.cardAcoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cardAcoes .ctaHero,
+.cardAcoes .botaoSecundario,
+.cardAcoes .botaoCancelar {
+  flex: 1;
+}
+
+.cardRodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cardRodape .cardAcoes {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.avatares {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.avatarMini,
+.avatarMiniIniciais,
+.avatarMais {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  margin-left: -8px;
+  border: 2px solid var(--surface-container);
+  object-fit: cover;
+}
+
+.avatarMini:first-child,
+.avatarMiniIniciais:first-child {
+  margin-left: 0;
+}
+
+.avatarMiniIniciais,
+.avatarMais {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-container-highest);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.avatarMais {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.confirmadosN {
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.botaoAcessar {
+  padding: 8px 12px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+}
+
+.pillPendente {
+  background: color-mix(in srgb, var(--secondary-container) 20%, transparent);
+  color: var(--secondary-fixed-dim);
+}
+
+.pillPendente .material-symbols-outlined,
+.pillConcluido .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.boxContexto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+}
+
+.boxTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.boxTexto,
+.notaAmigavel {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.notaAmigavel {
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface-container-high) 60%, transparent);
+}
+
+.chipTriagem {
+  padding: 4px 8px;
+  border-radius: 0.25rem;
+  background: var(--surface-container-high);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.botaoCancelar,
+.botaoSecundario,
+.botaoTentar {
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+}
+
+.pillConcluido {
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+}
+
+.pillConcluido .material-symbols-outlined {
+  color: var(--tertiary);
+}
+
+.vazio,
+.erro,
+.carregando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 8px;
+  text-align: center;
+}
+
+.vazioIcone,
+.erro .material-symbols-outlined {
+  font-size: 32px;
+  color: var(--on-surface-variant);
+}
+
+.vazioTitulo,
+.erroTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.vazioTexto {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.alertaAcao {
+  padding: 10px 12px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--on-error-container);
+  font-size: 12px;
+}
+
+.skeleton {
+  height: 96px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+}
+
+.sheet {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  z-index: 61;
+  width: calc(100% - 32px);
+  max-width: 560px;
+  transform: translateX(-50%);
+  padding: 20px;
+  border-radius: 0.75rem 0.75rem 0.5rem;
+  background: var(--surface-container);
+  border: 1px solid color-mix(in srgb, var(--primary-container) 22%, transparent);
+}
+
+.sheetTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.sheetGrupo {
+  margin: 12px 0 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 32px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.chipAtivo {
+  border-color: var(--primary-container);
+  color: var(--primary-container);
+}
+
+.sheetAcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.botaoLimpar {
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 360px) {
+  .abaLabel {
+    font-size: 11px;
+  }
+}

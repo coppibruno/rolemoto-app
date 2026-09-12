@@ -184,6 +184,7 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
         router.push("/");
       }, REDIRECT_SUCESSO_MS);
     } catch (erro) {
+      console.error(erro);
       const mensagem =
         erro instanceof ApiError
           ? erro.message

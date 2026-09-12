@@ -58,7 +58,9 @@ export const useFormularioPerfil = (usuario: Usuario) => {
   const [garupaFrequente, setGarupaFrequente] = useState(
     Boolean(usuario.garupaFrequente),
   );
-  const [pilotagem, setPilotagem] = useState<Pilotagem | null>(usuario.pilotagem);
+  const [pilotagem, setPilotagem] = useState<Pilotagem | null>(
+    usuario.pilotagem,
+  );
   const [erros, setErros] = useState<ErrosEdicaoPerfil>({});
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
@@ -98,6 +100,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
       setSucesso(true);
       setErros({});
     } catch (erro) {
+      console.error(erro);
       const mensagem =
         erro instanceof ApiError
           ? erro.message

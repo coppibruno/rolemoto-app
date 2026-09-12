@@ -1,5 +1,6 @@
 import {adminMessaging} from "./firebase-admin";
 import {dispositivoRepository} from "../repositories";
+import {origemApp} from "./origem";
 
 export type TipoPush = "pedido_vaga" | "aceite_vaga";
 
@@ -20,14 +21,6 @@ const CODIGOS_TOKEN_INVALIDO = new Set([
   "messaging/registration-token-not-registered",
   "messaging/invalid-registration-token",
 ]);
-
-const origemApp = (): string => {
-  const origem = process.env.APP_ORIGIN?.trim();
-  if (!origem) {
-    return "";
-  }
-  return origem.replace(/\/$/, "");
-};
 
 const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
   try {

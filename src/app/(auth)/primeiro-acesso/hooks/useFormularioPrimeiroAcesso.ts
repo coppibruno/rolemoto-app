@@ -15,7 +15,8 @@ import {
 import { perfilPrimeiroAcessoService } from "../services/perfil.service";
 import { useFotoPrimeiroAcesso } from "./useFotoPrimeiroAcesso";
 
-const esperar = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const esperar = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 const validar = (campos: {
   nome: string;
@@ -85,8 +86,7 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
   ].filter(Boolean).length;
 
   const percentual = Math.round((preenchidos / 4) * 100);
-  const valido =
-    preenchidos === 4 && !foto.erro;
+  const valido = preenchidos === 4 && !foto.erro;
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
@@ -128,6 +128,7 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
       await recarregarPerfil();
       router.replace(destinoSeguro(next));
     } catch (erro) {
+      console.error(erro);
       if (erro instanceof ApiError && erro.status === 409) {
         await recarregarPerfil();
         router.replace(destinoSeguro(next));
@@ -137,9 +138,7 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
         router.replace(urlLoginComNext(destinoSeguro(next)));
         return;
       }
-      setErroGeral(
-        erro instanceof ApiError ? erro.message : COPY.erroGenerico,
-      );
+      setErroGeral(erro instanceof ApiError ? erro.message : COPY.erroGenerico);
     } finally {
       setSalvando(false);
     }

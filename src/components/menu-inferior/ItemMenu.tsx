@@ -18,7 +18,11 @@ export const ItemMenu = ({ item, ativo }: Props) => {
       <span className={`material-symbols-outlined ${styles.icone}`}>
         {item.icone}
       </span>
-      <span className={styles.label}>{item.label}</span>
+      <span
+        className={`${styles.label} ${item.href === "/meus-roles" ? styles.labelLongo : ""}`}
+      >
+        {item.label}
+      </span>
     </Link>
   );
 };

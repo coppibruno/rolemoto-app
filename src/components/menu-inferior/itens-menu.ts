@@ -1,12 +1,13 @@
 export type ItemMenuConfig = {
-  href: "/" | "/aprovacoes" | "/criar-role" | "/perfil";
+  href: "/" | "/meus-roles" | "/aprovacoes" | "/criar-role" | "/perfil";
   label: string;
-  icone: "two_wheeler" | "how_to_reg" | "add" | "account_circle";
+  icone: "two_wheeler" | "sports_score" | "how_to_reg" | "add" | "account_circle";
   ariaLabel: string;
   tipo: "lateral" | "fab";
 };
 
 export const ITENS_MENU: readonly [
+  ItemMenuConfig,
   ItemMenuConfig,
   ItemMenuConfig,
   ItemMenuConfig,
@@ -20,10 +21,10 @@ export const ITENS_MENU: readonly [
     tipo: "lateral",
   },
   {
-    href: "/aprovacoes",
-    label: "Fila",
-    icone: "how_to_reg",
-    ariaLabel: "Aprovações de comboio",
+    href: "/meus-roles",
+    label: "Meus Rolês",
+    icone: "sports_score",
+    ariaLabel: "Meus rolês",
     tipo: "lateral",
   },
   {
@@ -32,6 +33,13 @@ export const ITENS_MENU: readonly [
     icone: "add",
     ariaLabel: "Incluir rolê",
     tipo: "fab",
+  },
+  {
+    href: "/aprovacoes",
+    label: "Fila",
+    icone: "how_to_reg",
+    ariaLabel: "Aprovações de comboio",
+    tipo: "lateral",
   },
   {
     href: "/perfil",

@@ -82,6 +82,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
           throw falha;
         }
       } catch (falha) {
+        console.error(falha);
         if (cancelado) return;
         if (falha instanceof ApiError && falha.status === 401) {
           router.replace("/login");
@@ -119,7 +120,8 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     try {
       await participacaoService.cancelar(roleId);
       router.push("/");
-    } catch {
+    } catch (erro) {
+      console.error(erro);
       setErroAcao(ERRO_CANCELAR);
       setCancelando(false);
     }

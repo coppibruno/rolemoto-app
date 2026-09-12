@@ -51,6 +51,7 @@ export const useModeloRole = (origemId: string | undefined) => {
         setModelo(resposta);
       })
       .catch((falha: unknown) => {
+        console.error(falha);
         if (cancelado) return;
         setModelo(null);
         setErro(classificarErro(falha));

@@ -52,7 +52,18 @@ Dois avisos nativos: pedido de vaga (para o organizador) e aceite (para o piloto
 - O service worker da SPEC 012 (`src/app/sw.ts`) também trata o push em background. Não há um segundo SW.
 - O envio FCM acontece nas Cloud Functions (`POST /roles/:id/participacao` e `PATCH /aprovacoes/:id`). Não há emulator de FCM — o send vai para o FCM de verdade. Tokens de `localhost` e de produção são origins diferentes.
 - Logout tenta `DELETE /dispositivos` antes do `signOut`, para o próximo usuário no mesmo browser não receber push alheio.
-- Opcional nas functions: `APP_ORIGIN` (ex. `https://seu-dominio`) para o clique nativo do Chrome (`webpush.fcmOptions.link`). Sem ela, o service worker abre o deep link.
+- Opcional nas functions: `APP_ORIGIN` (ex. `https://seu-dominio`) para o clique nativo do Chrome (`webpush.fcmOptions.link`) e para o `continueUrl` do e-mail de redefinir senha. Sem ela, o service worker abre o deep link e o reset depende só da action URL do console.
+- Nas functions (`functions/.env`, ver `functions/.env.example`): `FIREBASE_WEB_API_KEY` — a mesma Web API key do app (`NEXT_PUBLIC_FIREBASE_API_KEY`). Sem ela o `POST /auth/recuperar-senha` não consegue disparar o e-mail nativo do Auth.
+
+### Redefinir senha (console Firebase)
+
+O e-mail de reset é o template nativo do Firebase Auth. Para o link abrir `/redefinir-senha` no app (e não a UI `__/auth/action`):
+
+1. Authentication → Templates → **Password reset** → Customize action URL: `{APP_ORIGIN}/redefinir-senha`
+2. Authentication → Settings → **Authorized domains**: domínio de produção + `localhost`
+3. Template em português, se ainda não estiver
+
+No emulator de Auth (`npm run emulators:all`) o e-mail aparece na UI `http://127.0.0.1:4000` (aba Auth).
 
 ---
 
@@ -94,7 +105,9 @@ UI do emulator: [http://127.0.0.1:4000](http://127.0.0.1:4000)
 
 Health check (sem auth): `GET /`
 
-Recursos autenticados: `/roles`, `/perfil`, `/aprovacoes`, `/dispositivos`
+Recursos autenticados: `/roles`, `/meus-roles`, `/perfil`, `/aprovacoes`, `/dispositivos`
+
+Público (sem Bearer): `POST /auth/resolver`, `POST /auth/recuperar-senha`
 
 O frontend em `NODE_ENV=development` já aponta para o emulator. Para forçar outra URL:
 
