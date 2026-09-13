@@ -6,7 +6,7 @@ export type ListarRolesParams = {
   lat: number;
   lng: number;
   raioKm?: 25 | 50 | 100;
-  quando?: "hoje" | "amanha" | "fim_de_semana" | "data";
+  quando?: "hoje" | "amanha" | "fim_de_semana" | "proximos_roles" | "data";
   data?: string;
   ritmo?: RitmoRole;
   q?: string;
