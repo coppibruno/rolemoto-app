@@ -1,6 +1,6 @@
-import {adminMessaging} from "./firebase-admin";
-import {dispositivoRepository} from "../repositories";
-import {origemApp} from "./origem";
+import { adminMessaging } from "./firebase-admin";
+import { dispositivoRepository } from "../repositories";
+import { origemApp } from "./origem";
 
 export type TipoPush = "pedido_vaga" | "aceite_vaga";
 
@@ -34,10 +34,6 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
 
     const resposta = await adminMessaging.sendEachForMulticast({
       tokens,
-      notification: {
-        title: payload.title,
-        body: payload.body,
-      },
       data: {
         tipo: payload.tipo,
         url: payload.url,
@@ -45,7 +41,19 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
         title: payload.title,
         body: payload.body,
       },
-      ...(link ? {webpush: {fcmOptions: {link}}} : {}),
+      webpush: {
+        notification: {
+          title: payload.title,
+          body: payload.body,
+          icon: "/icons/icon-192.png",
+          data: {
+            url: payload.url,
+            tipo: payload.tipo,
+            roleId: payload.roleId,
+          },
+        },
+        fcmOptions: link ? { link } : {},
+      },
     });
 
     const invalidos: string[] = [];

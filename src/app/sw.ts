@@ -2,7 +2,11 @@
 
 import { initializeApp, getApps } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
-import type { PrecacheEntry, RuntimeCaching, SerwistGlobalConfig } from "serwist";
+import type {
+  PrecacheEntry,
+  RuntimeCaching,
+  SerwistGlobalConfig,
+} from "serwist";
 import { NetworkFirst, Serwist, StaleWhileRevalidate } from "serwist";
 
 declare global {
@@ -64,9 +68,6 @@ const abrirUrl = async (caminho: string) => {
 };
 
 onBackgroundMessage(messaging, (payload) => {
-  if (payload.notification) {
-    return;
-  }
   const title = payload.data?.title ?? "";
   if (!title) {
     return;
