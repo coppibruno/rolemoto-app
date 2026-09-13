@@ -12,10 +12,11 @@ import { IntroGaragem } from "./IntroGaragem";
 import { ListaMeusRoles } from "./ListaMeusRoles";
 import { SheetFiltrosMeusRoles } from "./SheetFiltrosMeusRoles";
 import { TelemetriaGaragem } from "./TelemetriaGaragem";
+import type { ContagensMeusRoles } from "@/types/meus-roles";
 import styles from "../meus-roles.module.css";
 
 const TELEMETRIA_ZERO = { ativos: 0, analise: 0, asfaltoKm: 0 };
-const CONTAGENS_ZERO = { confirmados: 0, aguardando: 0, concluidos: 0 };
+const CONTAGENS_ZERO: ContagensMeusRoles = { confirmados: 0, aguardando: 0, concluidos: 0, recusados: 0 };
 
 export const TelaMeusRoles = () => {
   const { payload, carregando, erro, recarregar } = useMeusRoles();

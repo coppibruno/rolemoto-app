@@ -18,6 +18,7 @@ export const ABAS_MEUS_ROLES: { id: Exclude<AbaMeusRoles, "proximos">; label: st
     { id: "confirmados", label: "Confirmados" },
     { id: "aguardando", label: "Aguardando" },
     { id: "concluidos", label: "Concluídos" },
+    { id: "recusados", label: "Recusados" },
   ];
 
 export const VAZIOS: Record<AbaMeusRoles | "tune", { titulo: string; corpo: string }> = {
@@ -36,6 +37,10 @@ export const VAZIOS: Record<AbaMeusRoles | "tune", { titulo: string; corpo: stri
   concluidos: {
     titulo: "Asfalto zerado",
     corpo: "Os rolês que você concluiu entram aqui com a quilometragem da rota.",
+  },
+  recusados: {
+    titulo: "Nenhuma recusa",
+    corpo: "Você não teve nenhum pedido recusado.",
   },
   tune: {
     titulo: "Nenhum rolê com esses filtros",
