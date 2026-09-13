@@ -1,5 +1,5 @@
 import {distanciaRotaKm} from "./geo";
-import {ePedidoAceito, ePedidoPendente} from "./historico";
+import {ePedidoAceito, ePedidoPendente, ePedidoRecusado} from "./historico";
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
 import type {UsuarioRole} from "../types/usuario-role";
@@ -21,6 +21,7 @@ export type ItemClassificado = {
   status: StatusMeuRole;
   papel: PapelMeuRole;
   pedidoCriadoEm: string | null;
+  recusadoEm: string | null;
 };
 
 const saidaPassou = (iso: string): boolean => Date.parse(iso) <= Date.now();
@@ -57,6 +58,7 @@ export const classificarMeusRoles = (
         status: "pendente",
         papel: "participante",
         pedidoCriadoEm: pedido.createdAt,
+        recusadoEm: null,
       });
     } else if (ePedidoAceito(pedido)) {
       porId.set(role.id, {
@@ -64,6 +66,15 @@ export const classificarMeusRoles = (
         status: passou ? "concluido" : "confirmado",
         papel: "participante",
         pedidoCriadoEm: pedido.createdAt,
+        recusadoEm: null,
+      });
+    } else if (ePedidoRecusado(pedido)) {
+      porId.set(role.id, {
+        role,
+        status: "recusado",
+        papel: "participante",
+        pedidoCriadoEm: pedido.createdAt,
+        recusadoEm: pedido.recusadoEm,
       });
     }
   }
@@ -83,6 +94,7 @@ export const unirComCriados = (
       status: passou ? "concluido" : "lider",
       papel: "organizador",
       pedidoCriadoEm: null,
+      recusadoEm: null,
     });
   }
   return [...porId.values()];
@@ -112,16 +124,19 @@ export const montarContagens = (
   let confirmados = 0;
   let aguardando = 0;
   let concluidos = 0;
+  let recusados = 0;
   for (const item of itens) {
     if (item.status === "confirmado" || item.status === "lider") {
       confirmados += 1;
     } else if (item.status === "pendente") {
       aguardando += 1;
+    } else if (item.status === "recusado") {
+      recusados += 1;
     } else {
       concluidos += 1;
     }
   }
-  return {confirmados, aguardando, concluidos};
+  return {confirmados, aguardando, concluidos, recusados};
 };
 
 export const ordenarPayload = (
@@ -180,6 +195,7 @@ export const paraMeuRoleItem = (
     criador: criadorDe(role.criadorId, usuariosPorId.get(role.criadorId)),
     participantes: {confirmados, destaques},
     pedidoCriadoEm: item.pedidoCriadoEm,
+    recusadoEm: item.recusadoEm,
   };
 };
 

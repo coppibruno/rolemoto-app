@@ -122,7 +122,7 @@ const fimDeSemanaYmd = (agora: Date): {sabado: string; domingo: string} => {
  * Sempre corta o início em `agora` (só rolês futuros ou no dia em andamento).
  */
 export const resolverIntervaloQuando = (
-  quando: "hoje" | "amanha" | "fim_de_semana" | "data" | undefined,
+  quando: "hoje" | "amanha" | "fim_de_semana" | "proximos_roles" | "data" | undefined,
   dataYmd: string | undefined,
   agora = new Date(),
 ): IntervaloQuando => {
@@ -146,6 +146,14 @@ export const resolverIntervaloQuando = (
     return {
       dataInicioIso: maxIso(agoraIso, inicioDoDiaSp(amanha)),
       dataFimIso: fimDoDiaSp(amanha),
+    };
+  }
+
+  if (quando === "proximos_roles") {
+    const limiteDia = somarDiasYmd(hoje, 30);
+    return {
+      dataInicioIso: maxIso(agoraIso, inicioDoDiaSp(hoje)),
+      dataFimIso: fimDoDiaSp(limiteDia),
     };
   }
 

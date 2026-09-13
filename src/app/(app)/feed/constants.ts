@@ -15,6 +15,7 @@ export const OPCOES_QUANDO: {
   valor: Exclude<FiltroQuando, { tipo: "data" }>;
   label: string;
 }[] = [
+  { valor: "proximos_roles", label: "Próximos Rolês" },
   { valor: "hoje", label: "Hoje" },
   { valor: "amanha", label: "Amanhã" },
   { valor: "fim_de_semana", label: "Neste Fim de Semana" },

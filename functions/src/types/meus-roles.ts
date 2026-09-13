@@ -1,6 +1,6 @@
 import type {RitmoRole} from "./role";
 
-export type StatusMeuRole = "pendente" | "confirmado" | "lider" | "concluido";
+export type StatusMeuRole = "pendente" | "confirmado" | "lider" | "concluido" | "recusado";
 
 export type PapelMeuRole = "participante" | "organizador";
 
@@ -33,6 +33,7 @@ export type MeuRoleItem = {
     destaques: DestaqueParticipante[];
   };
   pedidoCriadoEm: string | null;
+  recusadoEm: string | null;
 };
 
 export type TelemetriaMeusRoles = {
@@ -45,6 +46,7 @@ export type ContagensMeusRoles = {
   confirmados: number;
   aguardando: number;
   concluidos: number;
+  recusados: number;
 };
 
 export type MeusRolesPayload = {

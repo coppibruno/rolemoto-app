@@ -19,6 +19,9 @@ export const ePedidoAceito = (pedido: UsuarioRole): boolean =>
   pedido.aceitoEm !== null &&
   pedido.recusadoEm === null;
 
+export const ePedidoRecusado = (pedido: UsuarioRole): boolean =>
+  pedido.recusadoEm !== null;
+
 const saidaPassou = (iso: string): boolean => Date.parse(iso) <= Date.now();
 
 const distanciaKm = (role: Role): number =>

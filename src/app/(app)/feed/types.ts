@@ -6,6 +6,7 @@ export type FiltroQuando =
   | "hoje"
   | "amanha"
   | "fim_de_semana"
+  | "proximos_roles"
   | { tipo: "data"; iso: string };
 
 export type FiltroRitmo = Pilotagem | "todas";

@@ -5,7 +5,7 @@ export type QueryRolesValida = {
   lat: number;
   lng: number;
   raioKm?: 25 | 50 | 100;
-  quando?: "hoje" | "amanha" | "fim_de_semana" | "data";
+  quando?: "hoje" | "amanha" | "fim_de_semana" | "proximos_roles" | "data";
   data?: string;
   ritmo?: RitmoRole;
   q?: string;
@@ -16,7 +16,7 @@ export type QueryRolesInvalida = {
   erro: string;
 };
 
-const QUANDOS = ["hoje", "amanha", "fim_de_semana", "data"] as const;
+const QUANDOS = ["hoje", "amanha", "fim_de_semana", "proximos_roles", "data"] as const;
 const RITMOS: RitmoRole[] = ["tranquila", "moderada", "agressiva"];
 const RAIOS = [25, 50, 100] as const;
 const DATA_YMD = /^\d{4}-\d{2}-\d{2}$/;

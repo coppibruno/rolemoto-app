@@ -30,14 +30,10 @@ type NavigatorStandalone = Navigator & { standalone?: boolean };
 
 const deveUsarRedirect = () => {
   if (typeof window === "undefined") return false;
-  if (window.location.hostname === "localhost") return false; // ← dev sempre usa popup
   const standalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     (navigator as NavigatorStandalone).standalone === true;
-  const ios =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent));
-  return standalone || ios;
+  return standalone; // só redirect em PWA standalone
 };
 
 /**

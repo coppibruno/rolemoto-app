@@ -23,15 +23,21 @@ const nextConfig: NextConfig = {
     root: raizDoProjeto,
   },
   async rewrites() {
-    if (!process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST) {
-      return [];
-    }
-    return [
+    const regras: Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>> = [
       {
-        source: "/v0/:path*",
-        destination: "http://127.0.0.1:9199/v0/:path*",
+        source: "/__/auth/:path*",
+        destination: "https://rolemoto-bc47f.firebaseapp.com/__/auth/:path*",
       },
     ];
+
+    if (process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST) {
+      regras.push({
+        source: "/v0/:path*",
+        destination: "http://127.0.0.1:9199/v0/:path*",
+      });
+    }
+
+    return regras;
   },
 };
 

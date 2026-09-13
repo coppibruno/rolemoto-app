@@ -43,8 +43,10 @@ Adicionar o chip **"Próximos Rolês"** ao final das opções de `quando`, **ant
 **Posição dos chips após a mudança:**
 
 ```
-[ Hoje ] [ Amanhã ] [ Neste Fim de Semana ] [ Próximos Rolês ] [ 📅 Selecionar data ]
+[ Próximos Rolês ] [ Hoje ] [ Amanhã ] [ Neste Fim de Semana ] [ 📅 Selecionar data ]
 ```
+
+O chip fica **primeiro** no grupo — é o atalho mais abrangente e deve ser o mais visível.
 
 ### 2.3 Tipo `FiltroQuando` — sem quebra
 
@@ -68,10 +70,10 @@ export const OPCOES_QUANDO: {
   valor: Exclude<FiltroQuando, { tipo: "data" }>;
   label: string;
 }[] = [
+  { valor: "proximos_roles", label: "Próximos Rolês" },   // ← NOVO (primeiro)
   { valor: "hoje", label: "Hoje" },
   { valor: "amanha", label: "Amanhã" },
   { valor: "fim_de_semana", label: "Neste Fim de Semana" },
-  { valor: "proximos_roles", label: "Próximos Rolês" },   // ← NOVO
 ];
 ```
 
@@ -412,7 +414,7 @@ Piloto abre /meus-roles
 
 ### Melhoria A — Filtro "Próximos Rolês"
 
-- [ ] Chip **"Próximos Rolês"** aparece no filtro de data do feed, após "Neste Fim de Semana" e antes de "Selecionar data".
+- [ ] Chip **"Próximos Rolês"** aparece como **primeiro** chip no filtro de data do feed, antes de "Hoje".
 - [ ] Ao tocar, envia `quando=proximos_roles` na query do `GET /roles`.
 - [ ] Backend aceita `quando=proximos_roles` e retorna rolês de `agora` até `hoje + 30 dias` (fuso SP).
 - [ ] Tocar de novo no chip desativa o filtro (toggle, como os demais).
