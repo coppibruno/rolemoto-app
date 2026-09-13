@@ -1,7 +1,7 @@
 import type { FiltroQuando, FiltroRitmo, RaioKm } from "./types";
 
 export const RAIO_PADRAO: RaioKm = 50;
-export const QUANDO_PADRAO: FiltroQuando = "fim_de_semana";
+export const QUANDO_PADRAO: FiltroQuando = "proximos_roles";
 export const RITMO_PADRAO: FiltroRitmo = "todas";
 
 export const OPCOES_RAIO: { valor: RaioKm; label: string }[] = [
