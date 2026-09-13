@@ -30,6 +30,7 @@ type NavigatorStandalone = Navigator & { standalone?: boolean };
 
 const deveUsarRedirect = () => {
   if (typeof window === "undefined") return false;
+  if (window.location.hostname === "localhost") return false; // ← dev sempre usa popup
   const standalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     (navigator as NavigatorStandalone).standalone === true;
@@ -46,6 +47,7 @@ const deveUsarRedirect = () => {
 export const loginComGoogle = async () => {
   console.log("loginComGoogle 1");
   if (deveUsarRedirect()) {
+    console.log("redirect ios");
     await signInWithRedirect(auth, googleProvider);
     return;
   }

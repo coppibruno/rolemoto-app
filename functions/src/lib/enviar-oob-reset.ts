@@ -14,9 +14,9 @@ const origemIdentityToolkit = (): string => {
  * Não usa `generatePasswordResetLink` — esse só devolve URL e geraria outro oobCode.
  */
 export const enviarOobReset = async (email: string): Promise<void> => {
-  const key = process.env.FIREBASE_WEB_API_KEY?.trim();
+  const key = process.env.WEB_API_KEY?.trim();
   if (!key) {
-    throw new Error("FIREBASE_WEB_API_KEY ausente");
+    throw new Error("WEB_API_KEY ausente");
   }
 
   const origem = origemApp();
