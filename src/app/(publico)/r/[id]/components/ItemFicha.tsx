@@ -6,7 +6,9 @@ type Props = {
   iconeClasse: string;
   label: string;
   titulo: string;
+  subtitulo?: string;
   detalhe?: ReactNode;
+  acao?: ReactNode;
 };
 
 export const ItemFicha = ({
@@ -14,7 +16,9 @@ export const ItemFicha = ({
   iconeClasse,
   label,
   titulo,
+  subtitulo,
   detalhe,
+  acao,
 }: Props) => {
   return (
     <div className={styles.itemFicha}>
@@ -26,7 +30,9 @@ export const ItemFicha = ({
       <div className={styles.itemCorpo}>
         <span className={styles.itemLabel}>{label}</span>
         <p className={styles.itemTitulo}>{titulo}</p>
+        {subtitulo ? <p className={styles.itemSubtitulo}>{subtitulo}</p> : null}
         {detalhe}
+        {acao ? <div className={styles.itemAcao}>{acao}</div> : null}
       </div>
     </div>
   );

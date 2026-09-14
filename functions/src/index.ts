@@ -13,6 +13,7 @@
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE
+ * - /lembretes/enviar → POST (Cloud Tasks)
  * - /perfil  → GET, POST, PUT, DELETE
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
@@ -28,6 +29,7 @@ import {authRouter} from "./routes/auth";
 import {rolesRouter} from "./routes/roles";
 import {aprovacoesRouter} from "./routes/aprovacoes";
 import {dispositivosRouter} from "./routes/dispositivos";
+import {lembretesRouter} from "./routes/lembretes";
 import {perfilRouter} from "./routes/perfil";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
@@ -54,6 +56,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/feedback/pendente",
       "/aprovacoes",
       "/dispositivos",
+      "/lembretes/enviar",
       "/perfil",
       "/perfil/historico",
     ],
@@ -66,6 +69,7 @@ app.use("/meus-roles", meusRolesRouter);
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);
 app.use("/dispositivos", dispositivosRouter);
+app.use("/lembretes", lembretesRouter);
 app.use("/perfil", perfilRouter);
 app.use("/feedback", feedbackRouter);
 

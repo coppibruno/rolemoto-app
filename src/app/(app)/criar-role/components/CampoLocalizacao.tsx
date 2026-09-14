@@ -11,6 +11,7 @@ type Props = {
   label: string;
   icone: string;
   placeholder: string;
+  placeholderNome: string;
   mostrarGps?: boolean;
   campo: Campo;
   erro?: string;
@@ -29,12 +30,14 @@ export const CampoLocalizacao = ({
   label,
   icone,
   placeholder,
+  placeholderNome,
   mostrarGps,
   campo,
   erro,
   desabilitado,
 }: Props) => {
   const erroId = `${id}-erro`;
+  const nomeId = `${id}-nome`;
   const mensagem = erro ?? campo.erroGps;
 
   return (
@@ -89,6 +92,20 @@ export const CampoLocalizacao = ({
           />
         ) : null}
       </div>
+      <label htmlFor={nomeId} className={styles.labelNome}>
+        Nome do local <span className={styles.labelOpcional}>(opcional)</span>
+      </label>
+      <input
+        id={nomeId}
+        type="text"
+        className={styles.input}
+        value={campo.valor.nome}
+        onChange={(e) => campo.aoDigitarNome(e.target.value)}
+        placeholder={placeholderNome}
+        maxLength={60}
+        disabled={desabilitado}
+        autoComplete="off"
+      />
       {mensagem ? (
         <p id={erroId} className={styles.erroCampo} role="alert">
           {mensagem}

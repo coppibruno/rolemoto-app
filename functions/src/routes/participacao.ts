@@ -5,6 +5,7 @@ import {
   roleRepository,
   usuarioRoleRepository,
 } from "../repositories";
+import {cancelarLembrete} from "../lib/lembretes";
 import {notificarPedidoVaga} from "../lib/notificacoes";
 import type {UsuarioRole} from "../types/usuario-role";
 
@@ -161,6 +162,7 @@ participacaoRouter.delete(
 
       const roleId = param(req, "id");
       await usuarioRoleRepository.remover(idPedido(uid, roleId));
+      await cancelarLembrete(roleId, uid);
       res.status(204).send();
     } catch (error) {
       responderErro(res, error);

@@ -9,6 +9,7 @@ import {
   montarSolicitacaoLider,
   roleAindaNaoSaiu,
 } from "../lib/aprovacoes";
+import {agendarLembrete} from "../lib/lembretes";
 import {notificarAceite} from "../lib/notificacoes";
 import {roleRepository, usuarioRoleRepository} from "../repositories";
 import type {DecisaoPiloto, StatusAprovacao} from "../types/aprovacao";
@@ -122,11 +123,21 @@ aprovacoesRouter.patch("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    if (decisao === "aceitar" && atualizado.notificar !== false) {
-      await notificarAceite(
-        atualizado.usuarioId,
-        atualizado.roleId,
-        role.titulo,
+    if (decisao === "aceitar") {
+      if (atualizado.notificar !== false) {
+        await notificarAceite(
+          atualizado.usuarioId,
+          atualizado.roleId,
+          role.titulo,
+        );
+      }
+      await agendarLembrete(
+        {
+          roleId: role.id,
+          userId: atualizado.usuarioId,
+          titulo: role.titulo,
+        },
+        role.dataHoraSaida,
       );
     }
 

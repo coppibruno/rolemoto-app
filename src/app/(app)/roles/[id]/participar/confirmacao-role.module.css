@@ -379,7 +379,8 @@
 
 .miniPonto {
   grid-column: 1 / -1;
-  align-items: flex-start;
+  align-items: center;
+  gap: 8px;
 }
 
 .miniLinha .material-symbols-outlined {
@@ -390,7 +391,6 @@
 
 .iconePonto {
   color: var(--primary-container) !important;
-  margin-top: 2px;
 }
 
 .miniTexto {
@@ -400,6 +400,8 @@
 }
 
 .miniPontoTexto {
+  flex: 1;
+  min-width: 0;
   font-size: 12px;
   line-height: 16px;
   color: var(--on-surface-variant);

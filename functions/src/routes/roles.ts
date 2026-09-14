@@ -4,6 +4,11 @@ import {isDonoOuAdmin} from "../middleware/authorize";
 import {responderErro} from "../middleware/errors";
 import {param} from "../lib/params";
 import {distanciaRotaKm, haversineKm} from "../lib/geo";
+import {
+  agendarLembrete,
+  cancelarLembretesDoRole,
+  reagendarLembretesDoRole,
+} from "../lib/lembretes";
 import {horaSaoPaulo, resolverIntervaloQuando} from "../lib/quando";
 import {validarQueryRoles} from "../lib/roles-query";
 import {
@@ -55,17 +60,37 @@ const isCoordLng = (valor: unknown): valor is number =>
   valor >= -180 &&
   valor <= 180;
 
-const isLocalizacao = (valor: unknown): valor is Localizacao => {
+const normalizarNome = (valor: unknown): string | null => {
+  if (valor === undefined || valor === null) return "";
+  if (typeof valor !== "string") return null;
+  const n = valor.trim();
+  if (n.length > 60) return null;
+  return n;
+};
+
+const parseLocalizacao = (valor: unknown): Localizacao | null => {
   if (!valor || typeof valor !== "object") {
-    return false;
+    return null;
   }
   const o = valor as Localizacao;
-  return (
-    isCoordLat(o.lat) &&
-    isCoordLng(o.lng) &&
-    typeof o.endereco === "string" &&
-    o.endereco.trim().length >= 3
-  );
+  if (
+    !isCoordLat(o.lat) ||
+    !isCoordLng(o.lng) ||
+    typeof o.endereco !== "string" ||
+    o.endereco.trim().length < 3
+  ) {
+    return null;
+  }
+  const nome = normalizarNome(o.nome);
+  if (nome === null) {
+    return null;
+  }
+  return {
+    lat: o.lat,
+    lng: o.lng,
+    endereco: o.endereco.trim(),
+    nome,
+  };
 };
 
 const textoContem = (haystack: string, needle: string): boolean =>
@@ -77,7 +102,9 @@ const bateBusca = (role: Role, q: string): boolean => {
     textoContem(role.titulo, termo) ||
     textoContem(role.descricao, termo) ||
     textoContem(role.localSaida.endereco, termo) ||
-    textoContem(role.destinoFinal.endereco, termo)
+    textoContem(role.destinoFinal.endereco, termo) ||
+    textoContem(role.localSaida.nome, termo) ||
+    textoContem(role.destinoFinal.nome, termo)
   );
 };
 
@@ -190,10 +217,12 @@ const validarBodyCriacao = (
     return {ok: false, erro: "a partida precisa ser no futuro"};
   }
 
-  if (!isLocalizacao(localSaida)) {
+  const localSaidaOk = parseLocalizacao(localSaida);
+  if (!localSaidaOk) {
     return {ok: false, erro: "localSaida inválida"};
   }
-  if (!isLocalizacao(destinoFinal)) {
+  const destinoFinalOk = parseLocalizacao(destinoFinal);
+  if (!destinoFinalOk) {
     return {ok: false, erro: "destinoFinal inválida"};
   }
 
@@ -208,16 +237,8 @@ const validarBodyCriacao = (
       fotoCapaUrl: fotoCapaUrl.trim(),
       ritmo,
       dataHoraSaida,
-      localSaida: {
-        lat: localSaida.lat,
-        lng: localSaida.lng,
-        endereco: localSaida.endereco.trim(),
-      },
-      destinoFinal: {
-        lat: destinoFinal.lat,
-        lng: destinoFinal.lng,
-        endereco: destinoFinal.endereco.trim(),
-      },
+      localSaida: localSaidaOk,
+      destinoFinal: destinoFinalOk,
     },
   };
 };
@@ -231,8 +252,10 @@ const camposUpdate = (body: Partial<Role>): RoleUpdate => {
   if (typeof body.dataHoraSaida === "string") {
     dados.dataHoraSaida = body.dataHoraSaida;
   }
-  if (isLocalizacao(body.localSaida)) dados.localSaida = body.localSaida;
-  if (isLocalizacao(body.destinoFinal)) dados.destinoFinal = body.destinoFinal;
+  const localSaida = parseLocalizacao(body.localSaida);
+  if (localSaida) dados.localSaida = localSaida;
+  const destinoFinal = parseLocalizacao(body.destinoFinal);
+  if (destinoFinal) dados.destinoFinal = destinoFinal;
   return dados;
 };
 
@@ -355,6 +378,10 @@ rolesRouter.post("/", async (req: Request, res: Response) => {
       ...validado.dados,
       criadorId: uid,
     });
+    await agendarLembrete(
+      {roleId: criado.id, userId: uid, titulo: criado.titulo},
+      criado.dataHoraSaida,
+    );
     res.status(201).json(criado);
   } catch (error) {
     responderErro(res, error);
@@ -382,10 +409,32 @@ rolesRouter.put("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const atualizado = await roleRepository.atualizar(
-      id,
-      camposUpdate(req.body as Partial<Role>),
-    );
+    const body = camposUpdate(req.body as Partial<Role>);
+    const atualizado = await roleRepository.atualizar(id, body);
+    if (!atualizado) {
+      res.status(404).json({erro: "Rolê não encontrado"});
+      return;
+    }
+
+    if (
+      body.dataHoraSaida &&
+      body.dataHoraSaida !== existente.dataHoraSaida
+    ) {
+      const aceitos = await usuarioRoleRepository.listarConfirmadosDoRole(
+        id,
+        100,
+      );
+      const userIds = aceitos.map((p) => p.usuarioId);
+      await cancelarLembretesDoRole(id, userIds, existente.criadorId);
+      await reagendarLembretesDoRole(
+        id,
+        atualizado.titulo,
+        atualizado.dataHoraSaida,
+        userIds,
+        existente.criadorId,
+      );
+    }
+
     res.json(atualizado);
   } catch (error) {
     responderErro(res, error);
@@ -412,6 +461,13 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
       });
       return;
     }
+
+    const aceitos = await usuarioRoleRepository.listarConfirmadosDoRole(
+      id,
+      100,
+    );
+    const userIds = aceitos.map((p) => p.usuarioId);
+    await cancelarLembretesDoRole(id, userIds, existente.criadorId);
 
     await roleRepository.remover(id);
     res.status(204).send();

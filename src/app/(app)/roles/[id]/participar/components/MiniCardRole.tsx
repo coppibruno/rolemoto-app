@@ -1,6 +1,8 @@
 "use client";
 
 import type { RoleDetalhe, RitmoRole } from "@/types/role";
+import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
+import { tituloLocal } from "@/lib/localizacao";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { LABELS_RITMO_BADGE } from "../constants";
 import styles from "../confirmacao-role.module.css";
@@ -17,6 +19,7 @@ const classeBadge = (ritmo: RitmoRole) => {
 
 export const MiniCardRole = ({ detalhe }: Props) => {
   const confirmados = detalhe.participantes.confirmados;
+  const ponto = tituloLocal(detalhe.localSaida);
 
   return (
     <div className={styles.miniCard}>
@@ -48,11 +51,13 @@ export const MiniCardRole = ({ detalhe }: Props) => {
             pin_drop
           </span>
           <span className={styles.miniPontoTexto}>
-            Ponto:{" "}
-            <strong className={styles.pontoForte}>
-              {detalhe.localSaida.endereco}
-            </strong>
+            Ponto: <strong className={styles.pontoForte}>{ponto}</strong>
           </span>
+          <BotaoAbrirMaps
+            ponto={detalhe.localSaida}
+            variante="icone"
+            label="Abrir ponto no Maps"
+          />
         </div>
       </div>
     </div>

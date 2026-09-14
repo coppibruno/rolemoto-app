@@ -10,10 +10,16 @@ import { COPY_LINK_COPIADO } from "../constants";
 
 export const useCompartilharConvite = (dados: DadosConvite) => {
   const [feedback, setFeedback] = useState<string | null>(null);
-  const { id, titulo, dataHoraSaida, localSaidaEndereco } = dados;
+  const { id, titulo, dataHoraSaida, localSaidaEndereco, localSaidaNome } = dados;
 
   const compartilhar = useCallback(async () => {
-    const payload = { id, titulo, dataHoraSaida, localSaidaEndereco };
+    const payload = {
+      id,
+      titulo,
+      dataHoraSaida,
+      localSaidaEndereco,
+      localSaidaNome,
+    };
     const url = urlConvite(payload.id);
     const texto = textoConvite(payload);
 
@@ -38,7 +44,7 @@ export const useCompartilharConvite = (dados: DadosConvite) => {
       setFeedback("Não foi possível compartilhar");
       window.setTimeout(() => setFeedback(null), 2500);
     }
-  }, [id, titulo, dataHoraSaida, localSaidaEndereco]);
+  }, [id, titulo, dataHoraSaida, localSaidaEndereco, localSaidaNome]);
 
   return { compartilhar, feedback };
 };

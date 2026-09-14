@@ -3,7 +3,7 @@ import type { MeuRoleItem } from "@/types/meus-roles";
 import { BotaoCompartilharRole } from "@/app/(app)/feed/components/BotaoCompartilharRole";
 import { formatarHora, formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { hrefMeuRole } from "../constants";
-import { dadosConviteDe } from "../formatar-meus-roles";
+import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -26,7 +26,7 @@ export const CardConfirmadoRole = ({ item }: Props) => {
       <Link href={destino} className={styles.cardTituloLink}>
         <h2 className={styles.cardTitulo}>{item.titulo}</h2>
         <p className={styles.cardMeta}>
-          {item.localSaidaEndereco} · {formatarHora(item.dataHoraSaida)}
+          {tituloSaidaMeuRole(item)} · {formatarHora(item.dataHoraSaida)}
         </p>
       </Link>
       <div className={styles.cardRodape}>

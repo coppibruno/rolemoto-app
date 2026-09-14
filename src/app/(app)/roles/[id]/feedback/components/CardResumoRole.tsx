@@ -1,6 +1,7 @@
 "use client";
 
 import type { RoleDetalhe } from "@/types/role";
+import { tituloLocal } from "@/lib/localizacao";
 import styles from "../feedback-role.module.css";
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 };
 
 export const CardResumoRole = ({ detalhe }: Props) => {
-  const rota = `${detalhe.localSaida.endereco} → ${detalhe.destinoFinal.endereco}`;
+  const rota = `${tituloLocal(detalhe.localSaida)} → ${tituloLocal(detalhe.destinoFinal)}`;
   const apelido = detalhe.criador.apelido || "piloto";
 
   return (

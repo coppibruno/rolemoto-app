@@ -41,6 +41,7 @@ export const RoleCard = ({ role }: Props) => {
               titulo: role.titulo,
               dataHoraSaida: role.dataHoraSaida,
               localSaidaEndereco: role.localSaida.endereco,
+              localSaidaNome: role.localSaida.nome,
             }}
           />
         </div>

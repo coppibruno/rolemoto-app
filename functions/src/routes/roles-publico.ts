@@ -93,6 +93,12 @@ rolesPublicoRouter.get("/:id", async (req: Request, res: Response) => {
       dataHoraSaida: role.dataHoraSaida,
       localSaidaEndereco: role.localSaida.endereco,
       destinoFinalEndereco: role.destinoFinal.endereco,
+      localSaidaNome: role.localSaida.nome ?? "",
+      destinoFinalNome: role.destinoFinal.nome ?? "",
+      localSaidaLat: role.localSaida.lat,
+      localSaidaLng: role.localSaida.lng,
+      destinoFinalLat: role.destinoFinal.lat,
+      destinoFinalLng: role.destinoFinal.lng,
       distanciaKm: distanciaRotaKm(role.localSaida, role.destinoFinal),
       criador: criadorPublico(role.criadorId, criadorDoc),
       participantes: {

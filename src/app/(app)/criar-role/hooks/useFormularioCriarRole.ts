@@ -171,11 +171,13 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
           lat: partida.valor.lat as number,
           lng: partida.valor.lng as number,
           endereco: partida.valor.endereco.trim(),
+          nome: partida.valor.nome.trim(),
         },
         destinoFinal: {
           lat: destino.valor.lat as number,
           lng: destino.valor.lng as number,
           endereco: destino.valor.endereco.trim(),
+          nome: destino.valor.nome.trim(),
         },
       });
       setSucesso(true);

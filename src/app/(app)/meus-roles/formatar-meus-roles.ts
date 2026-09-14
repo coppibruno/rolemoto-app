@@ -1,5 +1,6 @@
 import { formatarHora } from "@/app/(app)/feed/formatar-horario";
 import type { DadosConvite } from "@/lib/convite";
+import { tituloLocal } from "@/lib/localizacao";
 import type { MeuRoleItem } from "@/types/meus-roles";
 
 const TZ = "America/Sao_Paulo";
@@ -51,4 +52,11 @@ export const dadosConviteDe = (item: MeuRoleItem): DadosConvite => ({
   titulo: item.titulo,
   dataHoraSaida: item.dataHoraSaida,
   localSaidaEndereco: item.localSaidaEndereco,
+  localSaidaNome: item.localSaidaNome,
 });
+
+export const tituloSaidaMeuRole = (item: MeuRoleItem): string =>
+  tituloLocal({
+    nome: item.localSaidaNome ?? "",
+    endereco: item.localSaidaEndereco,
+  });

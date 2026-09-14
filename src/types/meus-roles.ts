@@ -26,6 +26,7 @@ export type MeuRoleItem = {
   ritmo: RitmoRole;
   dataHoraSaida: string;
   localSaidaEndereco: string;
+  localSaidaNome: string;
   distanciaRotaKm: number;
   status: StatusMeuRole;
   papel: PapelMeuRole;

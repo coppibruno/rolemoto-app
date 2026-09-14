@@ -3,7 +3,7 @@ import type { MeuRoleItem } from "@/types/meus-roles";
 import { BotaoCompartilharRole } from "@/app/(app)/feed/components/BotaoCompartilharRole";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { hrefMeuRole, LABELS_RITMO } from "../constants";
-import { dadosConviteDe } from "../formatar-meus-roles";
+import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -42,7 +42,7 @@ export const CardDestaqueRole = ({ item, processando, onDesistir }: Props) => {
         <div className={styles.heroGrid}>
           <div>
             <span className={styles.metaRotulo}>Ponto de Encontro</span>
-            <p className={styles.metaValor}>{item.localSaidaEndereco}</p>
+            <p className={styles.metaValor}>{tituloSaidaMeuRole(item)}</p>
           </div>
           <div>
             <span className={styles.metaRotulo}>Ritmo</span>

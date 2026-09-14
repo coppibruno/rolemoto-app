@@ -14,7 +14,12 @@ import { FaixaClonando } from "./FaixaClonando";
 import { FotoCapa } from "./FotoCapa";
 import { SeletorRitmo } from "./SeletorRitmo";
 import { ToastSucesso } from "./ToastSucesso";
-import { PLACEHOLDER_DESTINO, PLACEHOLDER_PARTIDA } from "../constants";
+import {
+  PLACEHOLDER_DESTINO,
+  PLACEHOLDER_NOME_DESTINO,
+  PLACEHOLDER_NOME_PARTIDA,
+  PLACEHOLDER_PARTIDA,
+} from "../constants";
 import styles from "../criar-role.module.css";
 
 type Props = {
@@ -50,6 +55,7 @@ export const FormularioCriarRole = ({ origemId }: Props) => {
           label="Partida"
           icone="trip_origin"
           placeholder={PLACEHOLDER_PARTIDA}
+          placeholderNome={PLACEHOLDER_NOME_PARTIDA}
           mostrarGps
           campo={form.partida}
           erro={form.erros.partida}
@@ -70,6 +76,7 @@ export const FormularioCriarRole = ({ origemId }: Props) => {
           label="Destino Final"
           icone="location_on"
           placeholder={PLACEHOLDER_DESTINO}
+          placeholderNome={PLACEHOLDER_NOME_DESTINO}
           campo={form.destino}
           erro={form.erros.destino}
           desabilitado={form.publicando}

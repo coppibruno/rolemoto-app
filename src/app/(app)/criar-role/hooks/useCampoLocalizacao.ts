@@ -23,6 +23,7 @@ export const useCampoLocalizacao = () => {
   const [endereco, setEndereco] = useState("");
   const [lat, setLat] = useState<number | null>(null);
   const [lng, setLng] = useState<number | null>(null);
+  const [nome, setNome] = useState("");
   const [sugestoes, setSugestoes] = useState<SugestaoEndereco[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [gpsStatus, setGpsStatus] = useState<GpsStatus>("idle");
@@ -65,6 +66,10 @@ export const useCampoLocalizacao = () => {
     setListaAberta(true);
   };
 
+  const aoDigitarNome = (texto: string) => {
+    setNome(texto.slice(0, 60));
+  };
+
   const escolher = (item: SugestaoEndereco) => {
     escolhendoRef.current = true;
     setEndereco(item.label);
@@ -81,6 +86,7 @@ export const useCampoLocalizacao = () => {
     setEndereco(local.endereco);
     setLat(local.lat);
     setLng(local.lng);
+    setNome(local.nome ?? "");
     setSugestoes([]);
     setListaAberta(false);
     setGpsStatus("idle");
@@ -108,7 +114,7 @@ export const useCampoLocalizacao = () => {
     }
   };
 
-  const valor: LocalizacaoForm = { endereco, lat, lng };
+  const valor: LocalizacaoForm = { endereco, lat, lng, nome };
 
   return {
     valor,
@@ -118,6 +124,7 @@ export const useCampoLocalizacao = () => {
     erroGps,
     listaAberta,
     aoDigitar,
+    aoDigitarNome,
     escolher,
     preencher,
     fecharLista: () => setListaAberta(false),

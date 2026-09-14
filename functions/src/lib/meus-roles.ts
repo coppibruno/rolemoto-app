@@ -189,6 +189,7 @@ export const paraMeuRoleItem = (
     ritmo: role.ritmo,
     dataHoraSaida: role.dataHoraSaida,
     localSaidaEndereco: role.localSaida.endereco,
+    localSaidaNome: role.localSaida.nome ?? "",
     distanciaRotaKm: distanciaRotaKm(role.localSaida, role.destinoFinal),
     status: item.status,
     papel: item.papel,

@@ -23,6 +23,12 @@ export type RolePublico = {
   dataHoraSaida: string;
   localSaidaEndereco: string;
   destinoFinalEndereco: string;
+  localSaidaNome: string;
+  destinoFinalNome: string;
+  localSaidaLat: number;
+  localSaidaLng: number;
+  destinoFinalLat: number;
+  destinoFinalLng: number;
   distanciaKm: number;
   criador: CriadorPublico;
   participantes: {

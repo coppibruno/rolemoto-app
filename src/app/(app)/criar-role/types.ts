@@ -4,6 +4,7 @@ export type LocalizacaoForm = {
   endereco: string;
   lat: number | null;
   lng: number | null;
+  nome: string;
 };
 
 export type ErrosCriarRole = {

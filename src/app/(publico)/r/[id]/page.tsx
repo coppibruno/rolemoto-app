@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { formatarFaixaHero } from "@/app/(app)/feed/formatar-horario";
+import { tituloLocal } from "@/lib/localizacao";
 import { TelaConviteRole } from "./components/TelaConviteRole";
 import { obterRolePublico } from "./services/role-publico.service";
 
@@ -11,7 +12,11 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
   const role = await obterRolePublico(id);
   if (!role) return { title: "Rolê não encontrado · Rolê Moto" };
 
-  const descricao = `${formatarFaixaHero(role.dataHoraSaida)} · ${role.localSaidaEndereco}`;
+  const local = tituloLocal({
+    nome: role.localSaidaNome,
+    endereco: role.localSaidaEndereco,
+  });
+  const descricao = `${formatarFaixaHero(role.dataHoraSaida)} · ${local}`;
 
   return {
     title: `${role.titulo} · Rolê Moto`,

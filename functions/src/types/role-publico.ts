@@ -14,7 +14,7 @@ export type ParticipanteDestaque = {
   moto: string;
 };
 
-/** DTO sanitizado do convite — sem lat/lng, PII extra ou participação. */
+/** DTO sanitizado do convite — sem PII extra ou participação. */
 export type RolePublico = {
   id: string;
   titulo: string;
@@ -24,6 +24,12 @@ export type RolePublico = {
   dataHoraSaida: string;
   localSaidaEndereco: string;
   destinoFinalEndereco: string;
+  localSaidaNome: string;
+  destinoFinalNome: string;
+  localSaidaLat: number;
+  localSaidaLng: number;
+  destinoFinalLat: number;
+  destinoFinalLng: number;
   distanciaKm: number;
   criador: CriadorPublico;
   participantes: {

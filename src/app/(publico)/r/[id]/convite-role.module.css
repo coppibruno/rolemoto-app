@@ -524,6 +524,18 @@
   color: var(--on-surface);
 }
 
+.itemSubtitulo {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.itemAcao {
+  margin-top: 6px;
+}
+
 .itemDetalhe {
   margin-top: 4px;
   display: flex;

@@ -6,6 +6,8 @@ export interface Localizacao {
   lat: number;
   lng: number;
   endereco: string;
+  /** Apelido curto do ponto. Vazio = UI usa só o endereço. */
+  nome: string;
 }
 
 /** Rolê de moto — sem tipos do Firebase. Datas em ISO. */

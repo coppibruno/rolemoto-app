@@ -21,6 +21,7 @@ export const TelaConviteRole = ({ role }: Props) => {
     titulo: role.titulo,
     dataHoraSaida: role.dataHoraSaida,
     localSaidaEndereco: role.localSaidaEndereco,
+    localSaidaNome: role.localSaidaNome,
   };
 
   return (
@@ -45,6 +46,12 @@ export const TelaConviteRole = ({ role }: Props) => {
         <FichaTecnicaComboio
           localSaidaEndereco={role.localSaidaEndereco}
           destinoFinalEndereco={role.destinoFinalEndereco}
+          localSaidaNome={role.localSaidaNome}
+          destinoFinalNome={role.destinoFinalNome}
+          localSaidaLat={role.localSaidaLat}
+          localSaidaLng={role.localSaidaLng}
+          destinoFinalLat={role.destinoFinalLat}
+          destinoFinalLng={role.destinoFinalLng}
           dataHoraSaida={role.dataHoraSaida}
           ritmo={role.ritmo}
         />

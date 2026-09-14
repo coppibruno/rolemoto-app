@@ -2,7 +2,7 @@ import { adminMessaging } from "./firebase-admin";
 import { dispositivoRepository } from "../repositories";
 import { origemApp } from "./origem";
 
-export type TipoPush = "pedido_vaga" | "aceite_vaga";
+export type TipoPush = "pedido_vaga" | "aceite_vaga" | "lembrete_role";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -15,6 +15,7 @@ type PayloadPush = {
 const COPY = {
   pedido_vaga: "Um motociclista solicitou vaga para um rolê",
   aceite_vaga: "O organizador aceitou você no rolê",
+  lembrete_role: "Seu rolê começa em 1 hora! 🏍️",
 } as const;
 
 const CODIGOS_TOKEN_INVALIDO = new Set([
@@ -99,6 +100,20 @@ export const notificarAceite = async (
   await enviar(usuarioId, {
     tipo: "aceite_vaga",
     title: COPY.aceite_vaga,
+    body: titulo,
+    url: `/roles/${roleId}/participar`,
+    roleId,
+  });
+};
+
+export const notificarLembrete = async (
+  userId: string,
+  roleId: string,
+  titulo: string,
+): Promise<void> => {
+  await enviar(userId, {
+    tipo: "lembrete_role",
+    title: COPY.lembrete_role,
     body: titulo,
     url: `/roles/${roleId}/participar`,
     roleId,
