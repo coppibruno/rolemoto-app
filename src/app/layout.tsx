@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   icons: {
+    icon: [{ url: "/icon-rolemoto.svg", type: "image/svg+xml" }],
     apple: "/icons/apple-touch-icon.png",
   },
   manifest: "/manifest.webmanifest",

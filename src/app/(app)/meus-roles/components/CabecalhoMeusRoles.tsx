@@ -14,7 +14,7 @@ export const CabecalhoMeusRoles = () => {
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
         <Image
-          src="/logo-rolemoto.png"
+          src="/logo-rolemoto.jpeg"
           alt="Rolê Moto"
           width={96}
           height={32}

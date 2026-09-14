@@ -28,7 +28,7 @@ export const CabecalhoCriarRole = ({ fotoUrl, nome, modoClone }: Props) => {
             <span className="material-symbols-outlined">arrow_back_ios_new</span>
           </Link>
           <Image
-            src="/logo-rolemoto.png"
+            src="/logo-rolemoto.jpeg"
             alt="Rolê Moto"
             width={84}
             height={28}

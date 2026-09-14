@@ -14,7 +14,7 @@ export const CabecalhoPerfil = ({ fotoUrl, nome }: Props) => {
       <div className={styles.cabecalhoInner}>
         <div className={styles.cabecalhoMarca}>
           <Image
-            src="/logo-rolemoto.png"
+            src="/logo-rolemoto.jpeg"
             alt="Rolê Moto"
             width={96}
             height={32}

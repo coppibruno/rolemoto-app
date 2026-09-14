@@ -9,7 +9,7 @@ export const LoginHeader = () => (
 
     <div className={styles.logoContainer}>
       <Image
-        src="/logo-rolemoto.png"
+        src="/logo-rolemoto.jpeg"
         alt="Rolê Moto — Comunidade em duas rodas"
         width={240}
         height={80}
