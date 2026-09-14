@@ -20,6 +20,10 @@
   padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
+.shell:has([data-banner-pwa]) .conteudo {
+  padding-bottom: calc(160px + env(safe-area-inset-bottom, 0px));
+}
+
 .pagina {
   padding: 24px var(--gutter-md);
 }

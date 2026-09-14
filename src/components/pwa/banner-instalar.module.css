@@ -1,0 +1,64 @@
+.fixo,
+.fluxo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  border: 1px solid color-mix(in srgb, var(--primary-container) 35%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.fixo {
+  position: fixed;
+  left: 50%;
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  width: min(calc(100% - 32px), 528px);
+  transform: translateX(-50%);
+}
+
+.fluxo {
+  width: auto;
+  margin: 8px var(--gutter-md);
+}
+
+.acao {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.acao .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--primary-container);
+}
+
+.dispensar {
+  flex-shrink: 0;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  background: none;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
