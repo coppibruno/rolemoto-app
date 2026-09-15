@@ -3,7 +3,7 @@
  *
  * Envolve toda a aplicação (via `layout.tsx`) e gerencia:
  * 1. **Estado de autenticação** — escuta `onAuthStateChanged` do Firebase
- * 2. **Perfil do usuário** — carrega dados do Firestore após login
+ * 2. **Perfil do usuário** — carrega via `GET /perfil` após login
  * 3. **Funções de login/logout** — expõe via Context API
  *
  * Métodos de autenticação disponíveis:
@@ -15,7 +15,7 @@
  * ```
  * Usuário faz login/cadastro
  *   → onAuthStateChanged dispara
- *   → AuthProvider carrega perfil do Firestore
+ *   → AuthProvider carrega perfil pela API
  *   → Se perfil não existe (primeiro login), `usuario` fica null
  *   → App redireciona para completar cadastro
  * ```
@@ -41,7 +41,7 @@ import {
   loginComEmail as _loginComEmail,
   logout as _logout,
 } from "@/lib/auth";
-import { buscarUsuario } from "@/lib/firestore";
+import { perfilService } from "@/app/(app)/perfil/services/perfil.service";
 import type { Usuario } from "@/types/user";
 
 export interface AuthContextType {
@@ -62,8 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const carregarPerfil = useCallback(async (uid: string) => {
-    const perfil = await buscarUsuario(uid);
+  const carregarPerfil = useCallback(async () => {
+    const perfil = await perfilService.buscar();
     setUsuario(perfil);
   }, []);
 
@@ -77,9 +77,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         setLoading(true);
         try {
-          await carregarPerfil(user.uid);
+          await carregarPerfil();
         } catch (error) {
-          console.error("Erro ao carregar perfil do Firestore:", error);
+          console.error("Erro ao carregar perfil:", error);
           setUsuario(null);
         }
       } else {
@@ -111,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const recarregarPerfil = async () => {
     if (firebaseUser) {
-      await carregarPerfil(firebaseUser.uid);
+      await carregarPerfil();
     }
   };
 

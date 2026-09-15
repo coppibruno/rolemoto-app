@@ -12,11 +12,12 @@ const queuePath = client.queuePath(PROJECT_ID, LOCATION, QUEUE);
 const taskName = (roleId: string, userId: string): string =>
   `${queuePath}/tasks/lembrete-${roleId}-${userId}`;
 
-const functionUrl = (): string => {
+/** URL completa do handler — usada como audience OIDC no createTask e na verificação. */
+export const lembretesEnviarUrl = (): string => {
   const base =
     process.env.FUNCTIONS_BASE_URL ??
     `https://${LOCATION}-${PROJECT_ID}.cloudfunctions.net/api`;
-  return `${base}/lembretes/enviar`;
+  return `${base.replace(/\/$/, "")}/lembretes/enviar`;
 };
 
 /** Calcula se o lembrete ainda faz sentido (> agora). */
@@ -45,11 +46,12 @@ export const agendarLembrete = async (
         scheduleTime: {seconds: Math.floor(horario / 1000)},
         httpRequest: {
           httpMethod: "POST",
-          url: functionUrl(),
+          url: lembretesEnviarUrl(),
           body: Buffer.from(JSON.stringify(payload)).toString("base64"),
           headers: {"Content-Type": "application/json"},
           oidcToken: {
             serviceAccountEmail: `${PROJECT_ID}@appspot.gserviceaccount.com`,
+            audience: lembretesEnviarUrl(),
           },
         },
       },

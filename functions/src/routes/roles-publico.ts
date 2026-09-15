@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
+import {rateLimit} from "../middleware/rate-limit";
 import {param} from "../lib/params";
 import {distanciaRotaKm} from "../lib/geo";
 import {
@@ -20,6 +21,8 @@ import type {Usuario} from "../types/usuario";
  * GET /publico/roles/:id
  */
 export const rolesPublicoRouter = Router();
+
+rolesPublicoRouter.use(rateLimit({nome: "publico-roles", max: 60}));
 
 const LIMITE_DESTAQUES = 4;
 

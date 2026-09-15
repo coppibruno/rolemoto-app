@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository} from "../repositories";
 
 /**
@@ -12,6 +13,7 @@ import {dispositivoRepository} from "../repositories";
 export const dispositivosRouter = Router();
 
 dispositivosRouter.use(autenticar);
+dispositivosRouter.use(rateLimitAutenticado);
 
 const tokenDoBody = (body: unknown): string | null => {
   if (!body || typeof body !== "object") {

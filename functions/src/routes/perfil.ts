@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
@@ -130,6 +131,7 @@ const validarUsuarioPrimeiroAcesso = (
 export const perfilRouter = Router();
 
 perfilRouter.use(autenticar);
+perfilRouter.use(rateLimitAutenticado);
 perfilRouter.use(historicoRouter);
 
 perfilRouter.get("/", async (req: Request, res: Response) => {

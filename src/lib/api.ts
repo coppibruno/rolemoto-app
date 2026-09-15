@@ -1,10 +1,12 @@
 /**
  * Cliente HTTP da Cloud Function `api`.
  *
- * Envia o ID token do Firebase Auth em `Authorization: Bearer`.
+ * Envia o ID token do Firebase Auth em `Authorization: Bearer`
+ * e o token do App Check em `X-Firebase-AppCheck` quando disponível.
  * Não usa `httpsCallable` — o backend é Express via `onRequest`.
  */
-import { auth, functionsApiUrl } from "./firebase";
+import { getToken } from "firebase/app-check";
+import { appCheck, auth, functionsApiUrl } from "./firebase";
 
 export class ApiError extends Error {
   constructor(
@@ -27,6 +29,17 @@ const montarHeaders = async (headersInit?: HeadersInit): Promise<Headers> => {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
+  if (appCheck) {
+    try {
+      const { token: appCheckToken } = await getToken(appCheck, false);
+      if (appCheckToken) {
+        headers.set("X-Firebase-AppCheck", appCheckToken);
+      }
+    } catch (error) {
+      console.warn("Falha ao obter token App Check:", error);
+    }
+  }
+
   return headers;
 };
 
@@ -35,7 +48,6 @@ export const api = async <T = unknown>(
   opcoes?: RequestInit,
 ): Promise<T> => {
   const headers = await montarHeaders(opcoes?.headers);
-  console.log(`${functionsApiUrl}${caminho}`);
   const res = await fetch(`${functionsApiUrl}${caminho}`, {
     ...opcoes,
     headers,

@@ -53,7 +53,18 @@ Dois avisos nativos: pedido de vaga (para o organizador) e aceite (para o piloto
 - O envio FCM acontece nas Cloud Functions (`POST /roles/:id/participacao` e `PATCH /aprovacoes/:id`). Não há emulator de FCM — o send vai para o FCM de verdade. Tokens de `localhost` e de produção são origins diferentes.
 - Logout tenta `DELETE /dispositivos` antes do `signOut`, para o próximo usuário no mesmo browser não receber push alheio.
 - Opcional nas functions: `APP_ORIGIN` (ex. `https://seu-dominio`) para o clique nativo do Chrome (`webpush.fcmOptions.link`) e para o `continueUrl` do e-mail de redefinir senha. Sem ela, o service worker abre o deep link e o reset depende só da action URL do console.
-- Nas functions (`functions/.env`, ver `functions/.env.example`): `FIREBASE_WEB_API_KEY` — a mesma Web API key do app (`NEXT_PUBLIC_FIREBASE_API_KEY`). Sem ela o `POST /auth/recuperar-senha` não consegue disparar o e-mail nativo do Auth.
+- Nas functions (`functions/.env`, ver `functions/.env.example`): `WEB_API_KEY` — a mesma Web API key do app (`NEXT_PUBLIC_FIREBASE_API_KEY`). Sem ela o `POST /auth/recuperar-senha` não consegue disparar o e-mail nativo do Auth.
+
+### Segurança (produção)
+
+1. **Firestore rules:** deny-all no client (`firestore.rules`). Dados só via Cloud Functions (Admin SDK). Deploy: `firebase deploy --only firestore:rules` **depois** do frontend que usa `GET /perfil` (não lê Firestore direto).
+2. **CORS:** a function `api` só aceita origins do PWA (`cors.json` + `APP_ORIGIN`).
+3. **Lembretes:** `POST /lembretes/enviar` exige OIDC do Cloud Tasks. Configure `FUNCTIONS_BASE_URL` em produção se a URL da API não for o default.
+4. **App Check (reCAPTCHA v3):**
+   - Console → App Check → registrar o app web → copiar a site key para `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
+   - Em dev, o console do browser imprime um debug token — registre em App Check → Manage debug tokens
+   - Nas functions, só ligue `APP_CHECK_ENFORCE=true` **depois** da site key no frontend; senão a API responde 401
+5. **Rate limit:** in-memory por instância (resolver 10/min, recuperar-senha 5/min, público 60/min, autenticado 120/min).
 
 ### Redefinir senha (console Firebase)
 

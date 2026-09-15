@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {escolherPendente} from "../lib/feedback";
 import {ePedidoAceito} from "../lib/historico";
 import {
@@ -18,6 +19,7 @@ import type {Role} from "../types/role";
 export const feedbackRouter = Router();
 
 feedbackRouter.use(autenticar);
+feedbackRouter.use(rateLimitAutenticado);
 
 const idFeedback = (usuarioId: string, roleId: string): string =>
   `${usuarioId}_${roleId}`;

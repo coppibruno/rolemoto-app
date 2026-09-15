@@ -2,6 +2,7 @@ import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {isDonoOuAdmin} from "../middleware/authorize";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {param} from "../lib/params";
 import {distanciaRotaKm, haversineKm} from "../lib/geo";
 import {
@@ -43,6 +44,7 @@ import type {
 export const rolesRouter = Router();
 
 rolesRouter.use(autenticar);
+rolesRouter.use(rateLimitAutenticado);
 rolesRouter.use(participacaoRouter);
 rolesRouter.use(feedbackRoleRouter);
 

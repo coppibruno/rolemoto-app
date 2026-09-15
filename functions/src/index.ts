@@ -13,7 +13,7 @@
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE
- * - /lembretes/enviar → POST (Cloud Tasks)
+ * - /lembretes/enviar → POST (Cloud Tasks, OIDC)
  * - /perfil  → GET, POST, PUT, DELETE
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
@@ -34,11 +34,14 @@ import {perfilRouter} from "./routes/perfil";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
+import {corsOrigins} from "./lib/cors-origins";
+import {verificarAppCheck} from "./middleware/app-check";
 
 setGlobalOptions({maxInstances: 10});
 
 const app = express();
 app.use(express.json());
+app.use(verificarAppCheck);
 
 app.get("/", (_req: Request, res: Response) => {
   res.json({
@@ -73,4 +76,4 @@ app.use("/lembretes", lembretesRouter);
 app.use("/perfil", perfilRouter);
 app.use("/feedback", feedbackRouter);
 
-export const api = onRequest({cors: true}, app);
+export const api = onRequest({cors: corsOrigins()}, app);

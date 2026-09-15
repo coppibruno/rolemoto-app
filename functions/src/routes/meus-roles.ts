@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {
   classificarMeusRoles,
   destaquesDe,
@@ -28,6 +29,7 @@ import type {Usuario} from "../types/usuario";
 export const meusRolesRouter = Router();
 
 meusRolesRouter.use(autenticar);
+meusRolesRouter.use(rateLimitAutenticado);
 
 const LIMITE_DESTAQUES = 3;
 

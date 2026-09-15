@@ -2,6 +2,7 @@ import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {isDonoOuAdmin} from "../middleware/authorize";
 import {responderErro} from "../middleware/errors";
+import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {param} from "../lib/params";
 import {
   jaDecidida,
@@ -23,6 +24,7 @@ import type {DecisaoPiloto, StatusAprovacao} from "../types/aprovacao";
 export const aprovacoesRouter = Router();
 
 aprovacoesRouter.use(autenticar);
+aprovacoesRouter.use(rateLimitAutenticado);
 
 const STATUSES: StatusAprovacao[] = ["pendente", "aceito"];
 const DECISOES: DecisaoPiloto[] = ["aceitar", "recusar"];

@@ -13,14 +13,19 @@
  * - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
  * - NEXT_PUBLIC_FIREBASE_APP_ID
  * - NEXT_PUBLIC_FIREBASE_VAPID_KEY (Web Push; getToken no client)
+ * - NEXT_PUBLIC_RECAPTCHA_SITE_KEY (App Check reCAPTCHA v3)
  * - NEXT_PUBLIC_FUNCTIONS_URL (opcional; default aponta ao emulator em dev)
  * - NEXT_PUBLIC_STORAGE_EMULATOR_HOST (opcional; ex. 127.0.0.1:9199)
  *
  * @see .env.example para referência das variáveis
  */
 import { initializeApp, getApps } from "firebase/app";
+import {
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+  type AppCheck,
+} from "firebase/app-check";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { conectarStorageEmulator } from "./storage-emulator";
 
@@ -40,15 +45,31 @@ const app =
 /** Instância do Firebase Auth (login social, gerenciamento de sessão) */
 export const auth = getAuth(app);
 
-/** Instância do Firestore (banco de dados NoSQL) */
-export const db = getFirestore(app);
-
 /** Instância do Firebase Storage (upload de fotos de perfil e rolês) */
 export const storage = getStorage(app);
 
 const storageEmulatorHost = process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST;
 if (storageEmulatorHost) {
   conectarStorageEmulator(storage, storageEmulatorHost);
+}
+
+/** App Check (só no browser; exige site key do reCAPTCHA v3). */
+export let appCheck: AppCheck | null = null;
+
+if (typeof window !== "undefined") {
+  if (process.env.NODE_ENV === "development") {
+    // Registre o token impresso no Console → App Check → Manage debug tokens.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim();
+  if (siteKey) {
+    appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(siteKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  }
 }
 
 const projectId = firebaseConfig.projectId ?? "";

@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
 
 export interface Usuario {
@@ -11,7 +9,7 @@ export interface Usuario {
   fotoUrl: string;
   cidade: string;
   garupaFrequente: boolean;
-  createdAt: Timestamp;
+  createdAt: string;
 }
 
 export type UsuarioForm = Omit<Usuario, "uid" | "createdAt">;
