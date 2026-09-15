@@ -1,6 +1,7 @@
 "use client";
 
 import type { UsuarioResumoSolicitacao } from "@/types/aprovacao";
+import { textoRolesRodados } from "../constants";
 import styles from "../aprovacoes.module.css";
 
 type Props = {
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export const IdentidadePiloto = ({ usuario }: Props) => {
+  const cidade = (usuario.cidade ?? "").trim();
+
   return (
     <div className={styles.identidade}>
       {usuario.fotoUrl ? (
@@ -33,6 +36,20 @@ export const IdentidadePiloto = ({ usuario }: Props) => {
             <span>{usuario.moto}</span>
           </div>
         ) : null}
+        {cidade ? (
+          <div className={styles.cidadePiloto}>
+            <span className="material-symbols-outlined" aria-hidden>
+              location_on
+            </span>
+            <span>{cidade}</span>
+          </div>
+        ) : null}
+        <div className={styles.trajetoriaPiloto}>
+          <span className="material-symbols-outlined" aria-hidden>
+            sports_score
+          </span>
+          <span>{textoRolesRodados(usuario.rolesRodados ?? 0)}</span>
+        </div>
       </div>
     </div>
   );

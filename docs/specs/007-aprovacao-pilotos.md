@@ -7,7 +7,8 @@
 > **Padrões:** Next.js 15 App Router — Server Components por padrão, Client só com interatividade  
 > **Backend:** Cloud Function `api` (Express) — inbox do líder em `GET|PATCH /aprovacoes`  
 > **Coleção Firestore:** `usersrole` (vínculo usuário ↔ rolê, SPEC 005)  
-> **Depende de:** SPEC 001 (shell autenticado), SPEC 003 (feed + schema `roles`), SPEC 004 (rolê publicado), SPEC 005 (`usersrole` + pedido do piloto)
+> **Depende de:** SPEC 001 (shell autenticado), SPEC 003 (feed + schema `roles`), SPEC 004 (rolê publicado), SPEC 005 (`usersrole` + pedido do piloto)  
+> **Estendido por:** SPEC 021 — `cidade` + `rolesRodados` no card da fila (sem estrelas)
 
 ---
 

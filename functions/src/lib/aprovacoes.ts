@@ -13,6 +13,7 @@ import type {
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
 import type {UsuarioRole} from "../types/usuario-role";
+import {ePedidoAceito} from "./historico";
 
 const fallbackUsuario = (uid: string): UsuarioResumoSolicitacao => ({
   uid,
@@ -21,15 +22,22 @@ const fallbackUsuario = (uid: string): UsuarioResumoSolicitacao => ({
   fotoUrl: "",
   moto: "",
   pilotagem: "moderada",
+  cidade: "",
+  rolesRodados: 0,
 });
 
-const paraUsuarioResumo = (usuario: Usuario): UsuarioResumoSolicitacao => ({
+const paraUsuarioResumo = (
+  usuario: Usuario,
+  rolesRodados: number,
+): UsuarioResumoSolicitacao => ({
   uid: usuario.uid,
   nome: usuario.nome,
   apelido: usuario.apelido,
   fotoUrl: usuario.fotoUrl,
   moto: usuario.moto,
   pilotagem: usuario.pilotagem,
+  cidade: usuario.cidade ?? "",
+  rolesRodados,
 });
 
 const paraRoleResumo = (
@@ -51,14 +59,55 @@ export const jaDecidida = (pedido: UsuarioRole): boolean =>
   pedido.aceitoEm !== null ||
   pedido.recusadoEm !== null;
 
+const saidaPassou = (iso: string): boolean => Date.parse(iso) <= Date.now();
+
+const contarRolesRodadosPorUids = async (
+  uids: string[],
+): Promise<Map<string, number>> => {
+  const unicos = [...new Set(uids)].filter(Boolean);
+  const mapa = new Map<string, number>(unicos.map((uid) => [uid, 0]));
+  if (unicos.length === 0) {
+    return mapa;
+  }
+
+  const pedidosPorUid = await Promise.all(
+    unicos.map(async (uid) => ({
+      uid,
+      pedidos: await usuarioRoleRepository.listarPorUsuario(uid),
+    })),
+  );
+
+  const aceitos = pedidosPorUid.flatMap(({uid, pedidos}) =>
+    pedidos.filter(ePedidoAceito).map((p) => ({uid, roleId: p.roleId})),
+  );
+  if (aceitos.length === 0) {
+    return mapa;
+  }
+
+  const roles = await roleRepository.buscarPorIds([
+    ...new Set(aceitos.map((a) => a.roleId)),
+  ]);
+  const concluidos = new Set(
+    roles.filter((role) => saidaPassou(role.dataHoraSaida)).map((role) => role.id),
+  );
+
+  for (const {uid, roleId} of aceitos) {
+    if (concluidos.has(roleId)) {
+      mapa.set(uid, (mapa.get(uid) ?? 0) + 1);
+    }
+  }
+  return mapa;
+};
+
 const montarItem = (
   participacao: UsuarioRole,
   role: Role,
   usuario: Usuario | undefined,
   confirmados: number,
+  rolesRodados: number,
 ): SolicitacaoLider => {
   const resumoUsuario = usuario ?
-    paraUsuarioResumo(usuario) :
+    paraUsuarioResumo(usuario, rolesRodados) :
     fallbackUsuario(participacao.usuarioId);
   return {
     id: participacao.id,
@@ -72,15 +121,22 @@ const montarItem = (
 export const montarSolicitacaoLider = async (
   participacao: UsuarioRole,
 ): Promise<SolicitacaoLider | null> => {
-  const [usuario, role] = await Promise.all([
+  const [usuario, role, rolesRodadosPorUid] = await Promise.all([
     usuarioRepository.buscarPorId(participacao.usuarioId),
     roleRepository.buscarPorId(participacao.roleId),
+    contarRolesRodadosPorUids([participacao.usuarioId]),
   ]);
   if (!role) {
     return null;
   }
   const confirmados = await usuarioRoleRepository.contarConfirmados(role.id);
-  return montarItem(participacao, role, usuario ?? undefined, confirmados);
+  return montarItem(
+    participacao,
+    role,
+    usuario ?? undefined,
+    confirmados,
+    rolesRodadosPorUid.get(participacao.usuarioId) ?? 0,
+  );
 };
 
 export const montarFilaAprovacoes = async (
@@ -109,14 +165,18 @@ export const montarFilaAprovacoes = async (
 
   const confirmadosPorRole = new Map<string, number>();
   const roleIdsVisao = [...new Set(visao.map((p) => p.roleId))];
-  await Promise.all(
-    roleIdsVisao.map(async (roleId) => {
-      confirmadosPorRole.set(
-        roleId,
-        await usuarioRoleRepository.contarConfirmados(roleId),
-      );
-    }),
-  );
+  const uidsVisao = [...new Set(visao.map((p) => p.usuarioId))];
+  const [, rolesRodadosPorUid] = await Promise.all([
+    Promise.all(
+      roleIdsVisao.map(async (roleId) => {
+        confirmadosPorRole.set(
+          roleId,
+          await usuarioRoleRepository.contarConfirmados(roleId),
+        );
+      }),
+    ),
+    contarRolesRodadosPorUids(uidsVisao),
+  ]);
 
   const itens: SolicitacaoLider[] = [];
   for (const participacao of visao) {
@@ -130,6 +190,7 @@ export const montarFilaAprovacoes = async (
         role,
         usuariosMap.get(participacao.usuarioId),
         confirmadosPorRole.get(role.id) ?? 0,
+        rolesRodadosPorUid.get(participacao.usuarioId) ?? 0,
       ),
     );
   }

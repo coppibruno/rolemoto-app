@@ -3,6 +3,8 @@
 import { useMeusRoles } from "../hooks/useMeusRoles";
 import { useFiltrosMeusRoles } from "../hooks/useFiltrosMeusRoles";
 import { useAcaoParticipacaoGaragem } from "../hooks/useAcaoParticipacaoGaragem";
+import { useCancelarRole } from "../hooks/useCancelarRole";
+import { TOAST_ROLE_CANCELADO } from "../constants";
 import { AbasMeusRoles } from "./AbasMeusRoles";
 import { CabecalhoMeusRoles } from "./CabecalhoMeusRoles";
 import { EstadoCarregandoMeusRoles } from "./EstadoCarregandoMeusRoles";
@@ -12,6 +14,7 @@ import { IntroGaragem } from "./IntroGaragem";
 import { ListaMeusRoles } from "./ListaMeusRoles";
 import { SheetFiltrosMeusRoles } from "./SheetFiltrosMeusRoles";
 import { TelemetriaGaragem } from "./TelemetriaGaragem";
+import { ToastMeusRoles } from "./ToastMeusRoles";
 import type { ContagensMeusRoles } from "@/types/meus-roles";
 import styles from "../meus-roles.module.css";
 
@@ -22,7 +25,10 @@ export const TelaMeusRoles = () => {
   const { payload, carregando, erro, recarregar } = useMeusRoles();
   const filtros = useFiltrosMeusRoles(payload?.itens ?? []);
   const acao = useAcaoParticipacaoGaragem({ recarregar });
+  const cancelarRole = useCancelarRole({ recarregar });
   const vazio = !carregando && !erro && filtros.itensVisiveis.length === 0;
+  const processandoId = acao.processandoId ?? cancelarRole.processandoId;
+  const erroAcao = acao.erroAcao ?? cancelarRole.erro;
 
   return (
     <div className={styles.tela}>
@@ -38,9 +44,9 @@ export const TelaMeusRoles = () => {
           contagens={payload?.contagens ?? CONTAGENS_ZERO}
           onSelecionar={filtros.selecionarAba}
         />
-        {acao.erroAcao ? (
+        {erroAcao ? (
           <p className={styles.alertaAcao} role="alert">
-            {acao.erroAcao}
+            {erroAcao}
           </p>
         ) : null}
         {erro ? <EstadoErroMeusRoles onTentar={recarregar} /> : null}
@@ -51,8 +57,9 @@ export const TelaMeusRoles = () => {
         {!carregando && !erro && filtros.itensVisiveis.length > 0 ? (
           <ListaMeusRoles
             itens={filtros.itensVisiveis}
-            processandoId={acao.processandoId}
+            processandoId={processandoId}
             onAcao={acao.executar}
+            onCancelarRole={cancelarRole.executar}
           />
         ) : null}
       </div>
@@ -66,6 +73,12 @@ export const TelaMeusRoles = () => {
           onFechar={() => filtros.setSheetAberto(false)}
         />
       ) : null}
+      <ToastMeusRoles
+        visivel={cancelarRole.toast}
+        mensagem={TOAST_ROLE_CANCELADO}
+        duracaoMs={cancelarRole.toastMs}
+        onFechar={cancelarRole.fecharToast}
+      />
     </div>
   );
 };

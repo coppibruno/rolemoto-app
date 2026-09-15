@@ -14,9 +14,9 @@ import {
   TITULO_MAX,
   TITULO_MIN,
 } from "../constants";
-import { montarIsoSaida } from "../montar-iso-saida";
+import { montarIsoSaida, ymdSaoPauloDeIso } from "../montar-iso-saida";
 import { rolesService } from "../services/roles.service";
-import type { ErrosCriarRole, LocalizacaoForm } from "../types";
+import type { ErrosCriarRole, LocalizacaoForm, ModoCriarRole } from "../types";
 import { pedirPermissaoERegistrar } from "../../hooks/useRegistroFcm";
 import { useCampoLocalizacao } from "./useCampoLocalizacao";
 import { useFotoCapa } from "./useFotoCapa";
@@ -98,7 +98,10 @@ const validar = (campos: {
   return erros;
 };
 
-export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
+export const useFormularioCriarRole = (
+  modelo: RoleModelo | null,
+  modo: ModoCriarRole,
+) => {
   const router = useRouter();
   const { firebaseUser } = useAuth();
   const foto = useFotoCapa();
@@ -132,12 +135,14 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
     setDescricao(modelo.descricao);
     setRitmo(modelo.ritmo);
     setHoraSaida(HORA_RE.test(modelo.horaSaida) ? modelo.horaSaida : HORA_PADRAO);
-    setDataSaida("");
+    setDataSaida(
+      modo === "editar" ? ymdSaoPauloDeIso(modelo.dataHoraSaida) : "",
+    );
     partida.preencher(modelo.localSaida);
     destino.preencher(modelo.destinoFinal);
     foto.usarUrlExistente(modelo.fotoCapaUrl);
     setOrigemHidratada(modelo.roleIdOrigem);
-  }, [modelo, partida.preencher, destino.preencher, foto.usarUrlExistente]);
+  }, [modelo, modo, partida.preencher, destino.preencher, foto.usarUrlExistente]);
 
   const publicar = async (e: FormEvent) => {
     e.preventDefault();
@@ -161,7 +166,7 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
     setPublicando(true);
     try {
       const fotoCapaUrl = await foto.enviar(firebaseUser.uid);
-      await rolesService.criar({
+      const dados = {
         titulo: titulo.trim(),
         descricao: descricao.trim(),
         fotoCapaUrl,
@@ -179,18 +184,25 @@ export const useFormularioCriarRole = (modelo: RoleModelo | null) => {
           endereco: destino.valor.endereco.trim(),
           nome: destino.valor.nome.trim(),
         },
-      });
+      };
+      if (modo === "editar" && modelo) {
+        await rolesService.atualizar(modelo.roleIdOrigem, dados);
+      } else {
+        await rolesService.criar(dados);
+      }
       setSucesso(true);
       void pedirPermissaoERegistrar();
       redirectRef.current = window.setTimeout(() => {
-        router.push("/");
+        router.push(modo === "editar" ? "/meus-roles" : "/");
       }, REDIRECT_SUCESSO_MS);
     } catch (erro) {
       console.error(erro);
       const mensagem =
         erro instanceof ApiError
           ? erro.message
-          : "Erro ao publicar o rolê. Tente novamente.";
+          : modo === "editar"
+            ? "Erro ao salvar o rolê. Tente novamente."
+            : "Erro ao publicar o rolê. Tente novamente.";
       setErroGeral(mensagem);
       setPublicando(false);
     }

@@ -61,6 +61,8 @@ export type RoleModelo = {
   localSaida: Localizacao;
   destinoFinal: Localizacao;
   horaSaida: string;
+  /** ISO completo — clone ignora; edição pré-preenche data+hora */
+  dataHoraSaida: string;
 };
 
 export type RoleCreate = RolePublicacao & {criadorId: string};

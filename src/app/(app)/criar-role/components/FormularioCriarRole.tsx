@@ -15,33 +15,51 @@ import { FotoCapa } from "./FotoCapa";
 import { SeletorRitmo } from "./SeletorRitmo";
 import { ToastSucesso } from "./ToastSucesso";
 import {
+  FAIXA_CLONANDO,
+  FAIXA_EDITANDO,
   PLACEHOLDER_DESTINO,
   PLACEHOLDER_NOME_DESTINO,
   PLACEHOLDER_NOME_PARTIDA,
   PLACEHOLDER_PARTIDA,
 } from "../constants";
+import type { ModoCriarRole } from "../types";
 import styles from "../criar-role.module.css";
 
 type Props = {
   origemId?: string;
+  editarId?: string;
+  modo: ModoCriarRole;
 };
 
-export const FormularioCriarRole = ({ origemId }: Props) => {
-  const { modelo, carregando, erro, recarregar } = useModeloRole(origemId);
-  const form = useFormularioCriarRole(modelo);
-  const modoClone = Boolean(origemId);
+export const FormularioCriarRole = ({ origemId, editarId, modo }: Props) => {
+  const roleId = editarId ?? origemId;
+  const { modelo, carregando, erro, recarregar } = useModeloRole(roleId);
+  const form = useFormularioCriarRole(modelo, modo);
+  const precisaModelo = modo !== "criar";
 
-  if (modoClone && (carregando || form.hidratando)) {
+  if (precisaModelo && (carregando || form.hidratando)) {
     return <EstadoCarregandoModelo />;
   }
 
-  if (modoClone && erro) {
-    return <EstadoErroModelo erro={erro} onTentarDeNovo={recarregar} />;
+  if (precisaModelo && erro) {
+    return (
+      <EstadoErroModelo
+        erro={erro}
+        hrefVoltar={modo === "editar" ? "/meus-roles" : "/perfil"}
+        labelVoltar={modo === "editar" ? "Voltar aos meus rolês" : "Voltar ao perfil"}
+        onTentarDeNovo={recarregar}
+      />
+    );
   }
 
   return (
     <>
-      {modelo ? <FaixaClonando titulo={modelo.titulo} /> : null}
+      {modelo ? (
+        <FaixaClonando
+          rotulo={modo === "editar" ? FAIXA_EDITANDO : FAIXA_CLONANDO}
+          titulo={modelo.titulo}
+        />
+      ) : null}
       <form className={styles.formulario} onSubmit={form.publicar} noValidate>
         <CampoTitulo
           valor={form.titulo}
@@ -115,11 +133,11 @@ export const FormularioCriarRole = ({ origemId }: Props) => {
         ) : null}
 
         <div className={styles.acoes}>
-          <BotaoPublicar publicando={form.publicando} />
-          <BotaoCancelar desabilitado={form.publicando} modoClone={modoClone} />
+          <BotaoPublicar publicando={form.publicando} modo={modo} />
+          <BotaoCancelar desabilitado={form.publicando} modo={modo} />
         </div>
 
-        <ToastSucesso visivel={form.sucesso} modoClone={modoClone} />
+        <ToastSucesso visivel={form.sucesso} modo={modo} />
       </form>
     </>
   );

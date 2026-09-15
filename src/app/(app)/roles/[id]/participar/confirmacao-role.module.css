@@ -589,6 +589,13 @@
   max-width: 320px;
 }
 
+.estadoErro {
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--error);
+}
+
 .botaoEstado {
   min-height: var(--touch-min);
   margin-top: 8px;
@@ -621,6 +628,49 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
+}
+
+.acoesOrganizador {
+  display: flex;
+  width: 100%;
+  max-width: 360px;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.botaoEditarRole,
+.botaoExcluirRole {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  border-radius: 0.75rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botaoEditarRole {
+  border: none;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+}
+
+.botaoExcluirRole {
+  border: none;
+  background: transparent;
+  color: var(--error);
+}
+
+.botaoExcluirRole:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .skeleton {

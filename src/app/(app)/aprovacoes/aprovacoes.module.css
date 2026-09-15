@@ -289,6 +289,33 @@
   color: var(--primary-container);
 }
 
+.cidadePiloto,
+.trajetoriaPiloto {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.cidadePiloto {
+  font-weight: 400;
+  color: var(--on-surface-variant);
+}
+
+.trajetoriaPiloto {
+  font-weight: 500;
+  color: var(--on-surface);
+}
+
+.cidadePiloto .material-symbols-outlined,
+.trajetoriaPiloto .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--primary-container);
+}
+
 .badgePilotagem {
   display: inline-flex;
   align-items: center;

@@ -4,6 +4,7 @@ import { useCallback, useState, type FormEvent } from "react";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import type { Pilotagem, Usuario } from "@/types/user";
+import { CIDADE_MAX, CIDADE_MIN } from "../constants";
 import { perfilService } from "../services/perfil.service";
 import { useFotoPerfil } from "./useFotoPerfil";
 
@@ -11,6 +12,7 @@ export type ErrosEdicaoPerfil = {
   nome?: string;
   apelido?: string;
   moto?: string;
+  cidade?: string;
   foto?: string;
   pilotagem?: string;
 };
@@ -19,6 +21,7 @@ const validar = (campos: {
   nome: string;
   apelido: string;
   moto: string;
+  cidade: string;
   fotoUrlAtual: string;
   photoFile: File | null;
   pilotagem: Pilotagem | null;
@@ -27,6 +30,7 @@ const validar = (campos: {
   const nome = campos.nome.trim();
   const apelido = campos.apelido.trim();
   const moto = campos.moto.trim();
+  const cidade = campos.cidade.trim();
 
   if (!nome) erros.nome = "Informe o nome";
   else if (nome.length < 2) erros.nome = "Mínimo 2 caracteres";
@@ -36,6 +40,9 @@ const validar = (campos: {
 
   if (!moto) erros.moto = "Informe a moto";
   else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
+
+  if (cidade && cidade.length < CIDADE_MIN) erros.cidade = "Mínimo 2 caracteres";
+  else if (cidade.length > CIDADE_MAX) erros.cidade = "Máximo 80 caracteres";
 
   if (!campos.fotoUrlAtual.trim() && !campos.photoFile) {
     erros.foto = "Inclua uma foto de perfil";
@@ -55,6 +62,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
   const [nome, setNome] = useState(usuario.nome);
   const [apelido, setApelido] = useState(usuario.apelido);
   const [moto, setMoto] = useState(usuario.moto ?? "");
+  const [cidade, setCidade] = useState(usuario.cidade ?? "");
   const [garupaFrequente, setGarupaFrequente] = useState(
     Boolean(usuario.garupaFrequente),
   );
@@ -75,6 +83,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
       nome,
       apelido,
       moto,
+      cidade,
       fotoUrlAtual: foto.previewUrl,
       photoFile: foto.arquivo,
       pilotagem,
@@ -94,6 +103,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
         pilotagem,
         moto: moto.trim(),
         garupaFrequente,
+        cidade: cidade.trim(),
       });
       await recarregarPerfil();
       foto.limparArquivo();
@@ -120,6 +130,8 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     setApelido,
     moto,
     setMoto,
+    cidade,
+    setCidade,
     garupaFrequente,
     setGarupaFrequente,
     pilotagem,

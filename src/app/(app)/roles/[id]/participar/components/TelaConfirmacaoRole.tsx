@@ -25,6 +25,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
     erroAcao,
     voltarAoFeed,
     cancelarPedido,
+    cancelarRole,
   } = useConfirmacaoParticipacao(roleId);
 
   const preferencia = usePreferenciaNotificar(
@@ -41,8 +42,16 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
 
       {carregando ? <EstadoCarregando /> : null}
       {erro ? <EstadoErro mensagem={erro} onVoltar={voltarAoFeed} /> : null}
-      {estado === "organizador" ? (
-        <EstadoOrganizador roleId={roleId} onVoltar={voltarAoFeed} />
+      {estado === "organizador" && detalhe ? (
+        <EstadoOrganizador
+          roleId={roleId}
+          titulo={detalhe.titulo}
+          saidaFutura={Date.parse(detalhe.dataHoraSaida) > Date.now()}
+          cancelando={cancelando}
+          erroAcao={erroAcao}
+          onVoltar={voltarAoFeed}
+          onCancelarRole={cancelarRole}
+        />
       ) : null}
 
       {detalhe && estado && estado !== "organizador" ? (

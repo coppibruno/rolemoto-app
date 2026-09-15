@@ -23,16 +23,16 @@ const classificarErro = (erro: unknown): ErroModelo => {
   return { tipo: "rede", mensagem: ERRO_MODELO_REDE };
 };
 
-export const useModeloRole = (origemId: string | undefined) => {
+export const useModeloRole = (roleId: string | undefined) => {
   const [modelo, setModelo] = useState<RoleModelo | null>(null);
-  const [carregando, setCarregando] = useState(Boolean(origemId));
+  const [carregando, setCarregando] = useState(Boolean(roleId));
   const [erro, setErro] = useState<ErroModelo | null>(null);
   const [ticket, setTicket] = useState(0);
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
   useEffect(() => {
-    if (!origemId) {
+    if (!roleId) {
       setModelo(null);
       setCarregando(false);
       setErro(null);
@@ -45,7 +45,7 @@ export const useModeloRole = (origemId: string | undefined) => {
     setModelo(null);
 
     rolesService
-      .buscarModelo(origemId)
+      .buscarModelo(roleId)
       .then((resposta) => {
         if (cancelado) return;
         setModelo(resposta);
@@ -63,7 +63,7 @@ export const useModeloRole = (origemId: string | undefined) => {
     return () => {
       cancelado = true;
     };
-  }, [origemId, ticket]);
+  }, [roleId, ticket]);
 
   return { modelo, carregando, erro, recarregar };
 };

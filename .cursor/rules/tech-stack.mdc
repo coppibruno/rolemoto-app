@@ -11,11 +11,11 @@ alwaysApply: true
 - Responsivo e mobile-first (público principal usa celular)
 
 ## Backend / Serviços
-- **Firebase Authentication** — login social (Google, Facebook) e email/senha
+- **Firebase Authentication** — Google e e-mail/senha
 - **Firebase Cloud Functions** — API HTTP (Express, function `api`); persistência via repositórios
-- **Firebase Firestore** — banco NoSQL; só o adapter em `functions/src/repositories/firestore/` fala com ele
+- **Firebase Firestore** — banco NoSQL; só o adapter em `functions/src/repositories/firestore/` fala com ele. Client **deny-all**; escrita só via Functions
 - **Firebase Storage** — upload de fotos (perfil e rolês)
-- **Geolocalização** — API de geolocalização do navegador + integração com mapas
+- **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê
 
 ## Decisões de Arquitetura
 - Usar **Server Components** do Next.js onde possível, Client Components apenas quando necessário (interatividade, hooks de browser)
@@ -36,6 +36,7 @@ alwaysApply: true
   pilotagem: 'agressiva' | 'moderada' | 'tranquila',
   fotoUrl: string,
   cidade: string,
+  garupaFrequente: boolean,
   createdAt: timestamp
 }
 ```
@@ -44,25 +45,30 @@ alwaysApply: true
 ```
 {
   id: string,
-  criadorId: string,
+  titulo: string,
+  descricao: string,
+  fotoCapaUrl: string,
+  ritmo: 'tranquila' | 'moderada' | 'agressiva',
   dataHoraSaida: timestamp,
-  localSaida: { lat: number, lng: number, endereco: string },
-  destinoFinal: { lat: number, lng: number, endereco: string },
-  categoria: 'acelero' | 'moderado' | 'tranquilo',
-  categoriaMotos: 'ate300cc' | 'acima600cc' | 'todas',
-  fotoUrl: string,
-  participantes: string[],
-  createdAt: timestamp
+  localSaida: { lat: number, lng: number, endereco: string, nome: string },
+  destinoFinal: { lat: number, lng: number, endereco: string, nome: string },
+  criadorId: string,
+  createdAt: timestamp,
+  updatedAt: timestamp
 }
 ```
 
-### Coleção `solicitacoes`
+### Coleção `usersrole` (vínculo usuário ↔ rolê)
 ```
 {
-  id: string,
+  id: string,            // `{usuarioId}_{roleId}`
+  usuarioId: string,
   roleId: string,
-  userId: string,
-  status: 'pendente' | 'aceita' | 'recusada',
+  criadorId: string,
+  aceito: boolean,
+  notificar: boolean,
+  aceitoEm: timestamp | null,
+  recusadoEm: timestamp | null,
   createdAt: timestamp
 }
 ```

@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { Usuario } from "@/types/user";
 import { useFormularioPerfil } from "../hooks/useFormularioPerfil";
+import { HINT_CIDADE } from "../constants";
 import { CampoTexto } from "./CampoTexto";
 import { CartaoIdentidade } from "./CartaoIdentidade";
 import { SecaoGaragem } from "./SecaoGaragem";
@@ -70,6 +71,18 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
         onGarupa={form.setGarupaFrequente}
         erroMoto={form.erros.moto}
         desabilitado={form.salvando}
+      />
+
+      <CampoTexto
+        id="cidade"
+        label="Cidade"
+        hint={HINT_CIDADE}
+        icone="location_city"
+        valor={form.cidade}
+        onChange={form.setCidade}
+        erro={form.erros.cidade}
+        desabilitado={form.salvando}
+        autoComplete="address-level2"
       />
 
       <SeletorPilotagem

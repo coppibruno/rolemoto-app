@@ -207,4 +207,26 @@ export class FirestoreUsuarioRoleRepository implements UsuarioRoleRepository {
     await ref.delete();
     return true;
   }
+
+  async removerPorRoleId(roleId: string): Promise<number> {
+    const LIMITE_BATCH = 400;
+    let removidos = 0;
+    let temMais = true;
+    while (temMais) {
+      const snap = await firestore
+        .collection(COLECAO)
+        .where("roleId", "==", roleId)
+        .limit(LIMITE_BATCH)
+        .get();
+      if (snap.empty) {
+        break;
+      }
+      const batch = firestore.batch();
+      snap.docs.forEach((doc) => batch.delete(doc.ref));
+      await batch.commit();
+      removidos += snap.size;
+      temMais = snap.size === LIMITE_BATCH;
+    }
+    return removidos;
+  }
 }

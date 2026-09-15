@@ -16,26 +16,27 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 ## Funcionalidades Principais
 
 ### 1. Autenticação (Firebase Auth)
-- Login social (Google, Facebook) para entrada rápida
-- Após primeiro login, completar perfil: **apelido, moto, cidade, foto**
+- Login com **Google** e **e-mail/senha**
+- Após o primeiro login, completar perfil: **apelido, moto, ritmo/pilotagem, foto, garupa**. Cidade é opcional no perfil (aparece na fila de aprovação)
 
 ### 2. Feed de Rolês
-- Listagem de rolês disponíveis com geolocalização
-- Filtros: **data**, **distância**, **categoria de moto** (até 300cc, acima de 600cc, etc.)
-- Visualização no mapa e em lista
+- Listagem de rolês disponíveis com geolocalização (raio a partir da posição do piloto)
+- Filtros: **data**, **distância**, **ritmo** (`tranquila` | `moderada` | `agressiva`)
+- Visualização em **lista** (mapa no feed é evolução futura)
 - Solicitar participação em um rolê (sujeito à aprovação do criador)
 
 ### 3. Criação de Rolês
 - Qualquer usuário pode criar rolês com:
-  - **Data e local de saída**
+  - **Título, data/hora e local de saída**
   - **Destino final**
-  - **Categoria**: acelero, moderado, tranquilo
-  - **Foto do rolê**
+  - **Ritmo**: `tranquila` | `moderada` | `agressiva`
+  - **Foto de capa**
 - O criador gerencia as solicitações de participação (aceitar/recusar)
+- O líder pode **editar** e **cancelar** rolê futuro (Meus Rolês / detalhe)
 
 ### 4. Perfil do Usuário
-- Apelido, moto, cidade, foto
-- Histórico de rolês participados e criados
+- Apelido, moto, ritmo/pilotagem, foto, garupa, cidade (opcional)
+- Histórico de pistas (SPEC 008), Meus Rolês (SPEC 017), fila de aprovações (SPEC 007)
 
 ## Modelo de Negócio
 

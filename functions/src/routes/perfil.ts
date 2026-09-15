@@ -55,6 +55,17 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
     return {ok: false, erro: "pilotagem inválida"};
   }
 
+  let cidadeBruta = "";
+  if (bruto.cidade !== undefined && bruto.cidade !== null) {
+    if (typeof bruto.cidade !== "string") {
+      return {ok: false, erro: "cidade inválida"};
+    }
+    cidadeBruta = bruto.cidade.trim();
+  }
+  if (cidadeBruta.length > 0 && (cidadeBruta.length < 2 || cidadeBruta.length > 80)) {
+    return {ok: false, erro: "cidade deve ter entre 2 e 80 caracteres"};
+  }
+
   return {
     ok: true,
     dados: {
@@ -64,6 +75,7 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
       pilotagem: pilotagem as Pilotagem,
       moto,
       garupaFrequente: bruto.garupaFrequente,
+      cidade: cidadeBruta,
     },
   };
 };

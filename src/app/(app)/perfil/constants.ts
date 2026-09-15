@@ -7,6 +7,9 @@ export {
   TIPOS_FOTO_ACEITOS,
 } from "@/lib/storage";
 export const TOAST_MS = 3500;
+export const CIDADE_MIN = 2;
+export const CIDADE_MAX = 80;
+export const HINT_CIDADE = "opcional · aparece na fila de aprovação";
 
 export type OpcaoPilotagem = {
   valor: Pilotagem;

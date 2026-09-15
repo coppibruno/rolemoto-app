@@ -73,8 +73,20 @@ export const hrefMeuRole = (item: MeuRoleItem): string => {
 export const hrefClonarRole = (roleId: string): string =>
   `/criar-role?origem=${encodeURIComponent(roleId)}`;
 
+export const hrefEditarRole = (roleId: string): string =>
+  `/criar-role?editar=${encodeURIComponent(roleId)}`;
+
+export const saidaFutura = (iso: string): boolean => Date.parse(iso) > Date.now();
+
 export const confirmDesistir = (titulo: string): string =>
   `Deseja desistir da vaga em ${titulo}?`;
 
 export const confirmCancelar = (titulo: string): string =>
   `Deseja cancelar a solicitação para o rolê ${titulo}?`;
+
+export const confirmCancelarRole = (titulo: string): string =>
+  `Cancelar “${titulo}”? Os pilotos aceitos serão notificados e o rolê some do feed.`;
+
+export const ERRO_CANCELAR_ROLE = "Não foi possível cancelar o rolê.";
+export const TOAST_ROLE_CANCELADO = "Rolê cancelado.";
+export const TOAST_MEUS_ROLES_MS = 3500;

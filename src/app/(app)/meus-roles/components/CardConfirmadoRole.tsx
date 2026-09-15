@@ -2,15 +2,18 @@ import Link from "next/link";
 import type { MeuRoleItem } from "@/types/meus-roles";
 import { BotaoCompartilharRole } from "@/app/(app)/feed/components/BotaoCompartilharRole";
 import { formatarHora, formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
-import { hrefMeuRole } from "../constants";
+import { hrefMeuRole, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
+import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
 import styles from "../meus-roles.module.css";
 
 type Props = {
   item: MeuRoleItem;
+  cancelando?: boolean;
+  onCancelarRole?: () => void;
 };
 
-export const CardConfirmadoRole = ({ item }: Props) => {
+export const CardConfirmadoRole = ({ item, cancelando, onCancelarRole }: Props) => {
   const extras = Math.max(0, item.participantes.confirmados - item.participantes.destaques.length);
   const destino = hrefMeuRole(item);
 
@@ -57,6 +60,14 @@ export const CardConfirmadoRole = ({ item }: Props) => {
           <BotaoCompartilharRole dados={dadosConviteDe(item)} />
         </div>
       </div>
+      {item.status === "lider" && saidaFutura(item.dataHoraSaida) && onCancelarRole ? (
+        <AcoesOrganizadorRole
+          roleId={item.roleId}
+          titulo={item.titulo}
+          cancelando={Boolean(cancelando)}
+          onCancelar={onCancelarRole}
+        />
+      ) : null}
     </article>
   );
 };

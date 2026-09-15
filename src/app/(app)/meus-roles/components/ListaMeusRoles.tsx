@@ -9,9 +9,15 @@ type Props = {
   itens: MeuRoleItem[];
   processandoId: string | null;
   onAcao: (item: MeuRoleItem, tipo: "desistir" | "cancelar") => void;
+  onCancelarRole: (item: MeuRoleItem) => void;
 };
 
-export const ListaMeusRoles = ({ itens, processandoId, onAcao }: Props) => {
+export const ListaMeusRoles = ({
+  itens,
+  processandoId,
+  onAcao,
+  onCancelarRole,
+}: Props) => {
   const primeiro = itens[0];
   const usaHero =
     primeiro && (primeiro.status === "confirmado" || primeiro.status === "lider");
@@ -24,6 +30,7 @@ export const ListaMeusRoles = ({ itens, processandoId, onAcao }: Props) => {
           item={primeiro}
           processando={processandoId === primeiro.roleId}
           onDesistir={() => onAcao(primeiro, "desistir")}
+          onCancelarRole={() => onCancelarRole(primeiro)}
         />
       ) : null}
       {resto.map((item) => {
@@ -40,7 +47,14 @@ export const ListaMeusRoles = ({ itens, processandoId, onAcao }: Props) => {
         if (item.status === "concluido") {
           return <CardConcluidoRole key={item.roleId} item={item} />;
         }
-        return <CardConfirmadoRole key={item.roleId} item={item} />;
+        return (
+          <CardConfirmadoRole
+            key={item.roleId}
+            item={item}
+            cancelando={processandoId === item.roleId}
+            onCancelarRole={() => onCancelarRole(item)}
+          />
+        );
       })}
     </div>
   );

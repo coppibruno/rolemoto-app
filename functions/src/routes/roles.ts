@@ -11,6 +11,7 @@ import {
   reagendarLembretesDoRole,
 } from "../lib/lembretes";
 import {log} from "../lib/log";
+import {notificarCancelamentoRole} from "../lib/notificacoes";
 import {horaSaoPaulo, resolverIntervaloQuando} from "../lib/quando";
 import {validarQueryRoles} from "../lib/roles-query";
 import {
@@ -28,7 +29,6 @@ import type {
   RoleFeedItem,
   RoleModelo,
   RolePublicacao,
-  RoleUpdate,
   RitmoRole,
 } from "../types/role";
 
@@ -246,22 +246,6 @@ const validarBodyCriacao = (
   };
 };
 
-const camposUpdate = (body: Partial<Role>): RoleUpdate => {
-  const dados: RoleUpdate = {};
-  if (typeof body.titulo === "string") dados.titulo = body.titulo;
-  if (typeof body.descricao === "string") dados.descricao = body.descricao;
-  if (typeof body.fotoCapaUrl === "string") dados.fotoCapaUrl = body.fotoCapaUrl;
-  if (isRitmo(body.ritmo)) dados.ritmo = body.ritmo;
-  if (typeof body.dataHoraSaida === "string") {
-    dados.dataHoraSaida = body.dataHoraSaida;
-  }
-  const localSaida = parseLocalizacao(body.localSaida);
-  if (localSaida) dados.localSaida = localSaida;
-  const destinoFinal = parseLocalizacao(body.destinoFinal);
-  if (destinoFinal) dados.destinoFinal = destinoFinal;
-  return dados;
-};
-
 rolesRouter.get("/", async (req: Request, res: Response) => {
   try {
     const query = validarQueryRoles(req);
@@ -320,7 +304,7 @@ rolesRouter.get("/:id/modelo", async (req: Request, res: Response) => {
     }
     if (!isDonoOuAdmin(usuario, role.criadorId)) {
       res.status(403).json({
-        erro: "Apenas o criador pode clonar este rolê",
+        erro: "Apenas o criador pode clonar ou editar este rolê",
       });
       return;
     }
@@ -334,6 +318,7 @@ rolesRouter.get("/:id/modelo", async (req: Request, res: Response) => {
       localSaida: role.localSaida,
       destinoFinal: role.destinoFinal,
       horaSaida: horaSaoPaulo(role.dataHoraSaida),
+      dataHoraSaida: role.dataHoraSaida,
     };
     res.json(modelo);
   } catch (error) {
@@ -413,17 +398,26 @@ rolesRouter.put("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const body = camposUpdate(req.body as Partial<Role>);
-    const atualizado = await roleRepository.atualizar(id, body);
+    if (Date.parse(existente.dataHoraSaida) <= Date.now()) {
+      res.status(409).json({erro: "Não dá para editar um rolê que já saiu"});
+      return;
+    }
+
+    const validado = validarBodyCriacao(
+      (req.body ?? {}) as Record<string, unknown>,
+    );
+    if (!validado.ok) {
+      res.status(400).json({erro: validado.erro});
+      return;
+    }
+
+    const atualizado = await roleRepository.atualizar(id, validado.dados);
     if (!atualizado) {
       res.status(404).json({erro: "Rolê não encontrado"});
       return;
     }
 
-    if (
-      body.dataHoraSaida &&
-      body.dataHoraSaida !== existente.dataHoraSaida
-    ) {
+    if (validado.dados.dataHoraSaida !== existente.dataHoraSaida) {
       const aceitos = await usuarioRoleRepository.listarConfirmadosDoRole(
         id,
         100,
@@ -479,11 +473,22 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
     const userIds = aceitos.map((p) => p.usuarioId);
     await cancelarLembretesDoRole(id, userIds, existente.criadorId);
 
+    const notificar = aceitos
+      .map((p) => p.usuarioId)
+      .filter((uid) => uid && uid !== existente.criadorId);
+    await Promise.all(
+      notificar.map((uid) =>
+        notificarCancelamentoRole(uid, id, existente.titulo),
+      ),
+    );
+
+    const vinculosRemovidos = await usuarioRoleRepository.removerPorRoleId(id);
     await roleRepository.remover(id);
     log.info("Role", "Rolê removido", {
       roleId: id,
       criadorId: existente.criadorId,
       lembretesCancelados: userIds.length + 1,
+      vinculosRemovidos,
     });
     res.status(204).send();
   } catch (error) {

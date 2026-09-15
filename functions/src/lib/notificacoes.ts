@@ -3,7 +3,11 @@ import { dispositivoRepository } from "../repositories";
 import { origemApp } from "./origem";
 import { erroDe, log } from "./log";
 
-export type TipoPush = "pedido_vaga" | "aceite_vaga" | "lembrete_role";
+export type TipoPush =
+  | "pedido_vaga"
+  | "aceite_vaga"
+  | "lembrete_role"
+  | "cancelamento_role";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -147,6 +151,20 @@ export const notificarLembrete = async (
     title: COPY.lembrete_role,
     body: titulo,
     url: `/roles/${roleId}/participar`,
+    roleId,
+  });
+};
+
+export const notificarCancelamentoRole = async (
+  usuarioId: string,
+  roleId: string,
+  titulo: string,
+): Promise<void> => {
+  await enviar(usuarioId, {
+    tipo: "cancelamento_role",
+    title: "Rolê cancelado",
+    body: `${titulo} foi cancelado pelo organizador.`,
+    url: "/meus-roles",
     roleId,
   });
 };

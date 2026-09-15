@@ -6,10 +6,17 @@ import styles from "../criar-role.module.css";
 
 type Props = {
   erro: ErroModelo;
+  hrefVoltar: string;
+  labelVoltar: string;
   onTentarDeNovo: () => void;
 };
 
-export const EstadoErroModelo = ({ erro, onTentarDeNovo }: Props) => {
+export const EstadoErroModelo = ({
+  erro,
+  hrefVoltar,
+  labelVoltar,
+  onTentarDeNovo,
+}: Props) => {
   const icone = erro.tipo === "rede" ? "warning" : "explore_off";
 
   return (
@@ -25,8 +32,8 @@ export const EstadoErroModelo = ({ erro, onTentarDeNovo }: Props) => {
           Tentar de novo
         </button>
       ) : (
-        <Link href="/perfil" className={styles.botaoTentar}>
-          Voltar ao perfil
+        <Link href={hrefVoltar} className={styles.botaoTentar}>
+          {labelVoltar}
         </Link>
       )}
     </div>

@@ -24,6 +24,7 @@ export interface UsuarioRoleRepository {
     limite: number,
   ): Promise<UsuarioRole[]>;
   listarPorUsuario(usuarioId: string): Promise<UsuarioRole[]>;
+  removerPorRoleId(roleId: string): Promise<number>;
   criar(dados: UsuarioRoleCreate): Promise<UsuarioRole>;
   atualizarNotificar(
     id: string,

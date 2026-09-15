@@ -2,19 +2,42 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { TITULO_PAGINA, TITULO_PAGINA_CLONE } from "../constants";
+import {
+  TITULO_PAGINA,
+  TITULO_PAGINA_CLONE,
+  TITULO_PAGINA_EDITAR,
+} from "../constants";
+import type { ModoCriarRole } from "../types";
 import styles from "../criar-role.module.css";
 
 type Props = {
   fotoUrl: string;
   nome: string;
-  modoClone?: boolean;
+  modo: ModoCriarRole;
 };
 
-export const CabecalhoCriarRole = ({ fotoUrl, nome, modoClone }: Props) => {
-  const hrefVoltar = modoClone ? "/perfil" : "/";
-  const ariaVoltar = modoClone ? "Voltar para o perfil" : "Voltar para os rolês";
-  const titulo = modoClone ? TITULO_PAGINA_CLONE : TITULO_PAGINA;
+const TITULOS: Record<ModoCriarRole, string> = {
+  criar: TITULO_PAGINA,
+  clonar: TITULO_PAGINA_CLONE,
+  editar: TITULO_PAGINA_EDITAR,
+};
+
+const hrefVoltarDe = (modo: ModoCriarRole): string => {
+  if (modo === "editar") return "/meus-roles";
+  if (modo === "clonar") return "/perfil";
+  return "/";
+};
+
+const ariaVoltarDe = (modo: ModoCriarRole): string => {
+  if (modo === "editar") return "Voltar para meus rolês";
+  if (modo === "clonar") return "Voltar para o perfil";
+  return "Voltar para os rolês";
+};
+
+export const CabecalhoCriarRole = ({ fotoUrl, nome, modo }: Props) => {
+  const hrefVoltar = hrefVoltarDe(modo);
+  const titulo = TITULOS[modo];
+  const destaque = modo !== "criar";
 
   return (
     <header className={styles.cabecalho}>
@@ -23,7 +46,7 @@ export const CabecalhoCriarRole = ({ fotoUrl, nome, modoClone }: Props) => {
           <Link
             href={hrefVoltar}
             className={styles.botaoVoltar}
-            aria-label={ariaVoltar}
+            aria-label={ariaVoltarDe(modo)}
           >
             <span className="material-symbols-outlined">arrow_back_ios_new</span>
           </Link>
@@ -37,7 +60,7 @@ export const CabecalhoCriarRole = ({ fotoUrl, nome, modoClone }: Props) => {
           />
           <h1
             className={`${styles.tituloPagina} ${
-              modoClone ? styles.tituloPaginaClone : ""
+              destaque ? styles.tituloPaginaClone : ""
             }`}
           >
             {titulo}

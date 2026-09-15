@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/lib/api";
 import type { RoleDetalhe, UsuarioRole } from "@/types/role";
-import {
-  ERRO_CANCELAR,
-  ERRO_GENERICO,
-  ERRO_ROLE_NAO_ENCONTRADO,
-} from "../constants";
+import { ERRO_CANCELAR, ERRO_GENERICO, ERRO_ROLE_NAO_ENCONTRADO } from "../constants";
 import { participacaoService } from "../services/participacao.service";
+import { rolesService } from "@/app/(app)/criar-role/services/roles.service";
+import { confirmCancelarRole, ERRO_CANCELAR_ROLE } from "@/app/(app)/meus-roles/constants";
 import type { EstadoSheet } from "../types";
 
 const derivarEstado = (pedido: UsuarioRole): EstadoSheet => {
@@ -127,6 +125,24 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     }
   }, [cancelando, detalhe, roleId, router]);
 
+  const cancelarRole = useCallback(async () => {
+    if (!detalhe || cancelando) return;
+    if (!window.confirm(confirmCancelarRole(detalhe.titulo))) return;
+
+    setCancelando(true);
+    setErroAcao(null);
+    try {
+      await rolesService.excluir(roleId);
+      router.push("/meus-roles");
+    } catch (falha) {
+      console.error(falha);
+      setErroAcao(
+        falha instanceof ApiError ? falha.message : ERRO_CANCELAR_ROLE,
+      );
+      setCancelando(false);
+    }
+  }, [cancelando, detalhe, roleId, router]);
+
   return {
     carregando,
     cancelando,
@@ -136,5 +152,6 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     erroAcao,
     voltarAoFeed,
     cancelarPedido,
+    cancelarRole,
   };
 };

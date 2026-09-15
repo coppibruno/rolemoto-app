@@ -26,4 +26,6 @@ export type ErroModelo = {
   mensagem: string;
 };
 
+export type ModoCriarRole = "criar" | "clonar" | "editar";
+
 export type { RitmoRole };

@@ -50,4 +50,5 @@ export type UsuarioEdicao = {
   pilotagem: Pilotagem;
   moto: string;
   garupaFrequente: boolean;
+  cidade: string;
 };

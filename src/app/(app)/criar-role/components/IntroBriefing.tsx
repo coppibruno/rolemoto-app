@@ -1,16 +1,31 @@
 import {
   INTRO_SUBTITULO,
   INTRO_SUBTITULO_CLONE,
+  INTRO_SUBTITULO_EDITAR,
   INTRO_TITULO,
   INTRO_TITULO_CLONE,
+  INTRO_TITULO_EDITAR,
 } from "../constants";
+import type { ModoCriarRole } from "../types";
 import styles from "../criar-role.module.css";
 
 type Props = {
-  modoClone?: boolean;
+  modo: ModoCriarRole;
 };
 
-export const IntroBriefing = ({ modoClone }: Props) => {
+const TITULOS: Record<ModoCriarRole, string> = {
+  criar: INTRO_TITULO,
+  clonar: INTRO_TITULO_CLONE,
+  editar: INTRO_TITULO_EDITAR,
+};
+
+const SUBTITULOS: Record<ModoCriarRole, string> = {
+  criar: INTRO_SUBTITULO,
+  clonar: INTRO_SUBTITULO_CLONE,
+  editar: INTRO_SUBTITULO_EDITAR,
+};
+
+export const IntroBriefing = ({ modo }: Props) => {
   return (
     <div className={styles.intro}>
       <div className={styles.introTopo}>
@@ -20,12 +35,8 @@ export const IntroBriefing = ({ modoClone }: Props) => {
         </div>
         <span className={styles.badgePasso}>Passo 1 de 1</span>
       </div>
-      <h2 className={styles.introTitulo}>
-        {modoClone ? INTRO_TITULO_CLONE : INTRO_TITULO}
-      </h2>
-      <p className={styles.introSubtitulo}>
-        {modoClone ? INTRO_SUBTITULO_CLONE : INTRO_SUBTITULO}
-      </p>
+      <h2 className={styles.introTitulo}>{TITULOS[modo]}</h2>
+      <p className={styles.introSubtitulo}>{SUBTITULOS[modo]}</p>
     </div>
   );
 };

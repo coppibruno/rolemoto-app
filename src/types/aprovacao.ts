@@ -11,6 +11,8 @@ export type UsuarioResumoSolicitacao = {
   fotoUrl: string;
   moto: string;
   pilotagem: Pilotagem;
+  cidade: string;
+  rolesRodados: number;
 };
 
 export type RoleResumoSolicitacao = {

@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import type { ModoCriarRole } from "../types";
 import styles from "../criar-role.module.css";
 
 type Props = {
   desabilitado?: boolean;
-  modoClone?: boolean;
+  modo: ModoCriarRole;
 };
 
-export const BotaoCancelar = ({ desabilitado, modoClone }: Props) => {
+const hrefDe = (modo: ModoCriarRole): string => {
+  if (modo === "editar") return "/meus-roles";
+  if (modo === "clonar") return "/perfil";
+  return "/";
+};
+
+export const BotaoCancelar = ({ desabilitado, modo }: Props) => {
   return (
     <Link
-      href={modoClone ? "/perfil" : "/"}
+      href={hrefDe(modo)}
       className={`${styles.botaoCancelar} ${
         desabilitado ? styles.botaoCancelarDesabilitado : ""
       }`}

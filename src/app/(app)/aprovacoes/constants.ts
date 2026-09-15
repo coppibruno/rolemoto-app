@@ -31,6 +31,12 @@ export const rotuloPilotos = (n: number): string =>
 export const rotuloRoles = (n: number): string =>
   n === 1 ? "1 rolê" : `${n} rolês`;
 
+export const textoRolesRodados = (n: number): string => {
+  if (n <= 0) return "Ainda não rodou";
+  if (n === 1) return "Já rodou 1 rolê";
+  return `Já rodou ${n} rolês`;
+};
+
 export const toastAceite = (nome: string): string =>
   `${nome} foi aceito no comboio. O piloto será notificado.`;
 

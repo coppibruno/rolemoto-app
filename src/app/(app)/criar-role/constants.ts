@@ -26,22 +26,32 @@ export const PLACEHOLDER_DESCRICAO =
 
 export const TITULO_PAGINA = "Criar Rolê";
 export const TITULO_PAGINA_CLONE = "Clonar Rolê";
+export const TITULO_PAGINA_EDITAR = "Editar Rolê";
 export const INTRO_TITULO = "Organizar Novo Rolê";
 export const INTRO_TITULO_CLONE = "Mesma pista, nova data";
+export const INTRO_TITULO_EDITAR = "Ajustar a rota";
 export const INTRO_SUBTITULO =
   "Defina a rota, o ritmo e convoque os pilotos pro asfalto.";
 export const INTRO_SUBTITULO_CLONE =
   "Rota, ritmo e capa vêm do rolê original. Escolha o dia da próxima saída.";
+export const INTRO_SUBTITULO_EDITAR =
+  "Altere o que precisar e salve. Os pilotos já aceitos mantêm a vaga.";
 export const FAIXA_CLONANDO = "Clonando rota";
+export const FAIXA_EDITANDO = "Editando rota";
 export const TOAST_TITULO = "Rolê Criado com Sucesso!";
 export const TOAST_TITULO_CLONE = "Rolê clonado com sucesso!";
+export const TOAST_TITULO_EDITAR = "Rolê atualizado!";
 export const TOAST_SUBTITULO =
   "Comboio aberto para os pilotos confirmarem presença.";
 export const BADGE_CAPA = "Capa Atualizada";
 export const BADGE_CAPA_ORIGINAL = "Capa do original";
-export const ERRO_MODELO_403 = "Só o piloto líder pode clonar este rolê.";
+export const ERRO_MODELO_403 = "Só o piloto líder pode usar esta rota.";
 export const ERRO_MODELO_404 = "Não encontramos este rolê.";
-export const ERRO_MODELO_REDE = "Não foi possível carregar a rota original.";
+export const ERRO_MODELO_REDE = "Não foi possível carregar a rota.";
+export const CTA_PUBLICAR = "Publicar Rolê";
+export const CTA_PUBLICANDO = "Publicando...";
+export const CTA_SALVAR = "Salvar alterações";
+export const CTA_SALVANDO = "Salvando...";
 
 export type OpcaoRitmo = {
   valor: RitmoRole;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import type { ModoCriarRole } from "../types";
 import { CabecalhoCriarRole } from "./CabecalhoCriarRole";
 import { FormularioCriarRole } from "./FormularioCriarRole";
 import { IntroBriefing } from "./IntroBriefing";
@@ -8,11 +9,12 @@ import styles from "../criar-role.module.css";
 
 type Props = {
   origemId?: string;
+  editarId?: string;
 };
 
-export const TelaCriarRole = ({ origemId }: Props) => {
+export const TelaCriarRole = ({ origemId, editarId }: Props) => {
   const { usuario } = useAuth();
-  const modoClone = Boolean(origemId);
+  const modo: ModoCriarRole = editarId ? "editar" : origemId ? "clonar" : "criar";
 
   if (!usuario) {
     return null;
@@ -23,10 +25,10 @@ export const TelaCriarRole = ({ origemId }: Props) => {
       <CabecalhoCriarRole
         fotoUrl={usuario.fotoUrl}
         nome={usuario.nome}
-        modoClone={modoClone}
+        modo={modo}
       />
-      <IntroBriefing modoClone={modoClone} />
-      <FormularioCriarRole origemId={origemId} />
+      <IntroBriefing modo={modo} />
+      <FormularioCriarRole origemId={origemId} editarId={editarId} modo={modo} />
     </div>
   );
 };

@@ -50,3 +50,14 @@ export const hojeYmdSaoPaulo = (): string =>
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
+
+export const ymdSaoPauloDeIso = (iso: string): string => {
+  const instante = new Date(iso);
+  if (Number.isNaN(instante.getTime())) return "";
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(instante);
+};

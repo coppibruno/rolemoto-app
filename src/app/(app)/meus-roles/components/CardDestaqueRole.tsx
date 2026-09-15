@@ -2,17 +2,24 @@ import Link from "next/link";
 import type { MeuRoleItem } from "@/types/meus-roles";
 import { BotaoCompartilharRole } from "@/app/(app)/feed/components/BotaoCompartilharRole";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
-import { hrefMeuRole, LABELS_RITMO } from "../constants";
+import { hrefMeuRole, LABELS_RITMO, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
+import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
 import styles from "../meus-roles.module.css";
 
 type Props = {
   item: MeuRoleItem;
   processando: boolean;
   onDesistir: () => void;
+  onCancelarRole: () => void;
 };
 
-export const CardDestaqueRole = ({ item, processando, onDesistir }: Props) => {
+export const CardDestaqueRole = ({
+  item,
+  processando,
+  onDesistir,
+  onCancelarRole,
+}: Props) => {
   const lider = item.status === "lider";
   const destino = hrefMeuRole(item);
 
@@ -77,6 +84,14 @@ export const CardDestaqueRole = ({ item, processando, onDesistir }: Props) => {
           >
             Desistir da vaga
           </button>
+        ) : null}
+        {lider && saidaFutura(item.dataHoraSaida) ? (
+          <AcoesOrganizadorRole
+            roleId={item.roleId}
+            titulo={item.titulo}
+            cancelando={processando}
+            onCancelar={onCancelarRole}
+          />
         ) : null}
       </div>
     </article>

@@ -1,19 +1,16 @@
-import { FAIXA_CLONANDO } from "../constants";
 import styles from "../criar-role.module.css";
 
 type Props = {
+  rotulo: string;
   titulo: string;
 };
 
-export const FaixaClonando = ({ titulo }: Props) => {
+export const FaixaClonando = ({ rotulo, titulo }: Props) => {
   return (
-    <div
-      className={styles.faixaClonando}
-      aria-label={`${FAIXA_CLONANDO}: ${titulo}`}
-    >
+    <div className={styles.faixaClonando} aria-label={`${rotulo}: ${titulo}`}>
       <div className={styles.faixaCabecalho}>
         <span className={styles.faixaBarra} aria-hidden />
-        <span className={styles.faixaRotulo}>{FAIXA_CLONANDO}</span>
+        <span className={styles.faixaRotulo}>{rotulo}</span>
       </div>
       <p className={styles.faixaTituloOriginal}>{titulo}</p>
     </div>

@@ -7,7 +7,8 @@
 > **Padrões:** Next.js 15 App Router — Server Components por padrão, Client só com interatividade  
 > **Backend:** Cloud Function `api` (Express) — `GET /meus-roles` autenticado  
 > **Coleções Firestore:** `usersrole` (SPEC 005) + `roles` (SPEC 003 / 004) + `users` (resumo do líder e avatares)  
-> **Depende de:** SPEC 001 (shell + dock), SPEC 003 (schema `roles` + feed), SPEC 004 (rolê publicado), SPEC 005 (`usersrole` + `DELETE /roles/:id/participacao`), SPEC 007 (`/aprovacoes`), SPEC 008 (`GET /perfil/historico` — **não** reutilizar o DTO), SPEC 009 (clonar na aba Concluídos se for líder), SPEC 011 (perfil obrigatório)
+> **Depende de:** SPEC 001 (shell + dock), SPEC 003 (schema `roles` + feed), SPEC 004 (rolê publicado), SPEC 005 (`usersrole` + `DELETE /roles/:id/participacao`), SPEC 007 (`/aprovacoes`), SPEC 008 (`GET /perfil/historico` — **não** reutilizar o DTO), SPEC 009 (clonar na aba Concluídos se for líder), SPEC 011 (perfil obrigatório)  
+> **Estendido por:** SPEC 021 — editar/cancelar rolê futuro do líder
 
 ---
 
@@ -734,7 +735,7 @@ Não inflar `types/historico-pistas.ts`.
 - Remover ou redesenhar o Histórico de Pistas do `/perfil`.
 - Renomear o item **Fila** do dock.
 - Push novo (SPEC 013 já cobre aceite / pedido).
-- Editar rolê, apagar rolê, mapa.
+- ~~Editar rolê, apagar rolê~~ — SPEC 021 (só rolê futuro do líder). Mapa continua fora.
 - Filtro por texto / data no tune (só ritmo e papel).
 - Server Component fetch / `unstable_cache` (lista autenticada).
 
