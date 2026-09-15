@@ -1,12 +1,10 @@
 /**
  * Cliente HTTP da Cloud Function `api`.
  *
- * Envia o ID token do Firebase Auth em `Authorization: Bearer`
- * e o token do App Check em `X-Firebase-AppCheck` quando disponível.
+ * Envia o ID token do Firebase Auth em `Authorization: Bearer`.
  * Não usa `httpsCallable` — o backend é Express via `onRequest`.
  */
-import { getToken } from "firebase/app-check";
-import { appCheck, auth, functionsApiUrl } from "./firebase";
+import { auth, functionsApiUrl } from "./firebase";
 
 export class ApiError extends Error {
   constructor(
@@ -27,17 +25,6 @@ const montarHeaders = async (headersInit?: HeadersInit): Promise<Headers> => {
   const token = await auth.currentUser?.getIdToken();
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  if (appCheck) {
-    try {
-      const { token: appCheckToken } = await getToken(appCheck, false);
-      if (appCheckToken) {
-        headers.set("X-Firebase-AppCheck", appCheckToken);
-      }
-    } catch (error) {
-      console.warn("Falha ao obter token App Check:", error);
-    }
   }
 
   return headers;
