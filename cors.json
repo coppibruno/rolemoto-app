@@ -5,7 +5,8 @@
       "http://127.0.0.1:3000",
       "https://rolemoto-bc47f.web.app",
       "https://rolemoto-bc47f.firebaseapp.com",
-      "https://rolemoto.com.br"
+      "https://rolemoto.com.br",
+      "https://www.rolemoto.com.br"
     ],
     "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
     "responseHeader": [

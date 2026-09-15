@@ -29,7 +29,7 @@
   position: relative;
 }
 
-/* ---- Header: Logo + Ambient Glow ---- */
+/* ---- Header: Logo ---- */
 .header {
   display: flex;
   flex-direction: column;
@@ -40,38 +40,18 @@
   position: relative;
 }
 
-.ambientGlow {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 320px;
-  height: 288px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 107, 0, 0.2),
-    rgba(255, 107, 0, 0.05) 50%,
-    transparent
-  );
-  filter: blur(48px);
-  pointer-events: none;
-  z-index: 0;
-}
-
 .logoContainer {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
-  z-index: 1;
 }
 
 .logo {
   height: 80px;
   width: auto;
   object-fit: contain;
-  filter: drop-shadow(0 8px 20px rgba(255, 107, 0, 0.35));
 }
 
 /* ---- Card principal ---- */

@@ -6,6 +6,7 @@ const ORIGENS_FIXAS = [
   "https://rolemoto-bc47f.web.app",
   "https://rolemoto-bc47f.firebaseapp.com",
   "https://rolemoto.com.br",
+  "https://www.rolemoto.com.br",
 ] as const;
 
 /** Origins permitidos no CORS da function `api`. */

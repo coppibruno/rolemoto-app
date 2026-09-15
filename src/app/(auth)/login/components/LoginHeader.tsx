@@ -5,8 +5,6 @@ import styles from "../login.module.css";
 
 export const LoginHeader = () => (
   <div className={styles.header}>
-    <div className={styles.ambientGlow} />
-
     <div className={styles.logoContainer}>
       <Image
         src="/logo-rolemoto.jpeg"
