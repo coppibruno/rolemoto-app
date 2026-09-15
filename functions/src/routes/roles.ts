@@ -10,6 +10,7 @@ import {
   cancelarLembretesDoRole,
   reagendarLembretesDoRole,
 } from "../lib/lembretes";
+import {log} from "../lib/log";
 import {horaSaoPaulo, resolverIntervaloQuando} from "../lib/quando";
 import {validarQueryRoles} from "../lib/roles-query";
 import {
@@ -384,6 +385,7 @@ rolesRouter.post("/", async (req: Request, res: Response) => {
       {roleId: criado.id, userId: uid, titulo: criado.titulo},
       criado.dataHoraSaida,
     );
+    log.info("Role", "Rolê criado", {roleId: criado.id, criadorId: uid});
     res.status(201).json(criado);
   } catch (error) {
     responderErro(res, error);
@@ -435,8 +437,14 @@ rolesRouter.put("/:id", async (req: Request, res: Response) => {
         userIds,
         existente.criadorId,
       );
+      log.info("Role", "Lembretes reagendados", {
+        roleId: id,
+        participantes: userIds.length + 1,
+        novaDataHoraSaida: atualizado.dataHoraSaida,
+      });
     }
 
+    log.info("Role", "Rolê atualizado", {roleId: id, criadorId: existente.criadorId});
     res.json(atualizado);
   } catch (error) {
     responderErro(res, error);
@@ -472,6 +480,11 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
     await cancelarLembretesDoRole(id, userIds, existente.criadorId);
 
     await roleRepository.remover(id);
+    log.info("Role", "Rolê removido", {
+      roleId: id,
+      criadorId: existente.criadorId,
+      lembretesCancelados: userIds.length + 1,
+    });
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

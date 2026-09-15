@@ -1,6 +1,7 @@
 import { adminMessaging } from "./firebase-admin";
 import { dispositivoRepository } from "../repositories";
 import { origemApp } from "./origem";
+import { erroDe, log } from "./log";
 
 export type TipoPush = "pedido_vaga" | "aceite_vaga" | "lembrete_role";
 
@@ -24,11 +25,23 @@ const CODIGOS_TOKEN_INVALIDO = new Set([
 ]);
 
 const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
+  const contexto = {
+    uid,
+    tipo: payload.tipo,
+    roleId: payload.roleId,
+  };
+
   try {
     const tokens = await dispositivoRepository.listarTokensPorUid(uid);
     if (tokens.length === 0) {
+      log.warn("Push", "Usuário sem tokens FCM", contexto);
       return;
     }
+
+    log.info("Push", "Iniciando envio", {
+      ...contexto,
+      tokens: tokens.length,
+    });
 
     const origem = origemApp();
     const link = origem ? `${origem}${payload.url}` : undefined;
@@ -67,14 +80,32 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
         invalidos.push(tokens[indice]);
         return;
       }
-      console.error(resultado.error);
+      log.error("Push", "Falha em token", {
+        ...contexto,
+        codigo,
+        mensagem: resultado.error?.message,
+      });
     });
+
+    if (invalidos.length > 0) {
+      log.warn("Push", "Removendo tokens inválidos", {
+        ...contexto,
+        removidos: invalidos.length,
+      });
+    }
 
     await Promise.all(
       invalidos.map((token) => dispositivoRepository.removerPorToken(token)),
     );
+
+    log.info("Push", "Envio concluído", {
+      ...contexto,
+      sucesso: resposta.successCount,
+      falha: resposta.failureCount,
+      tokensRemovidos: invalidos.length,
+    });
   } catch (error) {
-    console.error(error);
+    log.error("Push", "Erro ao enviar", {...contexto, ...erroDe(error)});
   }
 };
 

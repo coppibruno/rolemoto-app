@@ -3,6 +3,7 @@ import type {UserRecord} from "firebase-admin/auth";
 import {adminAuth} from "../lib/firebase-admin";
 import {enviarOobReset} from "../lib/enviar-oob-reset";
 import {normalizarApelido, pareceEmail} from "../lib/identificador";
+import {log} from "../lib/log";
 import {responderErro} from "../middleware/errors";
 import {rateLimit} from "../middleware/rate-limit";
 import {usuarioRepository} from "../repositories";
@@ -74,6 +75,7 @@ authRouter.post(
         return;
       }
 
+      log.info("Auth", "Identificador resolvido", {uid: registro.uid});
       res.json({email: registro.email});
     } catch (error) {
       const codigo = (error as {code?: string}).code;
@@ -105,11 +107,16 @@ authRouter.post(
 
       const registro = await resolverRegistro(identificador);
       if (!registro?.email || !temProviderSenha(registro)) {
+        log.info("Auth", "Recuperação ignorada", {
+          encontrado: Boolean(registro),
+          temSenha: registro ? temProviderSenha(registro) : false,
+        });
         res.status(204).end();
         return;
       }
 
       await enviarOobReset(registro.email);
+      log.info("Auth", "Recuperação processada", {uid: registro.uid});
       res.status(204).end();
     } catch (error) {
       responderErro(res, error);

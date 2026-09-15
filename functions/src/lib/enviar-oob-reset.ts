@@ -1,4 +1,5 @@
 import {origemApp} from "./origem";
+import {log} from "./log";
 
 const origemIdentityToolkit = (): string => {
   const emulator = process.env.FIREBASE_AUTH_EMULATOR_HOST?.trim();
@@ -41,6 +42,9 @@ export const enviarOobReset = async (email: string): Promise<void> => {
 
   if (!res.ok) {
     const detalhe = await res.text().catch(() => "");
+    log.error("Auth", "sendOobCode falhou", {status: res.status, detalhe});
     throw new Error(`sendOobCode falhou (${res.status}): ${detalhe}`);
   }
+
+  log.info("Auth", "E-mail de recuperação enviado");
 };

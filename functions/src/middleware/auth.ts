@@ -1,5 +1,6 @@
 import type {NextFunction, Request, Response} from "express";
 import {adminAuth} from "../lib/firebase-admin";
+import {log} from "../lib/log";
 
 /**
  * Exige `Authorization: Bearer <idToken>` do Firebase Auth.
@@ -12,6 +13,10 @@ export const autenticar = async (
 ): Promise<void> => {
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
+    log.warn("Auth", "Token ausente", {
+      metodo: req.method,
+      rota: req.path,
+    });
     res.status(401).json({erro: "Token ausente"});
     return;
   }
@@ -25,6 +30,10 @@ export const autenticar = async (
     };
     next();
   } catch {
+    log.warn("Auth", "Token inválido ou expirado", {
+      metodo: req.method,
+      rota: req.path,
+    });
     res.status(401).json({erro: "Token inválido ou expirado"});
   }
 };

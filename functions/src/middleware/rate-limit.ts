@@ -1,4 +1,5 @@
 import type {NextFunction, Request, Response} from "express";
+import {log} from "../lib/log";
 
 type Entrada = {count: number; resetAt: number};
 
@@ -60,6 +61,10 @@ export const rateLimit = (
 
     entrada.count += 1;
     if (entrada.count > opcoes.max) {
+      log.warn("RateLimit", "Limite excedido", {
+        bucket: opcoes.nome,
+        identidade,
+      });
       res.status(429).json({erro: "muitas requisições"});
       return;
     }

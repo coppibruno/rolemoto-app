@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
+import {log} from "../lib/log";
 import {param} from "../lib/params";
 import {
   roleRepository,
@@ -103,6 +104,11 @@ participacaoRouter.post(
         roleId,
         criadorId: role.criadorId,
       });
+      log.info("Participacao", "Solicitação criada", {
+        roleId,
+        usuarioId: uid,
+        criadorId: role.criadorId,
+      });
       await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
       res.status(201).json(criado);
     } catch (error) {
@@ -144,6 +150,11 @@ participacaoRouter.patch(
         idPedido(uid, roleId),
         {notificar},
       );
+      log.info("Participacao", "Preferência de notificação atualizada", {
+        roleId,
+        usuarioId: uid,
+        notificar,
+      });
       res.json(atualizado);
     } catch (error) {
       responderErro(res, error);
@@ -163,6 +174,7 @@ participacaoRouter.delete(
       const roleId = param(req, "id");
       await usuarioRoleRepository.remover(idPedido(uid, roleId));
       await cancelarLembrete(roleId, uid);
+      log.info("Participacao", "Solicitação removida", {roleId, usuarioId: uid});
       res.status(204).send();
     } catch (error) {
       responderErro(res, error);

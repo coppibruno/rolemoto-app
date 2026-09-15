@@ -1,4 +1,5 @@
 import {CloudTasksClient} from "@google-cloud/tasks";
+import {erroDe, log} from "./log";
 import type {PayloadLembrete} from "../types/lembrete";
 
 const ANTECEDENCIA_MS = 60 * 60 * 1000; // 1 hora
@@ -35,6 +36,10 @@ export const agendarLembrete = async (
 ): Promise<void> => {
   const horario = horarioLembreteValido(dataHoraSaida);
   if (!horario) {
+    log.info("Lembrete", "Horário inválido, não agendado", {
+      roleId: payload.roleId,
+      userId: payload.userId,
+    });
     return;
   }
 
@@ -56,13 +61,26 @@ export const agendarLembrete = async (
         },
       },
     });
+    log.info("Lembrete", "Task agendada", {
+      roleId: payload.roleId,
+      userId: payload.userId,
+      agendadoPara: new Date(horario).toISOString(),
+    });
   } catch (error: unknown) {
     const code = (error as {code?: number}).code;
     // 6 = ALREADY_EXISTS — task já agendada (idempotente)
     if (code === 6) {
+      log.info("Lembrete", "Task já existia", {
+        roleId: payload.roleId,
+        userId: payload.userId,
+      });
       return;
     }
-    console.error("Erro ao agendar lembrete:", error);
+    log.error("Lembrete", "Erro ao agendar", {
+      roleId: payload.roleId,
+      userId: payload.userId,
+      ...erroDe(error),
+    });
   }
 };
 
@@ -72,13 +90,15 @@ export const cancelarLembrete = async (
 ): Promise<void> => {
   try {
     await client.deleteTask({name: taskName(roleId, userId)});
+    log.info("Lembrete", "Task cancelada", {roleId, userId});
   } catch (error: unknown) {
     const code = (error as {code?: number}).code;
     // 5 = NOT_FOUND — task já executada ou inexistente (ok)
     if (code === 5) {
+      log.info("Lembrete", "Task não encontrada ao cancelar", {roleId, userId});
       return;
     }
-    console.error("Erro ao cancelar lembrete:", error);
+    log.error("Lembrete", "Erro ao cancelar", {roleId, userId, ...erroDe(error)});
   }
 };
 

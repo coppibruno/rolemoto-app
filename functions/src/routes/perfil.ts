@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
+import {erroDe, log} from "../lib/log";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
@@ -182,6 +183,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       cidade: "",
       garupaFrequente: resultado.dados.garupaFrequente,
     });
+    log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
     res.status(201).json(criado);
   } catch (error) {
     responderErro(res, error);
@@ -207,6 +209,7 @@ perfilRouter.put("/", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
     }
+    log.info("Perfil", "Perfil atualizado", {uid});
     res.json(atualizado);
   } catch (error) {
     responderErro(res, error);
@@ -224,7 +227,7 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
     try {
       await dispositivoRepository.removerPorUid(uid);
     } catch (error) {
-      console.error(error);
+      log.warn("Perfil", "Falha ao remover dispositivos", {uid, ...erroDe(error)});
     }
 
     const removido = await usuarioRepository.remover(uid);
@@ -232,6 +235,7 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
     }
+    log.info("Perfil", "Perfil removido", {uid});
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

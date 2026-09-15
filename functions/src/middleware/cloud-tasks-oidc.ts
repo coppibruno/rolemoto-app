@@ -1,6 +1,7 @@
 import type {NextFunction, Request, Response} from "express";
 import {OAuth2Client} from "google-auth-library";
 import {lembretesEnviarUrl} from "../lib/lembretes";
+import {log} from "../lib/log";
 
 const client = new OAuth2Client();
 
@@ -28,6 +29,7 @@ export const autenticarCloudTasks = async (
 
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
+    log.warn("CloudTasks", "Token OIDC ausente");
     res.status(401).json({erro: "Token OIDC ausente"});
     return;
   }
@@ -47,11 +49,15 @@ export const autenticarCloudTasks = async (
       email !== serviceAccountEsperada() ||
       payload.email_verified !== true
     ) {
+      log.warn("CloudTasks", "Service account inválida", {
+        emailRecebido: email ?? null,
+      });
       res.status(401).json({erro: "Service account inválida"});
       return;
     }
     next();
   } catch {
+    log.warn("CloudTasks", "Token OIDC inválido");
     res.status(401).json({erro: "Token OIDC inválido"});
   }
 };

@@ -11,6 +11,7 @@ import {
   roleAindaNaoSaiu,
 } from "../lib/aprovacoes";
 import {agendarLembrete} from "../lib/lembretes";
+import {log} from "../lib/log";
 import {notificarAceite} from "../lib/notificacoes";
 import {roleRepository, usuarioRoleRepository} from "../repositories";
 import type {DecisaoPiloto, StatusAprovacao} from "../types/aprovacao";
@@ -142,6 +143,14 @@ aprovacoesRouter.patch("/:id", async (req: Request, res: Response) => {
         role.dataHoraSaida,
       );
     }
+
+    log.info("Aprovacao", "Decisão registrada", {
+      solicitacaoId: id,
+      roleId: pedido.roleId,
+      usuarioId: atualizado.usuarioId,
+      decisao,
+      notificar: atualizado.notificar,
+    });
 
     res.json(item);
   } catch (error) {

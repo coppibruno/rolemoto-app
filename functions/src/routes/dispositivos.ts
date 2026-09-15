@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
+import {log} from "../lib/log";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository} from "../repositories";
@@ -43,6 +44,9 @@ dispositivosRouter.post("/", async (req: Request, res: Response) => {
 
     const existente = await dispositivoRepository.buscarPorToken(token);
     const dispositivo = await dispositivoRepository.upsert(uid, token);
+    log.info("Dispositivo", existente ? "Token atualizado" : "Token registrado", {
+      uid,
+    });
     res.status(existente ? 200 : 201).json(dispositivo);
   } catch (error) {
     responderErro(res, error);
@@ -74,6 +78,7 @@ dispositivosRouter.delete("/", async (req: Request, res: Response) => {
     }
 
     await dispositivoRepository.removerPorToken(token);
+    log.info("Dispositivo", "Token removido", {uid});
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);
