@@ -1,7 +1,10 @@
 import type { RitmoRole } from "@/types/role";
 
-export const MAX_FOTO_BYTES = 2 * 1024 * 1024;
-export const TIPOS_FOTO_ACEITOS = ["image/jpeg", "image/png"];
+export {
+  ERRO_FOTO_GRANDE,
+  MAX_FOTO_BYTES,
+  TIPOS_FOTO_ACEITOS,
+} from "@/lib/storage";
 export const DEBOUNCE_BUSCA_MS = 300;
 export const REDIRECT_SUCESSO_MS = 1600;
 

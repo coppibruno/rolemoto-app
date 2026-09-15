@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { uploadFotoCapaRole } from "@/lib/storage";
-import { MAX_FOTO_BYTES, TIPOS_FOTO_ACEITOS } from "../constants";
+import { ERRO_FOTO_GRANDE, MAX_FOTO_BYTES, TIPOS_FOTO_ACEITOS } from "../constants";
 
 export const useFotoCapa = () => {
   const [arquivo, setArquivo] = useState<File | null>(null);
@@ -28,7 +28,7 @@ export const useFotoCapa = () => {
     }
 
     if (file.size > MAX_FOTO_BYTES) {
-      setErro("A foto deve ter no máximo 2MB.");
+      setErro(ERRO_FOTO_GRANDE);
       return;
     }
 

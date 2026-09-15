@@ -1,7 +1,10 @@
 import type { Pilotagem } from "@/types/user";
 
-export const MAX_FOTO_BYTES = 2 * 1024 * 1024;
-export const TIPOS_FOTO_ACEITOS = ["image/jpeg", "image/png"];
+export {
+  ERRO_FOTO_GRANDE,
+  MAX_FOTO_BYTES,
+  TIPOS_FOTO_ACEITOS,
+} from "@/lib/storage";
 export const DELAY_MOTOR_MS = 800;
 export const DELAY_SUCESSO_MS = 1100;
 

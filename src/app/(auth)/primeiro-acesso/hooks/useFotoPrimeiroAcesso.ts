@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { uploadFotoPerfil } from "@/lib/storage";
-import { MAX_FOTO_BYTES, TIPOS_FOTO_ACEITOS } from "../constants";
+import { ERRO_FOTO_GRANDE, MAX_FOTO_BYTES, TIPOS_FOTO_ACEITOS } from "../constants";
 
 export const useFotoPrimeiroAcesso = (fotoUrlInicial: string) => {
   const [arquivo, setArquivo] = useState<File | null>(null);
@@ -32,7 +32,7 @@ export const useFotoPrimeiroAcesso = (fotoUrlInicial: string) => {
     }
 
     if (file.size > MAX_FOTO_BYTES) {
-      setErro("A foto deve ter no máximo 2MB.");
+      setErro(ERRO_FOTO_GRANDE);
       return;
     }
 

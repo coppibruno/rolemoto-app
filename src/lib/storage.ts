@@ -5,6 +5,12 @@ import {
 } from "firebase/storage";
 import { storage } from "./firebase";
 
+/** Limite de upload de fotos (perfil e capa de rolê). */
+export const MAX_FOTO_MB = 10;
+export const MAX_FOTO_BYTES = MAX_FOTO_MB * 1024 * 1024;
+export const TIPOS_FOTO_ACEITOS = ["image/jpeg", "image/png"];
+export const ERRO_FOTO_GRANDE = `A foto deve ter no máximo ${MAX_FOTO_MB}MB.`;
+
 export const uploadFotoPerfil = async (
   uid: string,
   file: File
