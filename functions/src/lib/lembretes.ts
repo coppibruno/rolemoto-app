@@ -3,9 +3,25 @@ import {erroDe, log} from "./log";
 import type {PayloadLembrete} from "../types/lembrete";
 
 const ANTECEDENCIA_MS = 60 * 60 * 1000; // 1 hora
+/** Cloud Tasks recusa scheduleTime a mais de 720h (30 dias). */
+const LIMITE_AGENDA_MS = 29 * 24 * 60 * 60 * 1000;
+const TZ_SP = "America/Sao_Paulo";
 const PROJECT_ID = process.env.GCLOUD_PROJECT ?? "rolemoto-bc47f";
 const LOCATION = "us-central1";
 const QUEUE = "lembretes-role";
+
+const formatarSp = (ms: number): string =>
+  new Intl.DateTimeFormat("sv-SE", {
+    timeZone: TZ_SP,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  })
+    .format(new Date(ms))
+    .replace(" ", "T");
 
 const client = new CloudTasksClient();
 const queuePath = client.queuePath(PROJECT_ID, LOCATION, QUEUE);
@@ -39,6 +55,19 @@ export const agendarLembrete = async (
     log.info("Lembrete", "Horário inválido, não agendado", {
       roleId: payload.roleId,
       userId: payload.userId,
+      dataHoraSaida,
+    });
+    return;
+  }
+
+  if (horario - Date.now() > LIMITE_AGENDA_MS) {
+    log.warn("Lembrete", "Além de 30 dias, Cloud Tasks não agenda", {
+      roleId: payload.roleId,
+      userId: payload.userId,
+      dataHoraSaida,
+      saidaSp: formatarSp(Date.parse(dataHoraSaida)),
+      agendadoPara: new Date(horario).toISOString(),
+      agendadoParaSp: formatarSp(horario),
     });
     return;
   }
@@ -64,7 +93,10 @@ export const agendarLembrete = async (
     log.info("Lembrete", "Task agendada", {
       roleId: payload.roleId,
       userId: payload.userId,
+      dataHoraSaida,
+      saidaSp: formatarSp(Date.parse(dataHoraSaida)),
       agendadoPara: new Date(horario).toISOString(),
+      agendadoParaSp: formatarSp(horario),
     });
   } catch (error: unknown) {
     const code = (error as {code?: number}).code;

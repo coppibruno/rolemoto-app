@@ -11,15 +11,31 @@ export type PayloadForeground = {
   body: string;
 };
 
+const ESPERA_SW_MS = 800;
+
 const obterRegistration = async (): Promise<ServiceWorkerRegistration | null> => {
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
     return null;
   }
   const existente = await navigator.serviceWorker.getRegistration();
-  if (!existente) {
+  if (existente) {
+    return navigator.serviceWorker.ready;
+  }
+  await new Promise((resolve) => window.setTimeout(resolve, ESPERA_SW_MS));
+  const segunda = await navigator.serviceWorker.getRegistration();
+  if (!segunda) {
     return null;
   }
   return navigator.serviceWorker.ready;
+};
+
+const tituloDoPayload = (payload: {
+  data?: Record<string, string>;
+  notification?: { title?: string; body?: string };
+}): { title: string; body: string } => {
+  const title = payload.data?.title || payload.notification?.title || "";
+  const body = payload.data?.body || payload.notification?.body || "";
+  return { title, body };
 };
 
 export const messagingSuportado = async (): Promise<boolean> => {
@@ -76,6 +92,24 @@ export const obterToken = async (): Promise<string | null> => {
   }
 };
 
+const mostrarNativa = async (
+  title: string,
+  body: string,
+  data?: Record<string, string>,
+): Promise<void> => {
+  const registration = await obterRegistration();
+  if (!registration) {
+    return;
+  }
+  const icon = data?.icon || "/icons/icon-192.png";
+  await registration.showNotification(title, {
+    body,
+    data,
+    icon,
+    tag: data?.roleId ? `${data.tipo ?? "push"}-${data.roleId}` : undefined,
+  });
+};
+
 export const ouvirForeground = async (
   onPayload: (payload: PayloadForeground) => void,
 ): Promise<() => void> => {
@@ -86,13 +120,17 @@ export const ouvirForeground = async (
 
   const { onMessage } = await import("firebase/messaging");
   return onMessage(messaging, (payload) => {
-    const title = payload.notification?.title ?? "";
+    const { title, body } = tituloDoPayload(payload);
     if (!title) {
       return;
     }
-    onPayload({
-      title,
-      body: payload.notification?.body ?? "",
-    });
+    if (
+      typeof document !== "undefined" &&
+      document.visibilityState !== "visible"
+    ) {
+      void mostrarNativa(title, body, payload.data);
+      return;
+    }
+    onPayload({ title, body });
   });
 };

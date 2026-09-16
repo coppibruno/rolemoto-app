@@ -48,8 +48,10 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
     });
 
     const origem = origemApp();
-    const link = origem ? `${origem}${payload.url}` : undefined;
+    const icon = origem ? `${origem}/icons/icon-192.png` : "";
 
+    // Só `data`: com `webpush.notification` o Chrome engole o push se o PWA
+    // estiver aberto em segundo plano (nem SW nem onMessage desenham o card).
     const resposta = await adminMessaging.sendEachForMulticast({
       tokens,
       data: {
@@ -58,19 +60,13 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
         roleId: payload.roleId,
         title: payload.title,
         body: payload.body,
+        icon,
       },
       webpush: {
-        notification: {
-          title: payload.title,
-          body: payload.body,
-          icon: "/icons/icon-192.png",
-          data: {
-            url: payload.url,
-            tipo: payload.tipo,
-            roleId: payload.roleId,
-          },
+        headers: {
+          Urgency: "high",
+          TTL: "86400",
         },
-        fcmOptions: link ? { link } : {},
       },
     });
 

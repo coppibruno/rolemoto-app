@@ -37,15 +37,13 @@ export const pedirPermissaoERegistrar = async (): Promise<ResultadoPermissao> =>
     if (typeof window === "undefined" || !("Notification" in window)) {
       return "unsupported";
     }
-    if (!(await messagingSuportado())) {
-      return "unsupported";
-    }
 
     if (Notification.permission === "denied" || recusouNestaSessao) {
       recusouNestaSessao = true;
       return "denied";
     }
 
+    // requestPermission precisa rodar ainda no gesto do clique — nenhum await antes.
     let permissao = Notification.permission as NotificationPermission;
     if (permissao === "default") {
       permissao = await Notification.requestPermission();
@@ -57,6 +55,10 @@ export const pedirPermissaoERegistrar = async (): Promise<ResultadoPermissao> =>
     }
     if (permissao !== "granted") {
       return "default";
+    }
+
+    if (!(await messagingSuportado())) {
+      return "unsupported";
     }
 
     await registrarTokenAtual();

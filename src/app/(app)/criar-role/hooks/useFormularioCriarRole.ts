@@ -163,6 +163,7 @@ export const useFormularioCriarRole = (
     if (Object.keys(errosAtuais).length > 0) return;
     if (!firebaseUser) return;
 
+    void pedirPermissaoERegistrar();
     setPublicando(true);
     try {
       const fotoCapaUrl = await foto.enviar(firebaseUser.uid);
@@ -191,7 +192,6 @@ export const useFormularioCriarRole = (
         await rolesService.criar(dados);
       }
       setSucesso(true);
-      void pedirPermissaoERegistrar();
       redirectRef.current = window.setTimeout(() => {
         router.push(modo === "editar" ? "/meus-roles" : "/");
       }, REDIRECT_SUCESSO_MS);

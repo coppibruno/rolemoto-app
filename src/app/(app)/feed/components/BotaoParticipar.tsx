@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { pedirPermissaoERegistrar } from "@/app/(app)/hooks/useRegistroFcm";
 import styles from "../feed.module.css";
 
 type Props = {
@@ -23,7 +24,13 @@ export const BotaoParticipar = ({ id, criadorId }: Props) => {
   }
 
   return (
-    <Link href={`/roles/${id}/participar`} className={styles.botaoParticipar}>
+    <Link
+      href={`/roles/${id}/participar`}
+      className={styles.botaoParticipar}
+      onClick={() => {
+        void pedirPermissaoERegistrar();
+      }}
+    >
       <span className="material-symbols-outlined">two_wheeler</span>
       Participar do Rolê
     </Link>

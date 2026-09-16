@@ -7,6 +7,7 @@ import {
   urlPrimeiroAcessoComNext,
 } from "@/lib/destino-pos-auth";
 import type { RolePublico } from "@/types/role-publico";
+import { pedirPermissaoERegistrar } from "@/app/(app)/hooks/useRegistroFcm";
 import { COPY_CTA, COPY_CTA_SUB, COPY_ENCERRADO, COPY_GERENCIAR } from "../constants";
 
 export const useCtaConvite = (role: Pick<RolePublico, "id" | "dataHoraSaida" | "criador">) => {
@@ -31,6 +32,7 @@ export const useCtaConvite = (role: Pick<RolePublico, "id" | "dataHoraSaida" | "
       router.push(`/aprovacoes?role=${role.id}`);
       return;
     }
+    void pedirPermissaoERegistrar();
     router.push(destinoParticipar);
   };
 

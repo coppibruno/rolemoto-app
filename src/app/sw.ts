@@ -26,10 +26,19 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const firebaseApp =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const firebasePronto =
+  Boolean(firebaseConfig.apiKey) &&
+  Boolean(firebaseConfig.projectId) &&
+  Boolean(firebaseConfig.messagingSenderId) &&
+  Boolean(firebaseConfig.appId);
 
-const messaging = getMessaging(firebaseApp);
+const firebaseApp = firebasePronto
+  ? getApps().length === 0
+    ? initializeApp(firebaseConfig)
+    : getApps()[0]
+  : null;
+
+const messaging = firebaseApp ? getMessaging(firebaseApp) : null;
 
 const urlDoPayload = (data: unknown): string | null => {
   if (!data || typeof data !== "object") {
@@ -67,17 +76,23 @@ const abrirUrl = async (caminho: string) => {
   await self.clients.openWindow(url);
 };
 
-onBackgroundMessage(messaging, (payload) => {
-  const title = payload.data?.title ?? "";
-  if (!title) {
-    return;
-  }
-  return self.registration.showNotification(title, {
-    body: payload.data?.body,
-    data: payload.data,
-    icon: "/icons/icon-192.png",
+if (messaging) {
+  onBackgroundMessage(messaging, (payload) => {
+    const data = payload.data ?? {};
+    const title = data.title || payload.notification?.title || "";
+    if (!title) {
+      return;
+    }
+    const icon =
+      data.icon || `${self.location.origin}/icons/icon-192.png`;
+    return self.registration.showNotification(title, {
+      body: data.body || payload.notification?.body || "",
+      data,
+      icon,
+      tag: data.roleId ? `${data.tipo ?? "push"}-${data.roleId}` : undefined,
+    });
   });
-});
+}
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
