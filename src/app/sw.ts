@@ -40,30 +40,77 @@ const firebaseApp = firebasePronto
 
 const messaging = firebaseApp ? getMessaging(firebaseApp) : null;
 
-const urlDoPayload = (data: unknown): string | null => {
-  if (!data || typeof data !== "object") {
-    return null;
+type PayloadPush = {
+  data?: Record<string, string>;
+  notification?: { title?: string; body?: string };
+  FCM_MSG?: PayloadPush;
+};
+
+const clientesJanela = () =>
+  self.clients.matchAll({ type: "window", includeUncontrolled: true });
+
+const temClienteFocado = async (): Promise<boolean> => {
+  const clientes = await clientesJanela();
+  return clientes.some((client) => "focused" in client && client.focused);
+};
+
+const comoStrings = (valor: unknown): Record<string, string> => {
+  if (!valor || typeof valor !== "object") {
+    return {};
   }
-  const rec = data as Record<string, unknown>;
-  if (typeof rec.url === "string" && rec.url) {
-    return rec.url;
-  }
-  const fcm = rec.FCM_MSG;
-  if (fcm && typeof fcm === "object") {
-    const inner = fcm as { data?: { url?: unknown } };
-    if (typeof inner.data?.url === "string") {
-      return inner.data.url;
+  const saida: Record<string, string> = {};
+  for (const [chave, item] of Object.entries(valor)) {
+    if (typeof item === "string") {
+      saida[chave] = item;
     }
   }
-  return null;
+  return saida;
+};
+
+const partesDoPayload = (
+  raw: unknown,
+): {
+  data: Record<string, string>;
+  notification?: { title?: string; body?: string };
+} => {
+  if (!raw || typeof raw !== "object") {
+    return { data: {} };
+  }
+  const rec = raw as PayloadPush;
+  const inner =
+    rec.FCM_MSG && typeof rec.FCM_MSG === "object" ? rec.FCM_MSG : rec;
+  const data = {
+    ...comoStrings(inner),
+    ...comoStrings(inner.data),
+  };
+  return { data, notification: inner.notification };
+};
+
+const urlDoPayload = (data: unknown): string | null => {
+  const { data: campos } = partesDoPayload(data);
+  return campos.url || null;
+};
+
+const mostrarNotificacao = (
+  data: Record<string, string>,
+  notification?: { title?: string; body?: string },
+): Promise<void> => {
+  const title = data.title || notification?.title || "";
+  if (!title) {
+    return Promise.resolve();
+  }
+  const icon = data.icon || `${self.location.origin}/icons/icon-192.png`;
+  return self.registration.showNotification(title, {
+    body: data.body || notification?.body || "",
+    data,
+    icon,
+    tag: data.roleId ? `${data.tipo ?? "push"}-${data.roleId}` : undefined,
+  });
 };
 
 const abrirUrl = async (caminho: string) => {
   const url = new URL(caminho, self.location.origin).href;
-  const clientes = await self.clients.matchAll({
-    type: "window",
-    includeUncontrolled: true,
-  });
+  const clientes = await clientesJanela();
   for (const client of clientes) {
     if ("focus" in client) {
       await client.focus();
@@ -77,22 +124,32 @@ const abrirUrl = async (caminho: string) => {
 };
 
 if (messaging) {
-  onBackgroundMessage(messaging, (payload) => {
-    const data = payload.data ?? {};
-    const title = data.title || payload.notification?.title || "";
-    if (!title) {
+  onBackgroundMessage(messaging, async (payload) => {
+    if (await temClienteFocado()) {
       return;
     }
-    const icon =
-      data.icon || `${self.location.origin}/icons/icon-192.png`;
-    return self.registration.showNotification(title, {
-      body: data.body || payload.notification?.body || "",
-      data,
-      icon,
-      tag: data.roleId ? `${data.tipo ?? "push"}-${data.roleId}` : undefined,
-    });
+    const { data, notification } = partesDoPayload(payload);
+    await mostrarNotificacao(data, notification);
   });
 }
+
+self.addEventListener("push", (event) => {
+  event.waitUntil(
+    (async () => {
+      if (await temClienteFocado()) {
+        return;
+      }
+      let raw: unknown = null;
+      try {
+        raw = event.data?.json() ?? null;
+      } catch {
+        return;
+      }
+      const { data, notification } = partesDoPayload(raw);
+      await mostrarNotificacao(data, notification);
+    })(),
+  );
+});
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();

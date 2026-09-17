@@ -124,10 +124,11 @@ export const ouvirForeground = async (
     if (!title) {
       return;
     }
-    if (
+    const naTela =
       typeof document !== "undefined" &&
-      document.visibilityState !== "visible"
-    ) {
+      document.visibilityState === "visible" &&
+      document.hasFocus();
+    if (!naTela) {
       void mostrarNativa(title, body, payload.data);
       return;
     }
