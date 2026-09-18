@@ -4,33 +4,44 @@ import type {
   AbaHistoricoPublico,
   HistoricoPublico as HistoricoPublicoDto,
 } from "@/types/perfil-publico";
-import type { ItemHistoricoPista } from "@/types/historico-pistas";
+import type {
+  FiltroTipoHistorico,
+  ItemHistoricoPista,
+} from "@/types/historico-pistas";
 import {
   ABAS_HISTORICO_PUBLICO,
   ariaBadgeAba,
+  FILTROS_TIPO_HISTORICO_PUBLICO,
   textoTotalRoles,
   totalRolesHistorico,
   VAZIOS_HISTORICO_PUBLICO,
 } from "../constants";
-import { CardHistoricoPublico } from "./CardHistoricoPublico";
+import {
+  CardHistoricoPublicoEvento,
+  CardHistoricoPublicoRole,
+} from "./CardHistoricoPublico";
 import styles from "../perfil-publico.module.css";
 
 type Props = {
   historico: HistoricoPublicoDto | null;
   aba: AbaHistoricoPublico;
+  filtroTipo: FiltroTipoHistorico;
   itens: ItemHistoricoPista[];
   carregando: boolean;
   erro: string | null;
   onAba: (aba: AbaHistoricoPublico) => void;
+  onFiltroTipo: (filtro: FiltroTipoHistorico) => void;
 };
 
 export const HistoricoPublicoSecao = ({
   historico,
   aba,
+  filtroTipo,
   itens,
   carregando,
   erro,
   onAba,
+  onFiltroTipo,
 }: Props) => {
   const contagens = historico?.contagens ?? { concluidos: 0, comoLider: 0 };
   const total = totalRolesHistorico(contagens.concluidos, contagens.comoLider);
@@ -76,6 +87,30 @@ export const HistoricoPublicoSecao = ({
         })}
       </div>
 
+      {aba === "concluidos" && !carregando && !erro ? (
+        <div
+          className={styles.filtroTipo}
+          role="radiogroup"
+          aria-label="Filtrar por tipo"
+        >
+          {FILTROS_TIPO_HISTORICO_PUBLICO.map((opcao) => {
+            const ativo = filtroTipo === opcao.id;
+            return (
+              <button
+                key={opcao.id}
+                type="button"
+                role="radio"
+                aria-checked={ativo}
+                className={`${styles.chipFiltroTipo} ${ativo ? styles.chipFiltroTipoAtivo : ""}`}
+                onClick={() => onFiltroTipo(opcao.id)}
+              >
+                {opcao.label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
       {carregando ? (
         <div className={styles.lista} aria-busy="true">
           <div className={styles.skeleton} />
@@ -103,9 +138,19 @@ export const HistoricoPublicoSecao = ({
           role="tabpanel"
           aria-label={abaAtual?.listaAria}
         >
-          {itens.map((item) => (
-            <CardHistoricoPublico key={`${aba}-${item.roleId}`} item={item} />
-          ))}
+          {itens.map((item) =>
+            item.tipo === "evento" ? (
+              <CardHistoricoPublicoEvento
+                key={`${aba}-evento-${item.eventoId}`}
+                item={item}
+              />
+            ) : (
+              <CardHistoricoPublicoRole
+                key={`${aba}-role-${item.roleId}`}
+                item={item}
+              />
+            ),
+          )}
         </div>
       )}
     </section>

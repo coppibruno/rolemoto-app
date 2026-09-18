@@ -1,25 +1,26 @@
 import Link from "next/link";
-import type { ItemHistoricoPista } from "@/types/historico-pistas";
+import type { ItemHistoricoEvento, ItemHistoricoRole } from "@/types/historico-pistas";
 import { formatarDataMeta } from "../../formatar-data-historico";
 import {
-  hrefCardHistoricoPublico,
+  hrefCardHistoricoPublicoEvento,
+  hrefCardHistoricoPublicoRole,
   PAPEL_CARD,
   STATUS_CARD_PUBLICO,
 } from "../constants";
 import styles from "../perfil-publico.module.css";
 
-type Props = {
-  item: ItemHistoricoPista;
+type PropsRole = {
+  item: ItemHistoricoRole;
 };
 
-export const CardHistoricoPublico = ({ item }: Props) => {
+export const CardHistoricoPublicoRole = ({ item }: PropsRole) => {
   const eLider = item.status === "lider";
   const statusLabel = STATUS_CARD_PUBLICO[item.status];
   const papel = eLider ? PAPEL_CARD.lider : PAPEL_CARD.participante;
 
   return (
     <Link
-      href={hrefCardHistoricoPublico(item)}
+      href={hrefCardHistoricoPublicoRole(item)}
       className={styles.cardHistorico}
       aria-label={`Abrir ${item.titulo}`}
     >
@@ -60,6 +61,54 @@ export const CardHistoricoPublico = ({ item }: Props) => {
             {eLider ? "star" : "group"}
           </span>
           {papel}
+        </span>
+      </div>
+    </Link>
+  );
+};
+
+type PropsEvento = {
+  item: ItemHistoricoEvento;
+};
+
+export const CardHistoricoPublicoEvento = ({ item }: PropsEvento) => {
+  const statusLabel = STATUS_CARD_PUBLICO[item.status];
+
+  return (
+    <Link
+      href={hrefCardHistoricoPublicoEvento(item)}
+      className={styles.cardHistorico}
+      aria-label={`Abrir evento ${item.titulo}`}
+    >
+      <div className={styles.cardHistoricoTopo}>
+        <div>
+          <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
+          <div className={styles.cardHistoricoData}>
+            {formatarDataMeta(item.dataHoraAbertura)}
+          </div>
+        </div>
+        {statusLabel ? (
+          <span className={styles.badgeStatus}>{statusLabel}</span>
+        ) : null}
+      </div>
+      <div className={styles.cardHistoricoMeta}>
+        <span className={styles.badgeTipoEvento}>
+          <span className="material-symbols-outlined" aria-hidden>
+            local_activity
+          </span>
+          Evento
+        </span>
+        <span className={styles.metaItem}>
+          <span className="material-symbols-outlined" aria-hidden>
+            location_on
+          </span>
+          {item.localNome}
+        </span>
+        <span className={styles.metaItem}>
+          <span className="material-symbols-outlined" aria-hidden>
+            group
+          </span>
+          {item.inscritosConfirmados} inscritos
         </span>
       </div>
     </Link>

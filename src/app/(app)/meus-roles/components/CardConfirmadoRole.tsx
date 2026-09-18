@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { MeuRoleItem } from "@/types/meus-roles";
+import { BlocoParticipantes } from "@/components/participantes/BlocoParticipantes";
 import { BotaoCompartilharRole } from "@/app/(app)/feed/components/BotaoCompartilharRole";
 import { formatarHora, formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { hrefMeuRole, saidaFutura } from "../constants";
@@ -14,7 +17,6 @@ type Props = {
 };
 
 export const CardConfirmadoRole = ({ item, cancelando, onCancelarRole }: Props) => {
-  const extras = Math.max(0, item.participantes.confirmados - item.participantes.destaques.length);
   const destino = hrefMeuRole(item);
 
   return (
@@ -33,25 +35,20 @@ export const CardConfirmadoRole = ({ item, cancelando, onCancelarRole }: Props) 
         </p>
       </Link>
       <div className={styles.cardRodape}>
-        <div className={styles.avatares}>
-          {item.participantes.destaques.map((d, i) =>
-            d.fotoUrl ? (
-              <img key={`${d.iniciais}-${i}`} src={d.fotoUrl} alt="" className={styles.avatarMini} />
-            ) : (
-              <span key={`${d.iniciais}-${i}`} className={styles.avatarMiniIniciais}>
-                {d.iniciais}
-              </span>
-            ),
-          )}
-          {extras > 0 ? (
-            <span className={styles.avatarMais} aria-label={`mais ${extras} pilotos`}>
-              +{extras}
-            </span>
-          ) : null}
-          <span className={styles.confirmadosN}>
-            {item.participantes.confirmados} confirmados
-          </span>
-        </div>
+        <BlocoParticipantes
+          tipo="role"
+          id={item.roleId}
+          participantes={{
+            total: item.participantes.confirmados,
+            destaques: item.participantes.destaques.map((d) => ({
+              uid: d.uid,
+              apelido: d.apelido,
+              fotoUrl: d.fotoUrl,
+              iniciais: d.iniciais,
+              moto: "",
+            })),
+          }}
+        />
         <div className={styles.cardAcoes}>
           <Link href={destino} className={styles.botaoAcessar}>
             Acessar

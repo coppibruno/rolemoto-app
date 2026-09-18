@@ -1,10 +1,13 @@
 import {distanciaRotaKm} from "./geo";
+import type {Evento} from "../types/evento";
 import type {Role} from "../types/role";
 import type {UsuarioRole} from "../types/usuario-role";
 import type {
   HistoricoPistas,
   HistoricoPublico,
+  ItemHistoricoEvento,
   ItemHistoricoPista,
+  ItemHistoricoRole,
   StatusItemHistorico,
 } from "../types/historico-pistas";
 
@@ -25,13 +28,33 @@ export const ePedidoRecusado = (pedido: UsuarioRole): boolean =>
 
 const saidaPassou = (iso: string): boolean => Date.parse(iso) <= Date.now();
 
+const eventoEncerrou = (evento: Evento): boolean => {
+  const limite = evento.dataHoraEncerramento ?? evento.dataHoraAbertura;
+  return Date.parse(limite) <= Date.now();
+};
+
 const distanciaKm = (role: Role): number =>
   distanciaRotaKm(role.localSaida, role.destinoFinal);
 
-const ordenarPorSaida = (
+const dataDoItem = (item: ItemHistoricoPista): number => {
+  if (item.tipo === "evento") {
+    return Date.parse(item.dataHoraAbertura);
+  }
+  return Date.parse(item.dataHoraSaida);
+};
+
+const ordenarPorData = (
   itens: ItemHistoricoPista[],
   direcao: "asc" | "desc",
 ): ItemHistoricoPista[] => {
+  const sinal = direcao === "asc" ? 1 : -1;
+  return [...itens].sort((a, b) => sinal * (dataDoItem(a) - dataDoItem(b)));
+};
+
+const ordenarRolesPorSaida = (
+  itens: ItemHistoricoRole[],
+  direcao: "asc" | "desc",
+): ItemHistoricoRole[] => {
   const sinal = direcao === "asc" ? 1 : -1;
   return [...itens].sort(
     (a, b) =>
@@ -39,11 +62,12 @@ const ordenarPorSaida = (
   );
 };
 
-const paraItem = (
+const paraItemRole = (
   role: Role,
   status: StatusItemHistorico,
   participantesConfirmados: number,
-): ItemHistoricoPista => ({
+): ItemHistoricoRole => ({
+  tipo: "role",
   roleId: role.id,
   titulo: role.titulo,
   descricao: role.descricao,
@@ -53,6 +77,26 @@ const paraItem = (
   ritmo: role.ritmo,
   status,
 });
+
+export const paraItemEvento = (
+  evento: Evento,
+  inscritosConfirmados: number,
+  avaliado = false,
+): ItemHistoricoEvento => {
+  const localNome =
+    evento.local.nome.trim() || evento.local.endereco.trim() || "Local";
+  return {
+    tipo: "evento",
+    eventoId: evento.id,
+    titulo: evento.titulo,
+    dataHoraAbertura: evento.dataHoraAbertura,
+    localNome,
+    acesso: evento.acesso,
+    inscritosConfirmados,
+    status: eventoEncerrou(evento) ? "concluido" : "confirmado",
+    avaliado,
+  };
+};
 
 /** Ids distintos que entram nas três listas (após filtros). */
 export const coletarIdsRolesHistorico = (
@@ -89,12 +133,13 @@ export const montarHistorico = (
   criados: Role[],
   rolesPorId: Map<string, Role>,
   confirmadosPorRole: Map<string, number>,
+  itensEvento: ItemHistoricoEvento[] = [],
 ): HistoricoPistas => {
   const confirmados = (roleId: string): number =>
     confirmadosPorRole.get(roleId) ?? 0;
 
-  const aguardando: ItemHistoricoPista[] = [];
-  const participei: ItemHistoricoPista[] = [];
+  const aguardando: ItemHistoricoRole[] = [];
+  const participeiRoles: ItemHistoricoRole[] = [];
 
   for (const pedido of pedidos) {
     const role = rolesPorId.get(pedido.roleId);
@@ -106,28 +151,30 @@ export const montarHistorico = (
       if (saidaPassou(role.dataHoraSaida)) {
         continue;
       }
-      aguardando.push(paraItem(role, "pendente", confirmados(role.id)));
+      aguardando.push(paraItemRole(role, "pendente", confirmados(role.id)));
     } else if (ePedidoAceito(pedido)) {
       const status: StatusItemHistorico = saidaPassou(role.dataHoraSaida) ?
         "concluido" :
         "confirmado";
-      participei.push(paraItem(role, status, confirmados(role.id)));
+      participeiRoles.push(
+        paraItemRole(role, status, confirmados(role.id)),
+      );
     }
   }
 
   const criadosItens = criados.map((role) =>
-    paraItem(role, "lider", confirmados(role.id)),
+    paraItemRole(role, "lider", confirmados(role.id)),
   );
 
-  const listaAguardando = ordenarPorSaida(aguardando, "asc").slice(
+  const listaAguardando = ordenarRolesPorSaida(aguardando, "asc").slice(
     0,
     TETO_LISTA_HISTORICO,
   );
-  const listaParticipei = ordenarPorSaida(participei, "desc").slice(
-    0,
-    TETO_LISTA_HISTORICO,
-  );
-  const listaCriados = ordenarPorSaida(criadosItens, "desc").slice(
+  const listaParticipei = ordenarPorData(
+    [...participeiRoles, ...itensEvento],
+    "desc",
+  ).slice(0, TETO_LISTA_HISTORICO);
+  const listaCriados = ordenarRolesPorSaida(criadosItens, "desc").slice(
     0,
     TETO_LISTA_HISTORICO,
   );
@@ -150,12 +197,14 @@ export const montarHistoricoPublico = (
   criados: Role[],
   rolesPorId: Map<string, Role>,
   confirmadosPorRole: Map<string, number>,
+  itensEvento: ItemHistoricoEvento[] = [],
 ): HistoricoPublico => {
   const proprio = montarHistorico(
     pedidos,
     criados,
     rolesPorId,
     confirmadosPorRole,
+    itensEvento,
   );
   return {
     concluidos: proprio.participei,

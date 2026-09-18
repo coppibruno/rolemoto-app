@@ -7,8 +7,16 @@ import {filtrarEventosFeed} from "../lib/feed-filtros";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {log} from "../lib/log";
 import {param} from "../lib/params";
+import {
+  blocoParticipantesEvento,
+  blocoVazio,
+  enriquecerParticipantesEventos,
+  listarParticipantesEvento,
+} from "../lib/participantes";
 import {resolverIntervaloQuando} from "../lib/quando";
-import {eventoRepository} from "../repositories";
+import {eventoRepository, usuarioEventoRepository, usuarioEventoFeedbackRepository} from "../repositories";
+import {inscricaoEventoRouter} from "./inscricao-evento";
+import {avaliacaoEventoRouter} from "./avaliacao-evento";
 import type {Localizacao} from "../types/role";
 import {
   ACESSOS_EVENTO,
@@ -25,12 +33,57 @@ import {
  *
  * GET    /eventos
  * GET    /eventos/:id
+ * GET    /eventos/:id/participantes
  * POST   /eventos   (admin do documento users)
+ * GET|POST|DELETE /eventos/:id/inscricao
+ * GET|POST /eventos/:id/avaliacoes
+ * GET    /eventos/:id/avaliacao
  */
 export const eventosRouter = Router();
 
 eventosRouter.use(autenticar);
 eventosRouter.use(rateLimitAutenticado);
+eventosRouter.use(inscricaoEventoRouter);
+eventosRouter.use(avaliacaoEventoRouter);
+
+const idFeedbackEvento = (usuarioId: string, eventoId: string): string =>
+  `${usuarioId}_${eventoId}`;
+
+const marcarInscritos = async <T extends {id: string}>(
+  itens: T[],
+  uid: string,
+): Promise<(T & {inscrito: boolean})[]> => {
+  if (itens.length === 0) {
+    return [];
+  }
+  const inscricoes = await usuarioEventoRepository.listarPorUsuario(uid);
+  const idsFeed = new Set(itens.map((item) => item.id));
+  const inscritos = new Set(
+    inscricoes
+      .filter((inscricao) => idsFeed.has(inscricao.eventoId))
+      .map((inscricao) => inscricao.eventoId),
+  );
+  return itens.map((item) => ({
+    ...item,
+    inscrito: inscritos.has(item.id),
+  }));
+};
+
+const marcarAvaliados = async <T extends {id: string}>(
+  itens: T[],
+  uid: string,
+): Promise<(T & {avaliado: boolean})[]> => {
+  if (itens.length === 0) {
+    return [];
+  }
+  const ids = itens.map((item) => idFeedbackEvento(uid, item.id));
+  const docs = await usuarioEventoFeedbackRepository.buscarPorIds(ids);
+  const avaliados = new Set(docs.map((doc) => doc.eventoId));
+  return itens.map((item) => ({
+    ...item,
+    avaliado: avaliados.has(item.id),
+  }));
+};
 
 const isTipo = (valor: unknown): valor is TipoEvento =>
   typeof valor === "string" && (TIPOS_EVENTO as string[]).includes(valor);
@@ -244,6 +297,12 @@ const validarBody = (body: unknown): ResultadoValidacao => {
 
 eventosRouter.get("/", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
     const query = validarQueryGeoOpcional(req);
     if (query && "erro" in query) {
       res.status(query.status).json({erro: query.erro});
@@ -252,7 +311,17 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
 
     if (!query) {
       const eventos = await eventoRepository.listarFuturos();
-      res.json(eventos);
+      const [comInscrito, participantesPorEvento] = await Promise.all([
+        marcarInscritos(eventos, uid),
+        enriquecerParticipantesEventos(eventos.map((e) => e.id)),
+      ]);
+      const comAvaliado = await marcarAvaliados(comInscrito, uid);
+      res.json(
+        comAvaliado.map((item) => ({
+          ...item,
+          participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
+        })),
+      );
       return;
     }
 
@@ -266,7 +335,37 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
       {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
       query.q,
     );
-    res.json(itens);
+    const [comInscrito, participantesPorEvento] = await Promise.all([
+      marcarInscritos(itens, uid),
+      enriquecerParticipantesEventos(itens.map((e) => e.id)),
+    ]);
+    const comAvaliado = await marcarAvaliados(comInscrito, uid);
+    res.json(
+      comAvaliado.map((item) => ({
+        ...item,
+        participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
+      })),
+    );
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+eventosRouter.get("/:id/participantes", async (req: Request, res: Response) => {
+  try {
+    if (!req.usuario?.uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    const evento = await eventoRepository.buscarPorId(param(req, "id"));
+    if (!evento) {
+      res.status(404).json({erro: "Evento não encontrado"});
+      return;
+    }
+
+    const lista = await listarParticipantesEvento(evento.id);
+    res.json(lista);
   } catch (error) {
     responderErro(res, error);
   }
@@ -274,12 +373,32 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
 
 eventosRouter.get("/:id", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
     const evento = await eventoRepository.buscarPorId(param(req, "id"));
     if (!evento) {
       res.status(404).json({erro: "Evento não encontrado"});
       return;
     }
-    res.json(evento);
+
+    const [inscricao, total, feedback, participantes] = await Promise.all([
+      usuarioEventoRepository.buscarPorUsuarioEEvento(uid, evento.id),
+      usuarioEventoRepository.contarPorEvento(evento.id),
+      usuarioEventoFeedbackRepository.buscarPorUsuarioEEvento(uid, evento.id),
+      blocoParticipantesEvento(evento.id),
+    ]);
+
+    res.json({
+      ...evento,
+      inscrito: inscricao !== null,
+      inscritos: {total},
+      avaliado: feedback !== null,
+      participantes,
+    });
   } catch (error) {
     responderErro(res, error);
   }

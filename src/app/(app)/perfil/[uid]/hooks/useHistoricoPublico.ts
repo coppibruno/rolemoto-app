@@ -6,14 +6,33 @@ import type {
   AbaHistoricoPublico,
   HistoricoPublico,
 } from "@/types/perfil-publico";
+import type {
+  FiltroTipoHistorico,
+  ItemHistoricoPista,
+} from "@/types/historico-pistas";
 import { ERRO_HISTORICO_PUBLICO } from "../constants";
 import { perfilPublicoService } from "../services/perfil-publico.service";
 
+const filtrarPorTipo = (
+  itens: ItemHistoricoPista[],
+  filtro: FiltroTipoHistorico,
+): ItemHistoricoPista[] => {
+  if (filtro === "todos") return itens;
+  if (filtro === "roles") return itens.filter((item) => item.tipo === "role");
+  return itens.filter((item) => item.tipo === "evento");
+};
+
 export const useHistoricoPublico = (uid: string) => {
   const [historico, setHistorico] = useState<HistoricoPublico | null>(null);
-  const [aba, setAba] = useState<AbaHistoricoPublico>("concluidos");
+  const [aba, setAbaState] = useState<AbaHistoricoPublico>("concluidos");
+  const [filtroTipo, setFiltroTipo] = useState<FiltroTipoHistorico>("todos");
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+
+  const setAba = (nova: AbaHistoricoPublico) => {
+    setAbaState(nova);
+    setFiltroTipo("todos");
+  };
 
   useEffect(() => {
     let cancelado = false;
@@ -48,17 +67,22 @@ export const useHistoricoPublico = (uid: string) => {
     };
   }, [uid]);
 
-  const itens =
+  const bruto =
     historico == null
       ? []
       : aba === "concluidos"
         ? historico.concluidos
         : historico.comoLider;
 
+  const itens =
+    aba === "concluidos" ? filtrarPorTipo(bruto, filtroTipo) : bruto;
+
   return {
     historico,
     aba,
     setAba,
+    filtroTipo,
+    setFiltroTipo,
     itens,
     carregando,
     erro,

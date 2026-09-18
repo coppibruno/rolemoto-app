@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import type { ItemHistoricoPista } from "@/types/historico-pistas";
+import type { ItemHistoricoRole } from "@/types/historico-pistas";
 import {
   ariaCardHistorico,
-  hrefCardHistorico,
+  hrefCardHistoricoRole,
   LINHA1_LIDER,
   STATUS_DIREITA,
 } from "../constants";
@@ -14,17 +14,17 @@ import { BotaoClonarRole } from "./BotaoClonarRole";
 import styles from "../historico-pistas.module.css";
 
 type Props = {
-  item: ItemHistoricoPista;
+  item: ItemHistoricoRole;
 };
 
-const classeTitulo: Record<ItemHistoricoPista["status"], string> = {
+const classeTitulo: Record<ItemHistoricoRole["status"], string> = {
   pendente: styles.tituloPendente,
   confirmado: styles.tituloConfirmado,
   concluido: styles.tituloConcluido,
   lider: styles.tituloLider,
 };
 
-const classeStatus: Record<ItemHistoricoPista["status"], string> = {
+const classeStatus: Record<ItemHistoricoRole["status"], string> = {
   pendente: styles.chipAnalise,
   confirmado: styles.statusConfirmado,
   concluido: styles.statusConcluido,
@@ -40,7 +40,7 @@ export const CardHistorico = ({ item }: Props) => {
   return (
     <div className={styles.cardLinha}>
       <Link
-        href={hrefCardHistorico(item)}
+        href={hrefCardHistoricoRole(item)}
         className={classeCard}
         aria-label={ariaCardHistorico(item)}
       >

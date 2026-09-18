@@ -13,4 +13,5 @@ export interface EventoRepository {
   criar(dados: EventoCreate): Promise<Evento>;
   listarFuturos(filtros?: FiltroListagemEventos): Promise<Evento[]>;
   buscarPorId(id: string): Promise<Evento | null>;
+  buscarPorIds(ids: string[]): Promise<Evento[]>;
 }

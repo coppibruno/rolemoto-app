@@ -1,4 +1,9 @@
-import type { ItemHistoricoPista, StatusItemHistorico } from "@/types/historico-pistas";
+import type {
+  ItemHistoricoEvento,
+  ItemHistoricoPista,
+  ItemHistoricoRole,
+  StatusItemHistorico,
+} from "@/types/historico-pistas";
 import type { AbaHistoricoPublico } from "@/types/perfil-publico";
 
 export const TOAST_LINK_MS = 2800;
@@ -13,7 +18,7 @@ export const ABAS_HISTORICO_PUBLICO: DefAbaHistoricoPublico[] = [
   {
     id: "concluidos",
     label: "Concluídos",
-    listaAria: "Rolês concluídos ou confirmados",
+    listaAria: "Rolês e eventos concluídos ou confirmados",
   },
   {
     id: "comoLider",
@@ -22,13 +27,19 @@ export const ABAS_HISTORICO_PUBLICO: DefAbaHistoricoPublico[] = [
   },
 ];
 
+export const FILTROS_TIPO_HISTORICO_PUBLICO = [
+  { id: "todos" as const, label: "Todos" },
+  { id: "roles" as const, label: "Rolês" },
+  { id: "eventos" as const, label: "Eventos" },
+];
+
 export const VAZIOS_HISTORICO_PUBLICO: Record<
   AbaHistoricoPublico,
   { titulo: string; corpo: string; icone: string }
 > = {
   concluidos: {
     titulo: "Nenhum comboio ainda",
-    corpo: "Quando este piloto participar de rolês, eles aparecem aqui.",
+    corpo: "Quando este piloto participar de rolês ou eventos, eles aparecem aqui.",
     icone: "explore_off",
   },
   comoLider: {
@@ -54,16 +65,28 @@ export const ERRO_HISTORICO_PUBLICO = "Não foi possível carregar o histórico"
 export const PILOTO_NAO_ENCONTRADO = "Piloto não encontrado";
 
 export const ariaBadgeAba = (label: string, n: number): string =>
-  `${label}, ${n} rolês`;
+  `${label}, ${n} itens`;
 
 export const totalRolesHistorico = (concluidos: number, comoLider: number): number =>
   concluidos + comoLider;
 
 export const textoTotalRoles = (n: number): string =>
-  n === 1 ? "1 Rolê" : `${n} Rolês`;
+  n === 1 ? "1 pista" : `${n} pistas`;
 
-export const hrefCardHistoricoPublico = (item: ItemHistoricoPista): string => {
+export const hrefCardHistoricoPublicoRole = (item: ItemHistoricoRole): string => {
   if (item.status === "lider") return `/roles/${item.roleId}/participar`;
   if (item.status === "concluido") return `/roles/${item.roleId}/feedback`;
   return `/roles/${item.roleId}/participar`;
+};
+
+export const hrefCardHistoricoPublicoEvento = (
+  item: ItemHistoricoEvento,
+): string => {
+  if (item.status === "concluido") return `/eventos/${item.eventoId}/avaliar`;
+  return `/eventos/${item.eventoId}`;
+};
+
+export const hrefCardHistoricoPublico = (item: ItemHistoricoPista): string => {
+  if (item.tipo === "evento") return hrefCardHistoricoPublicoEvento(item);
+  return hrefCardHistoricoPublicoRole(item);
 };

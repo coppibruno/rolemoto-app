@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { LocalFeedItem } from "@/types/local";
 import { urlAbrirMaps } from "@/lib/maps";
 import {
@@ -7,6 +8,8 @@ import {
   ICONES_CATEGORIA_LOCAL,
   LABELS_CATEGORIA_LOCAL,
 } from "../constants";
+import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
+import { BotaoFavoritarLocal } from "./BotaoFavoritarLocal";
 import styles from "../feed.module.css";
 
 type Props = {
@@ -63,6 +66,15 @@ export const LocalCard = ({ local }: Props) => {
             <span className={styles.badgeCategoria}>
               {LABELS_CATEGORIA_LOCAL[local.categoria]}
             </span>
+            <SeloMediaAvaliacoes
+              notaMedia={local.notaMedia ?? 0}
+              totalAvaliacoes={local.totalAvaliacoes ?? 0}
+            />
+            <BotaoFavoritarLocal
+              localId={local.id}
+              nome={local.nome}
+              favoritoInicial={Boolean(local.favorito)}
+            />
           </div>
           <h3 className={styles.cardLocalTitulo}>{local.nome}</h3>
           <p className={styles.cardLocalEndereco}>{local.endereco}</p>
@@ -95,17 +107,28 @@ export const LocalCard = ({ local }: Props) => {
         </div>
       ) : null}
 
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.botaoRotaDireta}
-      >
-        <span className="material-symbols-outlined" aria-hidden>
-          directions
-        </span>
-        <span>Traçar Rota Direta</span>
-      </a>
+      <div className={styles.cardLocalAcoes}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.botaoRotaDireta}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            directions
+          </span>
+          <span>Maps</span>
+        </a>
+        <Link
+          href={`/locais/${local.id}/avaliar`}
+          className={styles.botaoAvaliar}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            star
+          </span>
+          Avaliar
+        </Link>
+      </div>
     </article>
   );
 };

@@ -1,6 +1,6 @@
 # SPEC 026 — Inscrição em Evento
 
-> **Status:** Proposta  
+> **Status:** Implementada  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-18  
 > **Referência visual:** `designs/filtros-feed/` (card de evento) + `designs/modal-excluir-conta/` / Layer 2 do design system (modal de ingresso) + `designs/perfil/` e `designs/Perfil-publico/` (histórico)  

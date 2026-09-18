@@ -49,3 +49,18 @@ export const uploadFotoCapaEvento = async (
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
 };
+
+export const uploadFotoAvaliacao = async (
+  uid: string,
+  alvoTipo: "local" | "evento",
+  alvoId: string,
+  file: File,
+): Promise<string> => {
+  const id = crypto.randomUUID();
+  const storageRef = ref(
+    storage,
+    `avaliacoes/${alvoTipo}/${alvoId}/${uid}/${id}.jpg`,
+  );
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+};

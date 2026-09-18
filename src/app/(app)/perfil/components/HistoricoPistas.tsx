@@ -3,6 +3,7 @@
 import { useHistoricoPistas } from "../hooks/useHistoricoPistas";
 import { ABAS_HISTORICO } from "../constants";
 import { AbasHistorico } from "./AbasHistorico";
+import { FiltroTipoHistoricoChips } from "./FiltroTipoHistorico";
 import { ListaHistorico } from "./ListaHistorico";
 import { EstadoErroHistorico } from "./EstadoErroHistorico";
 import perfil from "../perfil.module.css";
@@ -47,6 +48,13 @@ export const HistoricoPistas = () => {
         contagens={historico.dados?.contagens ?? null}
         carregando={historico.carregando}
       />
+
+      {historico.aba === "participei" && !historico.carregando && !historico.erro ? (
+        <FiltroTipoHistoricoChips
+          valor={historico.filtroTipo}
+          onMudar={historico.setFiltroTipo}
+        />
+      ) : null}
 
       <div
         id="painel-historico"

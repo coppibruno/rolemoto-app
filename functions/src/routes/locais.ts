@@ -7,7 +7,13 @@ import {filtrarLocaisFeed} from "../lib/feed-filtros";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {log} from "../lib/log";
 import {param} from "../lib/params";
-import {localRepository} from "../repositories";
+import {
+  localRepository,
+  usuarioLocalFavoritoRepository,
+  usuarioLocalFeedbackRepository,
+} from "../repositories";
+import {avaliacaoLocalRouter} from "./avaliacao-local";
+import {favoritoLocalRouter} from "./favorito-local";
 import type {
   CategoriaLocal,
   DiaSemana,
@@ -27,11 +33,40 @@ import {
  * GET    /locais
  * GET    /locais/:id
  * POST   /locais   (admin do documento users)
+ * GET|POST /locais/:id/avaliacoes
+ * GET    /locais/:id/avaliacao
+ * POST|DELETE /locais/:id/favorito
  */
 export const locaisRouter = Router();
 
 locaisRouter.use(autenticar);
 locaisRouter.use(rateLimitAutenticado);
+locaisRouter.use(avaliacaoLocalRouter);
+locaisRouter.use(favoritoLocalRouter);
+
+const idFeedbackLocal = (usuarioId: string, localId: string): string =>
+  `${usuarioId}_${localId}`;
+
+const marcarAvaliadosEFavoritos = async <T extends {id: string}>(
+  itens: T[],
+  uid: string,
+): Promise<(T & {avaliado: boolean; favorito: boolean})[]> => {
+  if (itens.length === 0) {
+    return [];
+  }
+  const idsFeedback = itens.map((item) => idFeedbackLocal(uid, item.id));
+  const [docs, favoritoIds] = await Promise.all([
+    usuarioLocalFeedbackRepository.buscarPorIds(idsFeedback),
+    usuarioLocalFavoritoRepository.listarLocalIdsPorUsuario(uid),
+  ]);
+  const avaliados = new Set(docs.map((doc) => doc.localId));
+  const favoritos = new Set(favoritoIds);
+  return itens.map((item) => ({
+    ...item,
+    avaliado: avaliados.has(item.id),
+    favorito: favoritos.has(item.id),
+  }));
+};
 
 const HORA_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
@@ -221,6 +256,12 @@ const validarBody = (body: unknown): ResultadoValidacao => {
 
 locaisRouter.get("/", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
     const query = validarQueryGeoOpcional(req);
     if (query && "erro" in query) {
       res.status(query.status).json({erro: query.erro});
@@ -229,7 +270,8 @@ locaisRouter.get("/", async (req: Request, res: Response) => {
 
     const locais = await localRepository.listar();
     if (!query) {
-      res.json(locais);
+      const enriquecidos = await marcarAvaliadosEFavoritos(locais, uid);
+      res.json(enriquecidos);
       return;
     }
 
@@ -238,7 +280,8 @@ locaisRouter.get("/", async (req: Request, res: Response) => {
       {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
       query.q,
     );
-    res.json(itens);
+    const enriquecidos = await marcarAvaliadosEFavoritos(itens, uid);
+    res.json(enriquecidos);
   } catch (error) {
     responderErro(res, error);
   }
@@ -246,12 +289,24 @@ locaisRouter.get("/", async (req: Request, res: Response) => {
 
 locaisRouter.get("/:id", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
     const local = await localRepository.buscarPorId(param(req, "id"));
     if (!local) {
       res.status(404).json({erro: "Local não encontrado"});
       return;
     }
-    res.json(local);
+
+    const feedback =
+      await usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(
+        uid,
+        local.id,
+      );
+    res.json({...local, avaliado: feedback !== null});
   } catch (error) {
     responderErro(res, error);
   }

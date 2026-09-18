@@ -1,5 +1,6 @@
 import type { AbaHistorico, ItemHistoricoPista } from "@/types/historico-pistas";
 import { CardHistorico } from "./CardHistorico";
+import { CardHistoricoEvento } from "./CardHistoricoEvento";
 import { EstadoVazioHistorico } from "./EstadoVazioHistorico";
 import styles from "../historico-pistas.module.css";
 
@@ -16,9 +17,13 @@ export const ListaHistorico = ({ itens, aba, ariaLabel }: Props) => {
 
   return (
     <div className={styles.lista} aria-label={ariaLabel}>
-      {itens.map((item) => (
-        <CardHistorico key={`${aba}-${item.roleId}`} item={item} />
-      ))}
+      {itens.map((item) =>
+        item.tipo === "evento" ? (
+          <CardHistoricoEvento key={`${aba}-evento-${item.eventoId}`} item={item} />
+        ) : (
+          <CardHistorico key={`${aba}-role-${item.roleId}`} item={item} />
+        ),
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import type {Usuario} from "../types/usuario";
 import type {UsuarioRole} from "../types/usuario-role";
 import type {
   ContagensMeusRoles,
+  ContagensTipoGaragem,
   CriadorMeuRole,
   DestaqueParticipante,
   MeuRoleItem,
@@ -101,22 +102,24 @@ export const unirComCriados = (
 };
 
 export const montarTelemetria = (
-  itens: ItemClassificado[],
-): TelemetriaMeusRoles => {
-  let ativos = 0;
-  let analise = 0;
-  let asfaltoKm = 0;
-  for (const item of itens) {
-    if (item.status === "confirmado" || item.status === "lider") {
-      ativos += 1;
-    } else if (item.status === "pendente") {
-      analise += 1;
-    } else if (item.status === "concluido") {
-      asfaltoKm += distanciaRotaKm(item.role.localSaida, item.role.destinoFinal);
-    }
-  }
-  return {ativos, analise, asfaltoKm};
-};
+  rolesFeitos: number,
+  eventosParticipados: number,
+  locaisFavoritos: number,
+): TelemetriaMeusRoles => ({
+  rolesFeitos,
+  eventosParticipados,
+  locaisFavoritos,
+});
+
+export const montarContagensTipo = (
+  contagens: ContagensMeusRoles,
+  eventosParticipados: number,
+  locaisFavoritos: number,
+): ContagensTipoGaragem => ({
+  roles: contagens.confirmados + contagens.aguardando + contagens.concluidos,
+  eventos: eventosParticipados,
+  locais: locaisFavoritos,
+});
 
 export const montarContagens = (
   itens: ItemClassificado[],
@@ -138,6 +141,9 @@ export const montarContagens = (
   }
   return {confirmados, aguardando, concluidos, recusados};
 };
+
+export const contarRolesFeitos = (itens: ItemClassificado[]): number =>
+  itens.filter((item) => item.status === "concluido").length;
 
 export const ordenarPayload = (
   itens: ItemClassificado[],
@@ -167,6 +173,8 @@ export const destaquesDe = (
       continue;
     }
     destaques.push({
+      uid: usuario.uid,
+      apelido: usuario.apelido || "piloto",
       fotoUrl: usuario.fotoUrl || "",
       iniciais: iniciaisDe(usuario.nome, usuario.apelido),
     });
@@ -203,5 +211,6 @@ export const paraMeuRoleItem = (
 export const montarPayloadMeusRoles = (
   itens: MeuRoleItem[],
   telemetria: TelemetriaMeusRoles,
+  contagensTipo: ContagensTipoGaragem,
   contagens: ContagensMeusRoles,
-): MeusRolesPayload => ({itens, telemetria, contagens});
+): MeusRolesPayload => ({itens, telemetria, contagensTipo, contagens});

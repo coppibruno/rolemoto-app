@@ -23,8 +23,8 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Home `/` com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)
 - Geolocalização + raio (pill 25 / 50 / 100 / sem limite) e busca unificada
 - Aba Rolês: filtros de **quando** e **ritmo**; cards de comboio (SPEC 003)
-- Aba Eventos: filtro **quando**; cards de destino fixo (SPEC 022 / 024)
-- Aba Locais: só raio + busca; pontos oficiais permanentes (SPEC 023 / 024)
+- Aba Eventos: filtro **quando**; cards de destino fixo (SPEC 022 / 024); inscrição (SPEC 026); ★ média + Avaliar (SPEC 027)
+- Aba Locais: só raio + busca; pontos oficiais permanentes (SPEC 023 / 024); ★ média + Avaliar (SPEC 027); ♥ favorito (SPEC 028)
 - Solicitar participação em um rolê (sujeito à aprovação do criador)
 
 ### 3. Criação de Rolês
@@ -40,18 +40,22 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Só **administrador** (`users.admin === true`, promoção manual no Firestore) cadastra eventos em `/criar-evento`
 - Evento não é rolê: um único local (moto point, track day, café, exposição), sem comboio em estrada
 - Piloto comum **não** cria; **vê** no feed (aba Eventos) e via `GET /eventos`
+- Qualquer autenticado **se inscreve** no evento (`POST /eventos/:id/inscricao`) sem aceite do criador; ingresso pago abre modal com `linkIngresso`
+- Após o evento encerrar, inscritos **avaliam** em `/eventos/:id/avaliar` (nota, relato, fotos, recomendo comboio)
+- Locais oficiais: qualquer autenticado avalia em `/locais/:id/avaliar`
+- **Meus Rolês** (`/meus-roles`) é a garagem: abas Rolês · Eventos (inscritos) · Locais (favoritos); CTAs Avaliar / Ver relato (SPEC 027/028)
+- Favoritar local no feed (aba Locais) → aparece na aba Locais da garagem (`userslocalfavorito`)
 - O `+` do dock: comum vai para `/criar-role`; admin abre menu Rolês / Eventos / Locais
 - Locais: catálogo `/locais` e aba Locais no feed; cadastro `/criar-local` só admin
 
 ### 5. Locais oficiais
 - Ponto permanente no catálogo (posto parceiro, bar / moto point, restaurante de estrada, oficina, mirante) — sem data de ocorrência
-- Qualquer piloto autenticado vê no feed (aba Locais) e em `/locais`; só admin cadastra
+- Qualquer piloto autenticado vê no feed (aba Locais) e em `/locais`; só admin cadastra; pode **favoritar** (coração no card)
 
 ### 6. Perfil do Usuário
 - Apelido, moto, tipo de moto (`trail` | `speed` | `custom`), ritmo/pilotagem, foto, garupa, cidade (opcional)
-- Histórico de pistas (SPEC 008), Meus Rolês (SPEC 017), fila de aprovações (SPEC 007)
-- Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura
-
+- Histórico de pistas (SPEC 008 + eventos da SPEC 026), Meus Rolês / garagem (SPEC 017 + 028), fila de aprovações (SPEC 007)
+- Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura; histórico inclui eventos inscritos
 ## Modelo de Negócio
 
 - App **gratuito** sem monetização inicial

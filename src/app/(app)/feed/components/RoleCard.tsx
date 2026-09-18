@@ -1,6 +1,7 @@
 "use client";
 
 import type { RoleFeedItem } from "@/types/role";
+import { BlocoParticipantes } from "@/components/participantes/BlocoParticipantes";
 import { BotaoParticipar } from "./BotaoParticipar";
 import { BotaoCompartilharRole } from "./BotaoCompartilharRole";
 import { CapaRole } from "./CapaRole";
@@ -32,7 +33,14 @@ export const RoleCard = ({ role }: Props) => {
           dataHoraSaida={role.dataHoraSaida}
         />
         {descricao ? <p className={styles.descricao}>{descricao}</p> : null}
-        <OrganizadorRole criador={role.criador} />
+        <div className={styles.linhaOrganizacao}>
+          <OrganizadorRole criador={role.criador} />
+          <BlocoParticipantes
+            tipo="role"
+            id={role.id}
+            participantes={role.participantes}
+          />
+        </div>
         <div className={styles.cardAcoes}>
           <BotaoParticipar id={role.id} criadorId={role.criadorId} />
           <BotaoCompartilharRole

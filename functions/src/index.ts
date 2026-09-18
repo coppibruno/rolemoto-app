@@ -6,6 +6,8 @@
  * - /auth/recuperar-senha → POST (público, sem Bearer)
  * - /publico/roles/:id → GET (público, sem Bearer)
  * - /meus-roles → GET
+ * - /meus-roles/eventos → GET
+ * - /meus-roles/locais → GET
  * - /roles   → GET, POST, PUT, DELETE
  * - /roles/:id/participacao → GET, POST, PATCH, DELETE
  * - /roles/:id/feedback → POST
@@ -19,7 +21,13 @@
  * - /usuarios/:uid → GET
  * - /usuarios/:uid/historico → GET
  * - /eventos → GET, POST
+ * - /eventos/:id/inscricao → GET, POST, DELETE
+ * - /eventos/:id/avaliacoes → GET, POST
+ * - /eventos/:id/avaliacao → GET
  * - /locais  → GET, POST
+ * - /locais/:id/avaliacoes → GET, POST
+ * - /locais/:id/avaliacao → GET
+ * - /locais/:id/favorito → POST, DELETE
  * - /feed/contagens → GET
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
@@ -60,8 +68,11 @@ app.get("/", (_req: Request, res: Response) => {
       "/auth/recuperar-senha",
       "/publico/roles/:id",
       "/meus-roles",
+      "/meus-roles/eventos",
+      "/meus-roles/locais",
       "/roles",
       "/roles/:id/modelo",
+      "/roles/:id/participantes",
       "/roles/:id/feedback",
       "/roles/:id/feedbacks",
       "/feedback/pendente",
@@ -74,8 +85,15 @@ app.get("/", (_req: Request, res: Response) => {
       "/usuarios/:uid/historico",
       "/eventos",
       "/eventos/:id",
+      "/eventos/:id/participantes",
+      "/eventos/:id/inscricao",
+      "/eventos/:id/avaliacoes",
+      "/eventos/:id/avaliacao",
       "/locais",
       "/locais/:id",
+      "/locais/:id/avaliacoes",
+      "/locais/:id/avaliacao",
+      "/locais/:id/favorito",
       "/feed/contagens",
     ],
   });

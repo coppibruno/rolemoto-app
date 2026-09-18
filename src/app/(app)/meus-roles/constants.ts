@@ -1,10 +1,18 @@
-import type { AbaMeusRoles, MeuRoleItem, PapelMeuRole } from "@/types/meus-roles";
+import type {
+  AbaMeusRoles,
+  AbaTipoGaragem,
+  MeuRoleItem,
+  PapelMeuRole,
+  PillAvaliacaoGaragem,
+} from "@/types/meus-roles";
 import type { RitmoRole } from "@/types/role";
 
 export const SUBTITULO_GARAGEM =
-  "Gerencie seus comboios ativos, solicitações em análise e a sua quilometragem percorrida.";
+  "Seus comboios, eventos inscritos e pontos favoritos — tudo na garagem.";
 
 export const ERRO_MEUS_ROLES = "Não foi possível carregar seus rolês";
+export const ERRO_MEUS_EVENTOS = "Não foi possível carregar seus eventos";
+export const ERRO_MEUS_LOCAIS = "Não foi possível carregar seus locais";
 export const ERRO_ACAO = "Não foi possível atualizar a participação.";
 
 export const LABELS_RITMO: Record<RitmoRole, string> = {
@@ -20,6 +28,26 @@ export const ABAS_MEUS_ROLES: { id: Exclude<AbaMeusRoles, "proximos">; label: st
     { id: "concluidos", label: "Concluídos" },
     { id: "recusados", label: "Recusados" },
   ];
+
+export const ABAS_TIPO_GARAGEM: {
+  id: AbaTipoGaragem;
+  label: string;
+  icone: string;
+}[] = [
+  { id: "roles", label: "Rolês", icone: "two_wheeler" },
+  { id: "eventos", label: "Eventos", icone: "local_activity" },
+  { id: "locais", label: "Locais", icone: "local_gas_station" },
+];
+
+export const PILLS_AVALIACAO: {
+  id: PillAvaliacaoGaragem;
+  label: string;
+  icone: string;
+}[] = [
+  { id: "todos", label: "Todos recentes", icone: "schedule" },
+  { id: "aguardando_avaliacao", label: "Aguardando avaliação", icone: "rate_review" },
+  { id: "avaliados", label: "Avaliados", icone: "check_circle" },
+];
 
 export const VAZIOS: Record<AbaMeusRoles | "tune", { titulo: string; corpo: string }> = {
   proximos: {
@@ -48,6 +76,42 @@ export const VAZIOS: Record<AbaMeusRoles | "tune", { titulo: string; corpo: stri
   },
 };
 
+export const VAZIOS_EVENTOS: Record<
+  PillAvaliacaoGaragem,
+  { titulo: string; corpo: string }
+> = {
+  todos: {
+    titulo: "Nenhum evento inscrito",
+    corpo: "Você ainda não se inscreveu em eventos. Explore a aba Eventos no feed.",
+  },
+  aguardando_avaliacao: {
+    titulo: "Nada pendente",
+    corpo: "Nenhum evento esperando sua avaliação.",
+  },
+  avaliados: {
+    titulo: "Sem relatos ainda",
+    corpo: "Você ainda não publicou relatos de eventos.",
+  },
+};
+
+export const VAZIOS_LOCAIS: Record<
+  PillAvaliacaoGaragem,
+  { titulo: string; corpo: string }
+> = {
+  todos: {
+    titulo: "Nenhum favorito",
+    corpo: "Favorite um ponto no feed (aba Locais) para vê-lo aqui.",
+  },
+  aguardando_avaliacao: {
+    titulo: "Nada pendente",
+    corpo: "Seus favoritos já estão em dia — ou ainda sem avaliação.",
+  },
+  avaliados: {
+    titulo: "Sem relatos ainda",
+    corpo: "Nenhum favorito avaliado ainda.",
+  },
+};
+
 export const OPCOES_RITMO: { id: RitmoRole | "todas"; label: string }[] = [
   { id: "todas", label: "Todas" },
   { id: "tranquila", label: "Tranquila" },
@@ -60,6 +124,12 @@ export const OPCOES_PAPEL: { id: PapelMeuRole | "todos"; label: string }[] = [
   { id: "participante", label: "Participante" },
   { id: "organizador", label: "Organizador" },
 ];
+
+export const LABELS_TELEMETRIA = {
+  rolesFeitos: "Rolês feitos",
+  eventosParticipados: "Eventos part.",
+  locaisFavoritos: "Locais favoritos",
+} as const;
 
 export const hrefMeuRole = (item: MeuRoleItem): string => {
   if (item.status === "pendente" || item.status === "confirmado") {
@@ -75,6 +145,15 @@ export const hrefClonarRole = (roleId: string): string =>
 
 export const hrefEditarRole = (roleId: string): string =>
   `/criar-role?editar=${encodeURIComponent(roleId)}`;
+
+export const hrefAvaliarEvento = (eventoId: string): string =>
+  `/eventos/${eventoId}/avaliar`;
+
+export const hrefDetalheEvento = (eventoId: string): string =>
+  `/eventos/${eventoId}`;
+
+export const hrefAvaliarLocal = (localId: string): string =>
+  `/locais/${localId}/avaliar`;
 
 export const saidaFutura = (iso: string): boolean => Date.parse(iso) > Date.now();
 

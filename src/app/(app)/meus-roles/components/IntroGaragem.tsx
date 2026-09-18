@@ -2,11 +2,12 @@ import { SUBTITULO_GARAGEM } from "../constants";
 import styles from "../meus-roles.module.css";
 
 type Props = {
+  mostrarTune: boolean;
   sheetAberto: boolean;
   onTune: () => void;
 };
 
-export const IntroGaragem = ({ sheetAberto, onTune }: Props) => {
+export const IntroGaragem = ({ mostrarTune, sheetAberto, onTune }: Props) => {
   return (
     <section className={styles.intro}>
       <div className={styles.introTopo}>
@@ -20,16 +21,18 @@ export const IntroGaragem = ({ sheetAberto, onTune }: Props) => {
           </h1>
           <p className={styles.subtitulo}>{SUBTITULO_GARAGEM}</p>
         </div>
-        <button
-          type="button"
-          className={styles.tune}
-          onClick={onTune}
-          aria-label="Filtros"
-          aria-expanded={sheetAberto}
-          aria-controls="sheet-filtros-meus-roles"
-        >
-          <span className="material-symbols-outlined">tune</span>
-        </button>
+        {mostrarTune ? (
+          <button
+            type="button"
+            className={styles.tune}
+            onClick={onTune}
+            aria-label="Filtros"
+            aria-expanded={sheetAberto}
+            aria-controls="sheet-filtros-meus-roles"
+          >
+            <span className="material-symbols-outlined">tune</span>
+          </button>
+        ) : null}
       </div>
     </section>
   );

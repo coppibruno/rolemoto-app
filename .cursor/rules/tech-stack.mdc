@@ -14,7 +14,7 @@ alwaysApply: true
 - **Firebase Authentication** — Google e e-mail/senha
 - **Firebase Cloud Functions** — API HTTP (Express, function `api`); persistência via repositórios
 - **Firebase Firestore** — banco NoSQL; só o adapter em `functions/src/repositories/firestore/` fala com ele. Client **deny-all**; escrita só via Functions
-- **Firebase Storage** — upload de fotos (perfil, rolês, eventos e fachadas de locais)
+- Firebase Storage — upload de fotos (perfil, rolês, eventos, fachadas de locais e avaliações)
 - **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê, do evento e do local
 
 ## Decisões de Arquitetura
@@ -77,6 +77,20 @@ Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/histori
 }
 ```
 
+### Coleção `usersevento` (vínculo usuário ↔ evento — inscrição imediata)
+```
+{
+  id: string,            // `{usuarioId}_{eventoId}`
+  usuarioId: string,
+  eventoId: string,
+  criadorId: string,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Sem `aceito` / fila: `POST /eventos/:id/inscricao` confirma na hora. Qualquer autenticado (incl. criador) pode se inscrever. Feed de eventos devolve `inscrito: boolean` por item.
+
 ### Coleção `eventos` (destino fixo — moto point, track day, café)
 ```
 {
@@ -92,12 +106,16 @@ Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/histori
   fotoCapaUrl: string,
   informacoes: string,
   criadorId: string,
+  notaMedia: number,              // denormalizado; 0 se sem avaliações
+  totalAvaliacoes: number,
+  recomendacoesComboio: number,
+  somaNotas: number,              // interno; NÃO expor na API
   createdAt: timestamp,
   updatedAt: timestamp
 }
 ```
 
-Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`). Não misturar com a coleção `roles`.
+Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`) e se inscreve (`POST|GET|DELETE /eventos/:id/inscricao`). Avalia após encerrar (`POST|GET /eventos/:id/avaliacoes`, `GET /eventos/:id/avaliacao`). Não misturar com a coleção `roles`.
 
 ### Coleção `locais` (pontos oficiais permanentes)
 ```
@@ -116,9 +134,45 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
   linkMaps: string,
   fotoFachadaUrl: string,
   criadorId: string,
+  notaMedia: number,
+  totalAvaliacoes: number,
+  recomendacoesComboio: number,
+  somaNotas: number,              // interno; NÃO expor na API
   createdAt: timestamp,
   updatedAt: timestamp
 }
 ```
 
-Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`). `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
+Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`) e avalia (`POST|GET /locais/:id/avaliacoes`, `GET /locais/:id/avaliacao`). Favorita via `POST|DELETE /locais/:id/favorito`. `GET /locais` inclui `favorito: boolean`. `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
+
+### Coleção `userslocalfavorito`
+```
+{
+  id: string, // `{usuarioId}_{localId}`
+  usuarioId: string,
+  localId: string,
+  createdAt: timestamp
+}
+```
+
+Um doc por par. Garagem lista favoritos em `GET /meus-roles/locais`.
+
+### Coleção `userslocalfeedback` / `userseventofeedback`
+```
+{
+  id: string, // `{usuarioId}_{localId|eventoId}`
+  usuarioId: string,
+  localId | eventoId: string,
+  nota: number,                 // 1..5
+  comentario: string,           // "" ok; máx 500
+  fotosUrls: string[],          // 0..4
+  recomendaComboio: boolean,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Local: qualquer autenticado. Evento: só inscrito (`usersevento`) e após encerramento. Um doc por par; sem PATCH/DELETE.
+
+### Garagem (`GET /meus-roles`)
+Telemetria: `rolesFeitos`, `eventosParticipados`, `locaisFavoritos`. `contagensTipo` (roles/eventos/locais). Subrotas lazy: `GET /meus-roles/eventos`, `GET /meus-roles/locais`.

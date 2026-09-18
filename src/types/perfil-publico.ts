@@ -1,4 +1,4 @@
-import type { ItemHistoricoPista } from "./historico-pistas";
+import type { ItemHistoricoPista, ItemHistoricoRole } from "./historico-pistas";
 import type { Pilotagem, TipoMoto } from "./user";
 
 export type PerfilPublico = {
@@ -17,7 +17,7 @@ export type AbaHistoricoPublico = "concluidos" | "comoLider";
 
 export type HistoricoPublico = {
   concluidos: ItemHistoricoPista[];
-  comoLider: ItemHistoricoPista[];
+  comoLider: ItemHistoricoRole[];
   contagens: {
     concluidos: number;
     comoLider: number;

@@ -1,3 +1,4 @@
+import type { ParticipantesBloco } from "./participante";
 import type { Pilotagem } from "./user";
 import type { UsuarioRole } from "./usuario-role";
 
@@ -38,6 +39,7 @@ export type RoleFeedItem = Role & {
   distanciaPartidaKm: number;
   distanciaRotaKm: number;
   criador: RoleCriadorResumo;
+  participantes: ParticipantesBloco;
 };
 
 export type RoleDetalhe = Role & {

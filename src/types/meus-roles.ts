@@ -1,8 +1,14 @@
 import type { RitmoRole } from "./role";
+import type { TipoEvento } from "./evento";
+import type { CategoriaLocal } from "./local";
 
 export type StatusMeuRole = "pendente" | "confirmado" | "lider" | "concluido" | "recusado";
 
 export type AbaMeusRoles = "proximos" | "confirmados" | "aguardando" | "concluidos" | "recusados";
+
+export type AbaTipoGaragem = "roles" | "eventos" | "locais";
+
+export type PillAvaliacaoGaragem = "todos" | "aguardando_avaliacao" | "avaliados";
 
 export type PapelMeuRole = "participante" | "organizador";
 
@@ -14,6 +20,8 @@ export type CriadorMeuRole = {
 };
 
 export type DestaqueParticipante = {
+  uid: string;
+  apelido: string;
   fotoUrl: string;
   iniciais: string;
 };
@@ -40,9 +48,15 @@ export type MeuRoleItem = {
 };
 
 export type TelemetriaMeusRoles = {
-  ativos: number;
-  analise: number;
-  asfaltoKm: number;
+  rolesFeitos: number;
+  eventosParticipados: number;
+  locaisFavoritos: number;
+};
+
+export type ContagensTipoGaragem = {
+  roles: number;
+  eventos: number;
+  locais: number;
 };
 
 export type ContagensMeusRoles = {
@@ -55,7 +69,58 @@ export type ContagensMeusRoles = {
 export type MeusRolesPayload = {
   itens: MeuRoleItem[];
   telemetria: TelemetriaMeusRoles;
+  contagensTipo: ContagensTipoGaragem;
   contagens: ContagensMeusRoles;
+};
+
+export type StatusMeuEventoGaragem = "confirmado" | "concluido";
+
+export type MeuEventoGaragemItem = {
+  eventoId: string;
+  titulo: string;
+  tipo: TipoEvento;
+  fotoCapaUrl: string;
+  dataHoraAbertura: string;
+  dataHoraEncerramento: string | null;
+  localNome: string;
+  localEndereco: string;
+  status: StatusMeuEventoGaragem;
+  inscritosTotal: number;
+  avaliado: boolean;
+  minhaAvaliacao: {
+    nota: number;
+    comentario: string;
+    createdAt: string;
+  } | null;
+  notaMedia: number;
+  totalAvaliacoes: number;
+};
+
+export type MeusEventosGaragemPayload = {
+  itens: MeuEventoGaragemItem[];
+};
+
+export type MeuLocalGaragemItem = {
+  localId: string;
+  nome: string;
+  categoria: CategoriaLocal;
+  endereco: string;
+  fotoFachadaUrl: string;
+  facilidadesResumo: string;
+  favoritadoEm: string;
+  avaliado: boolean;
+  minhaAvaliacao: {
+    nota: number;
+    comentario: string;
+    fotosCount: number;
+    createdAt: string;
+  } | null;
+  notaMedia: number;
+  totalAvaliacoes: number;
+};
+
+export type MeusLocaisGaragemPayload = {
+  itens: MeuLocalGaragemItem[];
 };
 
 export type FiltrosMeusRoles = {

@@ -1,3 +1,4 @@
+import type {AcessoEvento} from "./evento";
 import type {RitmoRole} from "./role";
 
 export type StatusItemHistorico =
@@ -6,7 +7,8 @@ export type StatusItemHistorico =
   | "concluido"
   | "lider";
 
-export type ItemHistoricoPista = {
+export type ItemHistoricoRole = {
+  tipo: "role";
   roleId: string;
   titulo: string;
   descricao: string;
@@ -17,10 +19,24 @@ export type ItemHistoricoPista = {
   status: StatusItemHistorico;
 };
 
+export type ItemHistoricoEvento = {
+  tipo: "evento";
+  eventoId: string;
+  titulo: string;
+  dataHoraAbertura: string;
+  localNome: string;
+  acesso: AcessoEvento;
+  inscritosConfirmados: number;
+  status: "confirmado" | "concluido";
+  avaliado: boolean;
+};
+
+export type ItemHistoricoPista = ItemHistoricoRole | ItemHistoricoEvento;
+
 export type HistoricoPistas = {
-  aguardando: ItemHistoricoPista[];
+  aguardando: ItemHistoricoRole[];
   participei: ItemHistoricoPista[];
-  criados: ItemHistoricoPista[];
+  criados: ItemHistoricoRole[];
   contagens: {
     aguardando: number;
     participei: number;
@@ -31,7 +47,7 @@ export type HistoricoPistas = {
 /** Histórico visível a outros pilotos — sem aba Aguardando. */
 export type HistoricoPublico = {
   concluidos: ItemHistoricoPista[];
-  comoLider: ItemHistoricoPista[];
+  comoLider: ItemHistoricoRole[];
   contagens: {
     concluidos: number;
     comoLider: number;

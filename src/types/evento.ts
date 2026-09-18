@@ -1,3 +1,4 @@
+import type { ParticipantesBloco } from "./participante";
 import type { Localizacao } from "./role";
 
 export type TipoEvento =
@@ -28,13 +29,34 @@ export interface Evento {
   fotoCapaUrl: string;
   informacoes: string;
   criadorId: string;
+  notaMedia: number;
+  totalAvaliacoes: number;
+  recomendacoesComboio: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export type EventoPublicacao = Omit<
   Evento,
-  "id" | "criadorId" | "createdAt" | "updatedAt"
+  | "id"
+  | "criadorId"
+  | "createdAt"
+  | "updatedAt"
+  | "notaMedia"
+  | "totalAvaliacoes"
+  | "recomendacoesComboio"
 >;
 
-export type EventoFeedItem = Evento & { distanciaKm: number };
+export type EventoFeedItem = Evento & {
+  distanciaKm: number;
+  inscrito: boolean;
+  avaliado: boolean;
+  participantes: ParticipantesBloco;
+};
+
+export type EventoDetalhe = Evento & {
+  inscrito: boolean;
+  inscritos: { total: number };
+  avaliado: boolean;
+  participantes: ParticipantesBloco;
+};

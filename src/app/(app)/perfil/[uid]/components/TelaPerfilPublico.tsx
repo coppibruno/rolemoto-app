@@ -60,10 +60,12 @@ export const TelaPerfilPublico = ({ uid }: Props) => {
       <HistoricoPublicoSecao
         historico={historico.historico}
         aba={historico.aba}
+        filtroTipo={historico.filtroTipo}
         itens={historico.itens}
         carregando={historico.carregando}
         erro={historico.erro}
         onAba={historico.setAba}
+        onFiltroTipo={historico.setFiltroTipo}
       />
     </div>
   );

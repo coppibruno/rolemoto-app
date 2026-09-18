@@ -89,6 +89,24 @@ export const LABELS_ACESSO_EVENTO = {
   ingresso: "Ingresso",
 } as const;
 
+export const TOAST_INSCRICAO_OK = "Inscrição confirmada!";
+export const TOAST_INSCRICAO_MS = 2800;
+export const CONFIRMA_CANCELAR_INSCRICAO =
+  "Cancelar sua inscrição neste evento?";
+
+export const MODAL_INGRESSO = {
+  titulo: "Ingresso necessário",
+  corpo:
+    "Sua inscrição no evento foi confirmada. Para garantir a entrada, compre o ingresso no link do organizador.",
+  comprar: "Ir para a compra",
+  agoraNao: "Agora não",
+} as const;
+
+export const ERRO_LINK_INGRESSO = "Link de ingresso indisponível";
+export const ERRO_INSCRICAO_GENERICO = "Não foi possível concluir a inscrição";
+export const ERRO_CANCELAR_INSCRICAO = "Não foi possível cancelar a inscrição";
+export const ERRO_FAVORITO = "Não foi possível atualizar o favorito.";
+
 export const LABELS_CATEGORIA_LOCAL = {
   posto: "Pit Stop Oficial",
   bar_moto_point: "Bar & Moto Point",

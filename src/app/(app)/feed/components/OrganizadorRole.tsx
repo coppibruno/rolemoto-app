@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { RoleCriadorResumo } from "@/types/role";
 import styles from "../feed.module.css";
 
@@ -11,7 +12,7 @@ export const OrganizadorRole = ({ criador }: Props) => {
   const apelido = criador.apelido || "piloto";
 
   return (
-    <div className={styles.organizador}>
+    <Link href={`/perfil/${criador.uid}`} className={styles.organizador}>
       {criador.fotoUrl ? (
         <img
           src={criador.fotoUrl}
@@ -25,6 +26,6 @@ export const OrganizadorRole = ({ criador }: Props) => {
         </span>
       )}
       <span className={styles.organizadorApelido}>@{apelido}</span>
-    </div>
+    </Link>
   );
 };

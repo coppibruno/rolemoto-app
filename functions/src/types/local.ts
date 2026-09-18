@@ -36,18 +36,31 @@ export interface Local {
   linkMaps: string;
   fotoFachadaUrl: string;
   criadorId: string;
+  notaMedia: number;
+  totalAvaliacoes: number;
+  recomendacoesComboio: number;
   createdAt: string;
   updatedAt: string;
 }
 
 export type LocalPublicacao = Omit<
   Local,
-  "id" | "criadorId" | "createdAt" | "updatedAt"
+  | "id"
+  | "criadorId"
+  | "createdAt"
+  | "updatedAt"
+  | "notaMedia"
+  | "totalAvaliacoes"
+  | "recomendacoesComboio"
 >;
 
 export type LocalCreate = LocalPublicacao & {criadorId: string};
 
-export type LocalFeedItem = Local & {distanciaKm: number};
+export type LocalFeedItem = Local & {
+  distanciaKm: number;
+  avaliado: boolean;
+  favorito: boolean;
+};
 
 export const CATEGORIAS_LOCAL: CategoriaLocal[] = [
   "posto",

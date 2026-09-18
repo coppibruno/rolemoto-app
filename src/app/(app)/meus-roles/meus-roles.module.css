@@ -890,8 +890,628 @@
   color: var(--primary-container);
 }
 
+/* —— Garagem 2.0 —— */
+
+.cardPiloto {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: var(--card-padding-md, 16px);
+  border-radius: 1.5rem;
+  background: var(--surface-container-low);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cardPilotoTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cardPilotoIdentidade {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.avatarPiloto {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: var(--surface-container-high);
+}
+
+.avatarPilotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPilotoFallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+
+.cardPilotoTextos {
+  min-width: 0;
+}
+
+.cardPilotoNome {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardPilotoMeta {
+  margin: 2px 0 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.telemetriaStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--surface-container-lowest) 70%, transparent);
+}
+
+.telemetriaItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.telemetriaNum {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 28px;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.telemetriaNum_laranja {
+  color: var(--primary-container);
+}
+
+.telemetriaNum_ciano {
+  color: var(--tertiary);
+}
+
+.telemetriaNum_ambar {
+  color: var(--secondary);
+}
+
+.telemetriaRotulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.stickyTipo {
+  position: sticky;
+  top: calc(64px + env(safe-area-inset-top, 0px));
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.abasTipo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 4px;
+  border-radius: 1.5rem;
+  background: var(--surface-container-lowest);
+}
+
+.abaTipo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 0.75rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.abaTipo .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.abaTipoAtiva {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 107, 0, 0.28);
+}
+
+.abaTipoAtiva .abaTipoBadge {
+  background: var(--on-primary);
+  color: var(--primary-container);
+}
+
+.abaTipoLabel {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.abaTipoBadge {
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 12px;
+}
+
+.pillsAvaliacao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.pillsAvaliacao::-webkit-scrollbar {
+  display: none;
+}
+
+.pillAvaliacao {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pillAvaliacao .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.pillAvaliacaoAtiva {
+  background: var(--surface-container-high);
+  color: var(--primary-container);
+}
+
+.cardGaragem {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: var(--card-padding-md, 16px);
+  border-radius: 1.5rem;
+  background: var(--surface-container-low);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cardEventoCapa {
+  position: relative;
+  width: 100%;
+  height: 144px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface-container);
+}
+
+.cardEventoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardEventoPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--on-surface-variant);
+}
+
+.cardEventoPlaceholder .material-symbols-outlined {
+  font-size: 40px;
+}
+
+.cardEventoGradiente {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    var(--surface-container-lowest) 0%,
+    color-mix(in srgb, var(--surface-container-lowest) 40%, transparent) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.cardEventoData {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  padding: 4px 8px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--surface-container-lowest) 90%, transparent);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.badgeStatusTertiary,
+.badgeStatusSecondary {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  padding: 4px 8px;
+  border-radius: 0.375rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.badgeStatusTertiary {
+  background: color-mix(in srgb, var(--tertiary-container) 30%, transparent);
+  color: var(--tertiary);
+}
+
+.badgeStatusSecondary {
+  background: color-mix(in srgb, var(--secondary-container) 20%, transparent);
+  color: var(--secondary);
+}
+
+.cardEventoTexto {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 1;
+}
+
+.cardEventoTitulo {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.cardEventoMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.cardEventoMeta .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--primary-container);
+}
+
+.linkVerEvento {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--primary-container);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.linkVerEvento .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.blocoPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+}
+
+.blocoPreviewTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.blocoPreviewNotas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--secondary);
+}
+
+.estrelaCheia {
+  font-size: 16px !important;
+  font-variation-settings: "FILL" 1;
+}
+
+.estrelaVazia {
+  font-size: 16px !important;
+  color: var(--surface-variant);
+}
+
+.blocoPreviewNotaNum {
+  margin-left: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.badgePublico {
+  padding: 2px 6px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--tertiary-container) 20%, transparent);
+  color: var(--tertiary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.blocoPreviewCitacao {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-style: italic;
+  color: var(--on-surface);
+}
+
+.blocoPreviewFotos {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  color: var(--outline);
+}
+
+.blocoPreviewRodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.blocoPreviewQuando {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  color: var(--outline);
+}
+
+.linkVerRelato {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--primary-container);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.linkVerRelato .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.blocoCta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--primary-container) 10%, transparent);
+}
+
+.blocoCtaTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.blocoCtaTitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary-container);
+}
+
+.blocoCtaTitulo .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.blocoCtaDesc {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.botaoAvaliarGaragem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  border-radius: 0.75rem;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
+}
+
+.botaoAvaliarGaragem .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.cardLocalGaragemTopo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.cardLocalGaragemThumb {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+}
+
+.cardLocalGaragemThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardLocalGaragemInfo {
+  min-width: 0;
+  flex: 1;
+}
+
+.badgeCategoriaLocal {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--secondary) 15%, transparent);
+  color: var(--secondary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cardLocalGaragemNome {
+  margin: 4px 0 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+  text-transform: uppercase;
+  color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardLocalGaragemMeta {
+  margin: 2px 0 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 360px) {
   .abaLabel {
     font-size: 11px;
+  }
+
+  .abaTipoLabel {
+    font-size: 11px;
+  }
+
+  .telemetriaNum {
+    font-size: 24px;
   }
 }

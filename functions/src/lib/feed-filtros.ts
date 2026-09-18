@@ -53,7 +53,13 @@ export const filtrarEventosFeed = (
     if (q && !bateBuscaEvento(evento, q)) {
       continue;
     }
-    itens.push({...evento, distanciaKm});
+    itens.push({
+      ...evento,
+      distanciaKm,
+      inscrito: false,
+      avaliado: false,
+      participantes: {total: 0, destaques: []},
+    });
   }
   itens.sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));
   return itens;
@@ -75,7 +81,7 @@ export const filtrarLocaisFeed = (
     if (q && !bateBuscaLocal(local, q)) {
       continue;
     }
-    itens.push({...local, distanciaKm});
+    itens.push({...local, distanciaKm, avaliado: false, favorito: false});
   }
   itens.sort((a, b) => a.distanciaKm - b.distanciaKm);
   return itens;

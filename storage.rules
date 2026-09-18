@@ -37,5 +37,13 @@ service firebase.storage {
         && request.auth.uid == uid
         && imagemValida();
     }
+
+    match /avaliacoes/{alvoTipo}/{alvoId}/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && (alvoTipo == 'local' || alvoTipo == 'evento')
+        && imagemValida();
+    }
   }
 }

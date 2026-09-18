@@ -13,6 +13,15 @@ import type {LocalRepository} from "../interfaces/local.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "locais";
+const CHUNK = 100;
+
+const emChunks = <T>(itens: T[]): T[][] => {
+  const saida: T[][] = [];
+  for (let i = 0; i < itens.length; i += CHUNK) {
+    saida.push(itens.slice(i, i + CHUNK));
+  }
+  return saida;
+};
 
 const toHora = (valor: unknown): string | null =>
   typeof valor === "string" && valor.trim() ? valor.trim() : null;
@@ -59,6 +68,7 @@ const toLocal = (snap: DocumentSnapshot): Local => {
   const facilidadesBrutas = Array.isArray(data.facilidades) ?
     data.facilidades :
     [];
+  const totalAvaliacoes = Number(data.totalAvaliacoes ?? 0);
   return {
     id: snap.id,
     nome: String(data.nome ?? ""),
@@ -72,6 +82,9 @@ const toLocal = (snap: DocumentSnapshot): Local => {
     linkMaps: String(data.linkMaps ?? ""),
     fotoFachadaUrl: String(data.fotoFachadaUrl ?? ""),
     criadorId: String(data.criadorId ?? ""),
+    notaMedia: totalAvaliacoes > 0 ? Number(data.notaMedia ?? 0) : 0,
+    totalAvaliacoes,
+    recomendacoesComboio: Number(data.recomendacoesComboio ?? 0),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -91,6 +104,10 @@ export class FirestoreLocalRepository implements LocalRepository {
       linkMaps: dados.linkMaps,
       fotoFachadaUrl: dados.fotoFachadaUrl,
       criadorId: dados.criadorId,
+      notaMedia: 0,
+      totalAvaliacoes: 0,
+      recomendacoesComboio: 0,
+      somaNotas: 0,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -112,5 +129,24 @@ export class FirestoreLocalRepository implements LocalRepository {
       return null;
     }
     return toLocal(snap);
+  }
+
+  async buscarPorIds(ids: string[]): Promise<Local[]> {
+    const unicos = [...new Set(ids)].filter(Boolean);
+    if (unicos.length === 0) {
+      return [];
+    }
+
+    const encontrados: Local[] = [];
+    for (const chunk of emChunks(unicos)) {
+      const refs = chunk.map((id) => firestore.collection(COLECAO).doc(id));
+      const snaps = await firestore.getAll(...refs);
+      for (const snap of snaps) {
+        if (snap.exists) {
+          encontrados.push(toLocal(snap));
+        }
+      }
+    }
+    return encontrados;
   }
 }

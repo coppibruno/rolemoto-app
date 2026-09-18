@@ -1,4 +1,10 @@
-import type { AbaHistorico, ItemHistoricoPista, StatusItemHistorico } from "@/types/historico-pistas";
+import type {
+  AbaHistorico,
+  ItemHistoricoEvento,
+  ItemHistoricoPista,
+  ItemHistoricoRole,
+  StatusItemHistorico,
+} from "@/types/historico-pistas";
 import type { Pilotagem } from "@/types/user";
 
 export {
@@ -54,13 +60,19 @@ export const ABAS_HISTORICO: DefAbaHistorico[] = [
   {
     id: "participei",
     label: "Participei",
-    listaAria: "Rolês em que você participou",
+    listaAria: "Rolês e eventos em que você participou",
   },
   {
     id: "criados",
     label: "Criados",
     listaAria: "Rolês que você publicou",
   },
+];
+
+export const FILTROS_TIPO_HISTORICO = [
+  { id: "todos" as const, label: "Todos" },
+  { id: "roles" as const, label: "Rolês" },
+  { id: "eventos" as const, label: "Eventos" },
 ];
 
 export const VAZIOS_HISTORICO: Record<
@@ -75,7 +87,7 @@ export const VAZIOS_HISTORICO: Record<
   participei: {
     titulo: "Nenhum comboio ainda",
     corpo:
-      "Quando o líder confirmar e o rolê entrar no histórico, ele aparece aqui.",
+      "Quando o líder confirmar o rolê ou você se inscrever em um evento, eles aparecem aqui.",
     icone: "explore_off",
   },
   criados: {
@@ -97,18 +109,34 @@ export const LINHA1_LIDER = "Criado por você";
 export const ERRO_HISTORICO = "Não foi possível carregar o histórico";
 
 export const ariaBadgeAba = (label: string, n: number): string =>
-  `${label}, ${n} rolês`;
+  `${label}, ${n} itens`;
 
-export const hrefCardHistorico = (item: ItemHistoricoPista): string => {
+export const hrefCardHistoricoRole = (item: ItemHistoricoRole): string => {
   if (item.status === "lider") return `/aprovacoes?role=${item.roleId}`;
   if (item.status === "concluido") return `/roles/${item.roleId}/feedback`;
   return `/roles/${item.roleId}/participar`;
+};
+
+export const hrefCardHistoricoEvento = (item: ItemHistoricoEvento): string => {
+  if (item.status === "concluido") return `/eventos/${item.eventoId}/avaliar`;
+  return `/eventos/${item.eventoId}`;
+};
+
+export const hrefCardHistorico = (item: ItemHistoricoPista): string => {
+  if (item.tipo === "evento") return hrefCardHistoricoEvento(item);
+  return hrefCardHistoricoRole(item);
 };
 
 export const hrefClonarRole = (roleId: string): string =>
   `/criar-role?origem=${encodeURIComponent(roleId)}`;
 
 export const ariaCardHistorico = (item: ItemHistoricoPista): string => {
+  if (item.tipo === "evento") {
+    if (item.status === "concluido") {
+      return `Avaliar ou ver avaliações de ${item.titulo}`;
+    }
+    return `Abrir evento ${item.titulo}, ${STATUS_DIREITA[item.status]}`;
+  }
   if (item.status === "pendente") {
     return `Abrir ${item.titulo}, em análise`;
   }

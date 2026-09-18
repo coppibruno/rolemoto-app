@@ -8,4 +8,5 @@ export interface LocalRepository {
   criar(dados: LocalCreate): Promise<Local>;
   listar(): Promise<Local[]>;
   buscarPorId(id: string): Promise<Local | null>;
+  buscarPorIds(ids: string[]): Promise<Local[]>;
 }

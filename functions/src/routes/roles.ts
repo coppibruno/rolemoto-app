@@ -15,6 +15,11 @@ import {notificarCancelamentoRole} from "../lib/notificacoes";
 import {horaSaoPaulo, resolverIntervaloQuando} from "../lib/quando";
 import {validarQueryRoles} from "../lib/roles-query";
 import {
+  blocoVazio,
+  enriquecerParticipantesRoles,
+  listarParticipantesRole,
+} from "../lib/participantes";
+import {
   roleRepository,
   usuarioRepository,
   usuarioRoleRepository,
@@ -31,12 +36,14 @@ import type {
   RolePublicacao,
   RitmoRole,
 } from "../types/role";
+import type {ParticipantesBloco} from "../types/participante";
 
 /**
  * REST de rolês.
  *
  * GET    /roles
  * GET    /roles/:id/modelo
+ * GET    /roles/:id/participantes
  * GET    /roles/:id
  * POST   /roles
  * PUT    /roles/:id
@@ -133,6 +140,7 @@ const paraFeedItem = (
   role: Role,
   criadores: Map<string, RoleCriadorResumo>,
   origem: {lat: number; lng: number},
+  participantes: ParticipantesBloco,
 ): RoleFeedItem => {
   const distanciaPartidaKm = Math.round(
     haversineKm(origem.lat, origem.lng, role.localSaida.lat, role.localSaida.lng),
@@ -143,7 +151,13 @@ const paraFeedItem = (
     apelido: "piloto",
     fotoUrl: "",
   };
-  return {...role, distanciaPartidaKm, distanciaRotaKm: rotaKm, criador};
+  return {
+    ...role,
+    distanciaPartidaKm,
+    distanciaRotaKm: rotaKm,
+    criador,
+    participantes,
+  };
 };
 
 const resumoCriador = async (criadorId: string): Promise<RoleCriadorResumo> => {
@@ -279,9 +293,17 @@ rolesRouter.get("/", async (req: Request, res: Response) => {
 
     filtrados.sort((a, b) => a.dataHoraSaida.localeCompare(b.dataHoraSaida));
 
-    const criadores = await enriquecerCriadores(filtrados);
+    const [criadores, participantesPorRole] = await Promise.all([
+      enriquecerCriadores(filtrados),
+      enriquecerParticipantesRoles(filtrados.map((r) => r.id)),
+    ]);
     const itens = filtrados.map((role) =>
-      paraFeedItem(role, criadores, query),
+      paraFeedItem(
+        role,
+        criadores,
+        query,
+        participantesPorRole.get(role.id) ?? blocoVazio(),
+      ),
     );
     res.json(itens);
   } catch (error) {
@@ -321,6 +343,26 @@ rolesRouter.get("/:id/modelo", async (req: Request, res: Response) => {
       dataHoraSaida: role.dataHoraSaida,
     };
     res.json(modelo);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+rolesRouter.get("/:id/participantes", async (req: Request, res: Response) => {
+  try {
+    if (!req.usuario?.uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    const role = await roleRepository.buscarPorId(param(req, "id"));
+    if (!role) {
+      res.status(404).json({erro: "Rolê não encontrado"});
+      return;
+    }
+
+    const lista = await listarParticipantesRole(role.id);
+    res.json(lista);
   } catch (error) {
     responderErro(res, error);
   }

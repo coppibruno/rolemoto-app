@@ -1,9 +1,8 @@
 .tela {
   display: flex;
-  align-items: center;
   justify-content: center;
   min-height: 60vh;
-  padding: 24px var(--gutter-md);
+  padding: 16px var(--gutter-md) 32px;
 }
 
 .card {
@@ -11,7 +10,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  max-width: 360px;
+  max-width: 420px;
   width: 100%;
   padding: 32px 20px;
   border-radius: 0.75rem;
@@ -19,12 +18,68 @@
   text-align: center;
 }
 
+.detalhe {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface-container);
+}
+
+.capa,
+.capaVazia {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: var(--surface-container-highest);
+}
+
+.capaVazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface-variant);
+}
+
+.capaVazia .material-symbols-outlined {
+  font-size: 40px;
+}
+
+.corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 0.375rem;
+  background: var(--surface-container-high);
+  color: var(--secondary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .icone {
   font-size: 40px;
   color: var(--secondary-container);
 }
 
-.titulo {
+.titulo,
+.tituloDetalhe {
   margin: 0;
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
@@ -32,6 +87,10 @@
   line-height: 28px;
   text-transform: uppercase;
   color: var(--on-surface);
+}
+
+.tituloDetalhe {
+  text-align: left;
 }
 
 .texto {
@@ -42,27 +101,54 @@
   color: var(--on-surface-variant);
 }
 
-.id {
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  color: var(--outline);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
 }
 
-.link {
-  margin-top: 8px;
+.meta .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.informacoes {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface);
+  white-space: pre-wrap;
+}
+
+.link,
+.linkSecundario {
+  margin-top: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: var(--touch-min);
   padding: 0 20px;
   border-radius: 0.75rem;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
+}
+
+.link {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.linkSecundario {
+  align-self: center;
+  background: transparent;
+  color: var(--on-surface-variant);
 }

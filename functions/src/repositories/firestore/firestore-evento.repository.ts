@@ -10,10 +10,20 @@ import {toIso, toIsoOrNull, toTimestamp} from "./mapper";
 
 const COLECAO = "eventos";
 const LIMITE_LISTAGEM = 200;
+const TAMANHO_CHUNK = 100;
+
+const emChunks = <T>(itens: T[]): T[][] => {
+  const chunks: T[][] = [];
+  for (let i = 0; i < itens.length; i += TAMANHO_CHUNK) {
+    chunks.push(itens.slice(i, i + TAMANHO_CHUNK));
+  }
+  return chunks;
+};
 
 const toEvento = (snap: DocumentSnapshot): Evento => {
   const data = snap.data() ?? {};
   const atracoesBrutas = Array.isArray(data.atracoes) ? data.atracoes : [];
+  const totalAvaliacoes = Number(data.totalAvaliacoes ?? 0);
   return {
     id: snap.id,
     titulo: String(data.titulo ?? ""),
@@ -37,6 +47,9 @@ const toEvento = (snap: DocumentSnapshot): Evento => {
     fotoCapaUrl: String(data.fotoCapaUrl ?? ""),
     informacoes: String(data.informacoes ?? ""),
     criadorId: String(data.criadorId ?? ""),
+    notaMedia: totalAvaliacoes > 0 ? Number(data.notaMedia ?? 0) : 0,
+    totalAvaliacoes,
+    recomendacoesComboio: Number(data.recomendacoesComboio ?? 0),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -58,6 +71,10 @@ export class FirestoreEventoRepository implements EventoRepository {
       fotoCapaUrl: dados.fotoCapaUrl,
       informacoes: dados.informacoes,
       criadorId: dados.criadorId,
+      notaMedia: 0,
+      totalAvaliacoes: 0,
+      recomendacoesComboio: 0,
+      somaNotas: 0,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -93,5 +110,24 @@ export class FirestoreEventoRepository implements EventoRepository {
       return null;
     }
     return toEvento(snap);
+  }
+
+  async buscarPorIds(ids: string[]): Promise<Evento[]> {
+    const unicos = [...new Set(ids)].filter(Boolean);
+    if (unicos.length === 0) {
+      return [];
+    }
+
+    const encontrados: Evento[] = [];
+    for (const chunk of emChunks(unicos)) {
+      const refs = chunk.map((id) => firestore.collection(COLECAO).doc(id));
+      const snaps = await firestore.getAll(...refs);
+      for (const snap of snaps) {
+        if (snap.exists) {
+          encontrados.push(toEvento(snap));
+        }
+      }
+    }
+    return encontrados;
   }
 }

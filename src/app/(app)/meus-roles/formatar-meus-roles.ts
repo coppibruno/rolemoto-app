@@ -44,6 +44,37 @@ export const formatarDataConcluido = (iso: string): string =>
     year: "numeric",
   }).format(new Date(iso));
 
+export const formatarDataEventoCapa = (iso: string): string => {
+  const data = new Date(iso);
+  const dia = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TZ,
+    day: "2-digit",
+  }).format(data);
+  const mes = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TZ,
+    month: "short",
+  })
+    .format(data)
+    .replace(".", "")
+    .toUpperCase();
+  const weekday = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TZ,
+    weekday: "long",
+  })
+    .format(data)
+    .toUpperCase();
+  return `${dia} ${mes} · ${weekday}`;
+};
+
+export const formatarAvaliadoRelativo = (iso: string): string => {
+  const ms = Date.now() - Date.parse(iso);
+  const dias = Math.max(0, Math.floor(ms / 86_400_000));
+  if (dias === 0) return "Avaliado hoje";
+  if (dias === 1) return "Avaliado há 1 dia";
+  if (dias < 30) return `Avaliado há ${dias} dias`;
+  return `Avaliado em ${formatarDataConcluido(iso)}`;
+};
+
 export const formatarKm = (km: number): string =>
   `${km.toLocaleString("pt-BR")} km`;
 

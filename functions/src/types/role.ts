@@ -1,3 +1,4 @@
+import type {ParticipantesBloco} from "./participante";
 import type {UsuarioRole} from "./usuario-role";
 
 export type RitmoRole = "tranquila" | "moderada" | "agressiva";
@@ -36,6 +37,7 @@ export type RoleFeedItem = Role & {
   distanciaPartidaKm: number;
   distanciaRotaKm: number;
   criador: RoleCriadorResumo;
+  participantes: ParticipantesBloco;
 };
 
 /** Detalhe do rolê — GET /roles/:id. */
