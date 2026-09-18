@@ -10,6 +10,16 @@ export const useItemMenuAtivo = () => {
     if (href === "/") {
       return pathname === "/" || Boolean(pathname?.startsWith("/roles"));
     }
+    if (href === "/criar-role") {
+      return (
+        pathname === "/criar-role" ||
+        Boolean(pathname?.startsWith("/criar-role/")) ||
+        pathname === "/criar-evento" ||
+        Boolean(pathname?.startsWith("/criar-evento/")) ||
+        pathname === "/criar-local" ||
+        Boolean(pathname?.startsWith("/criar-local/"))
+      );
+    }
     return pathname === href || Boolean(pathname?.startsWith(`${href}/`));
   };
 

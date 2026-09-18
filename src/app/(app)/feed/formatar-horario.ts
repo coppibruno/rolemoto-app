@@ -60,6 +60,23 @@ export const formatarHorarioSaida = (iso: string): string => {
   return `${capitalizado}, ${hora}`;
 };
 
+/** Badge do card de evento: "Hoje às 19:30". */
+export const formatarHorarioEvento = (iso: string): string => {
+  const data = new Date(iso);
+  const hora = formatarHora(iso);
+  const ymd = ymdSaoPaulo(data);
+  const hoje = ymdSaoPaulo(new Date());
+  if (ymd === hoje) return `Hoje às ${hora}`;
+  if (ymd === somarDiasYmd(hoje, 1)) return `Amanhã às ${hora}`;
+
+  const weekday = new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TZ,
+    weekday: "short",
+  }).format(data);
+  const capitalizado = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return `${capitalizado} às ${hora}`;
+};
+
 export const formatarDataCurta = (ymd: string): string => {
   const [ano, mes, dia] = ymd.split("-").map(Number);
   return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}/${ano}`;

@@ -10,6 +10,8 @@ type Props = {
   /** icone = só ícone 48×48; default = ícone + texto */
   variante?: "texto" | "icone";
   className?: string;
+  /** Se informado (ex.: linkMaps do catálogo), usa no lugar de `urlAbrirMaps`. */
+  href?: string;
 };
 
 export const BotaoAbrirMaps = ({
@@ -17,6 +19,7 @@ export const BotaoAbrirMaps = ({
   label = "Abrir no Maps",
   variante = "texto",
   className,
+  href,
 }: Props) => {
   const temCoord =
     typeof ponto.lat === "number" &&
@@ -25,7 +28,7 @@ export const BotaoAbrirMaps = ({
     Number.isFinite(ponto.lng);
   const enderecoOk = ponto.endereco.trim().length > 0;
 
-  if (!temCoord && !enderecoOk) {
+  if (!href?.trim() && !temCoord && !enderecoOk) {
     return null;
   }
 
@@ -38,10 +41,11 @@ export const BotaoAbrirMaps = ({
   ]
     .filter(Boolean)
     .join(" ");
+  const destino = href?.trim() || urlAbrirMaps(ponto);
 
   return (
     <a
-      href={urlAbrirMaps(ponto)}
+      href={destino}
       target="_blank"
       rel="noopener noreferrer"
       className={classes}

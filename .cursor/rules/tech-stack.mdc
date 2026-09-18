@@ -14,8 +14,8 @@ alwaysApply: true
 - **Firebase Authentication** — Google e e-mail/senha
 - **Firebase Cloud Functions** — API HTTP (Express, function `api`); persistência via repositórios
 - **Firebase Firestore** — banco NoSQL; só o adapter em `functions/src/repositories/firestore/` fala com ele. Client **deny-all**; escrita só via Functions
-- **Firebase Storage** — upload de fotos (perfil e rolês)
-- **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê
+- **Firebase Storage** — upload de fotos (perfil, rolês, eventos e fachadas de locais)
+- **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê, do evento e do local
 
 ## Decisões de Arquitetura
 - Usar **Server Components** do Next.js onde possível, Client Components apenas quando necessário (interatividade, hooks de browser)
@@ -37,6 +37,7 @@ alwaysApply: true
   fotoUrl: string,
   cidade: string,
   garupaFrequente: boolean,
+  admin: boolean,          // default false; promoção só no Firestore
   createdAt: timestamp
 }
 ```
@@ -72,3 +73,49 @@ alwaysApply: true
   createdAt: timestamp
 }
 ```
+
+### Coleção `eventos` (destino fixo — moto point, track day, café)
+```
+{
+  id: string,
+  titulo: string,
+  tipo: 'moto_point_semanal' | 'track_day' | 'cafe_pilotos' | 'exposicao_custom',
+  local: { lat: number, lng: number, endereco: string, nome: string },
+  dataHoraAbertura: timestamp,
+  dataHoraEncerramento: timestamp | null,
+  acesso: 'gratis' | 'ingresso',
+  linkIngresso: string | null,
+  atracoes: string[],
+  fotoCapaUrl: string,
+  informacoes: string,
+  criadorId: string,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`). Não misturar com a coleção `roles`.
+
+### Coleção `locais` (pontos oficiais permanentes)
+```
+{
+  id: string,
+  nome: string,
+  endereco: string,
+  lat: number,
+  lng: number,
+  categoria: 'posto' | 'bar_moto_point' | 'restaurante_estrada' | 'oficina' | 'mirante',
+  facilidades: string[],
+  aberto24h: boolean,
+  horarios: [
+    { dia: 0-6, fechado: boolean, abertura: 'HH:mm' | null, fechamento: 'HH:mm' | null }
+  ],
+  linkMaps: string,
+  fotoFachadaUrl: string,
+  criadorId: string,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`). `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).

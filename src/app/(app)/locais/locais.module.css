@@ -1,0 +1,261 @@
+.tela {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  padding-top: env(safe-area-inset-top, 0px);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
+}
+
+.cabecalhoInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gutter-sm);
+  height: 64px;
+  padding: 0 var(--gutter-md);
+}
+
+.cabecalhoEsquerda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.botaoVoltar,
+.botaoCadastrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--on-surface);
+  flex-shrink: 0;
+}
+
+.botaoVoltar {
+  margin-left: -8px;
+}
+
+.botaoVoltar:hover,
+.botaoCadastrar:hover {
+  color: var(--primary-container);
+}
+
+.tituloPagina {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 16px var(--gutter-md);
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface-container);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+}
+
+.cardFoto {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface-container-highest);
+}
+
+.cardFotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cardFotoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.cardFotoPlaceholder .material-symbols-outlined {
+  font-size: 48px;
+}
+
+.cardCorpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+}
+
+.chipCategoria {
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  color: var(--primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardNome {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface);
+}
+
+.cardEndereco,
+.cardHorario {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
+.cardRodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.facilidadesResumo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.facilidadeIcone {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.facilidadeMais {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+
+.vazio,
+.carregando,
+.erro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 48px var(--gutter-md);
+}
+
+.vazioIcone,
+.erro .material-symbols-outlined {
+  font-size: 40px;
+  color: var(--on-surface-variant);
+}
+
+.vazioTitulo,
+.erroTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.ctaVazio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.skeleton {
+  height: 180px;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    90deg,
+    var(--surface-container-high) 0%,
+    var(--surface-container-highest) 50%,
+    var(--surface-container-high) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.botaoTentar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}

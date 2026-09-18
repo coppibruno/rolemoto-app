@@ -15,6 +15,9 @@
  * - /dispositivos → POST, DELETE
  * - /lembretes/enviar → POST (Cloud Tasks, OIDC)
  * - /perfil  → GET, POST, PUT, DELETE
+ * - /eventos → GET, POST
+ * - /locais  → GET, POST
+ * - /feed/contagens → GET
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
  * Prod:   https://us-central1-rolemoto-bc47f.cloudfunctions.net/api
@@ -34,6 +37,9 @@ import {perfilRouter} from "./routes/perfil";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
+import {eventosRouter} from "./routes/eventos";
+import {locaisRouter} from "./routes/locais";
+import {feedRouter} from "./routes/feed";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -60,6 +66,11 @@ app.get("/", (_req: Request, res: Response) => {
       "/lembretes/enviar",
       "/perfil",
       "/perfil/historico",
+      "/eventos",
+      "/eventos/:id",
+      "/locais",
+      "/locais/:id",
+      "/feed/contagens",
     ],
   });
 });
@@ -73,5 +84,8 @@ app.use("/dispositivos", dispositivosRouter);
 app.use("/lembretes", lembretesRouter);
 app.use("/perfil", perfilRouter);
 app.use("/feedback", feedbackRouter);
+app.use("/eventos", eventosRouter);
+app.use("/locais", locaisRouter);
+app.use("/feed", feedRouter);
 
 export const api = onRequest({cors: corsOrigins()}, app);

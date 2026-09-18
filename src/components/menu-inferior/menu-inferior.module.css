@@ -98,6 +98,8 @@
 }
 
 .fabSlot {
+  position: relative;
+  z-index: 60;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -109,6 +111,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 71;
   width: var(--touch-target);
   height: var(--touch-target);
   border-radius: 9999px;
@@ -134,4 +138,114 @@
   font-size: 32px;
   font-weight: 700;
   line-height: 1;
+}
+
+.fabBotao {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 61;
+}
+
+.menuBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: none;
+  padding: 0;
+  background: color-mix(in srgb, var(--surface) 40%, transparent);
+  cursor: default;
+}
+
+.menuIncluir {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  z-index: 60;
+  width: min(280px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  background: var(--surface-container-high);
+  border: 1px solid rgba(255, 107, 0, 0.22);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.menuIncluir::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--surface-container-high);
+  border-right: 1px solid rgba(255, 107, 0, 0.22);
+  border-bottom: 1px solid rgba(255, 107, 0, 0.22);
+  transform: translate(-50%, -6px) rotate(45deg);
+}
+
+.itemMenuIncluir {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--touch-min);
+  padding: 10px 12px;
+  border-radius: 0.5rem;
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+.itemMenuIncluir:hover,
+.itemMenuIncluir:focus-visible {
+  background: var(--surface-container-highest);
+  outline: none;
+}
+
+.itemMenuDesabilitado {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.itemMenuIcone {
+  font-size: 24px;
+  color: var(--primary-container);
+  flex-shrink: 0;
+}
+
+.itemMenuTextos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.itemMenuTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.itemMenuSubtitulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.itemMenuSelo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  flex-shrink: 0;
 }

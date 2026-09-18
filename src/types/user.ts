@@ -9,10 +9,11 @@ export interface Usuario {
   fotoUrl: string;
   cidade: string;
   garupaFrequente: boolean;
+  admin: boolean;
   createdAt: string;
 }
 
-export type UsuarioForm = Omit<Usuario, "uid" | "createdAt">;
+export type UsuarioForm = Omit<Usuario, "uid" | "createdAt" | "admin">;
 
 export type PrimeiroAcessoForm = {
   nome: string;

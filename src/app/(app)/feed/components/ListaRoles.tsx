@@ -14,9 +14,6 @@ type Props = {
   onTentarDeNovo: () => void;
 };
 
-const rotuloContador = (n: number) =>
-  n === 1 ? "1 encontrado" : `${n} encontrados`;
-
 export const ListaRoles = ({
   itens,
   carregando,
@@ -27,14 +24,13 @@ export const ListaRoles = ({
   const mostrarVazio = !semPonto && !carregando && !erro && itens.length === 0;
 
   return (
-    <section className={styles.lista} aria-busy={carregando}>
-      <div className={styles.listaCabecalho}>
-        <h2 className={styles.listaTitulo}>Rolês na Região</h2>
-        <span className={styles.listaContador} aria-live="polite">
-          {semPonto || carregando ? "—" : rotuloContador(itens.length)}
-        </span>
-      </div>
-
+    <section
+      id="painel-roles"
+      role="tabpanel"
+      aria-labelledby="tab-roles"
+      className={styles.lista}
+      aria-busy={carregando}
+    >
       {erro ? (
         <div className={styles.erro} role="alert">
           <span className="material-symbols-outlined">wifi_off</span>
@@ -46,7 +42,7 @@ export const ListaRoles = ({
       ) : null}
 
       {carregando ? <EstadoCarregando /> : null}
-      {mostrarVazio ? <EstadoVazio /> : null}
+      {mostrarVazio ? <EstadoVazio aba="roles" /> : null}
       {!carregando && !erro
         ? itens.map((role) => <RoleCard key={role.id} role={role} />)
         : null}

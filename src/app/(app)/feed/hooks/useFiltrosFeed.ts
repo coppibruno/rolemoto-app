@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  CICLO_RAIO,
   DEBOUNCE_BUSCA_MS,
   QUANDO_PADRAO,
   RAIO_PADRAO,
@@ -21,6 +22,12 @@ export const useFiltrosFeed = () => {
     return () => window.clearTimeout(id);
   }, [busca]);
 
+  const ciclarRaio = () => {
+    const idx = CICLO_RAIO.indexOf(raioKm);
+    const proximo = CICLO_RAIO[(idx + 1) % CICLO_RAIO.length];
+    setRaioKm(proximo);
+  };
+
   const alternarQuando = (valor: Exclude<FiltroQuando, { tipo: "data" }>) => {
     setQuando((atual) => (atual === valor ? null : valor));
   };
@@ -38,6 +45,7 @@ export const useFiltrosFeed = () => {
   return {
     raioKm,
     setRaioKm,
+    ciclarRaio,
     quando,
     alternarQuando,
     escolherData,

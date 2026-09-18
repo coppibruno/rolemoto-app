@@ -19,10 +19,12 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Login com **Google** e **e-mail/senha**
 - Após o primeiro login, completar perfil: **apelido, moto, ritmo/pilotagem, foto, garupa**. Cidade é opcional no perfil (aparece na fila de aprovação)
 
-### 2. Feed de Rolês
-- Listagem de rolês disponíveis com geolocalização (raio a partir da posição do piloto)
-- Filtros: **data**, **distância**, **ritmo** (`tranquila` | `moderada` | `agressiva`)
-- Visualização em **lista** (mapa no feed é evolução futura)
+### 2. Feed (Rolês / Eventos / Locais)
+- Home `/` com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)
+- Geolocalização + raio (pill 25 / 50 / 100 / sem limite) e busca unificada
+- Aba Rolês: filtros de **quando** e **ritmo**; cards de comboio (SPEC 003)
+- Aba Eventos: filtro **quando**; cards de destino fixo (SPEC 022 / 024)
+- Aba Locais: só raio + busca; pontos oficiais permanentes (SPEC 023 / 024)
 - Solicitar participação em um rolê (sujeito à aprovação do criador)
 
 ### 3. Criação de Rolês
@@ -34,7 +36,18 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - O criador gerencia as solicitações de participação (aceitar/recusar)
 - O líder pode **editar** e **cancelar** rolê futuro (Meus Rolês / detalhe)
 
-### 4. Perfil do Usuário
+### 4. Eventos (destino fixo)
+- Só **administrador** (`users.admin === true`, promoção manual no Firestore) cadastra eventos em `/criar-evento`
+- Evento não é rolê: um único local (moto point, track day, café, exposição), sem comboio em estrada
+- Piloto comum **não** cria; **vê** no feed (aba Eventos) e via `GET /eventos`
+- O `+` do dock: comum vai para `/criar-role`; admin abre menu Rolês / Eventos / Locais
+- Locais: catálogo `/locais` e aba Locais no feed; cadastro `/criar-local` só admin
+
+### 5. Locais oficiais
+- Ponto permanente no catálogo (posto parceiro, bar / moto point, restaurante de estrada, oficina, mirante) — sem data de ocorrência
+- Qualquer piloto autenticado vê no feed (aba Locais) e em `/locais`; só admin cadastra
+
+### 6. Perfil do Usuário
 - Apelido, moto, ritmo/pilotagem, foto, garupa, cidade (opcional)
 - Histórico de pistas (SPEC 008), Meus Rolês (SPEC 017), fila de aprovações (SPEC 007)
 

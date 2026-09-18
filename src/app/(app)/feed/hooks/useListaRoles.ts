@@ -5,7 +5,9 @@ import type { RoleFeedItem } from "@/types/role";
 import { filtrosParaParams, rolesService } from "../services/roles.service";
 import type { FiltrosFeed } from "../types";
 
-export const useListaRoles = (filtros: FiltrosFeed) => {
+type Params = FiltrosFeed & { ativo: boolean };
+
+export const useListaRoles = (filtros: Params) => {
   const [itens, setItens] = useState<RoleFeedItem[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -19,6 +21,8 @@ export const useListaRoles = (filtros: FiltrosFeed) => {
       : String(filtros.quando ?? "");
 
   useEffect(() => {
+    if (!filtros.ativo) return;
+
     const params = filtrosParaParams(filtros);
     if (!params) {
       setItens([]);
@@ -50,6 +54,7 @@ export const useListaRoles = (filtros: FiltrosFeed) => {
       cancelado = true;
     };
   }, [
+    filtros.ativo,
     filtros.ponto?.lat,
     filtros.ponto?.lng,
     filtros.raioKm,

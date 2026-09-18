@@ -194,6 +194,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       fotoUrl: resultado.dados.fotoUrl,
       cidade: "",
       garupaFrequente: resultado.dados.garupaFrequente,
+      admin: false,
     });
     log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
     res.status(201).json(criado);

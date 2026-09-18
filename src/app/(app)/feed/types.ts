@@ -1,5 +1,7 @@
 import type { Pilotagem } from "@/types/user";
 
+export type AbaFeed = "roles" | "eventos" | "locais";
+
 export type RaioKm = 25 | 50 | 100 | null;
 
 export type FiltroQuando =

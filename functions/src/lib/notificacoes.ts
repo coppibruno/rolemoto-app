@@ -35,6 +35,12 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
     roleId: payload.roleId,
   };
 
+  // Emulator aponta ao FCM/Firestore de produção — não dispara push real em local.
+  if (process.env.FUNCTIONS_EMULATOR === "true") {
+    log.info("Push", "Ignorado no emulator", contexto);
+    return;
+  }
+
   try {
     const tokens = await dispositivoRepository.listarTokensPorUid(uid);
     if (tokens.length === 0) {

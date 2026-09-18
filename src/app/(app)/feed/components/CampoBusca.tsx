@@ -1,5 +1,6 @@
 "use client";
 
+import { PLACEHOLDER_BUSCA } from "../constants";
 import styles from "../feed.module.css";
 
 type Props = {
@@ -25,8 +26,8 @@ export const CampoBusca = ({ valor, onChange }: Props) => {
         type="search"
         value={valor}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Buscar destino ou serra…"
-        aria-label="Buscar destino ou serra"
+        placeholder={PLACEHOLDER_BUSCA}
+        aria-label={PLACEHOLDER_BUSCA}
       />
       <button
         type="button"

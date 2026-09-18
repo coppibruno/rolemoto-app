@@ -230,11 +230,37 @@
   font-size: 16px;
 }
 
+.linkPontosOficiais {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  margin-top: 8px;
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.linkPontosOficiais .material-symbols-outlined {
+  font-size: 18px;
+}
+
 .buscaWrap {
   position: relative;
   display: flex;
   align-items: center;
-  margin-top: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.barraBuscaRaio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .buscaIcone {
@@ -250,8 +276,8 @@
   min-height: var(--touch-min);
   padding: 12px 48px 12px 40px;
   border: none;
-  border-radius: 0.5rem;
-  background: var(--surface-container-lowest);
+  border-radius: 0.75rem;
+  background: var(--surface-container);
   color: var(--on-surface);
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 14px;
@@ -267,7 +293,7 @@
 }
 
 .buscaInput:focus {
-  background: var(--surface-container);
+  background: var(--surface-container-high);
 }
 
 .botaoTune {
@@ -286,6 +312,120 @@
 
 .botaoTune:hover {
   color: var(--primary);
+}
+
+.pillRaio {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-height: var(--touch-min);
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--primary-container);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.pillRaio:active {
+  transform: scale(0.95);
+}
+
+.pillRaio .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.pillRaioTexto {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.abas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+}
+
+.aba,
+.abaAtiva {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: var(--touch-min);
+  padding: 8px 4px;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.aba {
+  background: transparent;
+  color: var(--on-surface-variant);
+}
+
+.abaAtiva {
+  background: var(--primary-container);
+  color: var(--surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.aba:active,
+.abaAtiva:active {
+  transform: scale(0.98);
+}
+
+.abaLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.abaLabel .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.abaContador,
+.abaContadorAtivo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+.abaContador {
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+}
+
+.abaContadorAtivo {
+  background: color-mix(in srgb, var(--surface) 20%, transparent);
+  color: inherit;
+}
+
+.filtrosAncora {
+  height: 0;
+  overflow: hidden;
 }
 
 .filtros {
@@ -988,6 +1128,281 @@
   }
 }
 
+.cardEvento,
+.cardLocal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.cardEventoTopo,
+.cardLocalTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardEventoInfo,
+.cardLocalInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.cardEventoBadges,
+.cardLocalBadges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badgeQuando {
+  padding: 2px 8px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--secondary-container) 20%, transparent);
+  color: var(--secondary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badgeAcesso {
+  padding: 2px 8px;
+  border-radius: 0.375rem;
+  background: var(--surface-container-highest);
+  color: var(--tertiary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge24h {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--tertiary-container) 20%, transparent);
+  color: var(--tertiary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.badge24h .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.badgeCategoria {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+}
+
+.cardEventoTitulo,
+.cardLocalTitulo {
+  margin: 4px 0 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.cardEventoEndereco {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardEventoEndereco .material-symbols-outlined {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.cardLocalEndereco {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardEventoThumb {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--surface-container-highest);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface-variant);
+}
+
+.cardEventoThumbImg,
+.cardLocalThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardLocalIcone {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--tertiary) 10%, transparent);
+  color: var(--tertiary);
+  overflow: hidden;
+}
+
+.cardLocalIcone .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.cardEventoRodape {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.botaoVerDetalhes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--secondary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.botaoVerDetalhes .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.cardLocalChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chipFacilidade {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 0.375rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.chipFacilidade .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--tertiary);
+}
+
+.botaoRotaDireta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 0.75rem;
+  background: var(--tertiary);
+  color: var(--on-tertiary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.botaoRotaDireta:active {
+  transform: scale(0.98);
+}
+
+.botaoRotaDireta .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.cueFim {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 24px 8px;
+  margin: 0;
+  text-align: center;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.cueFim .material-symbols-outlined {
+  font-size: 28px;
+}
+
+@media (min-width: 480px) {
+  .aba,
+  .abaAtiva {
+    flex-direction: row;
+    gap: 6px;
+  }
+}
+
 @media (max-width: 360px) {
   .capaTitulo {
     font-size: 20px;
@@ -996,5 +1411,9 @@
 
   .botaoParticipar {
     font-size: 18px;
+  }
+
+  .abaLabel span:not(.material-symbols-outlined) {
+    font-size: 11px;
   }
 }

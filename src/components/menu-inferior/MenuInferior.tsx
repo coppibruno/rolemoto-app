@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
 import { ItemMenu } from "./ItemMenu";
 import { BotaoIncluir } from "./BotaoIncluir";
 import { ITENS_MENU } from "./itens-menu";
@@ -8,6 +9,7 @@ import styles from "./menu-inferior.module.css";
 
 export const MenuInferior = () => {
   const { estaAtivo } = useItemMenuAtivo();
+  const { usuario } = useAuth();
   const [roles, meusRoles, incluir, aprovacoes, perfil] = ITENS_MENU;
 
   return (
@@ -17,7 +19,11 @@ export const MenuInferior = () => {
           <ItemMenu item={roles} ativo={estaAtivo(roles.href)} />
           <ItemMenu item={meusRoles} ativo={estaAtivo(meusRoles.href)} />
         </div>
-        <BotaoIncluir item={incluir} destacado={estaAtivo(incluir.href)} />
+        <BotaoIncluir
+          item={incluir}
+          destacado={estaAtivo(incluir.href)}
+          admin={usuario?.admin === true}
+        />
         <div className={styles.grupo}>
           <ItemMenu item={aprovacoes} ativo={estaAtivo(aprovacoes.href)} />
           <ItemMenu item={perfil} ativo={estaAtivo(perfil.href)} />

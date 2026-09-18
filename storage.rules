@@ -23,5 +23,19 @@ service firebase.storage {
         && request.auth.uid == uid
         && imagemValida();
     }
+
+    match /eventos/capas/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
+
+    match /locais/fachadas/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
   }
 }

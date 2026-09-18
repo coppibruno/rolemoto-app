@@ -10,11 +10,12 @@ export interface Usuario {
   fotoUrl: string;
   cidade: string;
   garupaFrequente: boolean;
+  admin: boolean;
   createdAt: string;
 }
 
 export type UsuarioCreate = Omit<Usuario, "uid" | "createdAt">;
-export type UsuarioUpdate = Partial<UsuarioCreate>;
+export type UsuarioUpdate = Partial<Omit<UsuarioCreate, "admin">>;
 
 /** Body de POST /perfil — uid só do token; cidade nasce vazia. */
 export type UsuarioPrimeiroAcesso = {

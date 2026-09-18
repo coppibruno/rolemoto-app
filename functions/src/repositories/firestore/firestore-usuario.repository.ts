@@ -27,6 +27,7 @@ const toUsuario = (snap: DocumentSnapshot): Usuario => {
     fotoUrl: String(data.fotoUrl ?? ""),
     cidade: String(data.cidade ?? ""),
     garupaFrequente: Boolean(data.garupaFrequente),
+    admin: Boolean(data.admin),
     createdAt: toIso(data.createdAt),
   };
 };

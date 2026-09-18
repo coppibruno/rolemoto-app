@@ -1,16 +1,21 @@
 "use client";
 
+import { ESTADOS_VAZIOS } from "../constants";
+import type { AbaFeed } from "../types";
 import styles from "../feed.module.css";
 
-export const EstadoVazio = () => {
+type Props = {
+  aba: AbaFeed;
+};
+
+export const EstadoVazio = ({ aba }: Props) => {
+  const copy = ESTADOS_VAZIOS[aba];
+
   return (
     <div className={styles.vazio} role="status">
       <span className="material-symbols-outlined">explore_off</span>
-      <p className={styles.vazioTitulo}>Nenhum rolê por aqui</p>
-      <p className={styles.vazioTexto}>
-        Não encontramos rolês com esses filtros. Aumente o raio, mude a data ou o
-        ritmo.
-      </p>
+      <p className={styles.vazioTitulo}>{copy.titulo}</p>
+      <p className={styles.vazioTexto}>{copy.texto}</p>
     </div>
   );
 };

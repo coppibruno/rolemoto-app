@@ -22,10 +22,7 @@ export const CabecalhoFeed = () => {
             className={styles.logo}
             priority
           />
-          <div className={styles.cabecalhoTitulos}>
-            <span className={styles.tituloPagina}>Roles Feed</span>
-            <span className={styles.subtituloPagina}>Cockpit</span>
-          </div>
+          <h1 className={styles.tituloPagina}>Feed</h1>
         </div>
 
         <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">
