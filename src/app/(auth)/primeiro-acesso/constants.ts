@@ -43,7 +43,7 @@ export const COPY = {
   ctaEnviando: "Ligando o Motor…",
   ctaSucesso: "BEM-VINDO AO ASFALTO!",
   rodape:
-    "Você poderá editar nome, apelido, foto, moto, garupa e ritmo a qualquer momento no seu perfil.",
+    "Você poderá editar nome, apelido, foto, moto, tipo, garupa e ritmo a qualquer momento no seu perfil.",
   erroGenerico: "Erro ao salvar o perfil. Tente novamente.",
 } as const;
 

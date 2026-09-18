@@ -1,0 +1,94 @@
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.hint {
+  margin-left: 6px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--primary-container);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  padding: 12px 4px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.card:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.card:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.cardAtivo {
+  background: var(--primary-container);
+  color: var(--on-primary);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
+}
+
+.icone {
+  font-size: 22px;
+  margin-bottom: 4px;
+  color: var(--primary-container);
+}
+
+.cardAtivo .icone {
+  color: var(--on-primary);
+}
+
+.labelCard {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.cardAtivo .labelCard {
+  color: var(--on-primary);
+}
+
+.erro {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--error);
+}

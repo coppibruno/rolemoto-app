@@ -3,7 +3,7 @@
 import { useCallback, useState, type FormEvent } from "react";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import type { Pilotagem, Usuario } from "@/types/user";
+import type { Pilotagem, TipoMoto, Usuario } from "@/types/user";
 import { CIDADE_MAX, CIDADE_MIN } from "../constants";
 import { perfilService } from "../services/perfil.service";
 import { useFotoPerfil } from "./useFotoPerfil";
@@ -12,6 +12,7 @@ export type ErrosEdicaoPerfil = {
   nome?: string;
   apelido?: string;
   moto?: string;
+  tipoMoto?: string;
   cidade?: string;
   foto?: string;
   pilotagem?: string;
@@ -21,6 +22,7 @@ const validar = (campos: {
   nome: string;
   apelido: string;
   moto: string;
+  tipoMoto: TipoMoto | null;
   cidade: string;
   fotoUrlAtual: string;
   photoFile: File | null;
@@ -40,6 +42,10 @@ const validar = (campos: {
 
   if (!moto) erros.moto = "Informe a moto";
   else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
+
+  if (!campos.tipoMoto) {
+    erros.tipoMoto = "Selecione o tipo de moto";
+  }
 
   if (cidade && cidade.length < CIDADE_MIN) erros.cidade = "Mínimo 2 caracteres";
   else if (cidade.length > CIDADE_MAX) erros.cidade = "Máximo 80 caracteres";
@@ -62,6 +68,9 @@ export const useFormularioPerfil = (usuario: Usuario) => {
   const [nome, setNome] = useState(usuario.nome);
   const [apelido, setApelido] = useState(usuario.apelido);
   const [moto, setMoto] = useState(usuario.moto ?? "");
+  const [tipoMoto, setTipoMoto] = useState<TipoMoto | null>(
+    usuario.tipoMoto ?? null,
+  );
   const [cidade, setCidade] = useState(usuario.cidade ?? "");
   const [garupaFrequente, setGarupaFrequente] = useState(
     Boolean(usuario.garupaFrequente),
@@ -83,6 +92,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
       nome,
       apelido,
       moto,
+      tipoMoto,
       cidade,
       fotoUrlAtual: foto.previewUrl,
       photoFile: foto.arquivo,
@@ -91,7 +101,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     setErros(errosAtuais);
 
     if (Object.keys(errosAtuais).length > 0) return;
-    if (!firebaseUser || !pilotagem) return;
+    if (!firebaseUser || !pilotagem || !tipoMoto) return;
 
     setSalvando(true);
     try {
@@ -102,6 +112,7 @@ export const useFormularioPerfil = (usuario: Usuario) => {
         fotoUrl,
         pilotagem,
         moto: moto.trim(),
+        tipoMoto,
         garupaFrequente,
         cidade: cidade.trim(),
       });
@@ -130,6 +141,8 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     setApelido,
     moto,
     setMoto,
+    tipoMoto,
+    setTipoMoto,
     cidade,
     setCidade,
     garupaFrequente,

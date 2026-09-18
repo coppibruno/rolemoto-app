@@ -1,5 +1,7 @@
 "use client";
 
+import { SeletorTipoMoto } from "@/components/perfil/SeletorTipoMoto";
+import type { TipoMoto } from "@/types/user";
 import { COPY } from "../constants";
 import { CampoTexto } from "./CampoTexto";
 import { ToggleGarupa } from "./ToggleGarupa";
@@ -7,19 +9,25 @@ import styles from "../primeiro-acesso.module.css";
 
 type Props = {
   moto: string;
+  tipoMoto: TipoMoto | null;
   garupaFrequente: boolean;
   onMoto: (valor: string) => void;
+  onTipoMoto: (valor: TipoMoto) => void;
   onGarupa: (valor: boolean) => void;
   erroMoto?: string;
+  erroTipoMoto?: string;
   desabilitado?: boolean;
 };
 
 export const SecaoGaragem = ({
   moto,
+  tipoMoto,
   garupaFrequente,
   onMoto,
+  onTipoMoto,
   onGarupa,
   erroMoto,
+  erroTipoMoto,
   desabilitado,
 }: Props) => {
   return (
@@ -41,6 +49,12 @@ export const SecaoGaragem = ({
         valor={moto}
         onChange={onMoto}
         erro={erroMoto}
+        desabilitado={desabilitado}
+      />
+      <SeletorTipoMoto
+        valor={tipoMoto}
+        onChange={onTipoMoto}
+        erro={erroTipoMoto}
         desabilitado={desabilitado}
       />
       <div className={styles.garupaLinha}>

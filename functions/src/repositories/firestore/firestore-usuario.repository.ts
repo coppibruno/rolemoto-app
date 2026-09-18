@@ -1,12 +1,18 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
-import type {Usuario, UsuarioCreate, UsuarioUpdate} from "../../types/usuario";
+import type {
+  TipoMoto,
+  Usuario,
+  UsuarioCreate,
+  UsuarioUpdate,
+} from "../../types/usuario";
 import type {UsuarioRepository} from "../interfaces/usuario.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "users";
 const CHUNK = 100;
+const TIPOS_MOTO: TipoMoto[] = ["trail", "speed", "custom"];
 
 const emChunks = <T>(itens: T[]): T[][] => {
   const saida: T[][] = [];
@@ -16,6 +22,13 @@ const emChunks = <T>(itens: T[]): T[][] => {
   return saida;
 };
 
+const normalizarTipoMoto = (valor: unknown): TipoMoto | null => {
+  if (typeof valor !== "string") {
+    return null;
+  }
+  return TIPOS_MOTO.includes(valor as TipoMoto) ? (valor as TipoMoto) : null;
+};
+
 const toUsuario = (snap: DocumentSnapshot): Usuario => {
   const data = snap.data() ?? {};
   return {
@@ -23,6 +36,7 @@ const toUsuario = (snap: DocumentSnapshot): Usuario => {
     nome: String(data.nome ?? ""),
     apelido: String(data.apelido ?? ""),
     moto: String(data.moto ?? ""),
+    tipoMoto: normalizarTipoMoto(data.tipoMoto),
     pilotagem: data.pilotagem ?? "tranquila",
     fotoUrl: String(data.fotoUrl ?? ""),
     cidade: String(data.cidade ?? ""),

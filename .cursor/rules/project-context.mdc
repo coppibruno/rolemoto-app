@@ -17,7 +17,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 
 ### 1. Autenticação (Firebase Auth)
 - Login com **Google** e **e-mail/senha**
-- Após o primeiro login, completar perfil: **apelido, moto, ritmo/pilotagem, foto, garupa**. Cidade é opcional no perfil (aparece na fila de aprovação)
+- Após o primeiro login, completar perfil: **apelido, moto, tipo de moto, ritmo/pilotagem, foto, garupa**. Cidade é opcional no perfil (aparece na fila de aprovação)
 
 ### 2. Feed (Rolês / Eventos / Locais)
 - Home `/` com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)
@@ -48,8 +48,9 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Qualquer piloto autenticado vê no feed (aba Locais) e em `/locais`; só admin cadastra
 
 ### 6. Perfil do Usuário
-- Apelido, moto, ritmo/pilotagem, foto, garupa, cidade (opcional)
+- Apelido, moto, tipo de moto (`trail` | `speed` | `custom`), ritmo/pilotagem, foto, garupa, cidade (opcional)
 - Histórico de pistas (SPEC 008), Meus Rolês (SPEC 017), fila de aprovações (SPEC 007)
+- Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura
 
 ## Modelo de Negócio
 

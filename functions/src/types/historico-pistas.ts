@@ -27,3 +27,13 @@ export type HistoricoPistas = {
     criados: number;
   };
 };
+
+/** Histórico visível a outros pilotos — sem aba Aguardando. */
+export type HistoricoPublico = {
+  concluidos: ItemHistoricoPista[];
+  comoLider: ItemHistoricoPista[];
+  contagens: {
+    concluidos: number;
+    comoLider: number;
+  };
+};

@@ -66,10 +66,13 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
 
       <SecaoGaragem
         moto={form.moto}
+        tipoMoto={form.tipoMoto}
         garupaFrequente={form.garupaFrequente}
         onMoto={form.setMoto}
+        onTipoMoto={form.setTipoMoto}
         onGarupa={form.setGarupaFrequente}
         erroMoto={form.erros.moto}
+        erroTipoMoto={form.erros.tipoMoto}
         desabilitado={form.salvando}
       />
 

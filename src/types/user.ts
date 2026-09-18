@@ -1,10 +1,14 @@
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
 
+export type TipoMoto = "trail" | "speed" | "custom";
+
 export interface Usuario {
   uid: string;
   nome: string;
   apelido: string;
   moto: string;
+  /** Legado sem campo → null até o próximo save. */
+  tipoMoto: TipoMoto | null;
   pilotagem: Pilotagem;
   fotoUrl: string;
   cidade: string;
@@ -19,6 +23,7 @@ export type PrimeiroAcessoForm = {
   nome: string;
   apelido: string;
   moto: string;
+  tipoMoto: TipoMoto | null;
   garupaFrequente: boolean;
   photoFile: File | null;
   fotoUrlAtual: string;
@@ -29,6 +34,7 @@ export type ErrosPrimeiroAcesso = {
   nome?: string;
   apelido?: string;
   moto?: string;
+  tipoMoto?: string;
   foto?: string;
   pilotagem?: string;
 };
@@ -38,6 +44,7 @@ export type UsuarioPrimeiroAcesso = {
   nome: string;
   apelido: string;
   moto: string;
+  tipoMoto: TipoMoto;
   pilotagem: Pilotagem;
   fotoUrl: string;
   garupaFrequente: boolean;
@@ -50,6 +57,7 @@ export type UsuarioEdicao = {
   fotoUrl: string;
   pilotagem: Pilotagem;
   moto: string;
+  tipoMoto: TipoMoto;
   garupaFrequente: boolean;
   cidade: string;
 };

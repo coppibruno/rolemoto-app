@@ -33,6 +33,7 @@ alwaysApply: true
   nome: string,
   apelido: string,
   moto: string,
+  tipoMoto: 'trail' | 'speed' | 'custom', // legado pode faltar até o próximo save
   pilotagem: 'agressiva' | 'moderada' | 'tranquila',
   fotoUrl: string,
   cidade: string,
@@ -41,6 +42,8 @@ alwaysApply: true
   createdAt: timestamp
 }
 ```
+
+Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/historico` → rota front `/perfil/[uid]`.
 
 ### Coleção `roles` (rolês)
 ```

@@ -15,6 +15,9 @@
  * - /dispositivos → POST, DELETE
  * - /lembretes/enviar → POST (Cloud Tasks, OIDC)
  * - /perfil  → GET, POST, PUT, DELETE
+ * - /perfil/historico → GET
+ * - /usuarios/:uid → GET
+ * - /usuarios/:uid/historico → GET
  * - /eventos → GET, POST
  * - /locais  → GET, POST
  * - /feed/contagens → GET
@@ -34,6 +37,7 @@ import {aprovacoesRouter} from "./routes/aprovacoes";
 import {dispositivosRouter} from "./routes/dispositivos";
 import {lembretesRouter} from "./routes/lembretes";
 import {perfilRouter} from "./routes/perfil";
+import {usuariosRouter} from "./routes/usuarios";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
@@ -66,6 +70,8 @@ app.get("/", (_req: Request, res: Response) => {
       "/lembretes/enviar",
       "/perfil",
       "/perfil/historico",
+      "/usuarios/:uid",
+      "/usuarios/:uid/historico",
       "/eventos",
       "/eventos/:id",
       "/locais",
@@ -83,6 +89,7 @@ app.use("/aprovacoes", aprovacoesRouter);
 app.use("/dispositivos", dispositivosRouter);
 app.use("/lembretes", lembretesRouter);
 app.use("/perfil", perfilRouter);
+app.use("/usuarios", usuariosRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/eventos", eventosRouter);
 app.use("/locais", locaisRouter);

@@ -3,6 +3,7 @@ import type {Role} from "../types/role";
 import type {UsuarioRole} from "../types/usuario-role";
 import type {
   HistoricoPistas,
+  HistoricoPublico,
   ItemHistoricoPista,
   StatusItemHistorico,
 } from "../types/historico-pistas";
@@ -139,6 +140,29 @@ export const montarHistorico = (
       aguardando: listaAguardando.length,
       participei: listaParticipei.length,
       criados: listaCriados.length,
+    },
+  };
+};
+
+/** Visão pública: sem pedidos pendentes (aba Aguardando). */
+export const montarHistoricoPublico = (
+  pedidos: UsuarioRole[],
+  criados: Role[],
+  rolesPorId: Map<string, Role>,
+  confirmadosPorRole: Map<string, number>,
+): HistoricoPublico => {
+  const proprio = montarHistorico(
+    pedidos,
+    criados,
+    rolesPorId,
+    confirmadosPorRole,
+  );
+  return {
+    concluidos: proprio.participei,
+    comoLider: proprio.criados,
+    contagens: {
+      concluidos: proprio.contagens.participei,
+      comoLider: proprio.contagens.criados,
     },
   };
 };

@@ -37,10 +37,13 @@ export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
         />
         <SecaoGaragem
           moto={form.moto}
+          tipoMoto={form.tipoMoto}
           garupaFrequente={form.garupaFrequente}
           onMoto={form.setMoto}
+          onTipoMoto={form.setTipoMoto}
           onGarupa={form.setGarupaFrequente}
           erroMoto={form.erros.moto}
+          erroTipoMoto={form.erros.tipoMoto}
           desabilitado={ocupado}
         />
         <SeletorRitmoHabitual

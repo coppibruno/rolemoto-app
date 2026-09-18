@@ -7,13 +7,15 @@ import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
   Pilotagem,
+  TipoMoto,
   UsuarioEdicao,
   UsuarioPrimeiroAcesso,
 } from "../types/usuario";
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
+const TIPOS_MOTO_VALIDOS: TipoMoto[] = ["trail", "speed", "custom"];
 const ERRO_CAMPOS_OBRIGATORIOS =
-  "nome, apelido, fotoUrl, pilotagem, moto e garupaFrequente são obrigatórios";
+  "nome, apelido, fotoUrl, pilotagem, moto, tipoMoto e garupaFrequente são obrigatórios";
 
 type ResultadoEdicao =
   | {ok: true; dados: UsuarioEdicao}
@@ -22,6 +24,21 @@ type ResultadoEdicao =
 type ResultadoPrimeiroAcesso =
   | {ok: true; dados: UsuarioPrimeiroAcesso}
   | {ok: false; erro: string};
+
+const validarTipoMoto = (
+  bruto: Record<string, unknown>,
+): {ok: true; valor: TipoMoto} | {ok: false; erro: string} => {
+  if (bruto.tipoMoto === undefined || bruto.tipoMoto === null) {
+    return {ok: false, erro: "tipoMoto é obrigatório"};
+  }
+  if (typeof bruto.tipoMoto !== "string" || !bruto.tipoMoto) {
+    return {ok: false, erro: "tipoMoto é obrigatório"};
+  }
+  if (!TIPOS_MOTO_VALIDOS.includes(bruto.tipoMoto as TipoMoto)) {
+    return {ok: false, erro: "tipoMoto inválido"};
+  }
+  return {ok: true, valor: bruto.tipoMoto as TipoMoto};
+};
 
 const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
   if (!body || typeof body !== "object") {
@@ -41,6 +58,11 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
 
   if (moto.length < 2) {
     return {ok: false, erro: "moto é obrigatório"};
+  }
+
+  const tipoMoto = validarTipoMoto(bruto);
+  if (!tipoMoto.ok) {
+    return {ok: false, erro: tipoMoto.erro};
   }
 
   if (typeof bruto.garupaFrequente !== "boolean") {
@@ -74,6 +96,7 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
       fotoUrl,
       pilotagem: pilotagem as Pilotagem,
       moto,
+      tipoMoto: tipoMoto.valor,
       garupaFrequente: bruto.garupaFrequente,
       cidade: cidadeBruta,
     },
@@ -106,6 +129,10 @@ const validarUsuarioPrimeiroAcesso = (
   if (moto.length < 2) {
     return {ok: false, erro: "moto é obrigatório"};
   }
+  const tipoMoto = validarTipoMoto(bruto);
+  if (!tipoMoto.ok) {
+    return {ok: false, erro: tipoMoto.erro};
+  }
   if (bruto.fotoUrl !== undefined && typeof bruto.fotoUrl !== "string") {
     return {ok: false, erro: "fotoUrl inválido"};
   }
@@ -125,6 +152,7 @@ const validarUsuarioPrimeiroAcesso = (
       nome,
       apelido,
       moto,
+      tipoMoto: tipoMoto.valor,
       fotoUrl,
       pilotagem: pilotagem as Pilotagem,
       garupaFrequente: bruto.garupaFrequente,
@@ -190,6 +218,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       nome: resultado.dados.nome,
       apelido: resultado.dados.apelido,
       moto: resultado.dados.moto,
+      tipoMoto: resultado.dados.tipoMoto,
       pilotagem: resultado.dados.pilotagem,
       fotoUrl: resultado.dados.fotoUrl,
       cidade: "",

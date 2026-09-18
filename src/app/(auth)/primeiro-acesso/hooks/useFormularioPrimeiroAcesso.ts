@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 import { useAuth } from "@/hooks/useAuth";
-import type { ErrosPrimeiroAcesso, Pilotagem } from "@/types/user";
+import type { ErrosPrimeiroAcesso, Pilotagem, TipoMoto } from "@/types/user";
 import {
   COPY,
   DELAY_MOTOR_MS,
@@ -22,6 +22,7 @@ const validar = (campos: {
   nome: string;
   apelido: string;
   moto: string;
+  tipoMoto: TipoMoto | null;
   pilotagem: Pilotagem | null;
 }): ErrosPrimeiroAcesso => {
   const erros: ErrosPrimeiroAcesso = {};
@@ -38,6 +39,10 @@ const validar = (campos: {
   if (!moto) erros.moto = "Informe a moto";
   else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
 
+  if (!campos.tipoMoto) {
+    erros.tipoMoto = "Selecione o tipo de moto";
+  }
+
   if (!campos.pilotagem) {
     erros.pilotagem = "Selecione o ritmo de pilotagem";
   }
@@ -53,6 +58,7 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
   const [nome, setNome] = useState(firebaseUser?.displayName ?? "");
   const [apelido, setApelidoEstado] = useState("");
   const [moto, setMoto] = useState("");
+  const [tipoMoto, setTipoMoto] = useState<TipoMoto | null>(null);
   const [garupaFrequente, setGarupaFrequente] = useState(false);
   const [pilotagem, setPilotagem] = useState<Pilotagem | null>(null);
   const [erros, setErros] = useState<ErrosPrimeiroAcesso>({});
@@ -82,21 +88,27 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
     nome.trim().length >= 2,
     normalizarApelido(apelido).length >= 2,
     moto.trim().length >= 2,
+    tipoMoto !== null,
     pilotagem !== null,
   ].filter(Boolean).length;
 
-  const percentual = Math.round((preenchidos / 4) * 100);
-  const valido = preenchidos === 4 && !foto.erro;
+  const percentual = Math.round((preenchidos / 5) * 100);
+  const valido = preenchidos === 5 && !foto.erro;
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
     setErroGeral(null);
 
-    const errosAtuais = validar({ nome, apelido, moto, pilotagem });
+    const errosAtuais = validar({ nome, apelido, moto, tipoMoto, pilotagem });
     if (foto.erro) errosAtuais.foto = foto.erro;
     setErros(errosAtuais);
 
-    if (Object.keys(errosAtuais).length > 0 || !firebaseUser || !pilotagem) {
+    if (
+      Object.keys(errosAtuais).length > 0 ||
+      !firebaseUser ||
+      !pilotagem ||
+      !tipoMoto
+    ) {
       return;
     }
 
@@ -113,6 +125,7 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
         nome: nome.trim(),
         apelido: normalizarApelido(apelido),
         moto: moto.trim(),
+        tipoMoto,
         pilotagem,
         fotoUrl,
         garupaFrequente,
@@ -151,6 +164,8 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
     setApelido,
     moto,
     setMoto,
+    tipoMoto,
+    setTipoMoto,
     garupaFrequente,
     setGarupaFrequente,
     pilotagem,
