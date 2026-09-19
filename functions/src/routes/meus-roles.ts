@@ -38,8 +38,10 @@ import type {Evento} from "../types/evento";
 import type {Local} from "../types/local";
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
-import type {UsuarioEventoFeedbackDoc} from "../types/avaliacao-experiencia";
-import type {UsuarioLocalFeedbackDoc} from "../types/avaliacao-experiencia";
+import type {
+  UsuarioEventoFeedbackDoc,
+  UsuarioLocalFeedbackDoc,
+} from "../types/avaliacao-experiencia";
 
 /**
  * Garagem do piloto autenticado.

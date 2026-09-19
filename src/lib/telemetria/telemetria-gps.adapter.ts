@@ -39,11 +39,16 @@ export type TelemetriaGpsAdapter = {
 };
 
 export const obterAdapterGps = async (): Promise<TelemetriaGpsAdapter> => {
-  const { podeGravarTelemetriaNativa } = await import("./plataforma");
-  if (!podeGravarTelemetriaNativa()) {
+  try {
+    const { podeGravarTelemetriaNativa } = await import("./plataforma");
+    if (!podeGravarTelemetriaNativa()) {
+      const { webAdapter } = await import("./telemetria-gps.web");
+      return webAdapter;
+    }
+    const { nativeAdapter } = await import("./telemetria-gps.native");
+    return nativeAdapter;
+  } catch {
     const { webAdapter } = await import("./telemetria-gps.web");
     return webAdapter;
   }
-  const { nativeAdapter } = await import("./telemetria-gps.native");
-  return nativeAdapter;
 };

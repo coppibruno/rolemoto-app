@@ -75,8 +75,10 @@ export const formatarAvaliadoRelativo = (iso: string): string => {
   return `Avaliado em ${formatarDataConcluido(iso)}`;
 };
 
-export const formatarKm = (km: number): string =>
-  `${km.toLocaleString("pt-BR")} km`;
+export const formatarKm = (km: number | null | undefined): string => {
+  const valor = typeof km === "number" && Number.isFinite(km) ? km : 0;
+  return `${valor.toLocaleString("pt-BR")} km`;
+};
 
 export const dadosConviteDe = (item: MeuRoleItem): DadosConvite => ({
   id: item.roleId,

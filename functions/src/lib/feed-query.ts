@@ -15,8 +15,14 @@ export const validarQueryGeoFeed = (
   if ("erro" in base) {
     return base;
   }
-  const {ritmo: _ritmo, ...resto} = base;
-  return resto;
+  return {
+    lat: base.lat,
+    lng: base.lng,
+    ...(base.raioKm !== undefined ? {raioKm: base.raioKm} : {}),
+    ...(base.quando !== undefined ? {quando: base.quando} : {}),
+    ...(base.data !== undefined ? {data: base.data} : {}),
+    ...(base.q !== undefined ? {q: base.q} : {}),
+  };
 };
 
 /**
@@ -29,13 +35,17 @@ export const validarQueryGeoOpcional = (
   const latRaw = req.query.lat;
   const lngRaw = req.query.lng;
   const latStr =
-    typeof latRaw === "string" ? latRaw :
-    Array.isArray(latRaw) && typeof latRaw[0] === "string" ? latRaw[0] :
-    undefined;
+    typeof latRaw === "string" ?
+      latRaw :
+      Array.isArray(latRaw) && typeof latRaw[0] === "string" ?
+        latRaw[0] :
+        undefined;
   const lngStr =
-    typeof lngRaw === "string" ? lngRaw :
-    Array.isArray(lngRaw) && typeof lngRaw[0] === "string" ? lngRaw[0] :
-    undefined;
+    typeof lngRaw === "string" ?
+      lngRaw :
+      Array.isArray(lngRaw) && typeof lngRaw[0] === "string" ?
+        lngRaw[0] :
+        undefined;
 
   const latVazio = latStr === undefined || latStr === "";
   const lngVazio = lngStr === undefined || lngStr === "";

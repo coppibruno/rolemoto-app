@@ -14,7 +14,11 @@ import {
   listarParticipantesEvento,
 } from "../lib/participantes";
 import {resolverIntervaloQuando} from "../lib/quando";
-import {eventoRepository, usuarioEventoRepository, usuarioEventoFeedbackRepository} from "../repositories";
+import {
+  eventoRepository,
+  usuarioEventoFeedbackRepository,
+  usuarioEventoRepository,
+} from "../repositories";
 import {inscricaoEventoRouter} from "./inscricao-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
 import type {Localizacao} from "../types/role";

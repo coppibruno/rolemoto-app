@@ -10,11 +10,17 @@ export const useSessaoTelemetriaNativa = (roleId?: string) => {
   const [pronta, setPronta] = useState(false);
 
   const sincronizar = useCallback(async () => {
-    const adapter = await obterAdapterGps();
-    const atual = await adapter.getSession();
-    setSessao(atual);
-    setPronta(true);
-    return atual;
+    try {
+      const adapter = await obterAdapterGps();
+      const atual = await adapter.getSession();
+      setSessao(atual);
+      setPronta(true);
+      return atual;
+    } catch {
+      setSessao(null);
+      setPronta(true);
+      return null;
+    }
   }, []);
 
   useEffect(() => {

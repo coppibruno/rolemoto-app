@@ -10,7 +10,9 @@ import type {
   AvaliacaoExperienciaCreate,
   UsuarioEventoFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
-import type {UsuarioEventoFeedbackRepository} from "../interfaces/usuario-evento-feedback.repository";
+import type {
+  UsuarioEventoFeedbackRepository,
+} from "../interfaces/usuario-evento-feedback.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "userseventofeedback";

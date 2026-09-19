@@ -8,7 +8,7 @@ O App Router usa SSR, Serwist e rewrites — **não** empacota com `output: 'exp
 
 | Build | `CAPACITOR_SERVER_URL` |
 | ----- | ---------------------- |
-| Loja / QA | `https://rolemoto.com.br` (default em `capacitor.config.ts`) |
+| Loja / QA | `https://www.rolemoto.com.br` (default em `capacitor.config.ts`; o apex redireciona e abriria o Chrome) |
 | Device + Next local (Android) | `http://<IP-da-LAN>:3000` |
 | Device + Next local (iOS) | túnel **HTTPS** (ngrok) — ATS bloqueia HTTP |
 
