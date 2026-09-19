@@ -132,10 +132,14 @@ export const LABELS_TELEMETRIA = {
 } as const;
 
 export const hrefMeuRole = (item: MeuRoleItem): string => {
-  if (item.status === "pendente" || item.status === "confirmado") {
+  if (
+    item.status === "pendente" ||
+    item.status === "confirmado" ||
+    item.status === "lider"
+  ) {
+    // Líder também cai em /participar: lá estão telemetria + CTA “Aprovar Pilotos”.
     return `/roles/${item.roleId}/participar`;
   }
-  if (item.status === "lider") return `/aprovacoes?role=${item.roleId}`;
   if (item.papel === "organizador") return `/aprovacoes?role=${item.roleId}`;
   return `/roles/${item.roleId}/feedback`;
 };

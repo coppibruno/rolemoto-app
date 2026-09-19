@@ -3,6 +3,10 @@ import {origemApp} from "./origem";
 const ORIGENS_FIXAS = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
+  "http://192.168.1.15:3000",
+  "https://localhost",
+  "capacitor://localhost",
+  "ionic://localhost",
   "https://rolemoto-bc47f.web.app",
   "https://rolemoto-bc47f.firebaseapp.com",
   "https://rolemoto.com.br",

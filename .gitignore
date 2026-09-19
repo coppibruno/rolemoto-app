@@ -33,6 +33,19 @@ yarn-error.log*
 .env
 .env*.local
 
+# Capacitor / nativo
+android/.gradle
+android/.idea
+android/local.properties
+android/app/build
+android/build
+android/captures
+ios/App/Pods
+ios/App/App/public
+ios/DerivedData
+*.jks
+*.keystore
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

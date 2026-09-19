@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { hrefEditarRole } from "@/app/(app)/meus-roles/constants";
+import { PainelTelemetriaRole } from "@/app/(app)/roles/[id]/telemetria/components/PainelTelemetriaRole";
 import styles from "../confirmacao-role.module.css";
 
 type Props = {
@@ -30,6 +31,9 @@ export const EstadoOrganizador = ({
       <p className={styles.estadoTexto}>
         Não é possível solicitar vaga na própria saída.
       </p>
+      <div className={styles.painelTelemetriaOrganizador}>
+        <PainelTelemetriaRole roleId={roleId} elegivel />
+      </div>
       <Link
         href={`/aprovacoes?role=${roleId}`}
         className={styles.botaoEstadoPrimario}

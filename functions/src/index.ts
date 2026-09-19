@@ -12,6 +12,7 @@
  * - /roles/:id/participacao → GET, POST, PATCH, DELETE
  * - /roles/:id/feedback → POST
  * - /roles/:id/feedbacks → GET
+ * - /roles/:id/telemetria → GET, POST
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE
@@ -75,6 +76,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/roles/:id/participantes",
       "/roles/:id/feedback",
       "/roles/:id/feedbacks",
+      "/roles/:id/telemetria",
       "/feedback/pendente",
       "/aprovacoes",
       "/dispositivos",

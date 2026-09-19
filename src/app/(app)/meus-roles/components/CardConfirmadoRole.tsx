@@ -8,6 +8,7 @@ import { formatarHora, formatarHorarioSaida } from "@/app/(app)/feed/formatar-ho
 import { hrefMeuRole, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
+import { SeloGravandoTelemetria } from "@/app/(app)/roles/[id]/telemetria/components/SeloGravandoTelemetria";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -22,10 +23,13 @@ export const CardConfirmadoRole = ({ item, cancelando, onCancelarRole }: Props) 
   return (
     <article className={styles.card}>
       <div className={styles.cardTopo}>
-        <span className={styles.badgeAssegurada}>
-          <span className={styles.bolinhaCiano} aria-hidden />
-          {item.status === "lider" ? "Organizador" : "Vaga Assegurada"}
-        </span>
+        <div className={styles.cardTopoEsquerda}>
+          <span className={styles.badgeAssegurada}>
+            <span className={styles.bolinhaCiano} aria-hidden />
+            {item.status === "lider" ? "Organizador" : "Vaga Assegurada"}
+          </span>
+          <SeloGravandoTelemetria roleId={item.roleId} />
+        </div>
         <span className={styles.cardData}>{formatarHorarioSaida(item.dataHoraSaida)}</span>
       </div>
       <Link href={destino} className={styles.cardTituloLink}>

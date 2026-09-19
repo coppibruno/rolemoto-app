@@ -1,0 +1,43 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { obterAdapterGps } from "@/lib/telemetria/telemetria-gps.adapter";
+import { podeGravarTelemetriaNativa } from "@/lib/telemetria/plataforma";
+import type { SessaoTelemetriaLocal } from "@/types/telemetria-role";
+
+export const useSessaoTelemetriaNativa = (roleId?: string) => {
+  const [sessao, setSessao] = useState<SessaoTelemetriaLocal | null>(null);
+  const [pronta, setPronta] = useState(false);
+
+  const sincronizar = useCallback(async () => {
+    const adapter = await obterAdapterGps();
+    const atual = await adapter.getSession();
+    setSessao(atual);
+    setPronta(true);
+    return atual;
+  }, []);
+
+  useEffect(() => {
+    void sincronizar();
+    if (!podeGravarTelemetriaNativa()) return;
+    let remover: (() => void) | undefined;
+    void import("@capacitor/app").then(({ App }) =>
+      App.addListener("appStateChange", ({ isActive }) => {
+        if (isActive) void sincronizar();
+      }),
+    ).then((handle) => {
+      remover = () => {
+        void handle.remove();
+      };
+    }).catch(() => {
+      /* web: plugin ausente */
+    });
+    return () => remover?.();
+  }, [sincronizar]);
+
+  const sessaoDesteRole = sessao && roleId && sessao.roleId === roleId ? sessao : null;
+  const sessaoOutroRole =
+    sessao && roleId && sessao.roleId !== roleId ? sessao : null;
+
+  return { sessao, sessaoDesteRole, sessaoOutroRole, pronta, sincronizar };
+};

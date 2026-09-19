@@ -1,0 +1,242 @@
+.painel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.avisoWeb,
+.aviso,
+.erro {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.erro {
+  color: var(--error);
+}
+
+.botao {
+  width: 100%;
+  height: var(--touch-target);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.38);
+  cursor: pointer;
+}
+
+.botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.botaoSecundario {
+  width: 100%;
+  height: var(--touch-target);
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoSecundario:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gravando {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 0.5rem;
+  background: var(--surface-container);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-container);
+}
+
+.pulso {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.55);
+  animation: pulso 1.6s ease-out infinite;
+}
+
+.cronometro {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.resumo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+}
+
+.celula {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 56px;
+}
+
+.numero {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface);
+}
+
+.rotulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.nota {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--on-surface-variant);
+}
+
+.educacao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+}
+
+.educacaoTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.educacaoCorpo {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
+.banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: calc(100% - 32px);
+  max-width: 528px;
+  padding: 10px 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateX(-50%);
+}
+
+.bannerTexto {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface);
+}
+
+.bannerLink {
+  flex-shrink: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary-container);
+}
+
+.selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--primary-container) 18%, transparent);
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.seloHero {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}
+
+@keyframes pulso {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 107, 0, 0);
+  }
+}

@@ -23,6 +23,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: raizDoProjeto,
   },
+  transpilePackages: [
+    "@capacitor/core",
+    "@capacitor/app",
+    "@capacitor/preferences",
+    "@capgo/background-geolocation",
+  ],
   async rewrites() {
     const regras: Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>> = [
       {

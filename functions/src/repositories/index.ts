@@ -23,6 +23,9 @@ import {
 import {
   FirestoreUsuarioLocalFavoritoRepository,
 } from "./firestore/firestore-usuario-local-favorito.repository";
+import {
+  FirestoreTelemetriaRoleRepository,
+} from "./firestore/firestore-telemetria-role.repository";
 import type {UsuarioRepository} from "./interfaces/usuario.repository";
 import type {RoleRepository} from "./interfaces/role.repository";
 import type {UsuarioRoleRepository} from "./interfaces/usuario-role.repository";
@@ -42,6 +45,7 @@ import type {
 import type {
   UsuarioLocalFavoritoRepository,
 } from "./interfaces/usuario-local-favorito.repository";
+import type {TelemetriaRoleRepository} from "./interfaces/telemetria-role.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -74,3 +78,6 @@ export const usuarioEventoFeedbackRepository: UsuarioEventoFeedbackRepository =
 
 export const usuarioLocalFavoritoRepository: UsuarioLocalFavoritoRepository =
   new FirestoreUsuarioLocalFavoritoRepository();
+
+export const telemetriaRoleRepository: TelemetriaRoleRepository =
+  new FirestoreTelemetriaRoleRepository();

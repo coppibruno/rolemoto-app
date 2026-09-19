@@ -43,6 +43,16 @@ O service worker **só registra em produção** (`npm run build && npm start` ou
 
 Instalação e a página `/offline` exigem **HTTPS** no mesmo origin do app. `localhost` e o emulator não provam o aceite no iPhone.
 
+### App nativo (Capacitor — telemetria com tela off)
+
+A PWA **não** grava GPS com a tela desligada. Isso só existe no shell Android/iOS. Guia completo (device, TestFlight, Play Console): [`docs/mobile.md`](docs/mobile.md).
+
+```bash
+npm test                          # métricas GPS (sem device)
+npx cap sync android              # depois: Android Studio → Run
+npx cap sync ios                  # depois: Xcode → device (macOS)
+```
+
 ### Notificações push
 
 Dois avisos nativos: pedido de vaga (para o organizador) e aceite (para o piloto). Recusa não notifica.
@@ -335,5 +345,6 @@ O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/`.
 | `npm run emulators`                   | Function `api` + Storage locais (portas 5001 e 9199) |
 | `npm run emulators:all`               | Functions + Firestore + Auth + Storage locais        |
 | `npm run storage:cors`                | Aplica `cors.json` no bucket de produção             |
+| `npm run test`                        | Vitest — `calcular-metricas` (telemetria)            |
 | `cd functions && npm run build:watch` | Recompila o backend a cada save                      |
 | `cd functions && npm run deploy`      | Publica as functions                                 |

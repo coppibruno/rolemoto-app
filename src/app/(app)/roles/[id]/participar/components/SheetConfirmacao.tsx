@@ -7,6 +7,7 @@ import { ChecklistPrePista } from "./ChecklistPrePista";
 import { CorpoSheet } from "./CorpoSheet";
 import { MiniCardRole } from "./MiniCardRole";
 import { StatusAguardando } from "./StatusAguardando";
+import { PainelTelemetriaRole } from "@/app/(app)/roles/[id]/telemetria/components/PainelTelemetriaRole";
 import { COPY_SHEET } from "../constants";
 import type { RoleDetalhe } from "@/types/role";
 import type { EstadoSheet } from "../types";
@@ -76,6 +77,9 @@ export const SheetConfirmacao = ({
       <MiniCardRole detalhe={detalhe} />
       {estado === "aguardando" ? <ChecklistPrePista /> : null}
       <div className={styles.acoes}>
+        {estado === "confirmado" ? (
+          <PainelTelemetriaRole roleId={detalhe.id} elegivel />
+        ) : null}
         {erroAcao ? <p className={styles.erroAcao}>{erroAcao}</p> : null}
         <BotaoVoltarFeed onClick={onVoltar} />
         {estado !== "recusado" ? (
