@@ -1,7 +1,12 @@
 "use client";
 
+import { MapaSelecaoLocalClient } from "@/components/maps/MapaSelecaoLocalClient";
 import type { useCampoEnderecoLocal } from "../hooks/useCampoEnderecoLocal";
-import { PLACEHOLDER_ENDERECO } from "../constants";
+import {
+  HINT_MAPA_AJUSTE,
+  HINT_MAPA_VAZIO,
+  PLACEHOLDER_ENDERECO,
+} from "../constants";
 import { SugestoesEndereco } from "./SugestoesEndereco";
 import styles from "../criar-local.module.css";
 
@@ -37,9 +42,17 @@ export const CampoEnderecoLocal = ({ campo, erro, desabilitado }: Props) => {
             id="endereco-local"
             type="text"
             className={`${styles.input} ${mensagem ? styles.inputErro : ""}`}
-            value={campo.endereco}
+            value={
+              campo.resolvendoEndereco && !campo.endereco.trim()
+                ? ""
+                : campo.endereco
+            }
             onChange={(e) => campo.aoDigitar(e.target.value)}
-            placeholder={PLACEHOLDER_ENDERECO}
+            placeholder={
+              campo.resolvendoEndereco
+                ? "Buscando endereço do ponto…"
+                : PLACEHOLDER_ENDERECO
+            }
             disabled={desabilitado}
             autoComplete="off"
             aria-invalid={Boolean(mensagem)}
@@ -73,6 +86,17 @@ export const CampoEnderecoLocal = ({ campo, erro, desabilitado }: Props) => {
         </span>
         {textoGps(campo.gpsStatus)}
       </button>
+      <div className={styles.mapaInterativo}>
+        <MapaSelecaoLocalClient
+          lat={campo.lat}
+          lng={campo.lng}
+          vooId={campo.vooId}
+          onMoverPonto={campo.atualizarDoMapa}
+          desabilitado={desabilitado}
+          hintVazio={HINT_MAPA_VAZIO}
+          hintAjuste={HINT_MAPA_AJUSTE}
+        />
+      </div>
       {mensagem ? (
         <p id={erroId} className={styles.erroCampo} role="alert">
           {mensagem}

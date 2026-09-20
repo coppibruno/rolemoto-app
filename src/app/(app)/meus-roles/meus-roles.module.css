@@ -1460,6 +1460,7 @@
   overflow: hidden;
   background: var(--surface-container);
   color: var(--on-surface-variant);
+  text-decoration: none;
 }
 
 .cardLocalGaragemThumb img {
@@ -1497,6 +1498,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.linkNomeLocal {
+  color: inherit;
+  text-decoration: none;
 }
 
 .cardLocalGaragemMeta {

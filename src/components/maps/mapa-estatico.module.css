@@ -1,0 +1,80 @@
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #d4d8de;
+}
+
+.mosaico {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.tile {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  display: block;
+  image-rendering: auto;
+  user-select: none;
+}
+
+.overlaySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.marcador {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  margin-top: -7px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 45%);
+  pointer-events: none;
+}
+
+.rotulo {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 70%);
+  color: #fff;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.atribuicao {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  z-index: 2;
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 75%);
+  color: #333;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 8px;
+  line-height: 1.2;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.atribuicao:hover {
+  background: rgb(255 255 255 / 95%);
+}

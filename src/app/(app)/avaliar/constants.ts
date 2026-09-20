@@ -91,6 +91,7 @@ export const LABELS_CATEGORIA_ALVO = {
 } as const;
 
 export const LABELS_TIPO_EVENTO_ALVO = {
+  moto_point: "Moto Point",
   moto_point_semanal: "Moto Point Semanal",
   track_day: "Track Day",
   cafe_pilotos: "Café dos Pilotos",

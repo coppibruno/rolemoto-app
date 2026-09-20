@@ -323,6 +323,19 @@
   font-size: 18px;
 }
 
+.mapaInterativo {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface-container-lowest);
+}
+
+.mapaInterativo > * {
+  height: 100%;
+}
+
 .girando {
   animation: girar 0.8s linear infinite;
 }

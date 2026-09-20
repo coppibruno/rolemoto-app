@@ -1,9 +1,10 @@
+import Link from "next/link";
 import type { MeuLocalGaragemItem } from "@/types/meus-roles";
 import { LABELS_CATEGORIA_LOCAL } from "@/app/(app)/feed/constants";
 import { BlocoCtaAvaliar } from "./BlocoCtaAvaliar";
 import { BlocoPreviewAvaliacao } from "./BlocoPreviewAvaliacao";
 import { formatarAvaliadoRelativo } from "../formatar-meus-roles";
-import { hrefAvaliarLocal } from "../constants";
+import { hrefAvaliarLocal, hrefDetalheLocal } from "../constants";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -17,7 +18,11 @@ export const CardMeuLocal = ({ item }: Props) => {
   return (
     <article className={styles.cardGaragem}>
       <div className={styles.cardLocalGaragemTopo}>
-        <div className={styles.cardLocalGaragemThumb}>
+        <Link
+          href={hrefDetalheLocal(item.localId)}
+          className={styles.cardLocalGaragemThumb}
+          aria-label={`Ver ${item.nome}`}
+        >
           {item.fotoFachadaUrl ? (
             <img src={item.fotoFachadaUrl} alt="" />
           ) : (
@@ -25,15 +30,26 @@ export const CardMeuLocal = ({ item }: Props) => {
               local_gas_station
             </span>
           )}
-        </div>
+        </Link>
         <div className={styles.cardLocalGaragemInfo}>
           <span className={styles.badgeCategoriaLocal}>{categoria}</span>
-          <h3 className={styles.cardLocalGaragemNome}>{item.nome}</h3>
+          <h3 className={styles.cardLocalGaragemNome}>
+            <Link href={hrefDetalheLocal(item.localId)} className={styles.linkNomeLocal}>
+              {item.nome}
+            </Link>
+          </h3>
           <p className={styles.cardLocalGaragemMeta}>
             {item.facilidadesResumo || item.endereco}
           </p>
         </div>
       </div>
+
+      <Link href={hrefDetalheLocal(item.localId)} className={styles.linkVerEvento}>
+        Ver local
+        <span className="material-symbols-outlined" aria-hidden>
+          arrow_forward
+        </span>
+      </Link>
 
       {!item.avaliado ? (
         <BlocoCtaAvaliar

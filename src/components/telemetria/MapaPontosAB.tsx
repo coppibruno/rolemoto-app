@@ -1,3 +1,4 @@
+import { MapaEstatico } from "@/components/maps/MapaEstatico";
 import { urlRotaMaps } from "@/lib/maps";
 import { formatarDistancia, labelPontoTelemetria } from "@/lib/telemetria/formatar-telemetria";
 import type { PontoTelemetria } from "@/types/role-telemetria";
@@ -7,16 +8,6 @@ type Props = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   distanciaKm: number;
-};
-
-const urlMapaEstatico = (a: PontoTelemetria, b: PontoTelemetria): string => {
-  const lat = (a.lat + b.lat) / 2;
-  const lng = (a.lng + b.lng) / 2;
-  return (
-    `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}` +
-    `&zoom=12&size=560x200&maptype=mapnik` +
-    `&markers=${a.lat},${a.lng},lightblue1|${b.lat},${b.lng},orangered`
-  );
 };
 
 export const MapaPontosAB = ({ pontoInicio, pontoFim, distanciaKm }: Props) => {
@@ -53,9 +44,23 @@ export const MapaPontosAB = ({ pontoInicio, pontoFim, distanciaKm }: Props) => {
         </a>
       </div>
       <div className={styles.mapaCanvas}>
-        <img
-          src={urlMapaEstatico(pontoInicio, pontoFim)}
-          alt="Mapa com partida e destino"
+        <MapaEstatico
+          marcadores={[
+            {
+              lat: pontoInicio.lat,
+              lng: pontoInicio.lng,
+              cor: "#38bdf8",
+              rotulo: "A",
+            },
+            {
+              lat: pontoFim.lat,
+              lng: pontoFim.lng,
+              cor: "#f97316",
+              rotulo: "B",
+            },
+          ]}
+          ligarMarcadores
+          aria-label="Mapa com partida e destino"
           className={styles.mapaImg}
         />
       </div>

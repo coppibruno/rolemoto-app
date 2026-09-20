@@ -2,7 +2,7 @@ import type { ParticipantesBloco } from "./participante";
 import type { Localizacao } from "./role";
 
 export type TipoEvento =
-  | "moto_point_semanal"
+  | "moto_point"
   | "track_day"
   | "cafe_pilotos"
   | "exposicao_custom";

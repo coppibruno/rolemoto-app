@@ -2,6 +2,7 @@ import type {ParticipantesBloco} from "./participante";
 import type {Localizacao} from "./role";
 
 export type TipoEvento =
+  | "moto_point"
   | "moto_point_semanal"
   | "track_day"
   | "cafe_pilotos"
@@ -64,6 +65,7 @@ export type EventoDetalhe = Evento & {
 };
 
 export const TIPOS_EVENTO: TipoEvento[] = [
+  "moto_point",
   "moto_point_semanal",
   "track_day",
   "cafe_pilotos",

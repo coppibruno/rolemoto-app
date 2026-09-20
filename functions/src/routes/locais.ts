@@ -301,12 +301,15 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const feedback =
-      await usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(
-        uid,
-        local.id,
-      );
-    res.json({...local, avaliado: feedback !== null});
+    const [feedback, favorito] = await Promise.all([
+      usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(uid, local.id),
+      usuarioLocalFavoritoRepository.buscarPorUsuarioELocal(uid, local.id),
+    ]);
+    res.json({
+      ...local,
+      avaliado: feedback !== null,
+      favorito: favorito !== null,
+    });
   } catch (error) {
     responderErro(res, error);
   }

@@ -4,7 +4,6 @@ import { useFormularioCriarLocal } from "../hooks/useFormularioCriarLocal";
 import { BotaoCancelar } from "./BotaoCancelar";
 import { BotaoSalvarLocal } from "./BotaoSalvarLocal";
 import { CampoEnderecoLocal } from "./CampoEnderecoLocal";
-import { CampoLinkMaps } from "./CampoLinkMaps";
 import { CampoNomeLocal } from "./CampoNomeLocal";
 import { FotoFachada } from "./FotoFachada";
 import { ListaFacilidades } from "./ListaFacilidades";
@@ -47,12 +46,6 @@ export const FormularioCriarLocal = () => {
         onMudarModo={form.setAberto24h}
         onMudarDia={form.atualizarHorario}
         erro={form.erros.horario}
-        desabilitado={desabilitado}
-      />
-      <CampoLinkMaps
-        valor={form.linkMaps}
-        onChange={form.setLinkMaps}
-        erro={form.erros.linkMaps}
         desabilitado={desabilitado}
       />
       <FotoFachada

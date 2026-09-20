@@ -1,8 +1,12 @@
 "use client";
 
 import type { useCampoLocalEvento } from "../hooks/useCampoLocalEvento";
-import { PLACEHOLDER_LOCAL } from "../constants";
-import { PreviewMapaEstatico } from "./PreviewMapaEstatico";
+import { MapaSelecaoLocalClient } from "@/components/maps/MapaSelecaoLocalClient";
+import {
+  HINT_MAPA_AJUSTE,
+  HINT_MAPA_VAZIO,
+  PLACEHOLDER_LOCAL,
+} from "../constants";
 import { SugestoesEndereco } from "./SugestoesEndereco";
 import styles from "../criar-evento.module.css";
 
@@ -40,9 +44,17 @@ export const CampoLocalEvento = ({ campo, erro, desabilitado }: Props) => {
             className={`${styles.input} ${styles.inputComIcone} ${
               mensagem ? styles.inputErro : ""
             }`}
-            value={campo.valor.endereco}
+            value={
+              campo.resolvendoEndereco && !campo.valor.endereco.trim()
+                ? ""
+                : campo.valor.endereco
+            }
             onChange={(e) => campo.aoDigitar(e.target.value)}
-            placeholder={PLACEHOLDER_LOCAL}
+            placeholder={
+              campo.resolvendoEndereco
+                ? "Buscando endereço do ponto…"
+                : PLACEHOLDER_LOCAL
+            }
             disabled={desabilitado}
             autoComplete="off"
             aria-invalid={Boolean(mensagem)}
@@ -76,7 +88,17 @@ export const CampoLocalEvento = ({ campo, erro, desabilitado }: Props) => {
           {textoGps(campo.gpsStatus)}
         </button>
       </div>
-      <PreviewMapaEstatico lat={campo.valor.lat} lng={campo.valor.lng} />
+      <div className={styles.mapaInterativo}>
+        <MapaSelecaoLocalClient
+          lat={campo.valor.lat}
+          lng={campo.valor.lng}
+          vooId={campo.vooId}
+          onMoverPonto={campo.atualizarDoMapa}
+          desabilitado={desabilitado}
+          hintVazio={HINT_MAPA_VAZIO}
+          hintAjuste={HINT_MAPA_AJUSTE}
+        />
+      </div>
       {mensagem ? (
         <p id={erroId} className={styles.erroCampo} role="alert">
           {mensagem}

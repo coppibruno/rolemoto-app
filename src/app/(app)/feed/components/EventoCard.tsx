@@ -26,6 +26,11 @@ export const EventoCard = ({ evento }: Props) => {
 
   return (
     <article className={styles.cardEvento}>
+      <Link
+        href={href}
+        className={styles.cardDetalheLink}
+        aria-label={`Ver detalhes de ${evento.titulo}`}
+      />
       <div className={styles.cardEventoTopo}>
         <div className={styles.cardEventoInfo}>
           <div className={styles.cardEventoBadges}>
@@ -40,11 +45,7 @@ export const EventoCard = ({ evento }: Props) => {
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}
             />
           </div>
-          <h3 className={styles.cardEventoTitulo}>
-            <Link href={href} className={styles.cardEventoTituloLink}>
-              {evento.titulo}
-            </Link>
-          </h3>
+          <h3 className={styles.cardEventoTitulo}>{evento.titulo}</h3>
           <p className={styles.cardEventoEndereco}>
             <span className="material-symbols-outlined" aria-hidden>
               location_on
@@ -52,7 +53,7 @@ export const EventoCard = ({ evento }: Props) => {
             <span>{evento.local.endereco}</span>
           </p>
         </div>
-        <Link href={href} className={styles.cardEventoThumb} aria-label="Ver detalhe">
+        <div className={styles.cardEventoThumb} aria-hidden>
           {evento.fotoCapaUrl ? (
             <img
               src={evento.fotoCapaUrl}
@@ -60,13 +61,13 @@ export const EventoCard = ({ evento }: Props) => {
               className={styles.cardEventoThumbImg}
             />
           ) : (
-            <span className="material-symbols-outlined" aria-hidden>
+            <span className="material-symbols-outlined">
               local_activity
             </span>
           )}
-        </Link>
+        </div>
       </div>
-      <div className={styles.cardEventoRodape}>
+      <div className={`${styles.cardEventoRodape} ${styles.cardDetalheAcao}`}>
         <BotaoInscreverEvento
           id={evento.id}
           acesso={evento.acesso}

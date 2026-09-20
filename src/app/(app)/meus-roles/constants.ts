@@ -159,6 +159,9 @@ export const hrefDetalheEvento = (eventoId: string): string =>
 export const hrefAvaliarLocal = (localId: string): string =>
   `/locais/${localId}/avaliar`;
 
+export const hrefDetalheLocal = (localId: string): string =>
+  `/locais/${localId}`;
+
 export const saidaFutura = (iso: string): boolean => Date.parse(iso) > Date.now();
 
 export const confirmDesistir = (titulo: string): string =>

@@ -2,6 +2,8 @@ const NEXT_SEGURO = [
   /^\/$/,
   /^\/r\/[A-Za-z0-9_-]+$/,
   /^\/roles\/[A-Za-z0-9_-]+\/participar$/,
+  /^\/eventos\/[A-Za-z0-9_-]+$/,
+  /^\/locais\/[A-Za-z0-9_-]+$/,
 ];
 
 export const destinoSeguro = (bruto: string | null | undefined): string => {

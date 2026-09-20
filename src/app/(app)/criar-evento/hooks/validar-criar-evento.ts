@@ -12,7 +12,7 @@ import type { ErrosCriarEvento, LocalizacaoForm } from "../types";
 const DATA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const HORA_RE = /^\d{2}:\d{2}$/;
 const TIPOS: TipoEvento[] = [
-  "moto_point_semanal",
+  "moto_point",
   "track_day",
   "cafe_pilotos",
   "exposicao_custom",
@@ -71,7 +71,7 @@ export const validarCriarEvento = (campos: {
   if (campos.local.endereco.trim().length < ENDERECO_MIN) {
     erros.local = "Informe o local do evento";
   } else if (!coordsValidas(campos.local)) {
-    erros.local = "Escolha um endereço da lista ou use o GPS";
+    erros.local = "Escolha um endereço da lista, use o GPS ou o mapa";
   }
 
   let aberturaIso = "";

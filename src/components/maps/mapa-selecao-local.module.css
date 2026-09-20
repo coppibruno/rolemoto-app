@@ -1,0 +1,79 @@
+.mapa {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #d4d8de;
+  isolation: isolate;
+}
+
+.mapa :global(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  background: #d4d8de;
+  z-index: 0;
+}
+
+.mapa :global(.leaflet-control-attribution) {
+  font-size: 9px;
+  background: rgb(255 255 255 / 80%);
+}
+
+.mapa :global(.leaflet-bottom.leaflet-right) {
+  z-index: 1;
+}
+
+.pin {
+  background: transparent !important;
+  border: none !important;
+  width: 28px;
+  height: 40px;
+}
+
+.pinSvg {
+  display: block;
+  width: 28px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 35%));
+}
+
+.hint {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--surface-container-highest, #1e1e24) 88%, transparent);
+  color: var(--on-surface, #f2f2f5);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 1.3;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.hintIcone {
+  font-size: 18px;
+  color: var(--primary, #ff6b1a);
+  flex-shrink: 0;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  color: color-mix(in srgb, var(--on-surface-variant, #9a9aa3) 70%, transparent);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+}

@@ -37,6 +37,14 @@ const headersNominatim = {
   "Accept-Language": "pt-BR",
 };
 
+const TIMEOUT_NOMINATIM_MS = 8000;
+
+const fetchNominatim = async (url: string): Promise<Response> =>
+  fetch(url, {
+    headers: headersNominatim,
+    signal: AbortSignal.timeout(TIMEOUT_NOMINATIM_MS),
+  });
+
 const montarLabelCurto = (
   address?: NominatimAddress,
   displayName?: string,
@@ -86,7 +94,7 @@ export const geocodeService = {
       const url =
         `${NOMINATIM}/reverse?format=json&lat=${lat}&lon=${lng}` +
         `&zoom=${zoom}&addressdetails=1`;
-      const res = await fetch(url, { headers: headersNominatim });
+      const res = await fetchNominatim(url);
       if (!res.ok) return "Sua localização";
       const data = (await res.json()) as NominatimReverse;
       return montarLabel(estilo, data.address, data.display_name);
@@ -106,7 +114,7 @@ export const geocodeService = {
       const url =
         `${NOMINATIM}/search?format=json&q=${encodeURIComponent(termo)}` +
         "&addressdetails=1&limit=5&countrycodes=br";
-      const res = await fetch(url, { headers: headersNominatim });
+      const res = await fetchNominatim(url);
       if (!res.ok) return [];
       const data = (await res.json()) as NominatimSearch[];
       return data.map((item) => ({

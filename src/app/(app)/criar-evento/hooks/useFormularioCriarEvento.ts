@@ -50,35 +50,50 @@ export const useFormularioCriarEvento = () => {
 
   const publicar = async (e: FormEvent) => {
     e.preventDefault();
+    if (publicando) return;
     setSucesso(false);
     setErroGeral(null);
-    const errosAtuais = validarCriarEvento({
-      titulo,
-      tipo,
-      local: local.valor,
-      dataEvento,
-      horaAbertura,
-      horaEncerramento,
-      acesso,
-      linkIngresso,
-      photoFile: foto.arquivo,
-      informacoes,
-    });
-    setErros(errosAtuais);
-    if (Object.keys(errosAtuais).length > 0) return;
-    if (!firebaseUser || !tipo) return;
-
     setPublicando(true);
+
     try {
+      const localResolvido = await local.resolverPontoPendente();
+      const errosAtuais = validarCriarEvento({
+        titulo,
+        tipo,
+        local: localResolvido,
+        dataEvento,
+        horaAbertura,
+        horaEncerramento,
+        acesso,
+        linkIngresso,
+        photoFile: foto.arquivo,
+        informacoes,
+      });
+      setErros(errosAtuais);
+      if (Object.keys(errosAtuais).length > 0) {
+        setPublicando(false);
+        window.requestAnimationFrame(() => {
+          document
+            .querySelector<HTMLElement>("[role='alert']")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+        return;
+      }
+      if (!firebaseUser || !tipo) {
+        setErroGeral("Sessão expirada. Entre de novo para publicar.");
+        setPublicando(false);
+        return;
+      }
+
       const fotoCapaUrl = await foto.enviar(firebaseUser.uid);
       await eventosService.criar({
         titulo: titulo.trim(),
         tipo,
         local: {
-          lat: local.valor.lat as number,
-          lng: local.valor.lng as number,
-          endereco: local.valor.endereco.trim(),
-          nome: local.valor.nome.trim(),
+          lat: localResolvido.lat as number,
+          lng: localResolvido.lng as number,
+          endereco: localResolvido.endereco.trim(),
+          nome: localResolvido.nome.trim(),
         },
         dataHoraAbertura: montarIsoEvento(dataEvento, horaAbertura),
         dataHoraEncerramento: horaEncerramento.trim()

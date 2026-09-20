@@ -39,7 +39,7 @@ export const LocalCard = ({ local }: Props) => {
     .filter((item): item is NonNullable<typeof item> => Boolean(item))
     .slice(0, 3);
 
-  const href =
+  const hrefMaps =
     local.linkMaps.trim() ||
     urlAbrirMaps({
       lat: local.lat,
@@ -47,9 +47,15 @@ export const LocalCard = ({ local }: Props) => {
       endereco: local.endereco,
       nome: local.nome,
     });
+  const hrefDetalhe = `/locais/${local.id}`;
 
   return (
     <article className={styles.cardLocal}>
+      <Link
+        href={hrefDetalhe}
+        className={styles.cardDetalheLink}
+        aria-label={`Ver detalhes de ${local.nome}`}
+      />
       <div className={styles.cardLocalTopo}>
         <div className={styles.cardLocalInfo}>
           <div className={styles.cardLocalBadges}>
@@ -107,9 +113,9 @@ export const LocalCard = ({ local }: Props) => {
         </div>
       ) : null}
 
-      <div className={styles.cardLocalAcoes}>
+      <div className={`${styles.cardLocalAcoes} ${styles.cardDetalheAcao}`}>
         <a
-          href={href}
+          href={hrefMaps}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.botaoRotaDireta}
@@ -119,10 +125,7 @@ export const LocalCard = ({ local }: Props) => {
           </span>
           <span>Maps</span>
         </a>
-        <Link
-          href={`/locais/${local.id}/avaliar`}
-          className={styles.botaoAvaliar}
-        >
+        <Link href={`/locais/${local.id}/avaliar`} className={styles.botaoAvaliar}>
           <span className="material-symbols-outlined" aria-hidden>
             star
           </span>

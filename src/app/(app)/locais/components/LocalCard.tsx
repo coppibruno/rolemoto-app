@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Local } from "@/types/local";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
 import { OPCOES_CATEGORIA, OPCOES_FACILIDADES } from "../constants";
@@ -24,9 +25,15 @@ export const LocalCard = ({ local }: Props) => {
   const visiveis = facilidades.slice(0, 3);
   const extras = facilidades.length - visiveis.length;
   const hrefMaps = local.linkMaps.trim() || undefined;
+  const hrefDetalhe = `/locais/${local.id}`;
 
   return (
     <article className={styles.card}>
+      <Link
+        href={hrefDetalhe}
+        className={styles.cardDetalheLink}
+        aria-label={`Ver detalhes de ${local.nome}`}
+      />
       <div className={styles.cardFoto}>
         {local.fotoFachadaUrl ? (
           <img
@@ -47,7 +54,7 @@ export const LocalCard = ({ local }: Props) => {
         <h2 className={styles.cardNome}>{local.nome}</h2>
         <p className={styles.cardEndereco}>{local.endereco}</p>
         <p className={styles.cardHorario}>{formatarHorarioLocal(local)}</p>
-        <div className={styles.cardRodape}>
+        <div className={`${styles.cardRodape} ${styles.cardDetalheAcao}`}>
           <div className={styles.facilidadesResumo}>
             {visiveis.map((item) => (
               <span

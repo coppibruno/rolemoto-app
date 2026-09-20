@@ -34,8 +34,8 @@ export const CTA_PUBLICAR = "Publicar Evento";
 export const CTA_PUBLICANDO = "Publicando...";
 export const BANNER_RAIO =
   "Todos os pilotos em um raio de 40 km receberão notificação deste evento no feed comunitário.";
-export const HINT_MAPA_VAZIO = "Busque o endereço ou use o GPS";
-export const BADGE_PONTO = "Ponto verificado via Geocoding";
+export const HINT_MAPA_VAZIO = "Toque no mapa, busque o endereço ou use o GPS";
+export const HINT_MAPA_AJUSTE = "Arraste o alfinete para ajustar o ponto";
 export const BADGE_PREVIA = "Prévia ativa";
 
 export type OpcaoTipoEvento = {
@@ -46,8 +46,8 @@ export type OpcaoTipoEvento = {
 
 export const OPCOES_TIPO: OpcaoTipoEvento[] = [
   {
-    valor: "moto_point_semanal",
-    label: "Moto Point Semanal",
+    valor: "moto_point",
+    label: "Moto Point",
     icone: "sports_motorsports",
   },
   { valor: "track_day", label: "Track Day / Pista", icone: "flag" },

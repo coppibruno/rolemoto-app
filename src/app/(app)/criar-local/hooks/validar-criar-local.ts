@@ -1,21 +1,11 @@
 import type { CategoriaLocal, ErrosCriarLocal, HorarioDiaForm } from "@/types/local";
-import { HORA_RE, LINK_MAPS_MAX, NOME_MAX, NOME_MIN } from "../constants";
+import { HORA_RE, NOME_MAX, NOME_MIN } from "../constants";
 
 const coordsValidas = (lat: number | null, lng: number | null): boolean =>
   typeof lat === "number" &&
   Number.isFinite(lat) &&
   typeof lng === "number" &&
   Number.isFinite(lng);
-
-const isUrlHttp = (valor: string): boolean => {
-  if (valor.length > LINK_MAPS_MAX) return false;
-  try {
-    const url = new URL(valor);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch {
-    return false;
-  }
-};
 
 const horarioValido = (horarios: HorarioDiaForm[]): boolean => {
   const abertos = horarios.filter((dia) => !dia.fechado);
@@ -33,7 +23,6 @@ export const validarCriarLocal = (campos: {
   categoria: CategoriaLocal | null;
   aberto24h: boolean;
   horarios: HorarioDiaForm[];
-  linkMaps: string;
   fotoErro?: string;
 }): ErrosCriarLocal => {
   const erros: ErrosCriarLocal = {};
@@ -46,7 +35,7 @@ export const validarCriarLocal = (campos: {
   if (campos.endereco.trim().length < NOME_MIN) {
     erros.endereco = "Informe o endereço";
   } else if (!coordsValidas(campos.lat, campos.lng)) {
-    erros.endereco = "Escolha um endereço da lista ou use o GPS";
+    erros.endereco = "Escolha um endereço da lista, use o GPS ou o mapa";
   }
 
   if (!campos.categoria) {
@@ -55,11 +44,6 @@ export const validarCriarLocal = (campos: {
 
   if (!campos.aberto24h && !horarioValido(campos.horarios)) {
     erros.horario = "Informe o horário de pelo menos um dia aberto";
-  }
-
-  const link = campos.linkMaps.trim();
-  if (link && !isUrlHttp(link)) {
-    erros.linkMaps = "Informe um link válido (https://…)";
   }
 
   if (campos.fotoErro) {

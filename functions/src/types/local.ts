@@ -62,6 +62,11 @@ export type LocalFeedItem = Local & {
   favorito: boolean;
 };
 
+export type LocalDetalhe = Local & {
+  avaliado: boolean;
+  favorito: boolean;
+};
+
 export const CATEGORIAS_LOCAL: CategoriaLocal[] = [
   "posto",
   "bar_moto_point",

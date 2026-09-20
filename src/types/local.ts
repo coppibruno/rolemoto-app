@@ -60,6 +60,11 @@ export type LocalFeedItem = Local & {
   favorito: boolean;
 };
 
+export type LocalDetalhe = Local & {
+  avaliado: boolean;
+  favorito: boolean;
+};
+
 export type HorarioDiaForm = {
   dia: DiaSemana;
   fechado: boolean;
@@ -76,7 +81,6 @@ export type CriarLocalForm = {
   facilidades: FacilidadeLocal[];
   aberto24h: boolean;
   horarios: HorarioDiaForm[];
-  linkMaps: string;
   photoFile: File | null;
 };
 
@@ -85,6 +89,5 @@ export type ErrosCriarLocal = {
   endereco?: string;
   categoria?: string;
   horario?: string;
-  linkMaps?: string;
   foto?: string;
 };

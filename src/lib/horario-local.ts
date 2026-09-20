@@ -17,6 +17,16 @@ export const DIAS_SEMANA_UI: OpcaoDiaSemana[] = [
   { valor: 0, label: "Domingo", curto: "Dom" },
 ];
 
+export type GrupoHorario = {
+  inicio: OpcaoDiaSemana;
+  fim: OpcaoDiaSemana;
+  fechado: boolean;
+  abertura: string | null;
+  fechamento: string | null;
+};
+
+export type LabelStatusAberto = "Aberto agora" | "Fechado" | "24 horas";
+
 const chaveDia = (dia: HorarioDiaLocal | HorarioDiaForm): string => {
   if (dia.fechado) return "fechado";
   return `${dia.abertura ?? ""}|${dia.fechamento ?? ""}`;
@@ -25,14 +35,29 @@ const chaveDia = (dia: HorarioDiaLocal | HorarioDiaForm): string => {
 const labelFaixa = (inicio: OpcaoDiaSemana, fim: OpcaoDiaSemana): string =>
   inicio.valor === fim.valor ? inicio.curto : `${inicio.curto}–${fim.curto}`;
 
-export const formatarHorarioLocal = (
-  local: Pick<Local, "aberto24h" | "horarios">,
-): string => {
-  if (local.aberto24h) return "Aberto 24 horas";
-  if (!local.horarios.length) return "Horário não informado";
+const minutosDoRelogio = (hhmm: string): number => {
+  const [hora, minuto] = hhmm.split(":").map(Number);
+  return hora * 60 + minuto;
+};
 
-  const porDia = new Map(local.horarios.map((item) => [item.dia, item]));
-  const grupos: string[] = [];
+const estaNoIntervalo = (
+  agoraMin: number,
+  abertura: string,
+  fechamento: string,
+): boolean => {
+  const abre = minutosDoRelogio(abertura);
+  const fecha = minutosDoRelogio(fechamento);
+  if (fecha < abre) {
+    return agoraMin >= abre || agoraMin < fecha;
+  }
+  return agoraMin >= abre && agoraMin < fecha;
+};
+
+export const agruparHorarios = (
+  horarios: HorarioDiaLocal[],
+): GrupoHorario[] => {
+  const porDia = new Map(horarios.map((item) => [item.dia, item]));
+  const grupos: GrupoHorario[] = [];
   let i = 0;
 
   while (i < DIAS_SEMANA_UI.length) {
@@ -50,14 +75,53 @@ export const formatarHorarioLocal = (
       fimIdx += 1;
     }
     const fim = DIAS_SEMANA_UI[fimIdx];
-    const faixa = labelFaixa(inicio, fim);
-    grupos.push(
-      atual.fechado
-        ? `${faixa} fechado`
-        : `${faixa} ${atual.abertura}–${atual.fechamento}`,
-    );
+    grupos.push({
+      inicio,
+      fim,
+      fechado: atual.fechado,
+      abertura: atual.abertura ?? null,
+      fechamento: atual.fechamento ?? null,
+    });
     i = fimIdx + 1;
   }
 
+  return grupos;
+};
+
+export const formatarHorarioLocal = (
+  local: Pick<Local, "aberto24h" | "horarios">,
+): string => {
+  if (local.aberto24h) return "Aberto 24 horas";
+  if (!local.horarios.length) return "Horário não informado";
+
+  const grupos = agruparHorarios(local.horarios).map((grupo) => {
+    const faixa = labelFaixa(grupo.inicio, grupo.fim);
+    return grupo.fechado
+      ? `${faixa} fechado`
+      : `${faixa} ${grupo.abertura}–${grupo.fechamento}`;
+  });
+
   return grupos.join(" · ") || "Horário não informado";
+};
+
+export const estaAbertoAgora = (
+  local: Pick<Local, "aberto24h" | "horarios">,
+  agora: Date = new Date(),
+): boolean => {
+  if (local.aberto24h) return true;
+  const dia = agora.getDay() as DiaSemana;
+  const faixa = local.horarios.find((item) => item.dia === dia);
+  if (!faixa || faixa.fechado || !faixa.abertura || !faixa.fechamento) {
+    return false;
+  }
+  const agoraMin = agora.getHours() * 60 + agora.getMinutes();
+  return estaNoIntervalo(agoraMin, faixa.abertura, faixa.fechamento);
+};
+
+export const labelStatusAberto = (
+  local: Pick<Local, "aberto24h" | "horarios">,
+  agora: Date = new Date(),
+): LabelStatusAberto => {
+  if (local.aberto24h) return "24 horas";
+  return estaAbertoAgora(local, agora) ? "Aberto agora" : "Fechado";
 };

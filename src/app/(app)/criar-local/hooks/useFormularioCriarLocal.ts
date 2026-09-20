@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { urlAbrirMaps } from "@/lib/maps";
 import type {
   CategoriaLocal,
   FacilidadeLocal,
@@ -38,7 +39,6 @@ export const useFormularioCriarLocal = () => {
   const [facilidades, setFacilidades] = useState<FacilidadeLocal[]>([]);
   const [aberto24h, setAberto24h] = useState(true);
   const [horarios, setHorarios] = useState<HorarioDiaForm[]>(horariosPadraoEspecifico);
-  const [linkMaps, setLinkMaps] = useState("");
   const [erros, setErros] = useState<ReturnType<typeof validarCriarLocal>>({});
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
@@ -65,39 +65,60 @@ export const useFormularioCriarLocal = () => {
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
+    if (salvando) return;
     setSucesso(false);
     setErroGeral(null);
-    const errosAtuais = validarCriarLocal({
-      nome,
-      endereco: endereco.endereco,
-      lat: endereco.lat,
-      lng: endereco.lng,
-      categoria,
-      aberto24h,
-      horarios,
-      linkMaps,
-      fotoErro: foto.erro,
-    });
-    setErros(errosAtuais);
-    if (Object.keys(errosAtuais).length > 0) return;
-    if (!firebaseUser || !categoria) return;
-
     setSalvando(true);
+
     try {
+      const ponto = await endereco.resolverPontoPendente();
+      const errosAtuais = validarCriarLocal({
+        nome,
+        endereco: ponto.endereco,
+        lat: ponto.lat,
+        lng: ponto.lng,
+        categoria,
+        aberto24h,
+        horarios,
+        fotoErro: foto.erro,
+      });
+      setErros(errosAtuais);
+      if (Object.keys(errosAtuais).length > 0) {
+        setSalvando(false);
+        window.requestAnimationFrame(() => {
+          document
+            .querySelector<HTMLElement>("[role='alert']")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+        return;
+      }
+      if (!firebaseUser || !categoria || ponto.lat == null || ponto.lng == null) {
+        setErroGeral("Sessão expirada. Entre de novo para salvar.");
+        setSalvando(false);
+        return;
+      }
+
       const fotoFachadaUrl = foto.arquivo
         ? await foto.enviar(firebaseUser.uid)
         : "";
 
+      const linkMaps = urlAbrirMaps({
+        lat: ponto.lat,
+        lng: ponto.lng,
+        endereco: ponto.endereco.trim(),
+        nome: nome.trim(),
+      }).slice(0, LINK_MAPS_MAX);
+
       await locaisService.criar({
         nome: nome.trim().slice(0, NOME_MAX),
-        endereco: endereco.endereco.trim(),
-        lat: endereco.lat as number,
-        lng: endereco.lng as number,
+        endereco: ponto.endereco.trim(),
+        lat: ponto.lat,
+        lng: ponto.lng,
         categoria,
         facilidades,
         aberto24h,
         horarios: aberto24h ? [] : montarHorarios(horarios),
-        linkMaps: linkMaps.trim().slice(0, LINK_MAPS_MAX),
+        linkMaps,
         fotoFachadaUrl,
       });
 
@@ -127,8 +148,6 @@ export const useFormularioCriarLocal = () => {
     setAberto24h,
     horarios,
     atualizarHorario,
-    linkMaps,
-    setLinkMaps,
     foto,
     erros,
     salvando,
