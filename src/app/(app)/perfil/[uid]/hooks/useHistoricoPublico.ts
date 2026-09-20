@@ -10,8 +10,10 @@ import type {
   FiltroTipoHistorico,
   ItemHistoricoPista,
 } from "@/types/historico-pistas";
+import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
 import { ERRO_HISTORICO_PUBLICO } from "../constants";
 import { perfilPublicoService } from "../services/perfil-publico.service";
+import { telemetriaService } from "../../../telemetria/services/telemetria.service";
 
 const filtrarPorTipo = (
   itens: ItemHistoricoPista[],
@@ -19,14 +21,17 @@ const filtrarPorTipo = (
 ): ItemHistoricoPista[] => {
   if (filtro === "todos") return itens;
   if (filtro === "roles") return itens.filter((item) => item.tipo === "role");
-  return itens.filter((item) => item.tipo === "evento");
+  if (filtro === "eventos") return itens.filter((item) => item.tipo === "evento");
+  return itens;
 };
 
 export const useHistoricoPublico = (uid: string) => {
   const [historico, setHistorico] = useState<HistoricoPublico | null>(null);
   const [aba, setAbaState] = useState<AbaHistoricoPublico>("concluidos");
   const [filtroTipo, setFiltroTipo] = useState<FiltroTipoHistorico>("todos");
+  const [telemetrias, setTelemetrias] = useState<ItemHistoricoTelemetria[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [carregandoTelemetria, setCarregandoTelemetria] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
   const setAba = (nova: AbaHistoricoPublico) => {
@@ -67,6 +72,29 @@ export const useHistoricoPublico = (uid: string) => {
     };
   }, [uid]);
 
+  useEffect(() => {
+    if (!uid || aba !== "concluidos" || filtroTipo !== "telemetria") return;
+    let cancelado = false;
+    setCarregandoTelemetria(true);
+    telemetriaService
+      .listarDeUsuario(uid)
+      .then((lista) => {
+        if (cancelado) return;
+        setTelemetrias(lista);
+      })
+      .catch((e) => {
+        if (cancelado) return;
+        setTelemetrias([]);
+        setErro(e instanceof ApiError ? e.message : ERRO_HISTORICO_PUBLICO);
+      })
+      .finally(() => {
+        if (!cancelado) setCarregandoTelemetria(false);
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [uid, aba, filtroTipo]);
+
   const bruto =
     historico == null
       ? []
@@ -74,8 +102,12 @@ export const useHistoricoPublico = (uid: string) => {
         ? historico.concluidos
         : historico.comoLider;
 
-  const itens =
-    aba === "concluidos" ? filtrarPorTipo(bruto, filtroTipo) : bruto;
+  const modoTelemetria = aba === "concluidos" && filtroTipo === "telemetria";
+  const itens = modoTelemetria
+    ? []
+    : aba === "concluidos"
+      ? filtrarPorTipo(bruto, filtroTipo)
+      : bruto;
 
   return {
     historico,
@@ -84,7 +116,9 @@ export const useHistoricoPublico = (uid: string) => {
     filtroTipo,
     setFiltroTipo,
     itens,
-    carregando,
+    telemetrias,
+    modoTelemetria,
+    carregando: carregando || (modoTelemetria && carregandoTelemetria),
     erro,
   };
 };

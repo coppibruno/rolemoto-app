@@ -74,6 +74,31 @@ describe("processarPontos", () => {
     expect(estado.tempoMovimentoSegundos).toBeLessThan(20);
   });
 
+  it("A/B são o primeiro e o último ponto aceitos", () => {
+    const estado = processarPontos([
+      ponto({ t: t0, lat: -23.55, lng: -46.63 }),
+      ponto({ t: t0 + 2000, lat: -23.54, lng: -46.62, speed: 15 }),
+      ponto({
+        t: t0 + 4000,
+        lat: 0,
+        lng: 0,
+        accuracy: 200,
+        speed: 15,
+      }),
+      ponto({ t: t0 + 6000, lat: -23.53, lng: -46.61, speed: 15 }),
+    ]);
+    expect(estado.primeiro).toEqual({
+      lat: -23.55,
+      lng: -46.63,
+      t: t0,
+    });
+    expect(estado.ultimo).toEqual({
+      lat: -23.53,
+      lng: -46.61,
+      t: t0 + 6000,
+    });
+  });
+
   it("média usa só tempo em movimento", () => {
     expect(velocidadeMediaKmh(48, 1800)).toBeCloseTo(96, 5);
     expect(velocidadeMediaKmh(10, 0)).toBe(0);

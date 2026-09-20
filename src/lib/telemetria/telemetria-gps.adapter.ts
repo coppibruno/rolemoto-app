@@ -1,17 +1,16 @@
 import type {
+  RoleTelemetriaCreate,
   SessaoTelemetriaLocal,
-  TelemetriaRoleCreate,
-} from "@/types/telemetria-role";
+} from "@/types/role-telemetria";
 
 export type ResumoTelemetriaPendente = {
-  roleId: string;
-  dados: TelemetriaRoleCreate;
+  dados: RoleTelemetriaCreate;
 };
 
 export type ResultadoStopTelemetria = {
   sessao: SessaoTelemetriaLocal;
   encerradoEm: string;
-  dados: TelemetriaRoleCreate;
+  dados: RoleTelemetriaCreate;
 };
 
 export class TelemetriaGpsErro extends Error {
@@ -19,7 +18,7 @@ export class TelemetriaGpsErro extends Error {
     public codigo:
       | "nao_nativo"
       | "permissao_background"
-      | "sessao_outro_role"
+      | "sessao_ativa"
       | "sem_sessao",
     message: string,
   ) {
@@ -32,7 +31,7 @@ export type TelemetriaGpsAdapter = {
   isNative: () => boolean;
   getSession: () => Promise<SessaoTelemetriaLocal | null>;
   getResumoPendente: () => Promise<ResumoTelemetriaPendente | null>;
-  start: (roleId: string) => Promise<SessaoTelemetriaLocal>;
+  start: () => Promise<SessaoTelemetriaLocal>;
   stop: () => Promise<ResultadoStopTelemetria>;
   limparResumoPendente: () => Promise<void>;
   abrirAjustes: () => Promise<void>;

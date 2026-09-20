@@ -12,7 +12,8 @@
  * - /roles/:id/participacao → GET, POST, PATCH, DELETE
  * - /roles/:id/feedback → POST
  * - /roles/:id/feedbacks → GET
- * - /roles/:id/telemetria → GET, POST
+ * - /telemetria → GET, POST
+ * - /telemetria/:id → GET
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE
@@ -21,6 +22,7 @@
  * - /perfil/historico → GET
  * - /usuarios/:uid → GET
  * - /usuarios/:uid/historico → GET
+ * - /usuarios/:uid/telemetria → GET
  * - /eventos → GET, POST
  * - /eventos/:id/inscricao → GET, POST, DELETE
  * - /eventos/:id/avaliacoes → GET, POST
@@ -53,6 +55,7 @@ import {meusRolesRouter} from "./routes/meus-roles";
 import {eventosRouter} from "./routes/eventos";
 import {locaisRouter} from "./routes/locais";
 import {feedRouter} from "./routes/feed";
+import {telemetriaRouter} from "./routes/telemetria";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -76,7 +79,8 @@ app.get("/", (_req: Request, res: Response) => {
       "/roles/:id/participantes",
       "/roles/:id/feedback",
       "/roles/:id/feedbacks",
-      "/roles/:id/telemetria",
+      "/telemetria",
+      "/telemetria/:id",
       "/feedback/pendente",
       "/aprovacoes",
       "/dispositivos",
@@ -85,6 +89,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/perfil/historico",
       "/usuarios/:uid",
       "/usuarios/:uid/historico",
+      "/usuarios/:uid/telemetria",
       "/eventos",
       "/eventos/:id",
       "/eventos/:id/participantes",
@@ -114,5 +119,6 @@ app.use("/feedback", feedbackRouter);
 app.use("/eventos", eventosRouter);
 app.use("/locais", locaisRouter);
 app.use("/feed", feedRouter);
+app.use("/telemetria", telemetriaRouter);
 
 export const api = onRequest({cors: corsOrigins()}, app);

@@ -5,7 +5,6 @@ import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { hrefMeuRole, LABELS_RITMO, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
-import { SeloGravandoTelemetria } from "@/app/(app)/roles/[id]/telemetria/components/SeloGravandoTelemetria";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -41,7 +40,6 @@ export const CardDestaqueRole = ({
           {!lider ? <span className={styles.ping} aria-hidden /> : null}
           {lider ? "Líder do Comboio" : "Vaga Confirmada"}
         </span>
-        <SeloGravandoTelemetria roleId={item.roleId} destaque />
         <div className={styles.heroTituloWrap}>
           <h2 className={styles.heroTitulo}>{item.titulo}</h2>
           <p className={styles.heroData}>{formatarHorarioSaida(item.dataHoraSaida)}</p>

@@ -3,7 +3,8 @@ import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
-import {usuarioRepository} from "../repositories";
+import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
+import {roleTelemetriaRepository, usuarioRepository} from "../repositories";
 import type {PerfilPublico, Usuario} from "../types/usuario";
 
 /**
@@ -11,6 +12,7 @@ import type {PerfilPublico, Usuario} from "../types/usuario";
  *
  * GET /usuarios/:uid
  * GET /usuarios/:uid/historico
+ * GET /usuarios/:uid/telemetria
  */
 export const usuariosRouter = Router();
 
@@ -31,6 +33,27 @@ const paraPerfilPublico = (usuario: Usuario): PerfilPublico => ({
 
 const lerUid = (req: Request): string =>
   typeof req.params.uid === "string" ? req.params.uid.trim() : "";
+
+usuariosRouter.get("/:uid/telemetria", async (req: Request, res: Response) => {
+  try {
+    const uid = lerUid(req);
+    if (!uid) {
+      res.status(400).json({erro: "uid inválido"});
+      return;
+    }
+
+    const perfil = await usuarioRepository.buscarPorId(uid);
+    if (!perfil) {
+      res.status(404).json({erro: "Perfil não encontrado"});
+      return;
+    }
+
+    const lista = await roleTelemetriaRepository.listarPorUsuario(uid);
+    res.json(lista.map(paraItemHistoricoTelemetria));
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
 
 usuariosRouter.get("/:uid/historico", async (req: Request, res: Response) => {
   try {

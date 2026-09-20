@@ -20,3 +20,23 @@ export const urlAbrirMaps = (ponto: PontoMaps): string => {
   const q = (ponto.nome?.trim() || ponto.endereco).trim();
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 };
+
+export const urlRotaMaps = (origem: PontoMaps, destino: PontoMaps): string => {
+  const coord = (p: PontoMaps): string | null => {
+    if (
+      typeof p.lat === "number" &&
+      typeof p.lng === "number" &&
+      Number.isFinite(p.lat) &&
+      Number.isFinite(p.lng)
+    ) {
+      return `${p.lat},${p.lng}`;
+    }
+    return null;
+  };
+  const a = coord(origem);
+  const b = coord(destino);
+  if (a && b) {
+    return `https://www.google.com/maps/dir/?api=1&origin=${a}&destination=${b}`;
+  }
+  return urlAbrirMaps(destino);
+};

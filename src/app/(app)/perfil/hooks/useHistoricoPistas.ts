@@ -7,8 +7,10 @@ import type {
   HistoricoPistas,
   ItemHistoricoPista,
 } from "@/types/historico-pistas";
+import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
 import { ERRO_HISTORICO } from "../constants";
 import { historicoService } from "../services/historico.service";
+import { telemetriaService } from "../../telemetria/services/telemetria.service";
 
 const filtrarPorTipo = (
   itens: ItemHistoricoPista[],
@@ -16,14 +18,32 @@ const filtrarPorTipo = (
 ): ItemHistoricoPista[] => {
   if (filtro === "todos") return itens;
   if (filtro === "roles") return itens.filter((item) => item.tipo === "role");
-  return itens.filter((item) => item.tipo === "evento");
+  if (filtro === "eventos") return itens.filter((item) => item.tipo === "evento");
+  return itens;
 };
+
+const paraCard = (doc: {
+  id: string;
+  titulo: string;
+  distanciaKm: number;
+  tempoSegundos: number;
+  encerradoEm: string;
+}): ItemHistoricoTelemetria => ({
+  id: doc.id,
+  tipo: "telemetria",
+  titulo: doc.titulo,
+  distanciaKm: doc.distanciaKm,
+  tempoSegundos: doc.tempoSegundos,
+  encerradoEm: doc.encerradoEm,
+});
 
 export const useHistoricoPistas = () => {
   const [dados, setDados] = useState<HistoricoPistas | null>(null);
   const [aba, setAba] = useState<AbaHistorico>("participei");
   const [filtroTipo, setFiltroTipo] = useState<FiltroTipoHistorico>("todos");
+  const [telemetrias, setTelemetrias] = useState<ItemHistoricoTelemetria[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [carregandoTelemetria, setCarregandoTelemetria] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [ticket, setTicket] = useState(0);
 
@@ -60,9 +80,36 @@ export const useHistoricoPistas = () => {
     };
   }, [ticket]);
 
+  useEffect(() => {
+    if (aba !== "participei" || filtroTipo !== "telemetria") return;
+    let cancelado = false;
+    setCarregandoTelemetria(true);
+    telemetriaService
+      .listarMinhas()
+      .then((lista) => {
+        if (cancelado) return;
+        setTelemetrias(lista.map(paraCard));
+      })
+      .catch(() => {
+        if (cancelado) return;
+        setTelemetrias([]);
+        setErro(ERRO_HISTORICO);
+      })
+      .finally(() => {
+        if (!cancelado) setCarregandoTelemetria(false);
+      });
+    return () => {
+      cancelado = true;
+    };
+  }, [aba, filtroTipo, ticket]);
+
   const bruto = dados ? dados[aba] : [];
-  const itensVisiveis =
-    aba === "participei" ? filtrarPorTipo(bruto, filtroTipo) : bruto;
+  const modoTelemetria = aba === "participei" && filtroTipo === "telemetria";
+  const itensVisiveis = modoTelemetria
+    ? []
+    : aba === "participei"
+      ? filtrarPorTipo(bruto, filtroTipo)
+      : bruto;
 
   return {
     aba,
@@ -71,7 +118,9 @@ export const useHistoricoPistas = () => {
     setFiltroTipo,
     dados,
     itensVisiveis,
-    carregando,
+    telemetrias,
+    modoTelemetria,
+    carregando: carregando || (modoTelemetria && carregandoTelemetria),
     erro,
     recarregar,
   };

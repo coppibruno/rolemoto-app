@@ -1,4 +1,4 @@
-import type { SessaoTelemetriaLocal } from "@/types/telemetria-role";
+import type { SessaoTelemetriaLocal } from "@/types/role-telemetria";
 import {
   TelemetriaGpsErro,
   type ResultadoStopTelemetria,
@@ -9,7 +9,7 @@ export const webAdapter: TelemetriaGpsAdapter = {
   isNative: () => false,
   getSession: async () => null,
   getResumoPendente: async () => null,
-  start: async (_roleId: string): Promise<SessaoTelemetriaLocal> => {
+  start: async (): Promise<SessaoTelemetriaLocal> => {
     throw new TelemetriaGpsErro(
       "nao_nativo",
       "Telemetria com tela desligada só no app Rolemoto (Android/iOS).",

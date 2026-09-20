@@ -5,6 +5,7 @@ import { ABAS_HISTORICO } from "../constants";
 import { AbasHistorico } from "./AbasHistorico";
 import { FiltroTipoHistoricoChips } from "./FiltroTipoHistorico";
 import { ListaHistorico } from "./ListaHistorico";
+import { ListaHistoricoTelemetria } from "./ListaHistoricoTelemetria";
 import { EstadoErroHistorico } from "./EstadoErroHistorico";
 import perfil from "../perfil.module.css";
 import styles from "../historico-pistas.module.css";
@@ -68,7 +69,10 @@ export const HistoricoPistas = () => {
           />
         ) : null}
         {historico.carregando ? <SkeletonHistorico /> : null}
-        {!historico.carregando && !historico.erro ? (
+        {!historico.carregando && !historico.erro && historico.modoTelemetria ? (
+          <ListaHistoricoTelemetria itens={historico.telemetrias} />
+        ) : null}
+        {!historico.carregando && !historico.erro && !historico.modoTelemetria ? (
           <ListaHistorico
             itens={historico.itensVisiveis}
             aba={historico.aba}

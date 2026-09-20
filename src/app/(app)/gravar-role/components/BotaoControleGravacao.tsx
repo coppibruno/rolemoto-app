@@ -1,27 +1,26 @@
-"use client";
-
-import styles from "../telemetria-role.module.css";
+import styles from "@/components/telemetria/telemetria.module.css";
 
 type Props = {
   label: string;
+  icone: string;
   disabled?: boolean;
-  secundario?: boolean;
   onClick: () => void;
 };
 
-export const BotaoTelemetriaRole = ({
+export const BotaoControleGravacao = ({
   label,
+  icone,
   disabled,
-  secundario,
   onClick,
 }: Props) => {
   return (
     <button
       type="button"
-      className={secundario ? styles.botaoSecundario : styles.botao}
+      className={styles.cta}
       disabled={disabled}
       onClick={onClick}
     >
+      <span className="material-symbols-outlined">{icone}</span>
       {label}
     </button>
   );

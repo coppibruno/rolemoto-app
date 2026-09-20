@@ -1,6 +1,8 @@
 # SPEC 029 — Telemetria do Rolê (GPS + Capacitor)
 
-> **Status:** Proposta  
+> **Status:** Substituída pela 030  
+> **Nota:** o fluxo de produto (gravação amarrada ao comboio, `userstelemetria`, `POST|GET /roles/:id/telemetria`) saiu do app. Ver `docs/specs/030-tela-de-telemetria.md`.  
+
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-18  
 > **Referência visual:** tokens do cockpit (`globals.css`); sem mock Stitch dedicado nesta versão — UI mínima alinhada ao detalhe do rolê / Meus Rolês  

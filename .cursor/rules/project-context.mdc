@@ -45,7 +45,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Locais oficiais: qualquer autenticado avalia em `/locais/:id/avaliar`
 - **Meus Rolês** (`/meus-roles`) é a garagem: abas Rolês · Eventos (inscritos) · Locais (favoritos); CTAs Avaliar / Ver relato (SPEC 027/028)
 - Favoritar local no feed (aba Locais) → aparece na aba Locais da garagem (`userslocalfavorito`)
-- O `+` do dock: comum vai para `/criar-role`; admin abre menu Rolês / Eventos / Locais
+- O `+` do dock abre menu para todos: Rolê + **Gravar meu rolê**; admin também vê Evento e Local
 - Locais: catálogo `/locais` e aba Locais no feed; cadastro `/criar-local` só admin
 
 ### 5. Locais oficiais
@@ -54,8 +54,9 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 
 ### 6. Perfil do Usuário
 - Apelido, moto, tipo de moto (`trail` | `speed` | `custom`), ritmo/pilotagem, foto, garupa, cidade (opcional)
-- Histórico de pistas (SPEC 008 + eventos da SPEC 026), Meus Rolês / garagem (SPEC 017 + 028), fila de aprovações (SPEC 007)
-- Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura; histórico inclui eventos inscritos
+- Histórico de pistas (SPEC 008 + eventos da SPEC 026 + telemetria SPEC 030), Meus Rolês / garagem (SPEC 017 + 028), fila de aprovações (SPEC 007)
+- Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura; histórico inclui eventos inscritos e filtro Telemetria
+- Qualquer autenticado grava passeio próprio em `/gravar-role` (GPS nativo); dashboard em `/telemetria/[id]` (SPEC 030)
 ## Modelo de Negócio
 
 - App **gratuito** sem monetização inicial

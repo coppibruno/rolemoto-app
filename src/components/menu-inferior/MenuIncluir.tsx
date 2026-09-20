@@ -2,17 +2,18 @@
 
 import type { RefObject } from "react";
 import { ItemMenuIncluir } from "./ItemMenuIncluir";
-import { ITENS_MENU_INCLUIR } from "./itens-menu-incluir";
+import { itensMenuIncluirPara } from "./itens-menu-incluir";
 import styles from "./menu-inferior.module.css";
 
 type Props = {
   id: string;
   aberto: boolean;
   menuRef: RefObject<HTMLDivElement | null>;
+  admin?: boolean;
   onFechar: () => void;
 };
 
-export const MenuIncluir = ({ id, aberto, menuRef, onFechar }: Props) => {
+export const MenuIncluir = ({ id, aberto, menuRef, admin, onFechar }: Props) => {
   if (!aberto) return null;
 
   return (
@@ -23,7 +24,7 @@ export const MenuIncluir = ({ id, aberto, menuRef, onFechar }: Props) => {
       role="menu"
       aria-label="Incluir"
     >
-      {ITENS_MENU_INCLUIR.map((item) => (
+      {itensMenuIncluirPara(admin === true).map((item) => (
         <ItemMenuIncluir
           key={item.id}
           href={item.href ?? undefined}

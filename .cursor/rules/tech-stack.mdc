@@ -15,7 +15,7 @@ alwaysApply: true
 - **Firebase Cloud Functions** — API HTTP (Express, function `api`); persistência via repositórios
 - **Firebase Firestore** — banco NoSQL; só o adapter em `functions/src/repositories/firestore/` fala com ele. Client **deny-all**; escrita só via Functions
 - Firebase Storage — upload de fotos (perfil, rolês, eventos, fachadas de locais e avaliações)
-- **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê, do evento e do local
+- **Geolocalização** — API de geolocalização do navegador (raio no feed) + mapas na criação do rolê, do evento e do local + GPS nativo (Capacitor) em `/gravar-role`
 
 ## Decisões de Arquitetura
 - Usar **Server Components** do Next.js onde possível, Client Components apenas quando necessário (interatividade, hooks de browser)
@@ -173,6 +173,28 @@ Um doc por par. Garagem lista favoritos em `GET /meus-roles/locais`.
 ```
 
 Local: qualquer autenticado. Evento: só inscrito (`usersevento`) e após encerramento. Um doc por par; sem PATCH/DELETE.
+
+### Coleção `rolestelemetria` (passeio próprio gravado)
+```
+{
+  id: string,                    // autoId
+  usuarioId: string,
+  titulo: string,
+  velocidadeMaxKmh: number,
+  velocidadeMediaKmh: number,
+  distanciaKm: number,
+  tempoSegundos: number,
+  tempoMovimentoSegundos: number,
+  iniciadoEm: timestamp,
+  encerradoEm: timestamp,
+  pontoInicio: { lat, lng, nome, endereco },
+  pontoFim: { lat, lng, nome, endereco },
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria`; detalhe autenticado em `GET /telemetria/:id`; perfil em `GET /usuarios/:uid/telemetria`.
 
 ### Garagem (`GET /meus-roles`)
 Telemetria: `rolesFeitos`, `eventosParticipados`, `locaisFavoritos`. `contagensTipo` (roles/eventos/locais). Subrotas lazy: `GET /meus-roles/eventos`, `GET /meus-roles/locais`.

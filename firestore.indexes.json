@@ -74,6 +74,14 @@
         { "fieldPath": "usuarioId", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "rolestelemetria",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId", "order": "ASCENDING" },
+        { "fieldPath": "encerradoEm", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

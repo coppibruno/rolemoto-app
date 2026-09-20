@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { ItemHistoricoEvento, ItemHistoricoRole } from "@/types/historico-pistas";
+import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
+import { formatarDistancia, formatarDuracao } from "@/lib/telemetria/formatar-telemetria";
 import { formatarDataMeta } from "../../formatar-data-historico";
 import {
   hrefCardHistoricoPublicoEvento,
@@ -109,6 +111,44 @@ export const CardHistoricoPublicoEvento = ({ item }: PropsEvento) => {
             group
           </span>
           {item.inscritosConfirmados} inscritos
+        </span>
+      </div>
+    </Link>
+  );
+};
+
+type PropsTelemetria = {
+  item: ItemHistoricoTelemetria;
+};
+
+export const CardHistoricoPublicoTelemetria = ({ item }: PropsTelemetria) => {
+  return (
+    <Link
+      href={`/telemetria/${item.id}`}
+      className={styles.cardHistorico}
+      aria-label={`Abrir telemetria ${item.titulo}`}
+    >
+      <div className={styles.cardHistoricoTopo}>
+        <div>
+          <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
+          <div className={styles.cardHistoricoData}>
+            {formatarDataMeta(item.encerradoEm)}
+          </div>
+        </div>
+        <span className={styles.badgeStatus}>GPS</span>
+      </div>
+      <div className={styles.cardHistoricoMeta}>
+        <span className={styles.metaItem}>
+          <span className="material-symbols-outlined" aria-hidden>
+            straighten
+          </span>
+          {formatarDistancia(item.distanciaKm)}
+        </span>
+        <span className={styles.metaItem}>
+          <span className="material-symbols-outlined" aria-hidden>
+            schedule
+          </span>
+          {formatarDuracao(item.tempoSegundos)}
         </span>
       </div>
     </Link>

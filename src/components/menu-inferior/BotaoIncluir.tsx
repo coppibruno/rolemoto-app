@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { ItemMenuConfig } from "./itens-menu";
 import { MenuIncluir } from "./MenuIncluir";
 import { useMenuIncluir } from "./hooks/useMenuIncluir";
@@ -15,23 +14,6 @@ type Props = {
 export const BotaoIncluir = ({ item, destacado, admin }: Props) => {
   const menu = useMenuIncluir();
   const classeFab = `${styles.fab} ${destacado ? styles.fabDestacado : ""}`;
-
-  if (!admin) {
-    return (
-      <div className={styles.fabSlot}>
-        <Link
-          href={item.href}
-          className={classeFab}
-          aria-label={item.ariaLabel}
-          aria-current={destacado ? "page" : undefined}
-        >
-          <span className={`material-symbols-outlined ${styles.fabIcone}`}>
-            {item.icone}
-          </span>
-        </Link>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -48,6 +30,7 @@ export const BotaoIncluir = ({ item, destacado, admin }: Props) => {
           id={menu.menuId}
           aberto={menu.aberto}
           menuRef={menu.menuRef}
+          admin={admin === true}
           onFechar={menu.fechar}
         />
         <button

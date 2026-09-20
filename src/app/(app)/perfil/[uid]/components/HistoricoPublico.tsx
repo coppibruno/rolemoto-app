@@ -8,17 +8,20 @@ import type {
   FiltroTipoHistorico,
   ItemHistoricoPista,
 } from "@/types/historico-pistas";
+import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
 import {
   ABAS_HISTORICO_PUBLICO,
   ariaBadgeAba,
   FILTROS_TIPO_HISTORICO_PUBLICO,
   textoTotalRoles,
   totalRolesHistorico,
+  VAZIO_TELEMETRIA_PUBLICO,
   VAZIOS_HISTORICO_PUBLICO,
 } from "../constants";
 import {
   CardHistoricoPublicoEvento,
   CardHistoricoPublicoRole,
+  CardHistoricoPublicoTelemetria,
 } from "./CardHistoricoPublico";
 import styles from "../perfil-publico.module.css";
 
@@ -27,6 +30,8 @@ type Props = {
   aba: AbaHistoricoPublico;
   filtroTipo: FiltroTipoHistorico;
   itens: ItemHistoricoPista[];
+  telemetrias: ItemHistoricoTelemetria[];
+  modoTelemetria: boolean;
   carregando: boolean;
   erro: string | null;
   onAba: (aba: AbaHistoricoPublico) => void;
@@ -38,6 +43,8 @@ export const HistoricoPublicoSecao = ({
   aba,
   filtroTipo,
   itens,
+  telemetrias,
+  modoTelemetria,
   carregando,
   erro,
   onAba,
@@ -45,7 +52,10 @@ export const HistoricoPublicoSecao = ({
 }: Props) => {
   const contagens = historico?.contagens ?? { concluidos: 0, comoLider: 0 };
   const total = totalRolesHistorico(contagens.concluidos, contagens.comoLider);
-  const vazio = VAZIOS_HISTORICO_PUBLICO[aba];
+  const vazio = modoTelemetria
+    ? VAZIO_TELEMETRIA_PUBLICO
+    : VAZIOS_HISTORICO_PUBLICO[aba];
+  const listaItens = modoTelemetria ? telemetrias : itens;
   const abaAtual = ABAS_HISTORICO_PUBLICO.find((a) => a.id === aba);
 
   return (
@@ -124,7 +134,7 @@ export const HistoricoPublicoSecao = ({
           <p className={styles.estadoTitulo}>Falha no histórico</p>
           <p className={styles.estadoCorpo}>{erro}</p>
         </div>
-      ) : itens.length === 0 ? (
+      ) : listaItens.length === 0 ? (
         <div className={styles.estado}>
           <span className={`material-symbols-outlined ${styles.estadoIcone}`}>
             {vazio.icone}
@@ -138,19 +148,26 @@ export const HistoricoPublicoSecao = ({
           role="tabpanel"
           aria-label={abaAtual?.listaAria}
         >
-          {itens.map((item) =>
-            item.tipo === "evento" ? (
-              <CardHistoricoPublicoEvento
-                key={`${aba}-evento-${item.eventoId}`}
-                item={item}
-              />
-            ) : (
-              <CardHistoricoPublicoRole
-                key={`${aba}-role-${item.roleId}`}
-                item={item}
-              />
-            ),
-          )}
+          {modoTelemetria
+            ? telemetrias.map((item) => (
+                <CardHistoricoPublicoTelemetria
+                  key={`${aba}-telemetria-${item.id}`}
+                  item={item}
+                />
+              ))
+            : itens.map((item) =>
+                item.tipo === "evento" ? (
+                  <CardHistoricoPublicoEvento
+                    key={`${aba}-evento-${item.eventoId}`}
+                    item={item}
+                  />
+                ) : (
+                  <CardHistoricoPublicoRole
+                    key={`${aba}-role-${item.roleId}`}
+                    item={item}
+                  />
+                ),
+              )}
         </div>
       )}
     </section>

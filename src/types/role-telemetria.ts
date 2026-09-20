@@ -1,8 +1,14 @@
-/** Documento persistido — sem polyline no MVP. */
-export type TelemetriaRole = {
+export type PontoTelemetria = {
+  lat: number;
+  lng: number;
+  nome: string;
+  endereco: string;
+};
+
+export type RoleTelemetria = {
   id: string;
   usuarioId: string;
-  roleId: string;
+  titulo: string;
   velocidadeMaxKmh: number;
   velocidadeMediaKmh: number;
   distanciaKm: number;
@@ -10,26 +16,41 @@ export type TelemetriaRole = {
   tempoMovimentoSegundos: number;
   iniciadoEm: string;
   encerradoEm: string;
+  pontoInicio: PontoTelemetria;
+  pontoFim: PontoTelemetria;
   createdAt: string;
   updatedAt: string;
 };
 
-export type TelemetriaRoleCreate = {
+export type RoleTelemetriaCreate = {
+  titulo: string;
   velocidadeMaxKmh: number;
   velocidadeMediaKmh: number;
   distanciaKm: number;
   tempoSegundos: number;
   tempoMovimentoSegundos: number;
   iniciadoEm: string;
+  encerradoEm: string;
+  pontoInicio: PontoTelemetria;
+  pontoFim: PontoTelemetria;
+};
+
+export type ItemHistoricoTelemetria = {
+  id: string;
+  tipo: "telemetria";
+  titulo: string;
+  distanciaKm: number;
+  tempoSegundos: number;
   encerradoEm: string;
 };
 
 /** Estado local da sessão (plugin / adapter) — não vai inteiro à API. */
 export type SessaoTelemetriaLocal = {
-  roleId: string;
+  sessaoId: string;
   iniciadoEm: string;
   distanciaKm: number;
   velocidadeMaxKmh: number;
-  ultimo: { lat: number; lng: number; t: number } | null;
+  primeiro: {lat: number; lng: number; t: number} | null;
+  ultimo: {lat: number; lng: number; t: number} | null;
   tempoMovimentoSegundos: number;
 };

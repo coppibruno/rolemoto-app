@@ -13,11 +13,14 @@ export type PontoGps = {
   accuracy?: number | null;
 };
 
+export type CoordGps = { lat: number; lng: number; t: number };
+
 export type EstadoCalculo = {
   distanciaKm: number;
   velocidadeMaxKmh: number;
   tempoMovimentoSegundos: number;
-  ultimo: { lat: number; lng: number; t: number } | null;
+  primeiro: CoordGps | null;
+  ultimo: CoordGps | null;
   paradoDesde: number | null;
 };
 
@@ -41,6 +44,7 @@ export const estadoCalculoInicial = (): EstadoCalculo => ({
   distanciaKm: 0,
   velocidadeMaxKmh: 0,
   tempoMovimentoSegundos: 0,
+  primeiro: null,
   ultimo: null,
   paradoDesde: null,
 });
@@ -64,10 +68,13 @@ export const aplicarPonto = (
     return estado;
   }
 
+  const aceito: CoordGps = { lat: ponto.lat, lng: ponto.lng, t: ponto.t };
+
   if (!estado.ultimo) {
     return {
       ...estado,
-      ultimo: { lat: ponto.lat, lng: ponto.lng, t: ponto.t },
+      primeiro: estado.primeiro ?? aceito,
+      ultimo: aceito,
       velocidadeMaxKmh: Math.max(
         estado.velocidadeMaxKmh,
         velocidadeDoSensorKmh(ponto) ?? 0,
@@ -113,7 +120,8 @@ export const aplicarPonto = (
     distanciaKm: estado.distanciaKm + trechoKm,
     velocidadeMaxKmh: Math.max(estado.velocidadeMaxKmh, usadaKmh),
     tempoMovimentoSegundos: estado.tempoMovimentoSegundos + deltaMovimento,
-    ultimo: { lat: ponto.lat, lng: ponto.lng, t: ponto.t },
+    primeiro: estado.primeiro,
+    ultimo: aceito,
     paradoDesde: parado,
   };
 };

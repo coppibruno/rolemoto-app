@@ -73,7 +73,14 @@ export const FILTROS_TIPO_HISTORICO = [
   { id: "todos" as const, label: "Todos" },
   { id: "roles" as const, label: "Rolês" },
   { id: "eventos" as const, label: "Eventos" },
+  { id: "telemetria" as const, label: "Telemetria" },
 ];
+
+export const VAZIO_TELEMETRIA = {
+  titulo: "Nenhum passeio gravado",
+  corpo: "Toque no + e escolha Gravar meu rolê.",
+  icone: "speed",
+};
 
 export const VAZIOS_HISTORICO: Record<
   AbaHistorico,

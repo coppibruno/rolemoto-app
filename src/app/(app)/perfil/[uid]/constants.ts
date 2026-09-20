@@ -31,7 +31,14 @@ export const FILTROS_TIPO_HISTORICO_PUBLICO = [
   { id: "todos" as const, label: "Todos" },
   { id: "roles" as const, label: "Rolês" },
   { id: "eventos" as const, label: "Eventos" },
+  { id: "telemetria" as const, label: "Telemetria" },
 ];
+
+export const VAZIO_TELEMETRIA_PUBLICO = {
+  titulo: "Nenhuma telemetria",
+  corpo: "Quando este piloto gravar um passeio, ele aparece aqui.",
+  icone: "speed",
+};
 
 export const VAZIOS_HISTORICO_PUBLICO: Record<
   AbaHistoricoPublico,

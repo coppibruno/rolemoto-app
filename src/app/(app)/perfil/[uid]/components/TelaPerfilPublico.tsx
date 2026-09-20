@@ -62,6 +62,8 @@ export const TelaPerfilPublico = ({ uid }: Props) => {
         aba={historico.aba}
         filtroTipo={historico.filtroTipo}
         itens={historico.itens}
+        telemetrias={historico.telemetrias}
+        modoTelemetria={historico.modoTelemetria}
         carregando={historico.carregando}
         erro={historico.erro}
         onAba={historico.setAba}

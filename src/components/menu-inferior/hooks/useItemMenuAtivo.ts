@@ -22,7 +22,9 @@ export const useItemMenuAtivo = () => {
         pathname === "/criar-evento" ||
         Boolean(pathname?.startsWith("/criar-evento/")) ||
         pathname === "/criar-local" ||
-        Boolean(pathname?.startsWith("/criar-local/"))
+        Boolean(pathname?.startsWith("/criar-local/")) ||
+        pathname === "/gravar-role" ||
+        Boolean(pathname?.startsWith("/telemetria"))
       );
     }
     return pathname === href || Boolean(pathname?.startsWith(`${href}/`));

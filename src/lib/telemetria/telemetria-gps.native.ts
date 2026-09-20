@@ -2,9 +2,10 @@ import { BackgroundGeolocation } from "@capgo/background-geolocation";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import type {
+  RoleTelemetriaCreate,
   SessaoTelemetriaLocal,
-  TelemetriaRoleCreate,
-} from "@/types/telemetria-role";
+} from "@/types/role-telemetria";
+import { tituloPadraoTelemetria } from "./formatar-telemetria";
 import {
   aplicarPonto,
   arredondarParaPost,
@@ -34,11 +35,19 @@ let callbackAnexado = false;
 const backgroundOk = (valor: string | undefined): boolean =>
   valor === "granted" || valor === "always";
 
+const novoSessaoId = (): string => {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `sessao-${Date.now()}`;
+};
+
 const paraSessao = (s: SessaoPersistida): SessaoTelemetriaLocal => ({
-  roleId: s.roleId,
+  sessaoId: s.sessaoId,
   iniciadoEm: s.iniciadoEm,
   distanciaKm: s.distanciaKm,
   velocidadeMaxKmh: s.velocidadeMaxKmh,
+  primeiro: s.primeiro ?? null,
   ultimo: s.ultimo,
   tempoMovimentoSegundos: s.tempoMovimentoSegundos,
 });
@@ -63,7 +72,13 @@ const gravarSessao = async (sessao: SessaoPersistida | null) => {
 const lerResumo = async (): Promise<ResumoTelemetriaPendente | null> => {
   const { value } = await Preferences.get({ key: KEY_RESUMO });
   if (!value) return null;
-  return JSON.parse(value) as ResumoTelemetriaPendente;
+  const bruto = JSON.parse(value) as ResumoTelemetriaPendente & {
+    roleId?: string;
+  };
+  if (!bruto.dados?.pontoInicio || !bruto.dados?.pontoFim) {
+    return null;
+  }
+  return { dados: bruto.dados };
 };
 
 const gravarResumo = async (resumo: ResumoTelemetriaPendente | null) => {
@@ -78,6 +93,7 @@ const estadoDe = (sessao: SessaoPersistida): EstadoCalculo => ({
   distanciaKm: sessao.distanciaKm,
   velocidadeMaxKmh: sessao.velocidadeMaxKmh,
   tempoMovimentoSegundos: sessao.tempoMovimentoSegundos,
+  primeiro: sessao.primeiro ?? null,
   ultimo: sessao.ultimo,
   paradoDesde: sessao.paradoDesde,
 });
@@ -103,6 +119,7 @@ const aplicarLocalizacao = async (
     distanciaKm: proximo.distanciaKm,
     velocidadeMaxKmh: proximo.velocidadeMaxKmh,
     tempoMovimentoSegundos: proximo.tempoMovimentoSegundos,
+    primeiro: proximo.primeiro,
     ultimo: proximo.ultimo,
     paradoDesde: proximo.paradoDesde,
   });
@@ -138,7 +155,7 @@ const exigirBackground = async () => {
   if (primeiro.location !== "granted") {
     throw new TelemetriaGpsErro(
       "permissao_background",
-      "Precisamos da localização sempre para medir o rolê com a tela off.",
+      "Precisamos da localização sempre para medir o passeio com a tela off.",
     );
   }
 
@@ -148,7 +165,7 @@ const exigirBackground = async () => {
   if (!backgroundOk(segundo.backgroundLocation)) {
     throw new TelemetriaGpsErro(
       "permissao_background",
-      "Precisamos da localização sempre para medir o rolê com a tela off.",
+      "Precisamos da localização sempre para medir o passeio com a tela off.",
     );
   }
 
@@ -159,18 +176,28 @@ const exigirBackground = async () => {
     if (noti.notification !== "granted") {
       throw new TelemetriaGpsErro(
         "permissao_background",
-        "Precisamos da localização sempre para medir o rolê com a tela off.",
+        "Precisamos da localização sempre para medir o passeio com a tela off.",
       );
     }
   }
 };
 
+const pontoDe = (
+  coord: { lat: number; lng: number } | null,
+): RoleTelemetriaCreate["pontoInicio"] => ({
+  lat: coord?.lat ?? 0,
+  lng: coord?.lng ?? 0,
+  nome: "",
+  endereco: "",
+});
+
 const montarDados = (
   sessao: SessaoTelemetriaLocal,
   encerradoEm: string,
-): TelemetriaRoleCreate => {
+): RoleTelemetriaCreate => {
   const tempoSegundos = tempoParedeSegundos(sessao.iniciadoEm, encerradoEm);
   return {
+    titulo: tituloPadraoTelemetria(encerradoEm),
     ...arredondarParaPost({
       velocidadeMaxKmh: sessao.velocidadeMaxKmh,
       velocidadeMediaKmh: velocidadeMediaKmh(
@@ -183,6 +210,8 @@ const montarDados = (
     }),
     iniciadoEm: sessao.iniciadoEm,
     encerradoEm,
+    pontoInicio: pontoDe(sessao.primeiro ?? sessao.ultimo),
+    pontoFim: pontoDe(sessao.ultimo ?? sessao.primeiro),
   };
 };
 
@@ -204,23 +233,19 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
 
   getResumoPendente: lerResumo,
 
-  start: async (roleId: string) => {
+  start: async () => {
     const atual = await lerSessao();
-    if (atual?.ativa && atual.roleId !== roleId) {
+    if (atual?.ativa) {
       throw new TelemetriaGpsErro(
-        "sessao_outro_role",
-        "Finalize a gravação atual antes de iniciar outro rolê.",
+        "sessao_ativa",
+        "Finalize a gravação atual antes de iniciar outro passeio.",
       );
-    }
-    if (atual?.ativa && atual.roleId === roleId) {
-      if (!callbackAnexado) await anexarCallback();
-      return paraSessao(atual);
     }
 
     await exigirBackground();
     const iniciado: SessaoPersistida = {
       ...estadoCalculoInicial(),
-      roleId,
+      sessaoId: novoSessaoId(),
       iniciadoEm: new Date().toISOString(),
       ativa: true,
     };
@@ -242,7 +267,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     const encerradoEm = new Date().toISOString();
     const local = paraSessao({ ...sessao, ativa: false });
     const dados = montarDados(local, encerradoEm);
-    await gravarResumo({ roleId: sessao.roleId, dados });
+    await gravarResumo({ dados });
     await gravarSessao(null);
     return { sessao: local, encerradoEm, dados };
   },

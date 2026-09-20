@@ -26,7 +26,6 @@ import {
 } from "../repositories";
 import {participacaoRouter} from "./participacao";
 import {feedbackRoleRouter} from "./feedback-role";
-import {telemetriaRoleRouter} from "./telemetria-role";
 import type {
   Localizacao,
   Role,
@@ -45,8 +44,6 @@ import type {ParticipantesBloco} from "../types/participante";
  * GET    /roles
  * GET    /roles/:id/modelo
  * GET    /roles/:id/participantes
- * GET    /roles/:id/telemetria
- * POST   /roles/:id/telemetria
  * GET    /roles/:id
  * POST   /roles
  * PUT    /roles/:id
@@ -58,7 +55,6 @@ rolesRouter.use(autenticar);
 rolesRouter.use(rateLimitAutenticado);
 rolesRouter.use(participacaoRouter);
 rolesRouter.use(feedbackRoleRouter);
-rolesRouter.use(telemetriaRoleRouter);
 
 const RITMOS: RitmoRole[] = ["tranquila", "moderada", "agressiva"];
 

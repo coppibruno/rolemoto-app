@@ -3,7 +3,7 @@ import type { RitmoRole } from "./role";
 
 export type AbaHistorico = "aguardando" | "participei" | "criados";
 
-export type FiltroTipoHistorico = "todos" | "roles" | "eventos";
+export type FiltroTipoHistorico = "todos" | "roles" | "eventos" | "telemetria";
 
 export type StatusItemHistorico =
   | "pendente"
