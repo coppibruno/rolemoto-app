@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DEBOUNCE_BUSCA_MS, ENDERECO_MIN } from "../constants";
 import { geocodeService, type SugestaoEndereco } from "@/lib/geocode";
+import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 
 export type GpsStatus = "idle" | "buscando" | "fixado" | "erro";
 
@@ -126,6 +127,10 @@ export const useCampoEnderecoLocal = () => {
   };
 
   const escolher = (item: SugestaoEndereco) => {
+    if (!pontoEstaNoSul(item.lat, item.lng)) {
+      setErroGps(ERRO_FORA_DO_SUL);
+      return;
+    }
     if (reversoTimerRef.current != null) {
       window.clearTimeout(reversoTimerRef.current);
       reversoTimerRef.current = null;
@@ -141,7 +146,11 @@ export const useCampoEnderecoLocal = () => {
     setVooId((n) => n + 1);
   };
 
-  const atualizarDoMapa = (novaLat: number, novaLng: number) => {
+  const atualizarDoMapa = (novaLat: number, novaLng: number): boolean => {
+    if (!pontoEstaNoSul(novaLat, novaLng)) {
+      setErroGps(ERRO_FORA_DO_SUL);
+      return false;
+    }
     latRef.current = novaLat;
     lngRef.current = novaLng;
     setLat(novaLat);
@@ -161,6 +170,7 @@ export const useCampoEnderecoLocal = () => {
       reversoTimerRef.current = null;
       void aplicarReverso(novaLat, novaLng, seq);
     }, DEBOUNCE_REVERSO_MAPA_MS);
+    return true;
   };
 
   const resolverPontoPendente = async () => {
@@ -187,6 +197,11 @@ export const useCampoEnderecoLocal = () => {
       const pos = await obterGps();
       const novaLat = pos.coords.latitude;
       const novaLng = pos.coords.longitude;
+      if (!pontoEstaNoSul(novaLat, novaLng)) {
+        setGpsStatus("erro");
+        setErroGps(ERRO_FORA_DO_SUL);
+        return;
+      }
       const label = await geocodeService.reverso(novaLat, novaLng);
       if (reversoTimerRef.current != null) {
         window.clearTimeout(reversoTimerRef.current);

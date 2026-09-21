@@ -6,6 +6,7 @@ export {
   TIPOS_FOTO_ACEITOS,
 } from "@/lib/storage";
 export const DEBOUNCE_BUSCA_MS = 300;
+export const DEBOUNCE_REVERSO_MAPA_MS = 350;
 export const REDIRECT_SUCESSO_MS = 1600;
 
 export const TITULO_MIN = 3;
@@ -19,6 +20,8 @@ export const HORA_PADRAO = "07:30";
 export const PLACEHOLDER_TITULO = "Ex: Café com Curvas na Serra Negra";
 export const PLACEHOLDER_PARTIDA = "Posto Shell Rodovia km 22";
 export const PLACEHOLDER_DESTINO = "Ex: Mirante Alto da Serra";
+export const HINT_MAPA_VAZIO = "Toque no mapa, busque o endereço ou use o GPS";
+export const HINT_MAPA_AJUSTE = "Arraste o alfinete para ajustar o ponto";
 export const PLACEHOLDER_NOME_PARTIDA = "Ex.: Posto Shell km 24";
 export const PLACEHOLDER_NOME_DESTINO = "Ex.: Mirante da Serra";
 export const PLACEHOLDER_DESCRICAO =

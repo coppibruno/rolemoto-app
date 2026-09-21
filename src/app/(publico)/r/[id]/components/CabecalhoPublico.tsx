@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
 import { urlLoginComNext } from "@/lib/destino-pos-auth";
 import { COPY_PILL } from "../constants";
 import styles from "../convite-role.module.css";
 
 type Props = {
   roleId: string;
+  onCompartilhar: () => void;
+  feedback: string | null;
+  loading?: boolean;
 };
 
 const Marca = () => (
@@ -24,45 +26,43 @@ const Marca = () => (
   </>
 );
 
-export const CabecalhoPublico = ({ roleId }: Props) => {
-  const { firebaseUser, usuario, loading } = useAuth();
+export const CabecalhoPublico = ({
+  roleId,
+  onCompartilhar,
+  feedback,
+  loading = false,
+}: Props) => {
   const convite = `/r/${roleId}`;
-  const logado = Boolean(firebaseUser);
 
   return (
     <header className={styles.cabecalho}>
-      {logado ? (
-        <Link href="/" className={styles.cabecalhoMarca}>
-          <Marca />
-        </Link>
-      ) : (
-        <span className={styles.cabecalhoMarca}>
-          <Marca />
-        </span>
-      )}
+      <span className={styles.cabecalhoMarca}>
+        <Marca />
+      </span>
 
-      {loading ? (
-        <span className={styles.avatarHeader} aria-hidden />
-      ) : logado ? (
-        <Link href="/" className={styles.avatarHeader} aria-label="Ir ao início">
-          {usuario?.fotoUrl ? (
-            <img
-              src={usuario.fotoUrl}
-              alt=""
-              className={styles.avatarImg}
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <span className={styles.avatarPlaceholder}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </span>
-          )}
-        </Link>
-      ) : (
-        <Link href={urlLoginComNext(convite)} className={styles.botaoEntrar}>
-          Entrar
-        </Link>
-      )}
+      <div className={styles.cabecalhoAcoes}>
+        <button
+          type="button"
+          className={styles.botaoShareHeader}
+          aria-label="Compartilhar"
+          onClick={onCompartilhar}
+        >
+          <span className="material-symbols-outlined">share</span>
+        </button>
+        {loading ? (
+          <span className={styles.avatarHeader} aria-hidden />
+        ) : (
+          <Link href={urlLoginComNext(convite)} className={styles.botaoEntrar}>
+            Entrar
+          </Link>
+        )}
+      </div>
+
+      {feedback ? (
+        <span className={styles.toast} role="status">
+          {feedback}
+        </span>
+      ) : null}
     </header>
   );
 };

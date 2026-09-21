@@ -1,3 +1,4 @@
+import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 import type { CategoriaLocal, ErrosCriarLocal, HorarioDiaForm } from "@/types/local";
 import { HORA_RE, NOME_MAX, NOME_MIN } from "../constants";
 
@@ -36,6 +37,8 @@ export const validarCriarLocal = (campos: {
     erros.endereco = "Informe o endereço";
   } else if (!coordsValidas(campos.lat, campos.lng)) {
     erros.endereco = "Escolha um endereço da lista, use o GPS ou o mapa";
+  } else if (!pontoEstaNoSul(campos.lat as number, campos.lng as number)) {
+    erros.endereco = ERRO_FORA_DO_SUL;
   }
 
   if (!campos.categoria) {

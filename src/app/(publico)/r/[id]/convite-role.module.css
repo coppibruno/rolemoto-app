@@ -31,6 +31,31 @@
   color: inherit;
 }
 
+.cabecalhoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.botaoShareHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--primary-container);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.botaoShareHeader:active {
+  transform: scale(0.96);
+}
+
 .logoIcone {
   width: 36px;
   height: 36px;
@@ -350,78 +375,6 @@
   padding: 4px 8px;
   align-self: flex-start;
   flex-shrink: 0;
-}
-
-.banner {
-  --wa-accent: #34d399;
-  --wa-borda: #059669;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 0.75rem;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--wa-borda) 18%, var(--surface-container)),
-    var(--surface-container)
-  );
-  border: 1px solid color-mix(in srgb, var(--wa-accent) 30%, transparent);
-}
-
-.bannerTopo {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.bannerIcone {
-  width: 28px;
-  height: 28px;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--wa-accent) 20%, transparent);
-  color: var(--wa-accent);
-  flex-shrink: 0;
-}
-
-.bannerIcone svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-}
-
-.bannerTexto {
-  font-size: 12px;
-  line-height: 18px;
-  color: var(--on-surface-variant);
-}
-
-.botaoCompartilhar {
-  width: 100%;
-  min-height: var(--touch-min);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid color-mix(in srgb, var(--wa-accent) 40%, transparent);
-  border-radius: 0.5rem;
-  background: color-mix(in srgb, var(--wa-borda) 20%, transparent);
-  color: var(--wa-accent);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-}
-
-.botaoCompartilhar:active {
-  transform: scale(0.98);
-}
-
-.botaoCompartilhar .material-symbols-outlined {
-  font-size: 16px;
 }
 
 .fichaCabecalho {

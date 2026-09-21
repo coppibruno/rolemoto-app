@@ -10,10 +10,14 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import {
+  CENTRO_SUL_DEFAULT,
+  pontoEstaNoSul,
+  ZOOM_SUL_GPS,
+  ZOOM_SUL_REGIAO,
+} from "@/lib/regiao-sul";
 import styles from "./mapa-selecao-local.module.css";
 
-const CENTRO_BRASIL: [number, number] = [-14.235, -51.9253];
-const ZOOM_PAIS = 4;
 const ZOOM_LOCAL = 16;
 
 export type PropsMapaSelecaoLocal = {
@@ -21,14 +25,14 @@ export type PropsMapaSelecaoLocal = {
   lng: number | null;
   /** Incrementa só em busca/GPS — dispara flyTo sem brigar com arraste do pin. */
   vooId: number;
-  onMoverPonto: (lat: number, lng: number) => void;
+  onMoverPonto: (lat: number, lng: number) => boolean | void;
   desabilitado?: boolean;
   className?: string;
   hintVazio?: string;
   hintAjuste?: string;
 };
 
-type MoverPonto = (lat: number, lng: number) => void;
+type MoverPonto = (lat: number, lng: number) => boolean | void;
 
 const criarIconePin = () =>
   L.divIcon({
@@ -93,6 +97,28 @@ const AjustarTamanho = () => {
   return null;
 };
 
+const CentrarGpsSul = ({ ativo }: { ativo: boolean }) => {
+  const map = useMap();
+  const tentou = useRef(false);
+
+  useEffect(() => {
+    if (!ativo || tentou.current || !navigator.geolocation) return;
+    tentou.current = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        if (pontoEstaNoSul(latitude, longitude)) {
+          map.setView([latitude, longitude], ZOOM_SUL_GPS);
+        }
+      },
+      () => undefined,
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 300_000 },
+    );
+  }, [ativo, map]);
+
+  return null;
+};
+
 const MarcadorArrastavel = ({
   lat,
   lng,
@@ -113,11 +139,15 @@ const MarcadorArrastavel = ({
         if (desabilitadoRef.current) return;
         const mover = onMoverPontoRef.current;
         if (typeof mover !== "function") return;
-        const pos = (e.target as L.Marker).getLatLng();
-        mover(pos.lat, pos.lng);
+        const marker = e.target as L.Marker;
+        const pos = marker.getLatLng();
+        const aceito = mover(pos.lat, pos.lng);
+        if (aceito === false) {
+          marker.setLatLng([lat, lng]);
+        }
       },
     }),
-    [desabilitadoRef, onMoverPontoRef],
+    [desabilitadoRef, onMoverPontoRef, lat, lng],
   );
 
   return (
@@ -141,8 +171,8 @@ export const MapaSelecaoLocal = ({
   hintAjuste = "Arraste o alfinete para ajustar o ponto",
 }: PropsMapaSelecaoLocal) => {
   const temPonto = lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng);
-  const centro: [number, number] = temPonto ? [lat, lng] : CENTRO_BRASIL;
-  const zoomInicial = temPonto ? ZOOM_LOCAL : ZOOM_PAIS;
+  const centro: [number, number] = temPonto ? [lat, lng] : CENTRO_SUL_DEFAULT;
+  const zoomInicial = temPonto ? ZOOM_LOCAL : ZOOM_SUL_REGIAO;
   const onMoverPontoRef = useRef<MoverPonto>(onMoverPonto);
   const desabilitadoRef = useRef(Boolean(desabilitado));
   onMoverPontoRef.current = onMoverPonto;
@@ -165,6 +195,7 @@ export const MapaSelecaoLocal = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <AjustarTamanho />
+        <CentrarGpsSul ativo={!temPonto} />
         <CliqueNoMapa
           desabilitadoRef={desabilitadoRef}
           onMoverPontoRef={onMoverPontoRef}

@@ -1,9 +1,5 @@
 import type { RitmoRole } from "@/types/role";
 
-export const COPY_BANNER =
-  "Você recebeu este convite via WhatsApp. Conheça os detalhes do comboio e garanta sua vaga antes que esgote!";
-
-export const COPY_COMPARTILHAR = "Compartilhar Convite com Pilotos";
 export const COPY_VAGAS = "Vagas abertas para novos participantes";
 export const COPY_ENCERRADO = "Este rolê já aconteceu";
 export const COPY_MICROCOPY =

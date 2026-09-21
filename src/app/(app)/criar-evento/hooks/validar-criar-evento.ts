@@ -1,3 +1,4 @@
+import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 import type { AcessoEvento, TipoEvento } from "@/types/evento";
 import {
   ENDERECO_MIN,
@@ -72,6 +73,8 @@ export const validarCriarEvento = (campos: {
     erros.local = "Informe o local do evento";
   } else if (!coordsValidas(campos.local)) {
     erros.local = "Escolha um endereço da lista, use o GPS ou o mapa";
+  } else if (!pontoEstaNoSul(campos.local.lat as number, campos.local.lng as number)) {
+    erros.local = ERRO_FORA_DO_SUL;
   }
 
   let aberturaIso = "";

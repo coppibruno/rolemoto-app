@@ -342,6 +342,7 @@
   position: relative;
   flex: 1;
   min-width: 0;
+  z-index: 2;
 }
 
 .iconeInput {

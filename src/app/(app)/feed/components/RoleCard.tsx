@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import type { RoleFeedItem } from "@/types/role";
 import { BlocoParticipantes } from "@/components/participantes/BlocoParticipantes";
 import { BotaoParticipar } from "./BotaoParticipar";
-import { BotaoCompartilharRole } from "./BotaoCompartilharRole";
 import { CapaRole } from "./CapaRole";
 import { OrganizadorRole } from "./OrganizadorRole";
 import { RotaRole } from "./RotaRole";
@@ -15,9 +15,15 @@ type Props = {
 
 export const RoleCard = ({ role }: Props) => {
   const descricao = role.descricao.trim();
+  const href = `/r/${role.id}`;
 
   return (
     <article className={styles.card}>
+      <Link
+        href={href}
+        className={styles.cardDetalheLink}
+        aria-label={`Ver detalhes de ${role.titulo}`}
+      />
       <CapaRole
         titulo={role.titulo}
         fotoCapaUrl={role.fotoCapaUrl}
@@ -33,7 +39,7 @@ export const RoleCard = ({ role }: Props) => {
           dataHoraSaida={role.dataHoraSaida}
         />
         {descricao ? <p className={styles.descricao}>{descricao}</p> : null}
-        <div className={styles.linhaOrganizacao}>
+        <div className={`${styles.linhaOrganizacao} ${styles.cardDetalheAcao}`}>
           <OrganizadorRole criador={role.criador} />
           <BlocoParticipantes
             tipo="role"
@@ -41,17 +47,8 @@ export const RoleCard = ({ role }: Props) => {
             participantes={role.participantes}
           />
         </div>
-        <div className={styles.cardAcoes}>
+        <div className={`${styles.cardAcoes} ${styles.cardDetalheAcao}`}>
           <BotaoParticipar id={role.id} criadorId={role.criadorId} />
-          <BotaoCompartilharRole
-            dados={{
-              id: role.id,
-              titulo: role.titulo,
-              dataHoraSaida: role.dataHoraSaida,
-              localSaidaEndereco: role.localSaida.endereco,
-              localSaidaNome: role.localSaida.nome,
-            }}
-          />
         </div>
       </div>
     </article>

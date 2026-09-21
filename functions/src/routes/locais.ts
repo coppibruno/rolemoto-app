@@ -8,6 +8,10 @@ import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {log} from "../lib/log";
 import {param} from "../lib/params";
 import {
+  ERRO_LOCALIZACAO_FORA_DO_SUL,
+  pontoEstaNoSul,
+} from "../lib/regiao-sul";
+import {
   localRepository,
   usuarioLocalFavoritoRepository,
   usuarioLocalFeedbackRepository,
@@ -198,6 +202,9 @@ const validarBody = (body: unknown): ResultadoValidacao => {
 
   if (!isCoordLat(bruto.lat) || !isCoordLng(bruto.lng)) {
     return {ok: false, erro: "local inválido"};
+  }
+  if (!pontoEstaNoSul(bruto.lat, bruto.lng)) {
+    return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
   }
 
   if (!isCategoria(bruto.categoria)) {

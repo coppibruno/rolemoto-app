@@ -1,7 +1,6 @@
 import type { RolePublico } from "@/types/role-publico";
 import { BannerInstalarApp } from "@/components/pwa/BannerInstalarApp";
-import { BannerCompartilhar } from "./BannerCompartilhar";
-import { CabecalhoPublico } from "./CabecalhoPublico";
+import { CabecalhoConviteRole } from "./CabecalhoConviteRole";
 import { CardOrganizador } from "./CardOrganizador";
 import { FichaTecnicaComboio } from "./FichaTecnicaComboio";
 import { GradePilotos } from "./GradePilotos";
@@ -16,17 +15,10 @@ type Props = {
 
 export const TelaConviteRole = ({ role }: Props) => {
   const encerrado = Date.parse(role.dataHoraSaida) < Date.now();
-  const dadosShare = {
-    id: role.id,
-    titulo: role.titulo,
-    dataHoraSaida: role.dataHoraSaida,
-    localSaidaEndereco: role.localSaidaEndereco,
-    localSaidaNome: role.localSaidaNome,
-  };
 
   return (
     <div className={styles.tela}>
-      <CabecalhoPublico roleId={role.id} />
+      <CabecalhoConviteRole role={role} />
       <BannerInstalarApp variante="fluxo" />
       <HeroCapaRole
         titulo={role.titulo}
@@ -42,7 +34,6 @@ export const TelaConviteRole = ({ role }: Props) => {
           encerrado={encerrado}
         />
         <CardOrganizador criador={role.criador} />
-        <BannerCompartilhar dados={dadosShare} />
         <FichaTecnicaComboio
           localSaidaEndereco={role.localSaidaEndereco}
           destinoFinalEndereco={role.destinoFinalEndereco}

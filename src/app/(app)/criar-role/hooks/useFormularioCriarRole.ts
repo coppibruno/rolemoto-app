@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
+import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 import { useAuth } from "@/hooks/useAuth";
 import type { RitmoRole, RoleModelo } from "@/types/role";
 import {
@@ -63,13 +64,17 @@ const validar = (campos: {
   if (campos.partida.endereco.trim().length < ENDERECO_MIN) {
     erros.partida = "Informe o ponto de partida";
   } else if (!coordsValidas(campos.partida)) {
-    erros.partida = "Escolha um endereço da lista ou use o GPS";
+    erros.partida = "Escolha um endereço da lista, toque no mapa ou use o GPS";
+  } else if (!pontoEstaNoSul(campos.partida.lat as number, campos.partida.lng as number)) {
+    erros.partida = ERRO_FORA_DO_SUL;
   }
 
   if (campos.destino.endereco.trim().length < ENDERECO_MIN) {
     erros.destino = "Informe o destino";
   } else if (!coordsValidas(campos.destino)) {
-    erros.destino = "Escolha um endereço da lista";
+    erros.destino = "Escolha um endereço da lista ou toque no mapa";
+  } else if (!pontoEstaNoSul(campos.destino.lat as number, campos.destino.lng as number)) {
+    erros.destino = ERRO_FORA_DO_SUL;
   }
 
   if (!campos.dataSaida.trim() || !dataCalendarioValida(campos.dataSaida)) {
@@ -148,10 +153,14 @@ export const useFormularioCriarRole = (
     e.preventDefault();
     setSucesso(false);
     setErroGeral(null);
+    const [partidaResolvida, destinoResolvido] = await Promise.all([
+      partida.resolverPontoPendente(),
+      destino.resolverPontoPendente(),
+    ]);
     const errosAtuais = validar({
       titulo,
-      partida: partida.valor,
-      destino: destino.valor,
+      partida: partidaResolvida,
+      destino: destinoResolvido,
       dataSaida,
       horaSaida,
       ritmo,
@@ -174,16 +183,16 @@ export const useFormularioCriarRole = (
         ritmo,
         dataHoraSaida: montarIsoSaida(dataSaida, horaSaida),
         localSaida: {
-          lat: partida.valor.lat as number,
-          lng: partida.valor.lng as number,
-          endereco: partida.valor.endereco.trim(),
-          nome: partida.valor.nome.trim(),
+          lat: partidaResolvida.lat as number,
+          lng: partidaResolvida.lng as number,
+          endereco: partidaResolvida.endereco.trim(),
+          nome: partidaResolvida.nome.trim(),
         },
         destinoFinal: {
-          lat: destino.valor.lat as number,
-          lng: destino.valor.lng as number,
-          endereco: destino.valor.endereco.trim(),
-          nome: destino.valor.nome.trim(),
+          lat: destinoResolvido.lat as number,
+          lng: destinoResolvido.lng as number,
+          endereco: destinoResolvido.endereco.trim(),
+          nome: destinoResolvido.nome.trim(),
         },
       };
       if (modo === "editar" && modelo) {

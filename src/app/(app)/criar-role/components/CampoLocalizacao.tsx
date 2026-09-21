@@ -1,5 +1,8 @@
 "use client";
 
+import { MapaSelecaoLocalClient } from "@/components/maps/MapaSelecaoLocalClient";
+import { ERRO_FORA_DO_SUL } from "@/lib/regiao-sul";
+import { HINT_MAPA_AJUSTE, HINT_MAPA_VAZIO } from "../constants";
 import type { useCampoLocalizacao } from "../hooks/useCampoLocalizacao";
 import { SugestoesEndereco } from "./SugestoesEndereco";
 import styles from "../criar-role.module.css";
@@ -18,10 +21,12 @@ type Props = {
   desabilitado?: boolean;
 };
 
-const textoGps = (status: Campo["gpsStatus"]) => {
+const textoGps = (status: Campo["gpsStatus"], erroGps?: string) => {
   if (status === "buscando") return "Buscando...";
   if (status === "fixado") return "Fixado!";
-  if (status === "erro") return "Sem GPS";
+  if (status === "erro") {
+    return erroGps === ERRO_FORA_DO_SUL ? "Fora do Sul" : "Sem GPS";
+  }
   return "Meu GPS";
 };
 
@@ -64,7 +69,7 @@ export const CampoLocalizacao = ({
             >
               my_location
             </span>
-            {textoGps(campo.gpsStatus)}
+            {textoGps(campo.gpsStatus, campo.erroGps)}
           </button>
         ) : null}
       </div>
@@ -73,9 +78,17 @@ export const CampoLocalizacao = ({
           id={id}
           type="text"
           className={`${styles.input} ${mensagem ? styles.inputErro : ""}`}
-          value={campo.valor.endereco}
+          value={
+            campo.resolvendoEndereco && !campo.valor.endereco.trim()
+              ? ""
+              : campo.valor.endereco
+          }
           onChange={(e) => campo.aoDigitar(e.target.value)}
-          placeholder={placeholder}
+          placeholder={
+            campo.resolvendoEndereco
+              ? "Buscando endereço do ponto…"
+              : placeholder
+          }
           disabled={desabilitado}
           autoComplete="off"
           aria-invalid={Boolean(mensagem)}
@@ -91,6 +104,17 @@ export const CampoLocalizacao = ({
             onEscolher={campo.escolher}
           />
         ) : null}
+      </div>
+      <div className={styles.mapaInterativo}>
+        <MapaSelecaoLocalClient
+          lat={campo.valor.lat}
+          lng={campo.valor.lng}
+          vooId={campo.vooId}
+          onMoverPonto={campo.atualizarDoMapa}
+          desabilitado={desabilitado}
+          hintVazio={HINT_MAPA_VAZIO}
+          hintAjuste={HINT_MAPA_AJUSTE}
+        />
       </div>
       <label htmlFor={nomeId} className={styles.labelNome}>
         Nome do local <span className={styles.labelOpcional}>(opcional)</span>

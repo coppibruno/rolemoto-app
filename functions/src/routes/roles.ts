@@ -6,6 +6,10 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {param} from "../lib/params";
 import {distanciaRotaKm, haversineKm} from "../lib/geo";
 import {
+  ERRO_LOCALIZACAO_FORA_DO_SUL,
+  pontoEstaNoSul,
+} from "../lib/regiao-sul";
+import {
   agendarLembrete,
   cancelarLembretesDoRole,
   reagendarLembretesDoRole,
@@ -238,9 +242,15 @@ const validarBodyCriacao = (
   if (!localSaidaOk) {
     return {ok: false, erro: "localSaida inválida"};
   }
+  if (!pontoEstaNoSul(localSaidaOk.lat, localSaidaOk.lng)) {
+    return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
+  }
   const destinoFinalOk = parseLocalizacao(destinoFinal);
   if (!destinoFinalOk) {
     return {ok: false, erro: "destinoFinal inválida"};
+  }
+  if (!pontoEstaNoSul(destinoFinalOk.lat, destinoFinalOk.lng)) {
+    return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
   }
 
   const descricao =
