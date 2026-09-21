@@ -44,7 +44,7 @@ export const useFormularioCriarEvento = () => {
     setAtracoes((atuais) =>
       atuais.includes(valor)
         ? atuais.filter((item) => item !== valor)
-        : [...atuais, valor]
+        : [...atuais, valor],
     );
   };
 
@@ -100,8 +100,7 @@ export const useFormularioCriarEvento = () => {
           ? montarIsoEncerramento(dataEvento, horaAbertura, horaEncerramento)
           : null,
         acesso,
-        linkIngresso:
-          acesso === "ingresso" ? linkIngresso.trim() : null,
+        linkIngresso: acesso === "ingresso" ? linkIngresso.trim() : null,
         atracoes,
         fotoCapaUrl,
         informacoes: informacoes.trim(),
@@ -111,6 +110,7 @@ export const useFormularioCriarEvento = () => {
         router.push("/");
       }, REDIRECT_SUCESSO_MS);
     } catch (erro) {
+      console.error(erro);
       const mensagem =
         erro instanceof ApiError
           ? erro.message
