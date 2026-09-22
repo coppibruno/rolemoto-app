@@ -14,6 +14,7 @@ import {
   HEADER_SESSAO_TOKEN,
   criarTelemetriaSessao,
   ingerirPontoSessao,
+  sessaoParaResposta,
 } from "../lib/telemetria-sessao";
 import {
   roleTelemetriaRepository,
@@ -119,8 +120,7 @@ telemetriaRouter.get("/sessao/:id", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Sessão não encontrada"});
       return;
     }
-    const {tokenHash: _t, ...publico} = doc;
-    res.json(publico);
+    res.json(sessaoParaResposta(doc));
   } catch (error) {
     responderErro(res, error);
   }

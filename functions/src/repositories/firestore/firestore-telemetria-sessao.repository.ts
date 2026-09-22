@@ -57,6 +57,20 @@ const estadoDe = (doc: TelemetriaSessaoInterna): EstadoCalculo => ({
   paradoDesde: doc.paradoDesde,
 });
 
+const omitirTokenHash = (doc: TelemetriaSessaoInterna): TelemetriaSessao => ({
+  id: doc.id,
+  usuarioId: doc.usuarioId,
+  iniciadoEm: doc.iniciadoEm,
+  distanciaKm: doc.distanciaKm,
+  velocidadeMaxKmh: doc.velocidadeMaxKmh,
+  tempoMovimentoSegundos: doc.tempoMovimentoSegundos,
+  primeiro: doc.primeiro,
+  ultimo: doc.ultimo,
+  paradoDesde: doc.paradoDesde,
+  createdAt: doc.createdAt,
+  updatedAt: doc.updatedAt,
+});
+
 export class FirestoreTelemetriaSessaoRepository
 implements TelemetriaSessaoRepository {
   async criar(dados: TelemetriaSessaoNovo): Promise<TelemetriaSessao> {
@@ -77,8 +91,7 @@ implements TelemetriaSessaoRepository {
     if (!criado) {
       throw new Error("Falha ao criar sessão de telemetria");
     }
-    const {tokenHash: _t, ...publico} = criado;
-    return publico;
+    return omitirTokenHash(criado);
   }
 
   async buscarPorId(id: string): Promise<TelemetriaSessaoInterna | null> {

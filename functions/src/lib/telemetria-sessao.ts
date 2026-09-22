@@ -4,7 +4,12 @@ import {
   estadoCalculoInicial,
   type PontoGps,
 } from "./calcular-metricas-telemetria";
-import type {TelemetriaSessaoCriada} from "../types/telemetria-sessao";
+import type {
+  TelemetriaSessao,
+  TelemetriaSessaoCriada,
+} from "../types/telemetria-sessao";
+import type {TelemetriaSessaoInterna} from
+  "../repositories/interfaces/telemetria-sessao.repository";
 import {telemetriaSessaoRepository} from "../repositories";
 
 export const HEADER_SESSAO_TOKEN = "x-rolemoto-sessao-token";
@@ -20,6 +25,22 @@ export const tokensIguais = (a: string, b: string): boolean => {
   if (ha.length !== hb.length) return false;
   return timingSafeEqual(ha, hb);
 };
+
+export const sessaoParaResposta = (
+  doc: TelemetriaSessaoInterna,
+): TelemetriaSessao => ({
+  id: doc.id,
+  usuarioId: doc.usuarioId,
+  iniciadoEm: doc.iniciadoEm,
+  distanciaKm: doc.distanciaKm,
+  velocidadeMaxKmh: doc.velocidadeMaxKmh,
+  tempoMovimentoSegundos: doc.tempoMovimentoSegundos,
+  primeiro: doc.primeiro,
+  ultimo: doc.ultimo,
+  paradoDesde: doc.paradoDesde,
+  createdAt: doc.createdAt,
+  updatedAt: doc.updatedAt,
+});
 
 export const criarTelemetriaSessao = async (
   usuarioId: string,
