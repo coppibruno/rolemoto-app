@@ -11,6 +11,8 @@ export const LIMITE_COMENTARIO = 500;
 export const LIMITE_FOTOS = 4;
 
 export const TITULO_PAGINA = "Avaliar Experiência";
+export const TITULO_PAGINA_EDITAR = "Sua avaliação";
+export const TITULO_PAGINA_LISTA = "Avaliações";
 export const KICKER_PAGINA = "Feedback da Irmandade";
 
 export const LABEL_NOTA = "Nota geral da experiência";
@@ -27,9 +29,14 @@ export const PLACEHOLDER_RELATO =
 
 export const CTA_PUBLICAR = "Publicar Avaliação";
 export const CTA_PUBLICANDO = "Publicando...";
+export const CTA_SALVAR = "Salvar alterações";
+export const CTA_SALVANDO = "Salvando...";
 export const CTA_CANCELAR = "Cancelar";
 export const CTA_VOLTAR_FEED = "Voltar ao Feed";
 export const CTA_ANEXAR = "Anexar";
+export const CTA_AVALIAR = "Avaliar";
+export const CTA_EDITAR_MINHA = "Editar minha avaliação";
+export const TOAST_AVALIACAO_SALVA = "Avaliação atualizada.";
 
 export const TITULO_LISTA = "Avaliações da irmandade";
 export const SELO_SEU_RELATO = "Seu relato";
@@ -63,6 +70,7 @@ export const ERRO_CARREGAR: ErroTelaAvaliar = {
 };
 
 export const ERRO_SALVAR = "Não foi possível publicar a avaliação.";
+export const ERRO_ATUALIZAR = "Não foi possível salvar as alterações.";
 
 type MetaNota = {
   label: string;

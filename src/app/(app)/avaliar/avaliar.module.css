@@ -561,6 +561,7 @@
   border-radius: 0.75rem;
   background: var(--primary-container);
   color: var(--on-primary-container);
+  text-decoration: none;
   font-family: "Barlow Condensed", sans-serif;
   font-size: 18px;
   font-weight: 700;
@@ -591,6 +592,16 @@
   text-transform: uppercase;
   color: var(--on-surface-variant);
   cursor: pointer;
+}
+
+.toastSucesso {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--secondary-container) 18%, transparent);
+  color: var(--secondary-container);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .erroEnvio {

@@ -2,6 +2,7 @@ import {haversineKm} from "./geo";
 import type {Evento, EventoFeedItem} from "../types/evento";
 import type {Local, LocalFeedItem} from "../types/local";
 import type {Role} from "../types/role";
+import type {UsuarioRole} from "../types/usuario-role";
 
 const textoContem = (haystack: string, needle: string): boolean =>
   haystack.toLowerCase().includes(needle);
@@ -36,6 +37,54 @@ export const bateBuscaRole = (role: Role, q: string): boolean => {
 };
 
 type Origem = {lat: number; lng: number; raioKm?: 25 | 50 | 100};
+
+/** Rolês em que o piloto já pediu vaga (qualquer estado do vínculo). */
+export const roleIdsComVinculoUsuario = (
+  pedidos: UsuarioRole[],
+): Set<string> => new Set(pedidos.map((p) => p.roleId));
+
+export const deveOcultarRoleFeedDescoberta = (
+  role: Role,
+  uid: string,
+  roleIdsComVinculo: Set<string>,
+): boolean =>
+  role.criadorId === uid || roleIdsComVinculo.has(role.id);
+
+const filtrarRolesPorGeoBusca = (
+  roles: Role[],
+  origem: Origem,
+  q?: string,
+): Role[] => {
+  const filtrados: Role[] = [];
+  for (const role of roles) {
+    const distancia = haversineKm(
+      origem.lat,
+      origem.lng,
+      role.localSaida.lat,
+      role.localSaida.lng,
+    );
+    if (origem.raioKm !== undefined && distancia > origem.raioKm) {
+      continue;
+    }
+    if (q && !bateBuscaRole(role, q)) {
+      continue;
+    }
+    filtrados.push(role);
+  }
+  return filtrados;
+};
+
+/** Mesma regra de `GET /roles` e `GET /feed/contagens` (aba Rolês). */
+export const filtrarRolesFeedDescoberta = (
+  roles: Role[],
+  origem: Origem,
+  uid: string,
+  roleIdsComVinculo: Set<string>,
+  q?: string,
+): Role[] =>
+  filtrarRolesPorGeoBusca(roles, origem, q).filter(
+    (role) => !deveOcultarRoleFeedDescoberta(role, uid, roleIdsComVinculo),
+  );
 
 export const filtrarEventosFeed = (
   eventos: Evento[],
@@ -90,23 +139,8 @@ export const filtrarLocaisFeed = (
 export const contarRolesFeed = (
   roles: Role[],
   origem: Origem,
+  uid: string,
+  roleIdsComVinculo: Set<string>,
   q?: string,
-): number => {
-  let total = 0;
-  for (const role of roles) {
-    const distancia = haversineKm(
-      origem.lat,
-      origem.lng,
-      role.localSaida.lat,
-      role.localSaida.lng,
-    );
-    if (origem.raioKm !== undefined && distancia > origem.raioKm) {
-      continue;
-    }
-    if (q && !bateBuscaRole(role, q)) {
-      continue;
-    }
-    total += 1;
-  }
-  return total;
-};
+): number =>
+  filtrarRolesFeedDescoberta(roles, origem, uid, roleIdsComVinculo, q).length;

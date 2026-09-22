@@ -43,8 +43,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
         if (cancelado) return;
 
         if (obtido.criadorId === uid) {
-          setDetalhe(obtido);
-          setEstado("organizador");
+          router.replace(`/roles/${roleId}/gerenciar`);
           return;
         }
 
@@ -62,8 +61,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
         } catch (falha) {
           if (cancelado) return;
           if (falha instanceof ApiError && falha.status === 403) {
-            setDetalhe(obtido);
-            setEstado("organizador");
+            router.replace(`/roles/${roleId}/gerenciar`);
             return;
           }
           if (falha instanceof ApiError && falha.status === 409) {
@@ -127,11 +125,15 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
 
   const cancelarRole = useCallback(async () => {
     if (!detalhe || cancelando) return;
-    if (!window.confirm(confirmCancelarRole(detalhe.titulo))) return;
+    const confirmados = detalhe.participantes.confirmados;
+    if (!window.confirm(confirmCancelarRole(detalhe.titulo, confirmados))) {
+      return;
+    }
 
     setCancelando(true);
     setErroAcao(null);
     try {
+      // DELETE /roles/:id — backend notifica só confirmados (aceito === true).
       await rolesService.excluir(roleId);
       router.push("/meus-roles");
     } catch (falha) {

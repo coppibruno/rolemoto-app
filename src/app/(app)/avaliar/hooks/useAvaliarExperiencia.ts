@@ -14,15 +14,19 @@ import type { Local } from "@/types/local";
 import {
   DURACAO_ENVIADO_MS,
   ERRO_AINDA_GRADE,
+  ERRO_ATUALIZAR,
   ERRO_CARREGAR,
   ERRO_NAO_ENCONTRADO,
   ERRO_SALVAR,
   ERRO_SEM_INSCRICAO,
+  TOAST_AVALIACAO_SALVA,
   type ErroTelaAvaliar,
 } from "../constants";
 import { avaliacaoService } from "../services/avaliacao.service";
 
 export type VisaoAvaliar = "form" | "lista" | "enviado";
+
+export type FocoTelaAvaliar = "form" | "lista";
 
 export type AlvoAvaliacao =
   | { tipo: "local"; dados: Local & { avaliado?: boolean } }
@@ -39,6 +43,7 @@ const eventoEncerrou = (evento: Evento): boolean => {
 export const useAvaliarExperiencia = (
   tipo: TipoAlvoAvaliacao,
   alvoId: string,
+  foco: FocoTelaAvaliar = "form",
 ) => {
   const router = useRouter();
   const { firebaseUser } = useAuth();
@@ -47,10 +52,14 @@ export const useAvaliarExperiencia = (
   const [carregando, setCarregando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [alvo, setAlvo] = useState<AlvoAvaliacao | null>(null);
+  const [minha, setMinha] = useState<AvaliacaoExperiencia | null>(null);
   const [avaliacoes, setAvaliacoes] = useState<AvaliacaoExperiencia[]>([]);
-  const [visao, setVisao] = useState<VisaoAvaliar>("form");
+  const [visao, setVisao] = useState<VisaoAvaliar>(
+    foco === "lista" ? "lista" : "form",
+  );
   const [erro, setErro] = useState<ErroTelaAvaliar | null>(null);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
   const [ticket, setTicket] = useState(0);
 
   useEffect(() => {
@@ -60,10 +69,11 @@ export const useAvaliarExperiencia = (
     setCarregando(true);
     setErro(null);
     setErroEnvio(null);
+    setToast(null);
 
     const carregar = async () => {
       try {
-        const [obtido, minha, lista] = await Promise.all([
+        const [obtido, minhaDoc, lista] = await Promise.all([
           avaliacaoService.buscarAlvo(tipo, alvoId),
           avaliacaoService.buscarMinha(tipo, alvoId),
           avaliacaoService.listar(tipo, alvoId),
@@ -75,12 +85,20 @@ export const useAvaliarExperiencia = (
             avaliado?: boolean;
             inscrito?: boolean;
           };
-          if (evento.inscrito === false) {
+          if (
+            foco === "form" &&
+            evento.inscrito === false &&
+            !minhaDoc
+          ) {
             setAlvo({ tipo: "evento", dados: evento });
             setErro(ERRO_SEM_INSCRICAO);
             return;
           }
-          if (!eventoEncerrou(evento) && !minha) {
+          if (
+            foco === "form" &&
+            !eventoEncerrou(evento) &&
+            !minhaDoc
+          ) {
             setAlvo({ tipo: "evento", dados: evento });
             setErro(ERRO_AINDA_GRADE);
             return;
@@ -93,8 +111,9 @@ export const useAvaliarExperiencia = (
           });
         }
 
+        setMinha(minhaDoc);
         setAvaliacoes(lista);
-        setVisao(minha ? "lista" : "form");
+        setVisao(foco === "lista" ? "lista" : "form");
       } catch (falha) {
         if (cancelado) return;
         if (falha instanceof ApiError && falha.status === 401) {
@@ -119,7 +138,7 @@ export const useAvaliarExperiencia = (
     return () => {
       cancelado = true;
     };
-  }, [alvoId, tipo, uid, router, ticket]);
+  }, [alvoId, foco, tipo, uid, router, ticket]);
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
@@ -140,29 +159,55 @@ export const useAvaliarExperiencia = (
       if (enviando) return;
       setEnviando(true);
       setErroEnvio(null);
+      setToast(null);
+      const editando = Boolean(minha);
       try {
-        await avaliacaoService.publicar(tipo, alvoId, dados);
-        const lista = await avaliacaoService.listar(tipo, alvoId);
+        if (editando) {
+          await avaliacaoService.atualizar(tipo, alvoId, dados);
+        } else {
+          await avaliacaoService.publicar(tipo, alvoId, dados);
+        }
+        const [lista, minhaAtualizada] = await Promise.all([
+          avaliacaoService.listar(tipo, alvoId),
+          avaliacaoService.buscarMinha(tipo, alvoId),
+        ]);
         setAvaliacoes(lista);
-        setVisao("enviado");
-        window.setTimeout(() => setVisao("lista"), DURACAO_ENVIADO_MS);
+        setMinha(minhaAtualizada);
+        if (editando) {
+          setToast(TOAST_AVALIACAO_SALVA);
+          setVisao("form");
+        } else {
+          setVisao("enviado");
+          window.setTimeout(() => setVisao("lista"), DURACAO_ENVIADO_MS);
+        }
       } catch (falha) {
         if (falha instanceof ApiError && falha.status === 409) {
           try {
             const lista = await avaliacaoService.listar(tipo, alvoId);
             setAvaliacoes(lista);
+            const minhaAtualizada = await avaliacaoService.buscarMinha(
+              tipo,
+              alvoId,
+            );
+            setMinha(minhaAtualizada);
           } catch {
             /* lista fica como está */
           }
-          setVisao("lista");
+          setVisao(foco === "lista" ? "lista" : "form");
           return;
         }
-        setErroEnvio(falha instanceof ApiError ? falha.message : ERRO_SALVAR);
+        setErroEnvio(
+          falha instanceof ApiError
+            ? falha.message
+            : editando
+              ? ERRO_ATUALIZAR
+              : ERRO_SALVAR,
+        );
       } finally {
         setEnviando(false);
       }
     },
-    [alvoId, enviando, tipo],
+    [alvoId, enviando, foco, minha, tipo],
   );
 
   return {
@@ -170,10 +215,12 @@ export const useAvaliarExperiencia = (
     carregando,
     enviando,
     alvo,
+    minha,
     avaliacoes,
     visao,
     erro,
     erroEnvio,
+    toast,
     recarregar,
     voltar,
     voltarAoFeed,

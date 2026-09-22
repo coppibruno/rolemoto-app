@@ -5,9 +5,13 @@ import styles from "../avaliar.module.css";
 
 type Props = {
   onVoltar: () => void;
+  titulo?: string;
 };
 
-export const CabecalhoAvaliar = ({ onVoltar }: Props) => {
+export const CabecalhoAvaliar = ({
+  onVoltar,
+  titulo = TITULO_PAGINA,
+}: Props) => {
   return (
     <header className={styles.cabecalho}>
       <button
@@ -21,7 +25,7 @@ export const CabecalhoAvaliar = ({ onVoltar }: Props) => {
         </span>
       </button>
       <div className={styles.cabecalhoCentro}>
-        <h1 className={styles.tituloPagina}>{TITULO_PAGINA}</h1>
+        <h1 className={styles.tituloPagina}>{titulo}</h1>
         <span className={styles.kicker}>
           <span className={styles.kickerPing} aria-hidden />
           {KICKER_PAGINA}

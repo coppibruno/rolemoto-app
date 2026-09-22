@@ -4,6 +4,8 @@ import {
   CTA_CANCELAR,
   CTA_PUBLICAR,
   CTA_PUBLICANDO,
+  CTA_SALVAR,
+  CTA_SALVANDO,
   CTA_VOLTAR_FEED,
 } from "../constants";
 import { EstadoEnviado } from "./EstadoEnviado";
@@ -15,6 +17,7 @@ type Props = {
   enviado: boolean;
   erroEnvio: string | null;
   mostrarForm: boolean;
+  modoEdicao?: boolean;
   onEnviar: () => void;
   onCancelar: () => void;
   onVoltarFeed: () => void;
@@ -26,6 +29,7 @@ export const AcoesAvaliar = ({
   enviado,
   erroEnvio,
   mostrarForm,
+  modoEdicao = false,
   onEnviar,
   onCancelar,
   onVoltarFeed,
@@ -68,7 +72,15 @@ export const AcoesAvaliar = ({
         disabled={!podeEnviar}
         onClick={onEnviar}
       >
-        <span>{enviando ? CTA_PUBLICANDO : CTA_PUBLICAR}</span>
+        <span>
+          {enviando
+            ? modoEdicao
+              ? CTA_SALVANDO
+              : CTA_PUBLICANDO
+            : modoEdicao
+              ? CTA_SALVAR
+              : CTA_PUBLICAR}
+        </span>
         <span
           className={`material-symbols-outlined ${enviando ? styles.spin : ""}`}
           aria-hidden

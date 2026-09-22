@@ -11,21 +11,25 @@ import styles from "../avaliar.module.css";
 
 type Props = {
   fotos: FotoPendente[];
+  urlsRemotas?: string[];
   podeAnexar: boolean;
   erroFoto: string | null;
   inputRef: React.RefObject<HTMLInputElement | null>;
   onAnexar: (lista: FileList | null) => void;
   onRemover: (id: string) => void;
+  onRemoverRemota?: (url: string) => void;
   onAbrirSeletor: () => void;
 };
 
 export const FotosVisita = ({
   fotos,
+  urlsRemotas = [],
   podeAnexar,
   erroFoto,
   inputRef,
   onAnexar,
   onRemover,
+  onRemoverRemota,
   onAbrirSeletor,
 }: Props) => {
   return (
@@ -40,6 +44,23 @@ export const FotosVisita = ({
         <span className={styles.contador}>{LABEL_FOTOS_LIMITE}</span>
       </div>
       <div className={styles.gridFotos}>
+        {urlsRemotas.map((url, indice) => (
+          <div key={url} className={styles.slotFoto}>
+            <img src={url} alt="" className={styles.slotFotoImg} />
+            {onRemoverRemota ? (
+              <button
+                type="button"
+                className={styles.botaoRemoverFoto}
+                aria-label={`Remover foto ${indice + 1}`}
+                onClick={() => onRemoverRemota(url)}
+              >
+                <span className="material-symbols-outlined" aria-hidden>
+                  close
+                </span>
+              </button>
+            ) : null}
+          </div>
+        ))}
         {fotos.map((foto, indice) => (
           <div key={foto.id} className={styles.slotFoto}>
             <img
@@ -64,7 +85,7 @@ export const FotosVisita = ({
             type="button"
             className={styles.slotAnexar}
             onClick={onAbrirSeletor}
-            aria-label={`Anexar foto, ${fotos.length} de ${LIMITE_FOTOS}`}
+            aria-label={`Anexar foto, ${fotos.length + urlsRemotas.length} de ${LIMITE_FOTOS}`}
           >
             <span className="material-symbols-outlined" aria-hidden>
               add_a_photo

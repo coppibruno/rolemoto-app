@@ -7,6 +7,7 @@ import {
 } from "../../lib/avaliacao-experiencia";
 import {firestore} from "../../lib/firebase-admin";
 import type {
+  AvaliacaoExperienciaCampos,
   AvaliacaoExperienciaCreate,
   UsuarioEventoFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
@@ -156,5 +157,63 @@ implements UsuarioEventoFeedbackRepository {
 
     const criado = await this.buscarPorId(id);
     return criado as UsuarioEventoFeedbackDoc;
+  }
+
+  async atualizar(
+    usuarioId: string,
+    eventoId: string,
+    dados: AvaliacaoExperienciaCampos,
+  ): Promise<UsuarioEventoFeedbackDoc | null> {
+    const id = idFeedbackAlvo(usuarioId, eventoId);
+    const feedbackRef = firestore.collection(COLECAO).doc(id);
+    const eventoRef = firestore.collection(COLECAO_EVENTOS).doc(eventoId);
+
+    const resultado = await firestore.runTransaction(async (tx) => {
+      const feedbackSnap = await tx.get(feedbackRef);
+      if (!feedbackSnap.exists) {
+        return null;
+      }
+
+      const eventoSnap = await tx.get(eventoRef);
+      if (!eventoSnap.exists) {
+        throw new Error("ALVO_AUSENTE");
+      }
+
+      const anterior = feedbackSnap.data() ?? {};
+      const notaAnterior = Number(anterior.nota ?? 0);
+      const recAnterior = Boolean(anterior.recomendaComboio);
+
+      const eventoData = eventoSnap.data() ?? {};
+      const total = Number(eventoData.totalAvaliacoes ?? 0);
+      const soma =
+        Number(eventoData.somaNotas ?? 0) + (dados.nota - notaAnterior);
+      const recs =
+        Number(eventoData.recomendacoesComboio ?? 0) +
+        (dados.recomendaComboio ? 1 : 0) -
+        (recAnterior ? 1 : 0);
+
+      tx.update(feedbackRef, {
+        nota: dados.nota,
+        comentario: dados.comentario,
+        fotosUrls: dados.fotosUrls,
+        recomendaComboio: dados.recomendaComboio,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      tx.update(eventoRef, {
+        somaNotas: soma,
+        recomendacoesComboio: recs,
+        notaMedia: arredondarNotaMedia(soma, total),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return id;
+    });
+
+    if (resultado === null) {
+      return null;
+    }
+
+    return this.buscarPorId(resultado);
   }
 }

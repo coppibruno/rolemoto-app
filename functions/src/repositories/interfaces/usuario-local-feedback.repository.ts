@@ -1,4 +1,5 @@
 import type {
+  AvaliacaoExperienciaCampos,
   AvaliacaoExperienciaCreate,
   UsuarioLocalFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
@@ -20,4 +21,9 @@ export interface UsuarioLocalFeedbackRepository {
   criar(
     dados: AvaliacaoExperienciaCreate,
   ): Promise<UsuarioLocalFeedbackDoc | "conflito">;
+  atualizar(
+    usuarioId: string,
+    localId: string,
+    dados: AvaliacaoExperienciaCampos,
+  ): Promise<UsuarioLocalFeedbackDoc | null>;
 }

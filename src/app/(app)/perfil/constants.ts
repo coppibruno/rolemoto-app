@@ -119,7 +119,7 @@ export const ariaBadgeAba = (label: string, n: number): string =>
   `${label}, ${n} itens`;
 
 export const hrefCardHistoricoRole = (item: ItemHistoricoRole): string => {
-  if (item.status === "lider") return `/aprovacoes?role=${item.roleId}`;
+  if (item.status === "lider") return `/roles/${item.roleId}/gerenciar`;
   if (item.status === "concluido") return `/roles/${item.roleId}/feedback`;
   return `/roles/${item.roleId}/participar`;
 };

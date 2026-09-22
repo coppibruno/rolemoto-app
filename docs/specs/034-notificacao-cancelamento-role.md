@@ -1,6 +1,6 @@
 # SPEC 034 — Notificação ao cancelar rolê (bugfix)
 
-> **Status:** Proposta  
+> **Status:** Implementado  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — líder cancelou com confirmados; confirmados não foram notificados  
@@ -84,10 +84,10 @@ Pendentes **não** recebem push (ainda não estavam no comboio) — manter.
 ## 6. Checklist
 
 - [ ] N1 passa com dois devices reais (ou Chrome + permissão).
-- [ ] Pendente não recebe; confirmado recebe.
-- [ ] DELETE continua 204 mesmo se FCM falhar.
-- [ ] Logs permitem auditar “quem deveria ter sido notificado”.
-- [ ] Modal/copy fala em confirmados, não em toda a fila.
+- [x] Pendente não recebe; confirmado recebe. *(só `listarConfirmadosDoRole` / `aceito === true`)*
+- [x] DELETE continua 204 mesmo se FCM falhar.
+- [x] Logs permitem auditar “quem deveria ter sido notificado”.
+- [x] Modal/copy fala em confirmados, não em toda a fila.
 
 ---
 

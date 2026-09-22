@@ -1,6 +1,6 @@
 # SPEC 036 — Perfil público: layout + compartilhar
 
-> **Status:** Proposta  
+> **Status:** Implementada  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — layout estranho/quebrado; falta compartilhar no perfil  
@@ -92,10 +92,10 @@ Copy sugerida:
 
 ## 6. Checklist
 
-- [ ] P1: side-by-side mock vs app em 390px sem regressão óbvia.
-- [ ] Dono abrindo o próprio uid → redirect `/perfil`.
-- [ ] P2: share / copiar funciona; URL abre o perfil após login.
-- [ ] Sem novos campos na API.
+- [x] P1: side-by-side mock vs app em 390px sem regressão óbvia.
+- [x] Dono abrindo o próprio uid → redirect `/perfil`.
+- [x] P2: share / copiar funciona; URL abre o perfil após login.
+- [x] Sem novos campos na API.
 
 ---
 

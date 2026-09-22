@@ -50,8 +50,6 @@ const validar = (campos: {
   dataSaida: string;
   horaSaida: string;
   ritmo: RitmoRole;
-  photoFile: File | null;
-  capaHerdada: boolean;
   descricao: string;
 }): ErrosCriarRole => {
   const erros: ErrosCriarRole = {};
@@ -90,10 +88,6 @@ const validar = (campos: {
 
   if (!RITMOS.includes(campos.ritmo)) {
     erros.ritmo = "Selecione o ritmo da tocada";
-  }
-
-  if (!campos.photoFile && !campos.capaHerdada) {
-    erros.foto = "Inclua a foto de capa do rolê";
   }
 
   if (campos.descricao.trim().length > DESCRICAO_MAX) {
@@ -164,8 +158,6 @@ export const useFormularioCriarRole = (
       dataSaida,
       horaSaida,
       ritmo,
-      photoFile: foto.arquivo,
-      capaHerdada: foto.urlHerdada,
       descricao,
     });
     setErros(errosAtuais);

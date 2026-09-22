@@ -89,6 +89,19 @@
   object-fit: cover;
 }
 
+.thumbPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--on-surface-variant);
+}
+
+.thumbPlaceholder .material-symbols-outlined {
+  font-size: 28px;
+}
+
 .thumbScrim {
   position: absolute;
   inset: 0;

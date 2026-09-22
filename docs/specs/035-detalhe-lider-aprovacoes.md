@@ -1,6 +1,6 @@
 # SPEC 035 — Detalhe do líder + acesso às aprovações (Meus Rolês)
 
-> **Status:** Proposta  
+> **Status:** Implementada  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — tela ao “acessar rolê” deslocada; deveria mostrar info do rolê + aprovações; avaliar remover fila dedicada  
@@ -8,7 +8,8 @@
 > **Padrões:** Next.js 15 App Router  
 > **Backend:** reutilizar `GET /roles/:id`, `GET /aprovacoes` (ou por role), PATCH decisão (SPEC 007)  
 > **Depende de:** SPEC 007 (fila), SPEC 017 / 021 / 028 (Meus Rolês + editar/cancelar), SPEC 005 (participar)  
-> **QA:** IDs **L1**, **L2** (L2 é decisão de produto — fechar antes do PR)
+> **QA:** IDs **L1**, **L2**  
+> **Decisão L2:** **Opção A** — manter `/aprovacoes` (inbox global) + detalhe por rolê em `/roles/[id]/gerenciar`
 
 ---
 
@@ -42,48 +43,46 @@ Corrigir a experiência do **líder** ao abrir um rolê que organiza:
 | `/aprovacoes` | Inbox global do líder (SPEC 007) — pedidos de **todos** os rolês |
 | `/meus-roles` | Garagem: próximos, liderança, editar/cancelar |
 | `/roles/[id]/participar` | Sheet do piloto (pedido / confirmado) — **não** é cockpit do líder |
-| Detalhe rico do líder | Pode estar incompleto ou reutilizar tela errada → “deslocado” |
+| `/roles/[id]/gerenciar` | Cockpit do líder: ficha do rolê + aprovações daquele rolê |
 
-Hipótese do bug L1: líder cai em rota pensada para piloto, ou CSS/padding do dock corta o bloco de aprovações.
+Hipótese do bug L1 (corrigida): líder caía em `/participar` (rota do piloto). Agora Meus Rolês / feed / convite apontam a `/gerenciar`; `/participar` redireciona o criador.
 
 ---
 
-## 4. Decisão de produto (L2) — escolher **uma**
+## 4. Decisão de produto (L2) — **Opção A** (implementada)
 
-### Opção A — Manter `/aprovacoes` + detalhe por rolê (recomendado se volume alto)
+### Opção A — Manter `/aprovacoes` + detalhe por rolê ✅
 
-- `/aprovacoes` continua atalho para “tudo pendente”.
-- Em Meus Rolês, card de rolê que **lidero** → `/roles/[id]/gerenciar` (ou equivalente) com ficha + aprovações **daquele** rolê.
-- Dock / header: badge de pendentes pode linkar à inbox global.
+- `/aprovacoes` continua atalho para “tudo pendente” (dock / banner).
+- Em Meus Rolês, card de rolê que **lidero** → `/roles/[id]/gerenciar` com ficha + aprovações **daquele** rolê.
+- Dock / header: badge de pendentes continua linkando à inbox global.
 
-### Opção B — Remover fila global; só Meus Rolês
+### Opção B — Remover fila global; só Meus Rolês (não escolhida)
 
 - Deprecar `/aprovacoes` (redirect → `/meus-roles` com filtro “como líder” / pill pendentes).
 - Remover entrada dedicada no shell se existir.
 - Aprovar só no detalhe do rolê.
 
-**Esta spec assume Opção A como default** se o produto não escolher B no kickoff. Se escolher B, o PR L2 inclui redirect + atualização da SPEC 007.
-
 ---
 
 ## 5. L1 — Conteúdo da tela de gerenciamento
 
-Rota sugerida: **`/roles/[id]/gerenciar`** (só criador/admin; senão 403 → redirect).
+Rota: **`/roles/[id]/gerenciar`** (só criador/admin; senão redirect para `/participar`).
 
 Blocos (coluna única, max-width 560px):
 
-1. Header: Voltar · título · (opcional) Compartilhar / Editar / Cancelar.
-2. Resumo do rolê: capa (ou placeholder 033), data/hora, ritmo, partida → destino, contagens (pendentes / confirmados).
+1. Header: Voltar · título · Compartilhar.
+2. Resumo do rolê: capa (ou placeholder 033), data/hora, ritmo, partida → destino, contagens (pendentes / confirmados); Editar / Cancelar se saída futura.
 3. Seção **Aguardando aprovação**: cards no padrão SPEC 007 (foto, apelido, moto, ritmo, Aceitar/Recusar).
 4. Seção **Confirmados** (colapsável): lista só leitura + link perfil público.
-5. Padding-bottom ≥ dock (SPEC 001).
+5. Padding-bottom via shell autenticado (SPEC 001).
 
-Reusar hooks/services de `aprovacoes/` filtrando por `roleId` — não duplicar lógica de PATCH.
+Reusa `aprovacoesService` + `useDecisaoPiloto` filtrando por `roleId`.
 
 ### Layout — anti-deslocamento
 
-- Evitar `transform` / `height: 100vh` conflitante com safe-area.
-- Toast acima do dock; CTAs com `min-height` 48px.
+- Sem `transform` / `height: 100vh` conflitante com safe-area.
+- Toast acima do dock (mesmo componente da SPEC 007); CTAs com `min-height` touch.
 - Testar 390×844 e 430×932.
 
 ---
@@ -92,11 +91,11 @@ Reusar hooks/services de `aprovacoes/` filtrando por `roleId` — não duplicar 
 
 ```
 Meus Rolês → card "Você é o líder" → /roles/{id}/gerenciar
-Aprovações (inbox) → toque no pedido → mesmo gerenciar OU decide inline (manter 007)
-Feed → não é entrada primária do líder para aprovar
+Aprovações (inbox) → decide inline (manter 007)
+Feed / convite (criador) → /roles/{id}/gerenciar
+/roles/{id}/participar (criador) → redirect /gerenciar
+Piloto comum → /roles/{id}/participar
 ```
-
-Piloto comum continua em `/roles/[id]/participar`.
 
 ---
 
@@ -104,15 +103,15 @@ Piloto comum continua em `/roles/[id]/participar`.
 
 ### L1
 
-- [ ] Líder abre o rolê e vê ficha + pedidos sem corte/overlap.
-- [ ] Aceitar/Recusar funciona igual à SPEC 007 (toast, remove card).
-- [ ] Não-líder não acessa a rota de gerenciar.
+- [x] Líder abre o rolê e vê ficha + pedidos sem corte/overlap.
+- [x] Aceitar/Recusar funciona igual à SPEC 007 (toast, remove card).
+- [x] Não-líder não acessa a rota de gerenciar.
 
 ### L2
 
-- [ ] Decisão A ou B documentada no PR.
-- [ ] Links do app apontam para a entrada correta.
-- [ ] Se B: `/aprovacoes` redireciona; SPEC 007 marcada como supersedida na navegação.
+- [x] Decisão A documentada (esta spec + PR).
+- [x] Links do app apontam para a entrada correta.
+- [ ] Se B: N/A — Opção A escolhida.
 
 ---
 

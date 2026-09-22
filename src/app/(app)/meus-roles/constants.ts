@@ -132,15 +132,13 @@ export const LABELS_TELEMETRIA = {
 } as const;
 
 export const hrefMeuRole = (item: MeuRoleItem): string => {
-  if (
-    item.status === "pendente" ||
-    item.status === "confirmado" ||
-    item.status === "lider"
-  ) {
-    // Líder também cai em /participar: lá estão telemetria + CTA “Aprovar Pilotos”.
+  // SPEC 035 Opção A — líder abre cockpit do rolê (ficha + aprovações).
+  if (item.status === "lider" || item.papel === "organizador") {
+    return `/roles/${item.roleId}/gerenciar`;
+  }
+  if (item.status === "pendente" || item.status === "confirmado") {
     return `/roles/${item.roleId}/participar`;
   }
-  if (item.papel === "organizador") return `/aprovacoes?role=${item.roleId}`;
   return `/roles/${item.roleId}/feedback`;
 };
 
@@ -170,9 +168,29 @@ export const confirmDesistir = (titulo: string): string =>
 export const confirmCancelar = (titulo: string): string =>
   `Deseja cancelar a solicitação para o rolê ${titulo}?`;
 
-export const confirmCancelarRole = (titulo: string): string =>
-  `Cancelar “${titulo}”? Os pilotos aceitos serão notificados e o rolê some do feed.`;
+export const confirmCancelarRole = (
+  titulo: string,
+  confirmados = 0,
+): string => {
+  if (confirmados > 0) {
+    const n = confirmados;
+    const quem =
+      n === 1
+        ? "1 piloto confirmado será notificado"
+        : `${n} pilotos confirmados serão notificados`;
+    return `Cancelar “${titulo}”? ${quem} e o rolê some do feed.`;
+  }
+  return `Cancelar “${titulo}”? O rolê some do feed. Não há pilotos confirmados para notificar.`;
+};
 
 export const ERRO_CANCELAR_ROLE = "Não foi possível cancelar o rolê.";
-export const TOAST_ROLE_CANCELADO = "Rolê cancelado.";
+
+export const toastRoleCancelado = (confirmados = 0): string => {
+  if (confirmados <= 0) return "Rolê cancelado.";
+  if (confirmados === 1) {
+    return "Rolê cancelado. 1 piloto confirmado será notificado.";
+  }
+  return `Rolê cancelado. ${confirmados} pilotos confirmados serão notificados.`;
+};
+
 export const TOAST_MEUS_ROLES_MS = 3500;

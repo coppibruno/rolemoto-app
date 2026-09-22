@@ -23,7 +23,11 @@ export const FundoDetalheRole = ({ detalhe }: Props) => {
       <div className={styles.capa}>
         {detalhe.fotoCapaUrl ? (
           <img src={detalhe.fotoCapaUrl} alt="" className={styles.capaImg} />
-        ) : null}
+        ) : (
+          <div className={styles.capaPlaceholder} aria-hidden>
+            <span className="material-symbols-outlined">two_wheeler</span>
+          </div>
+        )}
         <div className={styles.capaScrim} />
       </div>
 

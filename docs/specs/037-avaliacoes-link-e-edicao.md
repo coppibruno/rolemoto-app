@@ -1,6 +1,6 @@
 # SPEC 037 — Avaliações: link no feed + edição
 
-> **Status:** Proposta  
+> **Status:** Implementada  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — estrelas no feed sem link; não dá para editar avaliação  
@@ -106,16 +106,16 @@ Após edição, `notaMedia` exibida deve refletir o novo valor (refresh na próx
 
 ### A1
 
-- [ ] ★ no card Local (e Evento) navegam para listagem/avaliações.
-- [ ] Clique no restante do card não quebra (detalhe / Maps / favorito).
-- [ ] Local sem avaliações: selo ausente ou desabilitado (sem 404 confuso).
+- [x] ★ no card Local (e Evento) navegam para listagem/avaliações.
+- [x] Clique no restante do card não quebra (detalhe / Maps / favorito).
+- [x] Local sem avaliações: selo ausente ou desabilitado (sem 404 confuso).
 
 ### A2
 
-- [ ] PATCH autenticado atualiza doc.
-- [ ] Agregação correta após mudar nota e flag recomenda.
-- [ ] UI pré-preenche; segundo save não cria segundo doc.
-- [ ] 404 no PATCH se nunca avaliou; POST continua para primeira vez.
+- [x] PATCH autenticado atualiza doc.
+- [x] Agregação correta após mudar nota e flag recomenda.
+- [x] UI pré-preenche; segundo save não cria segundo doc.
+- [x] 404 no PATCH se nunca avaliou; POST continua para primeira vez.
 
 ---
 

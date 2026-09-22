@@ -75,6 +75,7 @@ export const LocalCard = ({ local }: Props) => {
             <SeloMediaAvaliacoes
               notaMedia={local.notaMedia ?? 0}
               totalAvaliacoes={local.totalAvaliacoes ?? 0}
+              href={`/locais/${local.id}/avaliacoes`}
             />
             <BotaoFavoritarLocal
               localId={local.id}

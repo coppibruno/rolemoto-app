@@ -16,9 +16,10 @@ import {
 /**
  * Avaliações de eventos.
  *
- * GET  /eventos/:id/avaliacoes
- * GET  /eventos/:id/avaliacao
- * POST /eventos/:id/avaliacoes
+ * GET   /eventos/:id/avaliacoes
+ * GET   /eventos/:id/avaliacao
+ * POST  /eventos/:id/avaliacoes
+ * PATCH /eventos/:id/avaliacao
  */
 export const avaliacaoEventoRouter = Router();
 
@@ -146,6 +147,61 @@ avaliacaoEventoRouter.post(
       res
         .status(201)
         .json(hidratarAvaliacaoEvento(criado, usuario ?? undefined));
+    } catch (error) {
+      responderErro(res, error);
+    }
+  },
+);
+
+avaliacaoEventoRouter.patch(
+  "/:id/avaliacao",
+  async (req: Request, res: Response) => {
+    try {
+      const uid = uidAutenticado(req, res);
+      if (!uid) {
+        return;
+      }
+
+      const validado = validarBodyAvaliacao(
+        (req.body ?? {}) as Record<string, unknown>,
+      );
+      if (!validado.ok) {
+        res.status(400).json({erro: validado.erro});
+        return;
+      }
+
+      const eventoId = param(req, "id");
+      const evento = await eventoRepository.buscarPorId(eventoId);
+      if (!evento) {
+        res.status(404).json({erro: "Evento não encontrado"});
+        return;
+      }
+
+      const inscricao = await usuarioEventoRepository.buscarPorUsuarioEEvento(
+        uid,
+        eventoId,
+      );
+      if (!inscricao) {
+        res.status(403).json({erro: "somente inscritos avaliam"});
+        return;
+      }
+      if (!eventoEncerrouParaAvaliacao(evento)) {
+        res.status(400).json({erro: "este evento ainda não encerrou"});
+        return;
+      }
+
+      const atualizado = await usuarioEventoFeedbackRepository.atualizar(
+        uid,
+        eventoId,
+        validado.dados,
+      );
+      if (!atualizado) {
+        res.status(404).json({erro: "Avaliação não encontrada"});
+        return;
+      }
+
+      const usuario = await usuarioRepository.buscarPorId(uid);
+      res.json(hidratarAvaliacaoEvento(atualizado, usuario ?? undefined));
     } catch (error) {
       responderErro(res, error);
     }

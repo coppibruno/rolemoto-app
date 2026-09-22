@@ -6,6 +6,7 @@ import {
   contarRolesFeed,
   filtrarEventosFeed,
   filtrarLocaisFeed,
+  roleIdsComVinculoUsuario,
 } from "../lib/feed-filtros";
 import { validarQueryRoles } from "../lib/roles-query";
 import { resolverIntervaloQuando } from "../lib/quando";
@@ -13,6 +14,7 @@ import {
   eventoRepository,
   localRepository,
   roleRepository,
+  usuarioRoleRepository,
 } from "../repositories";
 import type { ContagensFeed } from "../types/feed";
 
@@ -28,6 +30,12 @@ feedRouter.use(rateLimitAutenticado);
 
 feedRouter.get("/contagens", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({ erro: "Não autenticado" });
+      return;
+    }
+
     const query = validarQueryRoles(req);
     if ("erro" in query) {
       res.status(query.status).json({ erro: query.erro });
@@ -41,7 +49,7 @@ feedRouter.get("/contagens", async (req: Request, res: Response) => {
       raioKm: query.raioKm,
     };
 
-    const [roles, eventos, locais] = await Promise.all([
+    const [roles, eventos, locais, pedidosUsuario] = await Promise.all([
       roleRepository.listar({
         dataInicioIso: intervalo.dataInicioIso,
         dataFimIso: intervalo.dataFimIso,
@@ -52,10 +60,12 @@ feedRouter.get("/contagens", async (req: Request, res: Response) => {
         dataFimIso: intervalo.dataFimIso,
       }),
       localRepository.listar(),
+      usuarioRoleRepository.listarPorUsuario(uid),
     ]);
 
+    const vinculos = roleIdsComVinculoUsuario(pedidosUsuario);
     const contagens: ContagensFeed = {
-      roles: contarRolesFeed(roles, origem, query.q),
+      roles: contarRolesFeed(roles, origem, uid, vinculos, query.q),
       eventos: filtrarEventosFeed(eventos, origem, query.q).length,
       locais: filtrarLocaisFeed(locais, origem, query.q).length,
     };

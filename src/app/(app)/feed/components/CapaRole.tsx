@@ -62,7 +62,11 @@ export const CapaRole = ({
     <div className={styles.capa}>
       {fotoCapaUrl ? (
         <img src={fotoCapaUrl} alt="" className={styles.capaImg} />
-      ) : null}
+      ) : (
+        <div className={styles.capaPlaceholder} aria-hidden>
+          <span className="material-symbols-outlined">two_wheeler</span>
+        </div>
+      )}
       <div className={styles.capaScrim} />
       <div className={`${styles.badge} ${styles.badgeEsq}`}>
         <span className={`${styles.bolinhaBadge} ${classeBolinha(ritmo)} ${animacao}`} />

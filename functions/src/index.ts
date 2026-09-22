@@ -26,10 +26,10 @@
  * - /eventos → GET, POST
  * - /eventos/:id/inscricao → GET, POST, DELETE
  * - /eventos/:id/avaliacoes → GET, POST
- * - /eventos/:id/avaliacao → GET
+ * - /eventos/:id/avaliacao → GET, PATCH
  * - /locais  → GET, POST
  * - /locais/:id/avaliacoes → GET, POST
- * - /locais/:id/avaliacao → GET
+ * - /locais/:id/avaliacao → GET, PATCH
  * - /locais/:id/favorito → POST, DELETE
  * - /feed/contagens → GET
  *

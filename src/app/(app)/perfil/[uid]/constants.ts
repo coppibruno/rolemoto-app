@@ -7,6 +7,14 @@ import type {
 import type { AbaHistoricoPublico } from "@/types/perfil-publico";
 
 export const TOAST_LINK_MS = 2800;
+export const TOAST_LINK_COPIADO = "Link copiado";
+export const ERRO_SHARE = "Não foi possível compartilhar";
+
+export const tituloSharePerfil = (apelido: string): string =>
+  `Perfil · @${apelido} · Rolemoto`;
+
+export const textoSharePerfil = (apelido: string): string =>
+  `Olha o cockpit do @${apelido} no Rolemoto`;
 
 export type DefAbaHistoricoPublico = {
   id: AbaHistoricoPublico;

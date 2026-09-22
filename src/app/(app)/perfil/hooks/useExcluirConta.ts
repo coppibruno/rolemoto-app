@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { perfilService } from "../services/perfil.service";
@@ -9,6 +10,7 @@ const MENSAGEM_GENERICA = "Não foi possível excluir a conta. Tente de novo.";
 
 export const useExcluirConta = () => {
   const { logout } = useAuth();
+  const router = useRouter();
   const [aberto, setAberto] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -39,21 +41,25 @@ export const useExcluirConta = () => {
     setErro(null);
   }, []);
 
+  const encerrarSessao = async () => {
+    await logout();
+    router.replace("/login");
+  };
+
   const confirmar = async () => {
     if (excluindoRef.current) return;
     setExcluindo(true);
     setErro(null);
     try {
       await perfilService.excluir();
-      await logout();
+      await encerrarSessao();
     } catch (e) {
       console.error(e);
       if (e instanceof ApiError && e.status === 404) {
-        await logout();
+        await encerrarSessao();
         return;
       }
       setErro(e instanceof ApiError ? e.message : MENSAGEM_GENERICA);
-    } finally {
       setExcluindo(false);
     }
   };

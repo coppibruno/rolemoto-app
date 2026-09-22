@@ -30,6 +30,19 @@
   object-fit: cover;
 }
 
+.capaPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--on-surface-variant);
+}
+
+.capaPlaceholder .material-symbols-outlined {
+  font-size: 48px;
+}
+
 .capaScrim {
   position: absolute;
   inset: 0;

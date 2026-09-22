@@ -1,6 +1,6 @@
 # SPEC 039 — Exclusão de conta completa (Auth + dados)
 
-> **Status:** Proposta  
+> **Status:** Implementada  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — excluir conta só zera `users`; Auth permanece e o login cai em `/primeiro-acesso`  
@@ -103,11 +103,11 @@ Providers:
 
 ## 6. Checklist
 
-- [ ] `DELETE /perfil` remove usuário do Auth (Admin SDK).
-- [ ] Sessão atual encerra; refresh não volta autenticado.
-- [ ] Login com mesmas credenciais não reabre perfil antigo (uid/doc sumiram).
-- [ ] Fluxo feliz cai em `/login`, nunca em primeiro-acesso com dados fantasmas.
-- [ ] Idempotência: segundo DELETE (token já inválido) → 401.
+- [x] `DELETE /perfil` remove usuário do Auth (Admin SDK).
+- [x] Sessão atual encerra; refresh não volta autenticado.
+- [x] Login com mesmas credenciais não reabre perfil antigo (uid/doc sumiram).
+- [x] Fluxo feliz cai em `/login`, nunca em primeiro-acesso com dados fantasmas.
+- [x] Idempotência: segundo DELETE (token já inválido) → 401.
 
 ---
 

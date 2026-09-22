@@ -59,14 +59,14 @@ export const useFotoCapa = () => {
     if (inputRef.current) inputRef.current.value = "";
   }, []);
 
-  const enviar = (uid: string) => {
+  const enviar = (uid: string): Promise<string> => {
     if (arquivo) {
       return uploadFotoCapaRole(uid, arquivo);
     }
     if (urlHerdada && previewUrl) {
       return Promise.resolve(previewUrl);
     }
-    return Promise.reject(new Error("Inclua a foto de capa do rolê"));
+    return Promise.resolve("");
   };
 
   return {

@@ -44,7 +44,8 @@ export const ModalExcluirConta = ({
         <p id="descricao-excluir-conta" className={styles.corpoExcluir}>
           Esta ação é permanente e irreversível. Todos os seus dados de piloto,
           histórico de rolês, motos cadastradas e reputação na comunidade serão
-          apagados definitivamente.
+          apagados definitivamente. Não será possível entrar de novo com esta
+          conta.
         </p>
 
         <div className={styles.faixaShield}>

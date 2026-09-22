@@ -33,7 +33,9 @@ export const CardDestaqueRole = ({
             className={styles.heroImg}
           />
         ) : (
-          <div className={styles.heroPlaceholder} />
+          <div className={styles.heroPlaceholder} aria-hidden>
+            <span className="material-symbols-outlined">two_wheeler</span>
+          </div>
         )}
         <div className={styles.heroScrim} />
         <span className={lider ? styles.badgeLider : styles.badgeConfirmada}>

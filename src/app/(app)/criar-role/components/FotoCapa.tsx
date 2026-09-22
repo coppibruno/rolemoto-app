@@ -34,12 +34,15 @@ export const FotoCapa = ({
 
   return (
     <div className={`${styles.cartao} ${erro ? styles.cartaoErro : ""}`}>
-      <span className={styles.label}>
-        <span className="material-symbols-outlined" aria-hidden>
-          add_photo_alternate
+      <div className={styles.labelLinha}>
+        <span className={styles.label}>
+          <span className="material-symbols-outlined" aria-hidden>
+            add_photo_alternate
+          </span>
+          Foto de Capa do Rolê
         </span>
-        Foto de Capa do Rolê
-      </span>
+        <span className={styles.hintOpcional}>opcional</span>
+      </div>
 
       {previewUrl ? (
         <div className={styles.previewCapa}>
@@ -57,7 +60,7 @@ export const FotoCapa = ({
               className={styles.botaoRemoverCapa}
               onClick={onRemover}
               disabled={desabilitado}
-              aria-label="Remover foto de capa"
+              aria-label="Remover foto"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
@@ -69,7 +72,7 @@ export const FotoCapa = ({
           className={styles.dropzone}
           onClick={onAbrirSeletor}
           disabled={desabilitado}
-          aria-label="Anexar foto de capa do rolê"
+          aria-label="Anexar foto de capa do rolê (opcional)"
           aria-invalid={Boolean(erro)}
           aria-describedby={erro ? erroId : undefined}
         >

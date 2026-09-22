@@ -150,10 +150,8 @@ export const resolverIntervaloQuando = (
   }
 
   if (quando === "proximos_roles") {
-    const limiteDia = somarDiasYmd(hoje, 30);
     return {
       dataInicioIso: maxIso(agoraIso, inicioDoDiaSp(hoje)),
-      dataFimIso: fimDoDiaSp(limiteDia),
     };
   }
 

@@ -31,10 +31,10 @@ export const EstadoOrganizador = ({
         Não é possível solicitar vaga na própria saída.
       </p>
       <Link
-        href={`/aprovacoes?role=${roleId}`}
+        href={`/roles/${roleId}/gerenciar`}
         className={styles.botaoEstadoPrimario}
       >
-        Aprovar Pilotos
+        Gerenciar rolê
       </Link>
       {saidaFutura ? (
         <div className={styles.acoesOrganizador}>

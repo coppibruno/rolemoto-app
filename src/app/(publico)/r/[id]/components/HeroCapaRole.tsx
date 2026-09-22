@@ -32,7 +32,11 @@ export const HeroCapaRole = ({
           alt={`Capa do rolê ${titulo}`}
           className={styles.heroImg}
         />
-      ) : null}
+      ) : (
+        <div className={styles.heroPlaceholder} aria-hidden>
+          <span className="material-symbols-outlined">two_wheeler</span>
+        </div>
+      )}
       <div className={styles.heroScrim} />
       <div className={styles.heroBadges}>
         <span className={`${styles.badge} ${styles.badgeKm}`}>

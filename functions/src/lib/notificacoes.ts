@@ -28,24 +28,56 @@ const CODIGOS_TOKEN_INVALIDO = new Set([
   "messaging/invalid-registration-token",
 ]);
 
-const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
+/** Resultado do envio — DELETE/cancelamento audita sem falhar o domínio. */
+export type ResultadoPush = {
+  uid: string;
+  tokens: number;
+  sucesso: number;
+  falha: number;
+  erros: string[];
+  ignoradoEmulator: boolean;
+};
+
+const resultadoVazio = (
+  uid: string,
+  parcial: Partial<ResultadoPush> = {},
+): ResultadoPush => ({
+  uid,
+  tokens: 0,
+  sucesso: 0,
+  falha: 0,
+  erros: [],
+  ignoradoEmulator: false,
+  ...parcial,
+});
+
+const enviar = async (
+  uid: string,
+  payload: PayloadPush,
+): Promise<ResultadoPush> => {
   const contexto = {
     uid,
     tipo: payload.tipo,
     roleId: payload.roleId,
   };
 
-  // Emulator aponta ao FCM/Firestore de produção — não dispara push real em local.
-  if (process.env.FUNCTIONS_EMULATOR === "true") {
-    log.info("Push", "Ignorado no emulator", contexto);
-    return;
-  }
-
   try {
     const tokens = await dispositivoRepository.listarTokensPorUid(uid);
     if (tokens.length === 0) {
-      log.warn("Push", "Usuário sem tokens FCM", contexto);
-      return;
+      log.warn("Push", "0 tokens FCM — push não enviado", contexto);
+      return resultadoVazio(uid);
+    }
+
+    // Emulator aponta ao FCM de produção — lista tokens p/ diagnóstico, sem disparar.
+    if (process.env.FUNCTIONS_EMULATOR === "true") {
+      log.info("Push", "Ignorado no emulator", {
+        ...contexto,
+        tokens: tokens.length,
+      });
+      return resultadoVazio(uid, {
+        tokens: tokens.length,
+        ignoradoEmulator: true,
+      });
     }
 
     log.info("Push", "Iniciando envio", {
@@ -77,16 +109,22 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
     });
 
     const invalidos: string[] = [];
+    const erros: string[] = [];
     resposta.responses.forEach((resultado, indice) => {
       if (resultado.success) {
         return;
       }
-      const codigo = resultado.error?.code ?? "";
+      const codigo = resultado.error?.code ?? "desconhecido";
+      erros.push(codigo);
       if (CODIGOS_TOKEN_INVALIDO.has(codigo)) {
         invalidos.push(tokens[indice]);
+        log.warn("Push", "Token inválido removido", {
+          ...contexto,
+          codigo,
+        });
         return;
       }
-      log.error("Push", "Falha em token", {
+      log.warn("Push", "Falha FCM em token", {
         ...contexto,
         codigo,
         mensagem: resultado.error?.message,
@@ -110,8 +148,21 @@ const enviar = async (uid: string, payload: PayloadPush): Promise<void> => {
       falha: resposta.failureCount,
       tokensRemovidos: invalidos.length,
     });
+
+    return {
+      uid,
+      tokens: tokens.length,
+      sucesso: resposta.successCount,
+      falha: resposta.failureCount,
+      erros,
+      ignoradoEmulator: false,
+    };
   } catch (error) {
     log.error("Push", "Erro ao enviar", {...contexto, ...erroDe(error)});
+    return resultadoVazio(uid, {
+      falha: 1,
+      erros: [error instanceof Error ? error.message : "erro_desconhecido"],
+    });
   }
 };
 
@@ -119,8 +170,8 @@ export const notificarPedidoVaga = async (
   criadorId: string,
   roleId: string,
   titulo: string,
-): Promise<void> => {
-  await enviar(criadorId, {
+): Promise<ResultadoPush> => {
+  return enviar(criadorId, {
     tipo: "pedido_vaga",
     title: COPY.pedido_vaga,
     body: titulo,
@@ -133,8 +184,8 @@ export const notificarAceite = async (
   usuarioId: string,
   roleId: string,
   titulo: string,
-): Promise<void> => {
-  await enviar(usuarioId, {
+): Promise<ResultadoPush> => {
+  return enviar(usuarioId, {
     tipo: "aceite_vaga",
     title: COPY.aceite_vaga,
     body: titulo,
@@ -147,8 +198,8 @@ export const notificarLembrete = async (
   userId: string,
   roleId: string,
   titulo: string,
-): Promise<void> => {
-  await enviar(userId, {
+): Promise<ResultadoPush> => {
+  return enviar(userId, {
     tipo: "lembrete_role",
     title: COPY.lembrete_role,
     body: titulo,
@@ -157,12 +208,13 @@ export const notificarLembrete = async (
   });
 };
 
+/** Push aos confirmados — não filtra `usersrole.notificar` (aceite implica interesse). */
 export const notificarCancelamentoRole = async (
   usuarioId: string,
   roleId: string,
   titulo: string,
-): Promise<void> => {
-  await enviar(usuarioId, {
+): Promise<ResultadoPush> => {
+  return enviar(usuarioId, {
     tipo: "cancelamento_role",
     title: "Rolê cancelado",
     body: `${titulo} foi cancelado pelo organizador.`,

@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
-import {autenticar} from "../middleware/auth";
+import {adminAuth} from "../lib/firebase-admin";
 import {erroDe, log} from "../lib/log";
+import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
@@ -266,18 +267,32 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       return;
     }
 
+    // Auth primeiro: invalida a sessão; se falhar, mantém Firestore intacto.
+    try {
+      await adminAuth.deleteUser(uid);
+    } catch (error) {
+      const codigo = (error as {code?: string}).code;
+      if (codigo !== "auth/user-not-found") {
+        log.error("Perfil", "Falha ao remover Auth", {uid, ...erroDe(error)});
+        res.status(500).json({erro: "Erro interno"});
+        return;
+      }
+      log.warn("Perfil", "Auth já inexistente ao excluir conta", {uid});
+    }
+
     try {
       await dispositivoRepository.removerPorUid(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover dispositivos", {uid, ...erroDe(error)});
     }
 
-    const removido = await usuarioRepository.remover(uid);
-    if (!removido) {
-      res.status(404).json({erro: "Perfil não encontrado"});
-      return;
+    try {
+      await usuarioRepository.remover(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover perfil Firestore", {uid, ...erroDe(error)});
     }
-    log.info("Perfil", "Perfil removido", {uid});
+
+    log.info("Perfil", "Conta removida", {uid});
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

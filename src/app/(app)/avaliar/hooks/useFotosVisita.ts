@@ -18,12 +18,19 @@ export type FotoPendente = {
 
 export const useFotosVisita = () => {
   const [fotos, setFotos] = useState<FotoPendente[]>([]);
+  const [urlsRemotas, setUrlsRemotas] = useState<string[]>([]);
   const [erroFoto, setErroFoto] = useState<string | null>(null);
   const [enviandoFotos, setEnviandoFotos] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const totalFotos = fotos.length + urlsRemotas.length;
+
   const liberarPreview = useCallback((url: string) => {
     URL.revokeObjectURL(url);
+  }, []);
+
+  const definirRemotas = useCallback((urls: string[]) => {
+    setUrlsRemotas(urls.filter(Boolean).slice(0, LIMITE_FOTOS));
   }, []);
 
   const anexar = useCallback(
@@ -32,7 +39,7 @@ export const useFotosVisita = () => {
       setErroFoto(null);
 
       setFotos((atual) => {
-        const vagas = LIMITE_FOTOS - atual.length;
+        const vagas = LIMITE_FOTOS - urlsRemotas.length - atual.length;
         if (vagas <= 0) return atual;
 
         const proximas: FotoPendente[] = [];
@@ -55,7 +62,7 @@ export const useFotosVisita = () => {
         return [...atual, ...proximas];
       });
     },
-    [],
+    [urlsRemotas.length],
   );
 
   const remover = useCallback(
@@ -69,6 +76,10 @@ export const useFotosVisita = () => {
     [liberarPreview],
   );
 
+  const removerRemota = useCallback((url: string) => {
+    setUrlsRemotas((atual) => atual.filter((item) => item !== url));
+  }, []);
+
   const abrirSeletor = useCallback(() => {
     inputRef.current?.click();
   }, []);
@@ -79,20 +90,20 @@ export const useFotosVisita = () => {
       tipo: TipoAlvoAvaliacao,
       alvoId: string,
     ): Promise<string[]> => {
-      if (fotos.length === 0) return [];
+      if (fotos.length === 0) return [...urlsRemotas];
       setEnviandoFotos(true);
       try {
-        const urls: string[] = [];
+        const urls: string[] = [...urlsRemotas];
         for (const foto of fotos) {
           const url = await uploadFotoAvaliacao(uid, tipo, alvoId, foto.file);
           urls.push(url);
         }
-        return urls;
+        return urls.slice(0, LIMITE_FOTOS);
       } finally {
         setEnviandoFotos(false);
       }
     },
-    [fotos],
+    [fotos, urlsRemotas],
   );
 
   const limpar = useCallback(() => {
@@ -100,18 +111,22 @@ export const useFotosVisita = () => {
       for (const foto of atual) liberarPreview(foto.previewUrl);
       return [];
     });
+    setUrlsRemotas([]);
   }, [liberarPreview]);
 
   return {
     fotos,
+    urlsRemotas,
+    definirRemotas,
     erroFoto,
     enviandoFotos,
     inputRef,
     anexar,
     remover,
+    removerRemota,
     abrirSeletor,
     uploadTodas,
     limpar,
-    podeAnexar: fotos.length < LIMITE_FOTOS,
+    podeAnexar: totalFotos < LIMITE_FOTOS,
   };
 };

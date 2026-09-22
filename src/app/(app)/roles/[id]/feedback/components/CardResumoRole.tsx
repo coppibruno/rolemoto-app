@@ -21,7 +21,11 @@ export const CardResumoRole = ({ detalhe }: Props) => {
             alt=""
             className={styles.thumbImg}
           />
-        ) : null}
+        ) : (
+          <div className={styles.thumbPlaceholder} aria-hidden>
+            <span className="material-symbols-outlined">two_wheeler</span>
+          </div>
+        )}
         <div className={styles.thumbScrim} />
         <span className={styles.pillKm}>{detalhe.distanciaKm} KM</span>
       </div>

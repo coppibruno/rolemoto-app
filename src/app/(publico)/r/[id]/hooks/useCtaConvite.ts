@@ -29,7 +29,7 @@ export const useCtaConvite = (role: Pick<RolePublico, "id" | "dataHoraSaida" | "
       return;
     }
     if (souCriador) {
-      router.push(`/aprovacoes?role=${role.id}`);
+      router.push(`/roles/${role.id}/gerenciar`);
       return;
     }
     void pedirPermissaoERegistrar();

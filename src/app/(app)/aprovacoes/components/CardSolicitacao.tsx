@@ -13,6 +13,8 @@ type Props = {
   decidindo: boolean;
   saindo: "direita" | "esquerda" | null;
   onDecidir: (item: SolicitacaoLider, decisao: DecisaoPiloto) => void;
+  /** Na tela por rolê o contexto já está no cabeçalho. */
+  ocultarFaixa?: boolean;
 };
 
 const classeSaindo = (saindo: Props["saindo"]) => {
@@ -26,10 +28,11 @@ export const CardSolicitacao = ({
   decidindo,
   saindo,
   onDecidir,
+  ocultarFaixa = false,
 }: Props) => {
   return (
     <article className={`${styles.card} ${classeSaindo(saindo)}`}>
-      <FaixaRoleCard role={item.role} />
+      {ocultarFaixa ? null : <FaixaRoleCard role={item.role} />}
       <IdentidadePiloto usuario={item.usuario} />
       <BadgePilotagem pilotagem={item.usuario.pilotagem} />
       <AlertaRitmo

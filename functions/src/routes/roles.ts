@@ -16,6 +16,10 @@ import {
 } from "../lib/lembretes";
 import {log} from "../lib/log";
 import {notificarCancelamentoRole} from "../lib/notificacoes";
+import {
+  filtrarRolesFeedDescoberta,
+  roleIdsComVinculoUsuario,
+} from "../lib/feed-filtros";
 import {horaSaoPaulo, resolverIntervaloQuando} from "../lib/quando";
 import {validarQueryRoles} from "../lib/roles-query";
 import {
@@ -107,21 +111,6 @@ const parseLocalizacao = (valor: unknown): Localizacao | null => {
   };
 };
 
-const textoContem = (haystack: string, needle: string): boolean =>
-  haystack.toLowerCase().includes(needle);
-
-const bateBusca = (role: Role, q: string): boolean => {
-  const termo = q.toLowerCase();
-  return (
-    textoContem(role.titulo, termo) ||
-    textoContem(role.descricao, termo) ||
-    textoContem(role.localSaida.endereco, termo) ||
-    textoContem(role.destinoFinal.endereco, termo) ||
-    textoContem(role.localSaida.nome, termo) ||
-    textoContem(role.destinoFinal.nome, termo)
-  );
-};
-
 const enriquecerCriadores = async (
   roles: Role[],
 ): Promise<Map<string, RoleCriadorResumo>> => {
@@ -192,12 +181,42 @@ const paraDetalhe = async (
   };
 };
 
+const isUrlHttp = (valor: string): boolean => {
+  if (valor.length > 500) {
+    return false;
+  }
+  try {
+    const url = new URL(valor);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+const parseFotoCapaUrl = (
+  bruto: unknown,
+): {ok: true; valor: string} | {ok: false; erro: string} => {
+  if (bruto === undefined || bruto === null) {
+    return {ok: true, valor: ""};
+  }
+  if (typeof bruto !== "string") {
+    return {ok: false, erro: "fotoCapaUrl inválida"};
+  }
+  const limpa = bruto.trim();
+  if (!limpa) {
+    return {ok: true, valor: ""};
+  }
+  if (!isUrlHttp(limpa)) {
+    return {ok: false, erro: "fotoCapaUrl inválida"};
+  }
+  return {ok: true, valor: limpa};
+};
+
 const validarBodyCriacao = (
   body: Record<string, unknown>,
 ): {ok: true; dados: RolePublicacao} | {ok: false; erro: string} => {
   const titulo = body.titulo;
   const descricaoBruta = body.descricao;
-  const fotoCapaUrl = body.fotoCapaUrl;
   const ritmo = body.ritmo;
   const dataHoraSaida = body.dataHoraSaida;
   const localSaida = body.localSaida;
@@ -219,8 +238,9 @@ const validarBodyCriacao = (
     return {ok: false, erro: "descricao inválida"};
   }
 
-  if (typeof fotoCapaUrl !== "string" || !fotoCapaUrl.trim()) {
-    return {ok: false, erro: "fotoCapaUrl é obrigatória"};
+  const fotoCapa = parseFotoCapaUrl(body.fotoCapaUrl);
+  if (!fotoCapa.ok) {
+    return fotoCapa;
   }
 
   if (!isRitmo(ritmo)) {
@@ -261,7 +281,7 @@ const validarBodyCriacao = (
     dados: {
       titulo: titulo.trim(),
       descricao,
-      fotoCapaUrl: fotoCapaUrl.trim(),
+      fotoCapaUrl: fotoCapa.valor,
       ritmo,
       dataHoraSaida,
       localSaida: localSaidaOk,
@@ -272,6 +292,12 @@ const validarBodyCriacao = (
 
 rolesRouter.get("/", async (req: Request, res: Response) => {
   try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
     const query = validarQueryRoles(req);
     if ("erro" in query) {
       res.status(query.status).json({erro: query.erro});
@@ -279,27 +305,24 @@ rolesRouter.get("/", async (req: Request, res: Response) => {
     }
 
     const intervalo = resolverIntervaloQuando(query.quando, query.data);
-    const listados = await roleRepository.listar({
-      dataInicioIso: intervalo.dataInicioIso,
-      dataFimIso: intervalo.dataFimIso,
-      ritmo: query.ritmo,
-    });
+    const [listados, pedidosUsuario] = await Promise.all([
+      roleRepository.listar({
+        dataInicioIso: intervalo.dataInicioIso,
+        dataFimIso: intervalo.dataFimIso,
+        ritmo: query.ritmo,
+      }),
+      usuarioRoleRepository.listarPorUsuario(uid),
+    ]);
 
-    const filtrados = listados.filter((role) => {
-      const distancia = haversineKm(
-        query.lat,
-        query.lng,
-        role.localSaida.lat,
-        role.localSaida.lng,
-      );
-      if (query.raioKm !== undefined && distancia > query.raioKm) {
-        return false;
-      }
-      if (query.q && !bateBusca(role, query.q)) {
-        return false;
-      }
-      return true;
-    });
+    const origem = {lat: query.lat, lng: query.lng, raioKm: query.raioKm};
+    const vinculos = roleIdsComVinculoUsuario(pedidosUsuario);
+    const filtrados = filtrarRolesFeedDescoberta(
+      listados,
+      origem,
+      uid,
+      vinculos,
+      query.q,
+    );
 
     filtrados.sort((a, b) => a.dataHoraSaida.localeCompare(b.dataHoraSaida));
 
@@ -525,14 +548,36 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
     const userIds = aceitos.map((p) => p.usuarioId);
     await cancelarLembretesDoRole(id, userIds, existente.criadorId);
 
-    const notificar = aceitos
+    // Confirmados (aceito === true), sem filtrar `notificar` — o rolê some.
+    const aNotificar = aceitos
       .map((p) => p.usuarioId)
       .filter((uid) => uid && uid !== existente.criadorId);
-    await Promise.all(
-      notificar.map((uid) =>
+    log.info("Role", "Cancelamento — notificando confirmados", {
+      roleId: id,
+      confirmados: aceitos.length,
+      aNotificar,
+    });
+
+    const resultadosPush = await Promise.all(
+      aNotificar.map((uid) =>
         notificarCancelamentoRole(uid, id, existente.titulo),
       ),
     );
+    const semTokens = resultadosPush
+      .filter((r) => r.tokens === 0)
+      .map((r) => r.uid);
+    const comErroFcm = resultadosPush
+      .filter((r) => r.falha > 0)
+      .map((r) => ({uid: r.uid, erros: r.erros}));
+    log.info("Role", "Cancelamento — resultado push", {
+      roleId: id,
+      uidsNotificados: aNotificar,
+      tokensEncontrados: resultadosPush.reduce((acc, r) => acc + r.tokens, 0),
+      enviosOk: resultadosPush.reduce((acc, r) => acc + r.sucesso, 0),
+      semTokens,
+      comErroFcm,
+      ignoradoEmulator: resultadosPush.some((r) => r.ignoradoEmulator),
+    });
 
     const vinculosRemovidos = await usuarioRoleRepository.removerPorRoleId(id);
     await roleRepository.remover(id);
@@ -541,6 +586,7 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
       criadorId: existente.criadorId,
       lembretesCancelados: userIds.length + 1,
       vinculosRemovidos,
+      confirmadosNotificados: aNotificar.length,
     });
     res.status(204).send();
   } catch (error) {

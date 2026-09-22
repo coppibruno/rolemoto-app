@@ -9,14 +9,16 @@ import styles from "../aprovacoes.module.css";
 
 type Props = {
   item: SolicitacaoLider;
+  /** Na tela por rolê o contexto já está no cabeçalho. */
+  ocultarFaixa?: boolean;
 };
 
-export const CardConfirmado = ({ item }: Props) => {
+export const CardConfirmado = ({ item, ocultarFaixa = false }: Props) => {
   const aceitoEm = item.participacao.aceitoEm;
 
   return (
     <article className={styles.card}>
-      <FaixaRoleCard role={item.role} />
+      {ocultarFaixa ? null : <FaixaRoleCard role={item.role} />}
       <IdentidadePiloto usuario={item.usuario} />
       <BadgePilotagem pilotagem={item.usuario.pilotagem} />
       <span className={styles.badgeNaGrade}>

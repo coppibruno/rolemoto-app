@@ -7,6 +7,7 @@ import {
 } from "../../lib/avaliacao-experiencia";
 import {firestore} from "../../lib/firebase-admin";
 import type {
+  AvaliacaoExperienciaCampos,
   AvaliacaoExperienciaCreate,
   UsuarioLocalFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
@@ -154,5 +155,63 @@ implements UsuarioLocalFeedbackRepository {
 
     const criado = await this.buscarPorId(id);
     return criado as UsuarioLocalFeedbackDoc;
+  }
+
+  async atualizar(
+    usuarioId: string,
+    localId: string,
+    dados: AvaliacaoExperienciaCampos,
+  ): Promise<UsuarioLocalFeedbackDoc | null> {
+    const id = idFeedbackAlvo(usuarioId, localId);
+    const feedbackRef = firestore.collection(COLECAO).doc(id);
+    const localRef = firestore.collection(COLECAO_LOCAIS).doc(localId);
+
+    const resultado = await firestore.runTransaction(async (tx) => {
+      const feedbackSnap = await tx.get(feedbackRef);
+      if (!feedbackSnap.exists) {
+        return null;
+      }
+
+      const localSnap = await tx.get(localRef);
+      if (!localSnap.exists) {
+        throw new Error("ALVO_AUSENTE");
+      }
+
+      const anterior = feedbackSnap.data() ?? {};
+      const notaAnterior = Number(anterior.nota ?? 0);
+      const recAnterior = Boolean(anterior.recomendaComboio);
+
+      const localData = localSnap.data() ?? {};
+      const total = Number(localData.totalAvaliacoes ?? 0);
+      const soma =
+        Number(localData.somaNotas ?? 0) + (dados.nota - notaAnterior);
+      const recs =
+        Number(localData.recomendacoesComboio ?? 0) +
+        (dados.recomendaComboio ? 1 : 0) -
+        (recAnterior ? 1 : 0);
+
+      tx.update(feedbackRef, {
+        nota: dados.nota,
+        comentario: dados.comentario,
+        fotosUrls: dados.fotosUrls,
+        recomendaComboio: dados.recomendaComboio,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      tx.update(localRef, {
+        somaNotas: soma,
+        recomendacoesComboio: recs,
+        notaMedia: arredondarNotaMedia(soma, total),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return id;
+    });
+
+    if (resultado === null) {
+      return null;
+    }
+
+    return this.buscarPorId(resultado);
   }
 }

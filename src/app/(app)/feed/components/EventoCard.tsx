@@ -43,6 +43,7 @@ export const EventoCard = ({ evento }: Props) => {
             <SeloMediaAvaliacoes
               notaMedia={evento.notaMedia ?? 0}
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}
+              href={`/eventos/${evento.id}/avaliacoes`}
             />
           </div>
           <h3 className={styles.cardEventoTitulo}>{evento.titulo}</h3>

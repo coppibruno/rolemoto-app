@@ -10,7 +10,6 @@ import { useAbaTipoGaragem } from "../hooks/useAbaTipoGaragem";
 import { useMeusEventosGaragem } from "../hooks/useMeusEventosGaragem";
 import { useMeusLocaisGaragem } from "../hooks/useMeusLocaisGaragem";
 import { useFiltroAvaliacaoGaragem } from "../hooks/useFiltroAvaliacaoGaragem";
-import { TOAST_ROLE_CANCELADO } from "../constants";
 import { AbasMeusRoles } from "./AbasMeusRoles";
 import { AbasTipoGaragem } from "./AbasTipoGaragem";
 import { CabecalhoMeusRoles } from "./CabecalhoMeusRoles";
@@ -198,7 +197,7 @@ export const TelaMeusRoles = () => {
       ) : null}
       <ToastMeusRoles
         visivel={cancelarRole.toast}
-        mensagem={TOAST_ROLE_CANCELADO}
+        mensagem={cancelarRole.toastMensagem}
         duracaoMs={cancelarRole.toastMs}
         onFechar={cancelarRole.fecharToast}
       />

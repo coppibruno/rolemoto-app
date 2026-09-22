@@ -1,4 +1,5 @@
 import type {
+  AvaliacaoExperienciaCampos,
   AvaliacaoExperienciaCreate,
   UsuarioEventoFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
@@ -20,4 +21,9 @@ export interface UsuarioEventoFeedbackRepository {
   criar(
     dados: AvaliacaoExperienciaCreate,
   ): Promise<UsuarioEventoFeedbackDoc | "conflito">;
+  atualizar(
+    usuarioId: string,
+    eventoId: string,
+    dados: AvaliacaoExperienciaCampos,
+  ): Promise<UsuarioEventoFeedbackDoc | null>;
 }

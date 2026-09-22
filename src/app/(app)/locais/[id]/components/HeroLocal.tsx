@@ -55,8 +55,9 @@ export const HeroLocal = ({ local }: Props) => {
           <SeloMediaAvaliacoes
             notaMedia={local.notaMedia ?? 0}
             totalAvaliacoes={local.totalAvaliacoes ?? 0}
+            href={`/locais/${local.id}/avaliacoes`}
           />
-          <Link href={`/locais/${local.id}/avaliar`} className={styles.linkReviews}>
+          <Link href={`/locais/${local.id}/avaliacoes`} className={styles.linkReviews}>
             {CTA_VER_REVIEWS}
             <span className="material-symbols-outlined" aria-hidden>
               chevron_right

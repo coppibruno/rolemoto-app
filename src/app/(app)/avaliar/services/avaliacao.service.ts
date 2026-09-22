@@ -44,4 +44,14 @@ export const avaliacaoService = {
       method: "POST",
       body: JSON.stringify(dados),
     }),
+
+  atualizar: (
+    tipo: TipoAlvoAvaliacao,
+    id: string,
+    dados: AvaliacaoCreate,
+  ) =>
+    api<AvaliacaoExperiencia>(`${base(tipo, id)}/avaliacao`, {
+      method: "PATCH",
+      body: JSON.stringify(dados),
+    }),
 };

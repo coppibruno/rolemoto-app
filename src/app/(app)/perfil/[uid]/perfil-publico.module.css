@@ -2,8 +2,30 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 8px var(--gutter-md) 96px;
+  padding: 0 var(--gutter-md) 12px;
   min-height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.marcaShell {
+  margin: 0 calc(-1 * var(--gutter-md));
+}
+
+.cabecalhoFaixa {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--gutter-md));
+  padding: 8px var(--gutter-md);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .cabecalho {
@@ -12,6 +34,50 @@
   justify-content: space-between;
   padding-top: 8px;
   gap: 8px;
+}
+
+.cabecalhoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.avatarVisitanteLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex-shrink: 0;
+  border-radius: 9999px;
+  text-decoration: none;
+}
+
+.avatarVisitante {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  object-fit: cover;
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.3);
+  outline: 2px solid color-mix(in srgb, var(--primary-container) 60%, transparent);
+}
+
+.avatarVisitantePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  color: var(--on-surface-variant);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.2);
+  outline: 2px solid color-mix(in srgb, var(--primary-container) 40%, transparent);
+}
+
+.avatarVisitantePlaceholder .material-symbols-outlined {
+  font-size: 22px;
 }
 
 .botaoIcone {
@@ -214,6 +280,14 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+  min-width: 0;
+}
+
+.garagemTextos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
 }
 
 .motoNome {
@@ -224,6 +298,56 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--on-surface);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.divisorGaragem {
+  height: 1px;
+  width: 100%;
+  background: color-mix(in srgb, var(--surface-variant) 40%, transparent);
+}
+
+.chipsTipoMoto {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.chipTipoMoto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 48px;
+  padding: 8px 4px;
+  border-radius: 0.5rem;
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.chipTipoMoto .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--on-surface-variant);
+}
+
+.chipTipoMotoAtivo {
+  opacity: 1;
+  background: var(--primary-container);
+  color: var(--on-primary);
+  box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
+}
+
+.chipTipoMotoAtivo .material-symbols-outlined {
+  color: var(--on-primary);
 }
 
 .badgeTipo {
@@ -360,6 +484,12 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+  min-width: 0;
+}
+
+.cardHistoricoTopo > div:first-child {
+  min-width: 0;
+  flex: 1;
 }
 
 .cardHistoricoTitulo {
@@ -370,6 +500,8 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--on-surface);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .cardHistoricoData {
@@ -401,6 +533,7 @@
 
 .cardHistoricoMeta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;

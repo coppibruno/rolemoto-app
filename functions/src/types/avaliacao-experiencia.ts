@@ -56,6 +56,14 @@ export type AvaliacaoExperienciaCreate = {
   recomendaComboio: boolean;
 };
 
+/** Campos editáveis via PATCH (mesma validação do POST). */
+export type AvaliacaoExperienciaCampos = {
+  nota: number;
+  comentario: string;
+  fotosUrls: string[];
+  recomendaComboio: boolean;
+};
+
 export type ResumoAvaliacoesAlvo = {
   notaMedia: number;
   totalAvaliacoes: number;

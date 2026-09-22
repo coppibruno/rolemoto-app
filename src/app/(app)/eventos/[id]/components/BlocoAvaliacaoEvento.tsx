@@ -28,6 +28,7 @@ export const BlocoAvaliacaoEvento = ({ evento }: Props) => {
         <SeloMediaAvaliacoes
           notaMedia={evento.notaMedia ?? 0}
           totalAvaliacoes={evento.totalAvaliacoes ?? 0}
+          href={`/eventos/${evento.id}/avaliacoes`}
         />
       ) : null}
       {temComboio ? (

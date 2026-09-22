@@ -1,6 +1,6 @@
 # SPEC 038 — Feed: ocultar rolês da fila + filtro “Próximos”
 
-> **Status:** Proposta  
+> **Status:** Implementado  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** backlog — rolê já na fila reaparece no feed; “próximos rolês” não traz tudo dali pra frente  

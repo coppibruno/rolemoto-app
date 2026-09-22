@@ -14,9 +14,10 @@ import {
 /**
  * Avaliações de locais oficiais.
  *
- * GET  /locais/:id/avaliacoes
- * GET  /locais/:id/avaliacao
- * POST /locais/:id/avaliacoes
+ * GET   /locais/:id/avaliacoes
+ * GET   /locais/:id/avaliacao
+ * POST  /locais/:id/avaliacoes
+ * PATCH /locais/:id/avaliacao
  */
 export const avaliacaoLocalRouter = Router();
 
@@ -127,6 +128,48 @@ avaliacaoLocalRouter.post(
 
       const usuario = await usuarioRepository.buscarPorId(uid);
       res.status(201).json(hidratarAvaliacaoLocal(criado, usuario ?? undefined));
+    } catch (error) {
+      responderErro(res, error);
+    }
+  },
+);
+
+avaliacaoLocalRouter.patch(
+  "/:id/avaliacao",
+  async (req: Request, res: Response) => {
+    try {
+      const uid = uidAutenticado(req, res);
+      if (!uid) {
+        return;
+      }
+
+      const validado = validarBodyAvaliacao(
+        (req.body ?? {}) as Record<string, unknown>,
+      );
+      if (!validado.ok) {
+        res.status(400).json({erro: validado.erro});
+        return;
+      }
+
+      const localId = param(req, "id");
+      const local = await localRepository.buscarPorId(localId);
+      if (!local) {
+        res.status(404).json({erro: "Local não encontrado"});
+        return;
+      }
+
+      const atualizado = await usuarioLocalFeedbackRepository.atualizar(
+        uid,
+        localId,
+        validado.dados,
+      );
+      if (!atualizado) {
+        res.status(404).json({erro: "Avaliação não encontrada"});
+        return;
+      }
+
+      const usuario = await usuarioRepository.buscarPorId(uid);
+      res.json(hidratarAvaliacaoLocal(atualizado, usuario ?? undefined));
     } catch (error) {
       responderErro(res, error);
     }

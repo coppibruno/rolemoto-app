@@ -16,9 +16,9 @@ export const BotaoParticipar = ({ id, criadorId }: Props) => {
 
   if (souLider) {
     return (
-      <Link href={`/aprovacoes?role=${id}`} className={styles.botaoParticipar}>
+      <Link href={`/roles/${id}/gerenciar`} className={styles.botaoParticipar}>
         <span className="material-symbols-outlined">how_to_reg</span>
-        Aprovar Pilotos
+        Gerenciar rolê
       </Link>
     );
   }
