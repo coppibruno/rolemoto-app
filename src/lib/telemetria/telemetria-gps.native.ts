@@ -5,6 +5,7 @@ import type {
   RoleTelemetriaCreate,
   SessaoTelemetriaLocal,
 } from "@/types/role-telemetria";
+import { auth, functionsApiUrl } from "@/lib/firebase";
 import { tituloPadraoTelemetria } from "./formatar-telemetria";
 import {
   aplicarPonto,
@@ -23,10 +24,26 @@ import {
 
 const KEY_SESSAO = "rolemoto.telemetria.sessao";
 const KEY_RESUMO = "rolemoto.telemetria.resumo";
+const HEADER_SESSAO = "X-Rolemoto-Sessao-Token";
+
+type SessaoRemota = {
+  id: string;
+  token: string;
+  iniciadoEm: string;
+};
 
 type SessaoPersistida = SessaoTelemetriaLocal & {
   ativa: boolean;
   paradoDesde: number | null;
+  remota?: SessaoRemota | null;
+};
+
+type AgregadosRemotos = {
+  distanciaKm: number;
+  velocidadeMaxKmh: number;
+  tempoMovimentoSegundos: number;
+  primeiro: SessaoTelemetriaLocal["primeiro"];
+  ultimo: SessaoTelemetriaLocal["ultimo"];
 };
 
 let memoria: SessaoPersistida | null = null;
@@ -34,13 +51,6 @@ let callbackAnexado = false;
 
 const backgroundOk = (valor: string | undefined): boolean =>
   valor === "granted" || valor === "always";
-
-const novoSessaoId = (): string => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-  return `sessao-${Date.now()}`;
-};
 
 const paraSessao = (s: SessaoPersistida): SessaoTelemetriaLocal => ({
   sessaoId: s.sessaoId,
@@ -125,7 +135,101 @@ const aplicarLocalizacao = async (
   });
 };
 
-const anexarCallback = async () => {
+const urlPontoNativo = (sessaoId: string): string =>
+  `${functionsApiUrl}/telemetria/sessao/${sessaoId}/ponto`;
+
+const abrirSessaoRemota = async (): Promise<SessaoRemota | null> => {
+  const tokenAuth = await auth.currentUser?.getIdToken();
+  if (!tokenAuth) return null;
+  try {
+    const res = await fetch(`${functionsApiUrl}/telemetria/sessao`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${tokenAuth}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      id?: string;
+      token?: string;
+      iniciadoEm?: string;
+    };
+    if (!data.id || !data.token || !data.iniciadoEm) return null;
+    return { id: data.id, token: data.token, iniciadoEm: data.iniciadoEm };
+  } catch {
+    return null;
+  }
+};
+
+const buscarAgregadosRemotos = async (
+  remota: SessaoRemota,
+): Promise<AgregadosRemotos | null> => {
+  const tokenAuth = await auth.currentUser?.getIdToken();
+  if (!tokenAuth) return null;
+  try {
+    const res = await fetch(
+      `${functionsApiUrl}/telemetria/sessao/${remota.id}`,
+      {
+        headers: { Authorization: `Bearer ${tokenAuth}` },
+      },
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as AgregadosRemotos;
+    return {
+      distanciaKm: Number(data.distanciaKm ?? 0),
+      velocidadeMaxKmh: Number(data.velocidadeMaxKmh ?? 0),
+      tempoMovimentoSegundos: Number(data.tempoMovimentoSegundos ?? 0),
+      primeiro: data.primeiro ?? null,
+      ultimo: data.ultimo ?? null,
+    };
+  } catch {
+    return null;
+  }
+};
+
+const encerrarSessaoRemota = async (remota: SessaoRemota): Promise<void> => {
+  const tokenAuth = await auth.currentUser?.getIdToken();
+  if (!tokenAuth) return;
+  try {
+    await fetch(`${functionsApiUrl}/telemetria/sessao/${remota.id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${tokenAuth}` },
+    });
+  } catch {
+    /* best-effort */
+  }
+};
+
+/** Prefere servidor (sobrevive a tela off); local é fallback offline. */
+const mesclarComRemoto = (
+  local: SessaoPersistida,
+  remoto: AgregadosRemotos | null,
+): SessaoPersistida => {
+  if (!remoto) return local;
+  const remotoTemDados =
+    remoto.distanciaKm > 0 ||
+    remoto.velocidadeMaxKmh > 0 ||
+    remoto.tempoMovimentoSegundos > 0 ||
+    remoto.ultimo != null;
+  if (!remotoTemDados) return local;
+  if (remoto.distanciaKm + 0.01 < local.distanciaKm) {
+    return local;
+  }
+  return {
+    ...local,
+    distanciaKm: remoto.distanciaKm,
+    velocidadeMaxKmh: Math.max(local.velocidadeMaxKmh, remoto.velocidadeMaxKmh),
+    tempoMovimentoSegundos: Math.max(
+      local.tempoMovimentoSegundos,
+      remoto.tempoMovimentoSegundos,
+    ),
+    primeiro: remoto.primeiro ?? local.primeiro,
+    ultimo: remoto.ultimo ?? local.ultimo,
+  };
+};
+
+const anexarCallback = async (remota?: SessaoRemota | null) => {
   await BackgroundGeolocation.start(
     {
       backgroundMessage: "Registrando seu rolê",
@@ -133,6 +237,13 @@ const anexarCallback = async () => {
       requestPermissions: false,
       stale: false,
       distanceFilter: 10,
+      minIntervalMs: 2000,
+      ...(remota
+        ? {
+            url: urlPontoNativo(remota.id),
+            headers: { [HEADER_SESSAO]: remota.token },
+          }
+        : {}),
     },
     (location, error) => {
       if (error || !location) return;
@@ -223,7 +334,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     if (!sessao?.ativa) return null;
     if (!callbackAnexado) {
       try {
-        await anexarCallback();
+        await anexarCallback(sessao.remota);
       } catch {
         return paraSessao(sessao);
       }
@@ -243,14 +354,22 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     }
 
     await exigirBackground();
+    const remota = await abrirSessaoRemota();
+    if (!remota) {
+      throw new TelemetriaGpsErro(
+        "sessao_remota",
+        "Não foi possível abrir a sessão de telemetria. Verifique a internet e tente de novo.",
+      );
+    }
     const iniciado: SessaoPersistida = {
       ...estadoCalculoInicial(),
-      sessaoId: novoSessaoId(),
-      iniciadoEm: new Date().toISOString(),
+      sessaoId: remota.id,
+      iniciadoEm: remota.iniciadoEm,
       ativa: true,
+      remota,
     };
     await gravarSessao(iniciado);
-    await anexarCallback();
+    await anexarCallback(remota);
     return paraSessao(iniciado);
   },
 
@@ -259,13 +378,25 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     if (!sessao?.ativa) {
       throw new TelemetriaGpsErro("sem_sessao", "Nenhuma gravação ativa.");
     }
+
+    const remoto =
+      sessao.remota != null
+        ? await buscarAgregadosRemotos(sessao.remota)
+        : null;
+
     try {
       await BackgroundGeolocation.stop();
     } finally {
       callbackAnexado = false;
     }
+
+    if (sessao.remota) {
+      await encerrarSessaoRemota(sessao.remota);
+    }
+
+    const mesclada = mesclarComRemoto(sessao, remoto);
     const encerradoEm = new Date().toISOString();
-    const local = paraSessao({ ...sessao, ativa: false });
+    const local = paraSessao({ ...mesclada, ativa: false, remota: null });
     const dados = montarDados(local, encerradoEm);
     await gravarResumo({ dados });
     await gravarSessao(null);

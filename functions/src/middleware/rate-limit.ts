@@ -79,3 +79,16 @@ export const rateLimitAutenticado = rateLimit({
   max: 120,
   chave: (req) => req.usuario?.uid ?? ipDoRequest(req),
 });
+
+/**
+ * Pontos GPS nativos (Capgo) — frequência alta com distanceFilter baixo.
+ * 600/min por IP+sessão.
+ */
+export const rateLimitPontoTelemetria = rateLimit({
+  nome: "telemetria-ponto",
+  max: 600,
+  chave: (req) => {
+    const sessao = String(req.params.id ?? "");
+    return `${ipDoRequest(req)}:${sessao}`;
+  },
+});

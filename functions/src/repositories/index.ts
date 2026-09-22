@@ -26,6 +26,9 @@ import {
 import {
   FirestoreRoleTelemetriaRepository,
 } from "./firestore/firestore-role-telemetria.repository";
+import {
+  FirestoreTelemetriaSessaoRepository,
+} from "./firestore/firestore-telemetria-sessao.repository";
 import type {UsuarioRepository} from "./interfaces/usuario.repository";
 import type {RoleRepository} from "./interfaces/role.repository";
 import type {UsuarioRoleRepository} from "./interfaces/usuario-role.repository";
@@ -46,6 +49,7 @@ import type {
   UsuarioLocalFavoritoRepository,
 } from "./interfaces/usuario-local-favorito.repository";
 import type {RoleTelemetriaRepository} from "./interfaces/role-telemetria.repository";
+import type {TelemetriaSessaoRepository} from "./interfaces/telemetria-sessao.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -81,3 +85,6 @@ export const usuarioLocalFavoritoRepository: UsuarioLocalFavoritoRepository =
 
 export const roleTelemetriaRepository: RoleTelemetriaRepository =
   new FirestoreRoleTelemetriaRepository();
+
+export const telemetriaSessaoRepository: TelemetriaSessaoRepository =
+  new FirestoreTelemetriaSessaoRepository();

@@ -1,12 +1,12 @@
 # Backlog pós-MVP — índice de specs e IDs de QA
 
-> **Data:** 2026-09-21  
-> **Escopo deste índice:** specs **032–040** (nome do arquivo histórico `032-039-…` mantido para não quebrar links)  
+> **Data:** 2026-09-22  
+> **Escopo deste índice:** specs **032–041** (nome do arquivo histórico `032-039-…` mantido para não quebrar links)  
 > **Uso:** um cenário de teste / PR por **ID** (não precisa fechar a spec inteira de uma vez).
 
 ## Ordem sugerida
 
-1. F2, C1 → 2. E1 → 3. N1 → 4. F1 → 5. A1 → A2 → 6. P1 → P2 → 7. L1 → L2 → 8. G2 → G3 → G1 → 9. **S1** → S3 → S2
+1. F2, C1 → 2. E1 → 3. N1 → 4. F1 → 5. A1 → A2 → 6. P1 → P2 → 7. L1 → L2 → 8. G2 → G3 → G1 → 9. **S1** → S3 → S2 → 10. **T1**
 
 ## Mapa
 
@@ -21,6 +21,7 @@
 | **038** | [038-feed-fila-e-proximos.md](./038-feed-fila-e-proximos.md) | F1, F2 | Ocultar fila no feed; próximos sem teto 30d |
 | **039** | [039-excluir-conta-auth.md](./039-excluir-conta-auth.md) | E1 | Apagar Auth + perfil |
 | **040** | [040-google-signin-nativo-capacitor.md](./040-google-signin-nativo-capacitor.md) | S1, S2, S3 | Google Sign-In nativo no Capacitor; web/PWA intactos |
+| **041** | [041-telemetria-tela-off-capgo-url.md](./041-telemetria-tela-off-capgo-url.md) | T1 | Capgo `url` + sessão ao vivo; tela off agrega no servidor |
 
 ## Como testar separado
 
@@ -42,3 +43,4 @@
 | 038 | Ajusta **003** / **024** + `quando.ts` |
 | 039 | Estende **006** (passa a apagar Auth) |
 | 040 | Estende **012** §7 (Google nativo no Capacitor; web/PWA iguais) |
+| 041 | Corrige gap de agregação JS da **030** / intenção **029** (tela off) |

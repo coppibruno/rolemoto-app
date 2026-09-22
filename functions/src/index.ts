@@ -13,6 +13,9 @@
  * - /roles/:id/feedback → POST
  * - /roles/:id/feedbacks → GET
  * - /telemetria → GET, POST
+ * - /telemetria/sessao → POST
+ * - /telemetria/sessao/:id → GET, DELETE
+ * - /telemetria/sessao/:id/ponto → POST (token de sessão Capgo)
  * - /telemetria/:id → GET
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
@@ -80,6 +83,9 @@ app.get("/", (_req: Request, res: Response) => {
       "/roles/:id/feedback",
       "/roles/:id/feedbacks",
       "/telemetria",
+      "/telemetria/sessao",
+      "/telemetria/sessao/:id",
+      "/telemetria/sessao/:id/ponto",
       "/telemetria/:id",
       "/feedback/pendente",
       "/aprovacoes",

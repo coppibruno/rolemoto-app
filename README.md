@@ -45,7 +45,7 @@ Instalação e a página `/offline` exigem **HTTPS** no mesmo origin do app. `lo
 
 ### App nativo (Capacitor — telemetria com tela off)
 
-A PWA **não** grava GPS com a tela desligada. Isso só existe no shell Android/iOS. Guia completo (device, TestFlight, Play Console): [`docs/mobile.md`](docs/mobile.md).
+A PWA **não** grava GPS com a tela desligada. Isso só existe no shell Android/iOS (Capgo + sessão ao vivo na API — [SPEC 041](docs/specs/041-telemetria-tela-off-capgo-url.md)). Guia completo (device, TestFlight, Play Console): [`docs/mobile.md`](docs/mobile.md).
 
 ```bash
 npm test                          # métricas GPS (sem device)

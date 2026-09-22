@@ -20,7 +20,7 @@ npx cap sync
 
 Auth no Capacitor: e-mail/senha pelo Firebase JS no WebView; **Google** usa Sign-In nativo (`@capacitor-firebase/authentication` → `signInWithCredential`) — ver SPEC 040. Web/PWA continua popup/redirect (SPEC 012). A API continua sendo a function `api`.
 
-Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Sessão e agregados ficam em `@capacitor/preferences` para sobreviver a cold start.
+Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Com a opção Capgo **`url`**, cada ponto é POSTado **nativamente** para `POST /telemetria/sessao/:id/ponto` (agrega no Firestore mesmo com WebView congelado). Preferences no device guardam espelho local; no Finalizar o app lê os agregados do servidor. Detalhe: [SPEC 041](./specs/041-telemetria-tela-off-capgo-url.md).
 
 **Pré-requisito Google no APK:** app Android `br.com.rolemoto.app` no Firebase + SHA-1 (debug e release/Play) + `google-services.json` em `android/app/`. No iOS: `GoogleService-Info.plist` + URL scheme `REVERSED_CLIENT_ID`.
 
@@ -99,6 +99,8 @@ npx cap open android
 
 Reinicie `npm run dev` e `npm run emulators` depois de mudar o `.env.local` ou o `host: 0.0.0.0` no `firebase.json`.
 
+> **Tela off em LAN:** o POST nativo Capgo usa `NEXT_PUBLIC_FUNCTIONS_URL`. Sem a function alcançável no aparelho, **Iniciar** falha de propósito (SPEC 041). Em build de loja use API HTTPS de produção.
+
 No Android Studio: Run no aparelho. Marque USB debugging.
 
 **iOS:** use ngrok (HTTPS) apontando à porta 3000, depois:
@@ -123,6 +125,8 @@ Build de loja: **não** passe `CAPACITOR_SERVER_URL` HTTP; o default é o site d
 
 Sem “Sempre”, o app **não** inicia a gravação background — a UI explica.
 
+**Internet no Iniciar:** a sessão ao vivo (POST nativo Capgo) exige rede no momento de **Iniciar gravação**. Sem API alcançável, o app mostra erro e não começa. Com tela off, dados móveis (ou Wi‑Fi) precisam estar ok para os POSTs nativos; Capgo não reenvia pontos perdidos offline.
+
 ### 3. Roteiro de campo
 
 1. Login no app nativo → rolê confirmado (`/roles/:id/participar`) → **Iniciar gravação**.
@@ -135,11 +139,12 @@ Sem “Sempre”, o app **não** inicia a gravação background — a UI explica
 
 **Aceite:**
 
-- [ ] Tela off ≥ 10 min → distância > 0
+- [ ] Tela off ≥ 10 min → distância > 0 (functions de produção ou emulator acessível na LAN)
 - [ ] Máxima ≥ média (salvo ritmo constante)
 - [ ] Tempo de parede ≈ relógio (± 1 min)
 - [ ] Notificação Android visível o tempo todo
 - [ ] Negar “Sempre” → não inicia + mensagem clara
+- [ ] Sem rede no Iniciar → não inicia + mensagem clara
 - [ ] Chrome PWA: botão disabled + copy do app, sem fingir tela off
 
 ### 4. Mesa (não conta como aceite)

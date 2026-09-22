@@ -19,7 +19,8 @@ export class TelemetriaGpsErro extends Error {
       | "nao_nativo"
       | "permissao_background"
       | "sessao_ativa"
-      | "sem_sessao",
+      | "sem_sessao"
+      | "sessao_remota",
     message: string,
   ) {
     super(message);
