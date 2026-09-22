@@ -2,7 +2,7 @@
  * Funções de autenticação do Rolemoto App.
  *
  * Utiliza o Firebase Auth com:
- * - **Login social** via Google (popup no browser; redirect no iOS/standalone)
+ * - **Login social** via Google (nativo no Capacitor; popup/redirect no web/PWA)
  * - **Cadastro manual** com email e senha
  * - **Login manual** com email e senha
  *
@@ -11,9 +11,13 @@
  *
  * O provedor Google deve estar habilitado no console do Firebase:
  * Firebase Console → Authentication → Sign-in method
+ *
+ * @see docs/specs/040-google-signin-nativo-capacitor.md
  */
+import { Capacitor } from "@capacitor/core";
 import {
   GoogleAuthProvider,
+  signInWithCredential,
   signInWithPopup,
   signInWithRedirect,
   signOut,
@@ -33,23 +37,42 @@ const deveUsarRedirect = () => {
   const standalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     (navigator as NavigatorStandalone).standalone === true;
-  return standalone; // só redirect em PWA standalone
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  return standalone || ios;
+};
+
+const loginComGoogleNativo = async () => {
+  const { FirebaseAuthentication } = await import(
+    "@capacitor-firebase/authentication"
+  );
+  const resultado = await FirebaseAuthentication.signInWithGoogle({
+    skipNativeAuth: true,
+  });
+  const idToken = resultado.credential?.idToken;
+  if (!idToken) {
+    throw new Error("Token Google ausente");
+  }
+  const credential = GoogleAuthProvider.credential(idToken);
+  const cred = await signInWithCredential(auth, credential);
+  return cred.user;
 };
 
 /**
- * Login com Google: popup no browser; redirect no iOS ou PWA standalone.
- * No redirect o `User` só chega no próximo load via `getRedirectResult`.
+ * Login com Google: nativo no Capacitor; redirect no iOS/PWA standalone;
+ * popup no browser. No redirect o `User` só chega no próximo load via
+ * `getRedirectResult`.
  */
 export const loginComGoogle = async () => {
-  console.log("loginComGoogle 1");
+  if (Capacitor.isNativePlatform()) {
+    return loginComGoogleNativo();
+  }
+
   if (deveUsarRedirect()) {
-    console.log("redirect ios");
     await signInWithRedirect(auth, googleProvider);
     return;
   }
-  console.log("loginComGoogle 2", auth, googleProvider);
+
   const resultado = await signInWithPopup(auth, googleProvider);
-  console.log("loginComGoogle 3", resultado);
   return resultado.user;
 };
 
@@ -79,6 +102,7 @@ export const loginComEmail = async (email: string, senha: string) => {
 /**
  * Encerra a sessão do usuário atual.
  * Remove o token FCM deste aparelho (best-effort) antes do signOut.
+ * No Capacitor, também desloga o Google Sign-In nativo (best-effort).
  */
 export const logout = async () => {
   try {
@@ -89,5 +113,17 @@ export const logout = async () => {
   } catch {
     // Falha de rede/401 não bloqueia o logout.
   }
+
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const { FirebaseAuthentication } = await import(
+        "@capacitor-firebase/authentication"
+      );
+      await FirebaseAuthentication.signOut();
+    } catch {
+      // Sessão nativa ausente não bloqueia o signOut do JS SDK.
+    }
+  }
+
   await signOut(auth);
 };

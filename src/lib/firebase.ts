@@ -19,8 +19,14 @@
  * @see .env.example para referência das variáveis
  */
 import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {
+  getAuth,
+  initializeAuth,
+  indexedDBLocalPersistence,
+  type Auth,
+} from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import { Capacitor } from "@capacitor/core";
 import { conectarStorageEmulator } from "./storage-emulator";
 
 const firebaseConfig = {
@@ -36,8 +42,26 @@ const firebaseConfig = {
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
+/**
+ * Auth com IndexedDB no Capacitor (requisito do plugin + JS SDK).
+ * No web usa getAuth; em HMR/SSR reutiliza a instância se já existir.
+ */
+const criarAuth = (): Auth => {
+  if (typeof window !== "undefined" && Capacitor.isNativePlatform()) {
+    try {
+      return initializeAuth(app, {
+        persistence: indexedDBLocalPersistence,
+      });
+    } catch {
+      return getAuth(app);
+    }
+  }
+  return getAuth(app);
+};
+
 /** Instância do Firebase Auth (login social, gerenciamento de sessão) */
-export const auth = getAuth(app);
+export const auth = criarAuth();
+
 
 /** Instância do Firebase Storage (upload de fotos de perfil e rolês) */
 export const storage = getStorage(app);

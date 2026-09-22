@@ -14,6 +14,7 @@
     "storage:cors": "gcloud storage buckets update gs://rolemoto-bc47f.firebasestorage.app --cors-file=cors.json --project=rolemoto-bc47f"
   },
   "dependencies": {
+    "@capacitor-firebase/authentication": "^8.5.2",
     "@capacitor/android": "^8.5.2",
     "@capacitor/app": "^8.1.1",
     "@capacitor/core": "^8.5.2",

@@ -11,6 +11,23 @@ const config: CapacitorConfig = {
   android: {
     useLegacyBridge: true,
   },
+  plugins: {
+    FirebaseAuthentication: {
+      providers: ["google.com"],
+    },
+  },
+  // Evita colisão de identidade SPM do @capacitor-firebase/authentication (Cap CLI 8.4+).
+  experimental: {
+    ios: {
+      spm: {
+        packageOptions: {
+          "@capacitor-firebase/authentication": {
+            symlink: true,
+          },
+        },
+      },
+    },
+  },
   server: {
     url: serverUrl,
     cleartext: usaHttp,

@@ -7,7 +7,7 @@
  * 3. **Funções de login/logout** — expõe via Context API
  *
  * Métodos de autenticação disponíveis:
- * - Login social com Google (popup no browser; redirect no iOS/standalone)
+ * - Login social com Google (nativo no Capacitor; popup/redirect no web/PWA — SPEC 040 / 012)
  * - Cadastro manual com email e senha
  * - Login manual com email e senha
  *

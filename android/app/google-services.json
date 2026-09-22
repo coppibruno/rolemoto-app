@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "59164478458",
+    "project_id": "rolemoto-bc47f",
+    "storage_bucket": "rolemoto-bc47f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59164478458:android:e5aab48a25a6b484f17243",
+        "android_client_info": {
+          "package_name": "br.com.rolemoto.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "59164478458-ma6chs214eo3m3sab35qbdnei20fk888.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "br.com.rolemoto.app",
+            "certificate_hash": "f0cc100b16e8a02ec294525296eba4e0fb32ed66"
+          }
+        },
+        {
+          "client_id": "59164478458-049s968l7fvdjlpgfm9pf34r576i6f6c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6G8vu8whzG3tLxWL8nWagv5RYWbPs0JI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "59164478458-049s968l7fvdjlpgfm9pf34r576i6f6c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

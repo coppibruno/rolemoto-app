@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
     "@capacitor/core",
     "@capacitor/app",
     "@capacitor/preferences",
+    "@capacitor-firebase/authentication",
     "@capgo/background-geolocation",
   ],
   async rewrites() {

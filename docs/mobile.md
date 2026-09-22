@@ -18,9 +18,11 @@ Depois de mudar o env:
 npx cap sync
 ```
 
-Auth no WebView é o Firebase de sempre (persistência local). A API continua sendo a function `api`.
+Auth no Capacitor: e-mail/senha pelo Firebase JS no WebView; **Google** usa Sign-In nativo (`@capacitor-firebase/authentication` → `signInWithCredential`) — ver SPEC 040. Web/PWA continua popup/redirect (SPEC 012). A API continua sendo a function `api`.
 
 Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Sessão e agregados ficam em `@capacitor/preferences` para sobreviver a cold start.
+
+**Pré-requisito Google no APK:** app Android `br.com.rolemoto.app` no Firebase + SHA-1 (debug e release/Play) + `google-services.json` em `android/app/`. No iOS: `GoogleService-Info.plist` + URL scheme `REVERSED_CLIENT_ID`.
 
 ---
 

@@ -1,11 +1,12 @@
 # Backlog pós-MVP — índice de specs e IDs de QA
 
 > **Data:** 2026-09-21  
+> **Escopo deste índice:** specs **032–040** (nome do arquivo histórico `032-039-…` mantido para não quebrar links)  
 > **Uso:** um cenário de teste / PR por **ID** (não precisa fechar a spec inteira de uma vez).
 
 ## Ordem sugerida
 
-1. F2, C1 → 2. E1 → 3. N1 → 4. F1 → 5. A1 → A2 → 6. P1 → P2 → 7. L1 → L2 → 8. G2 → G3 → G1
+1. F2, C1 → 2. E1 → 3. N1 → 4. F1 → 5. A1 → A2 → 6. P1 → P2 → 7. L1 → L2 → 8. G2 → G3 → G1 → 9. **S1** → S3 → S2
 
 ## Mapa
 
@@ -19,6 +20,7 @@
 | **037** | [037-avaliacoes-link-e-edicao.md](./037-avaliacoes-link-e-edicao.md) | A1, A2 | ★ → listagem; editar avaliação |
 | **038** | [038-feed-fila-e-proximos.md](./038-feed-fila-e-proximos.md) | F1, F2 | Ocultar fila no feed; próximos sem teto 30d |
 | **039** | [039-excluir-conta-auth.md](./039-excluir-conta-auth.md) | E1 | Apagar Auth + perfil |
+| **040** | [040-google-signin-nativo-capacitor.md](./040-google-signin-nativo-capacitor.md) | S1, S2, S3 | Google Sign-In nativo no Capacitor; web/PWA intactos |
 
 ## Como testar separado
 
@@ -39,3 +41,4 @@
 | 037 | Revoga “sem PATCH” da **027** |
 | 038 | Ajusta **003** / **024** + `quando.ts` |
 | 039 | Estende **006** (passa a apagar Auth) |
+| 040 | Estende **012** §7 (Google nativo no Capacitor; web/PWA iguais) |
