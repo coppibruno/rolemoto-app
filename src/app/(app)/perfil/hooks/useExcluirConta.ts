@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { limparCredenciais } from "@/lib/credenciais-login";
 import { perfilService } from "../services/perfil.service";
 
 const MENSAGEM_GENERICA = "Não foi possível excluir a conta. Tente de novo.";
@@ -42,6 +43,7 @@ export const useExcluirConta = () => {
   }, []);
 
   const encerrarSessao = async () => {
+    limparCredenciais();
     await logout();
     router.replace("/login");
   };

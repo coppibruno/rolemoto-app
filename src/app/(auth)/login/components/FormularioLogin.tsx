@@ -1,5 +1,6 @@
 "use client";
 
+import { OpcoesSalvarSenha } from "../../components/OpcoesSalvarSenha";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { useRecuperarSenha } from "../hooks/useRecuperarSenha";
 import { SheetRecuperarSenha } from "./SheetRecuperarSenha";
@@ -7,13 +8,25 @@ import styles from "../login.module.css";
 
 interface Props {
   desabilitado: boolean;
-  next: string | null;
   modoCadastro: boolean;
 }
 
-export const FormularioLogin = ({ desabilitado, next, modoCadastro }: Props) => {
-  const { modo, campos, mostrarSenha, toggleSenha, erro, carregando, alternarModo, submeter } =
-    useLoginForm(next, modoCadastro);
+export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
+  const {
+    modo,
+    campos,
+    mostrarSenha,
+    toggleSenha,
+    salvarSenha,
+    setSalvarSenha,
+    entrarAutomatico,
+    setEntrarAutomatico,
+    avisoGoogle,
+    erro,
+    carregando,
+    alternarModo,
+    submeter,
+  } = useLoginForm(modoCadastro);
   const reset = useRecuperarSenha(campos.email);
 
   const bloqueado = desabilitado || carregando;
@@ -88,6 +101,13 @@ export const FormularioLogin = ({ desabilitado, next, modoCadastro }: Props) => 
           </div>
         </div>
 
+        {avisoGoogle && !eCadastro ? (
+          <p className={styles.avisoMetodo}>
+            Último acesso neste aparelho foi com Google. Use o botão abaixo ou
+            crie uma senha depois de entrar.
+          </p>
+        ) : null}
+
         {eCadastro && (
           <div className={styles.campo}>
             <label htmlFor="confirmar-senha" className={styles.label}>
@@ -110,6 +130,14 @@ export const FormularioLogin = ({ desabilitado, next, modoCadastro }: Props) => 
             </div>
           </div>
         )}
+
+        <OpcoesSalvarSenha
+          salvarSenha={salvarSenha}
+          entrarAutomatico={entrarAutomatico}
+          desabilitado={bloqueado}
+          onSalvarSenha={setSalvarSenha}
+          onEntrarAutomatico={setEntrarAutomatico}
+        />
 
         <button type="submit" className={styles.botaoPrimario} disabled={bloqueado}>
           <span>{eCadastro ? "Criar conta" : "Acelerar / Entrar"}</span>

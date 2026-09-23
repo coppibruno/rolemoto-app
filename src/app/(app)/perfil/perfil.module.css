@@ -591,6 +591,7 @@
   gap: 6px;
   border: none;
   background: transparent;
+  text-decoration: none;
   color: var(--on-surface);
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 12px;

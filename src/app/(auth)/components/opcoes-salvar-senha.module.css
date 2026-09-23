@@ -1,0 +1,44 @@
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.legenda {
+  margin-bottom: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--outline);
+}
+
+.opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: var(--touch-min);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.opcao input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-container);
+  flex-shrink: 0;
+}
+
+.grupo:disabled .opcao {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

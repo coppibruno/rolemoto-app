@@ -16,7 +16,9 @@
  */
 import { Capacitor } from "@capacitor/core";
 import {
+  EmailAuthProvider,
   GoogleAuthProvider,
+  linkWithCredential,
   signInWithCredential,
   signInWithPopup,
   signInWithRedirect,
@@ -25,6 +27,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
+import { marcarLogoutRecente } from "./credenciais-login";
 import { obterToken } from "./fcm";
 import { auth } from "./firebase";
 
@@ -100,11 +103,26 @@ export const loginComEmail = async (email: string, senha: string) => {
 };
 
 /**
+ * Liga e-mail/senha à conta atual (tipicamente Google).
+ * Depois o mesmo e-mail entra pelos dois métodos.
+ */
+export const vincularSenha = async (senha: string) => {
+  const user = auth.currentUser;
+  if (!user?.email) {
+    throw new Error("Conta sem e-mail para vincular senha");
+  }
+  const credential = EmailAuthProvider.credential(user.email, senha);
+  const cred = await linkWithCredential(user, credential);
+  return cred.user;
+};
+
+/**
  * Encerra a sessão do usuário atual.
  * Remove o token FCM deste aparelho (best-effort) antes do signOut.
  * No Capacitor, também desloga o Google Sign-In nativo (best-effort).
  */
 export const logout = async () => {
+  marcarLogoutRecente();
   try {
     const token = await obterToken();
     if (token) {

@@ -1,5 +1,6 @@
 const NEXT_SEGURO = [
   /^\/$/,
+  /^\/perfil$/,
   /^\/r\/[A-Za-z0-9_-]+$/,
   /^\/roles\/[A-Za-z0-9_-]+\/participar$/,
   /^\/eventos\/[A-Za-z0-9_-]+$/,
@@ -30,4 +31,9 @@ export const urlLoginComNext = (next: string, modoCadastro = false): string => {
 export const urlPrimeiroAcessoComNext = (next: string): string => {
   const params = new URLSearchParams({ next: destinoSeguro(next) });
   return `/primeiro-acesso?${params.toString()}`;
+};
+
+export const urlDefinirSenhaComNext = (next: string): string => {
+  const params = new URLSearchParams({ next: destinoSeguro(next) });
+  return `/definir-senha?${params.toString()}`;
 };

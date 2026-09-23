@@ -7,6 +7,9 @@ const ERROS_FIREBASE: Record<string, string> = {
   "auth/invalid-credential": "Email ou senha incorretos.",
   "auth/too-many-requests": "Muitas tentativas. Aguarde um momento.",
   "auth/popup-closed-by-user": "",
+  "auth/credential-already-in-use": "Este e-mail já tem senha em outra conta.",
+  "auth/provider-already-linked": "Esta conta já tem senha.",
+  "auth/requires-recent-login": "Entre de novo com o Google para criar a senha.",
 };
 
 export const traduzirErroFirebase = (codigo: string): string =>

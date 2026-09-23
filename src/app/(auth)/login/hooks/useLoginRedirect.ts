@@ -4,10 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "firebase/auth";
 import type { Usuario } from "@/types/user";
-import {
-  destinoSeguro,
-  urlPrimeiroAcessoComNext,
-} from "@/lib/destino-pos-auth";
+import { lembrarConta } from "@/lib/credenciais-login";
+import { destinoAposAuth } from "@/lib/destino-apos-auth";
 
 interface Props {
   firebaseUser: User | null;
@@ -32,11 +30,8 @@ export const useLoginRedirect = ({
   useEffect(() => {
     if (loading) return;
     if (firebaseUser) {
-      router.replace(
-        usuario
-          ? destinoSeguro(next)
-          : urlPrimeiroAcessoComNext(destinoSeguro(next)),
-      );
+      lembrarConta(firebaseUser);
+      router.replace(destinoAposAuth(firebaseUser, usuario, next));
     } else {
       setPronto(true);
     }

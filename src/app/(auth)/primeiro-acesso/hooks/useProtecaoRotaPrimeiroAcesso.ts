@@ -3,7 +3,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
+import { precisaDefinirSenha } from "@/lib/credenciais-login";
+import {
+  destinoSeguro,
+  urlDefinirSenhaComNext,
+  urlLoginComNext,
+} from "@/lib/destino-pos-auth";
 
 export const useProtecaoRotaPrimeiroAcesso = (next: string | null) => {
   const { firebaseUser, usuario, loading } = useAuth();
@@ -17,12 +22,21 @@ export const useProtecaoRotaPrimeiroAcesso = (next: string | null) => {
       return;
     }
 
+    if (precisaDefinirSenha(firebaseUser)) {
+      router.replace(urlDefinirSenhaComNext(destinoSeguro(next)));
+      return;
+    }
+
     if (usuario) {
       router.replace(destinoSeguro(next));
     }
   }, [loading, firebaseUser, usuario, next, router]);
 
-  const bloqueado = loading || !firebaseUser || Boolean(usuario);
+  const bloqueado =
+    loading ||
+    !firebaseUser ||
+    Boolean(usuario) ||
+    precisaDefinirSenha(firebaseUser);
 
   return { bloqueado };
 };

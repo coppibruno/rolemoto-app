@@ -42,7 +42,6 @@ export const TelaLogin = ({ next, modoCadastro, senhaRedefinida }: Props) => {
           <div className={styles.cardEdge} />
           <FormularioLogin
             desabilitado={loading}
-            next={next}
             modoCadastro={modoCadastro}
           />
 
@@ -51,7 +50,7 @@ export const TelaLogin = ({ next, modoCadastro, senhaRedefinida }: Props) => {
             <span className={styles.divisorLabel}>ou conecte-se com</span>
           </div>
 
-          <BotaoGoogle desabilitado={loading} next={next} />
+          <BotaoGoogle desabilitado={loading} />
         </div>
 
         <CtaInstalarApp />

@@ -10,6 +10,7 @@
  * - Login social com Google (nativo no Capacitor; popup/redirect no web/PWA — SPEC 040 / 012)
  * - Cadastro manual com email e senha
  * - Login manual com email e senha
+ * - Vincular senha a conta Google (`vincularSenha`)
  *
  * Fluxo de autenticação:
  * ```
@@ -39,8 +40,10 @@ import {
   loginComGoogle as _loginComGoogle,
   cadastrarComEmail as _cadastrarComEmail,
   loginComEmail as _loginComEmail,
+  vincularSenha as _vincularSenha,
   logout as _logout,
 } from "@/lib/auth";
+import { temProviderSenha } from "@/lib/provedor-senha";
 import { perfilService } from "@/app/(app)/perfil/services/perfil.service";
 import type { Usuario } from "@/types/user";
 
@@ -51,6 +54,8 @@ export interface AuthContextType {
   loginComGoogle: () => Promise<void>;
   cadastrarComEmail: (email: string, senha: string) => Promise<void>;
   loginComEmail: (email: string, senha: string) => Promise<void>;
+  vincularSenha: (senha: string) => Promise<void>;
+  temSenha: boolean;
   logout: () => Promise<void>;
   recarregarPerfil: () => Promise<void>;
 }
@@ -104,6 +109,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await _loginComEmail(email, senha);
   };
 
+  const vincularSenha = async (senha: string) => {
+    await _vincularSenha(senha);
+    const atual = auth.currentUser;
+    if (atual) {
+      await atual.reload();
+      setFirebaseUser(auth.currentUser);
+    }
+  };
+
   const logout = async () => {
     await _logout();
     setUsuario(null);
@@ -124,6 +138,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loginComGoogle,
         cadastrarComEmail,
         loginComEmail,
+        vincularSenha,
+        temSenha: temProviderSenha(firebaseUser),
         logout,
         recarregarPerfil,
       }}

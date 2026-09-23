@@ -7,6 +7,10 @@ describe("destinoSeguro", () => {
     expect(destinoSeguro("/locais/xyz789")).toBe("/locais/xyz789");
   });
 
+  it("preserva o perfil", () => {
+    expect(destinoSeguro("/perfil")).toBe("/perfil");
+  });
+
   it("rejeita destino inseguro", () => {
     expect(destinoSeguro("https://evil.example")).toBe("/");
     expect(destinoSeguro("/admin")).toBe("/");

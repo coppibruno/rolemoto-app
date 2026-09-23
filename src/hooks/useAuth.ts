@@ -8,6 +8,8 @@
  * - `loginComGoogle()` — inicia login via Google
  * - `cadastrarComEmail(email, senha)` — cria conta com email/senha
  * - `loginComEmail(email, senha)` — faz login com email/senha
+ * - `vincularSenha(senha)` — liga senha à conta Google
+ * - `temSenha` — conta já tem provedor e-mail/senha
  * - `logout()` — encerra a sessão
  * - `recarregarPerfil()` — recarrega o perfil do Firestore
  *

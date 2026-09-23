@@ -8,6 +8,7 @@ import { CampoTexto } from "./CampoTexto";
 import { CartaoIdentidade } from "./CartaoIdentidade";
 import { SecaoGaragem } from "./SecaoGaragem";
 import { SeletorPilotagem } from "./SeletorPilotagem";
+import { BotaoCriarSenha } from "./BotaoCriarSenha";
 import { BotaoInstalarApp } from "./BotaoInstalarApp";
 import { BotaoSair } from "./BotaoSair";
 import { BotaoExcluirConta } from "./BotaoExcluirConta";
@@ -116,6 +117,7 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
           {form.salvando ? "Salvando..." : "Salvar Alterações"}
         </button>
         <BotaoInstalarApp />
+        <BotaoCriarSenha />
         <BotaoSair desabilitado={form.salvando} />
         <BotaoExcluirConta desabilitado={form.salvando} />
       </div>
