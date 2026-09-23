@@ -20,6 +20,8 @@ npx cap sync
 
 Auth no Capacitor: e-mail/senha pelo Firebase JS no WebView; **Google** usa Sign-In nativo (`@capacitor-firebase/authentication` → `signInWithCredential`) — ver SPEC 040. Web/PWA continua popup/redirect (SPEC 012). A API continua sendo a function `api`.
 
+Push híbrido (SPEC 042): no APK/loja o token FCM vem de `@capacitor/push-notifications` (`plataforma: android|ios`); no Chrome/PWA continua VAPID + service worker (`plataforma: web`). A mesma coleção `dispositivos` e o mesmo `notificacoes.ts` enviam os dois formatos. Canal Android `rolemoto_push` (avisos de rolê) — distinto da notificação persistente da telemetria Capgo. Emulator de Functions **não** dispara FCM; QA de card nativo exige Functions deployadas.
+
 Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Com a opção Capgo **`url`**, cada ponto é POSTado **nativamente** para `POST /telemetria/sessao/:id/ponto` (agrega no Firestore mesmo com WebView congelado). Preferências: `networkFallback: true`, `distanceFilter: 5`, accuracy máx. 100 m (aceita fix de rede com tela off). Preferences no device guardam espelho local; no Finalizar o app lê os agregados do servidor. Detalhe: [SPEC 041](./specs/041-telemetria-tela-off-capgo-url.md).
 
 **Pré-requisito Google no APK:** app Android `br.com.rolemoto.app` no Firebase + SHA-1 (debug e release/Play) + `google-services.json` em `android/app/`. No iOS: `GoogleService-Info.plist` + URL scheme `REVERSED_CLIENT_ID`.

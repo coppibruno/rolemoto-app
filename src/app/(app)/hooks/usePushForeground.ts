@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Capacitor } from "@capacitor/core";
 import { ouvirForeground } from "@/lib/fcm";
+import { ouvirForegroundNativo } from "@/lib/fcm-nativo";
 
 const TOAST_MS = 2500;
 
@@ -12,11 +14,21 @@ export const usePushForeground = () => {
     let ativo = true;
     let unsubscribe: (() => void) | undefined;
 
-    void ouvirForeground((payload) => {
+    const mostrar = (title: string) => {
       if (ativo) {
-        setTitulo(payload.title);
+        setTitulo(title);
       }
-    }).then((fn) => {
+    };
+
+    if (Capacitor.isNativePlatform()) {
+      unsubscribe = ouvirForegroundNativo((payload) => mostrar(payload.title));
+      return () => {
+        ativo = false;
+        unsubscribe?.();
+      };
+    }
+
+    void ouvirForeground((payload) => mostrar(payload.title)).then((fn) => {
       if (!ativo) {
         fn();
         return;

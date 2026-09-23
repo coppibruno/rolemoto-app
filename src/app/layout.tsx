@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { IniciarPushNativo } from "@/components/push/IniciarPushNativo";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,7 +39,10 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <IniciarPushNativo />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

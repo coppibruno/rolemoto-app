@@ -15,6 +15,9 @@ const config: CapacitorConfig = {
     FirebaseAuthentication: {
       providers: ["google.com"],
     },
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"],
+    },
   },
   // Evita colisão de identidade SPM do @capacitor-firebase/authentication (Cap CLI 8.4+).
   experimental: {

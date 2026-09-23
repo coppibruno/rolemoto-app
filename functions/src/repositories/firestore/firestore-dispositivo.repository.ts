@@ -1,7 +1,8 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
-import type {Dispositivo} from "../../types/dispositivo";
+import type {Dispositivo, PlataformaDispositivo} from "../../types/dispositivo";
+import {ehPlataformaDispositivo} from "../../types/dispositivo";
 import type {DispositivoRepository} from "../interfaces/dispositivo.repository";
 import {toIso} from "./mapper";
 
@@ -10,23 +11,32 @@ const COLECAO = "dispositivos";
 /** Máximo de tokens ativos por uid; o restante (aparelhos mortos) é apagado. */
 const TETO_TOKENS = 10;
 
+const plataformaDe = (value: unknown): PlataformaDispositivo =>
+  ehPlataformaDispositivo(value) ? value : "web";
+
 const toDispositivo = (snap: DocumentSnapshot): Dispositivo => {
   const data = snap.data() ?? {};
   return {
     token: String(data.token ?? snap.id),
     uid: String(data.uid ?? ""),
+    plataforma: plataformaDe(data.plataforma),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
 };
 
 export class FirestoreDispositivoRepository implements DispositivoRepository {
-  async upsert(uid: string, token: string): Promise<Dispositivo> {
+  async upsert(
+    uid: string,
+    token: string,
+    plataforma: PlataformaDispositivo = "web",
+  ): Promise<Dispositivo> {
     const ref = firestore.collection(COLECAO).doc(token);
     const snap = await ref.get();
     const payload: Record<string, unknown> = {
       token,
       uid,
+      plataforma,
       updatedAt: FieldValue.serverTimestamp(),
     };
     if (!snap.exists) {
@@ -45,17 +55,14 @@ export class FirestoreDispositivoRepository implements DispositivoRepository {
     return toDispositivo(snap);
   }
 
-  async listarTokensPorUid(uid: string): Promise<string[]> {
+  async listarPorUid(uid: string): Promise<Dispositivo[]> {
     const snap = await firestore
       .collection(COLECAO)
       .where("uid", "==", uid)
       .get();
 
     const ordenados = snap.docs
-      .map((doc) => ({
-        token: doc.id,
-        updatedAt: toIso(doc.data()?.updatedAt),
-      }))
+      .map((doc) => toDispositivo(doc))
       .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
 
     const recentes = ordenados.slice(0, TETO_TOKENS);
@@ -63,7 +70,7 @@ export class FirestoreDispositivoRepository implements DispositivoRepository {
     await Promise.all(
       restantes.map((item) => this.removerPorToken(item.token)),
     );
-    return recentes.map((item) => item.token);
+    return recentes;
   }
 
   async removerPorToken(token: string): Promise<boolean> {

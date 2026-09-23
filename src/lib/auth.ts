@@ -124,9 +124,20 @@ export const vincularSenha = async (senha: string) => {
 export const logout = async () => {
   marcarLogoutRecente();
   try {
-    const token = await obterToken();
-    if (token) {
-      await dispositivosService.remover(token);
+    if (Capacitor.isNativePlatform()) {
+      const { obterTokenNativo, limparPushNativoNoLogout } = await import(
+        "./fcm-nativo"
+      );
+      const token = await obterTokenNativo();
+      if (token) {
+        await dispositivosService.remover(token);
+      }
+      await limparPushNativoNoLogout();
+    } else {
+      const token = await obterToken();
+      if (token) {
+        await dispositivosService.remover(token);
+      }
     }
   } catch {
     // Falha de rede/401 não bloqueia o logout.

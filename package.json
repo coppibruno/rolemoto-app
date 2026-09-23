@@ -20,6 +20,7 @@
     "@capacitor/core": "^8.5.2",
     "@capacitor/ios": "^8.5.2",
     "@capacitor/preferences": "^8.0.1",
+    "@capacitor/push-notifications": "^8.1.2",
     "@capgo/background-geolocation": "^8.4.6",
     "@sentry/nextjs": "^10.74.0",
     "@serwist/next": "^9.5.12",

@@ -4,6 +4,10 @@ import {log} from "../lib/log";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {dispositivoRepository} from "../repositories";
+import {
+  ehPlataformaDispositivo,
+  type PlataformaDispositivo,
+} from "../types/dispositivo";
 
 /**
  * Tokens FCM do aparelho autenticado (coleção `dispositivos`).
@@ -28,6 +32,20 @@ const tokenDoBody = (body: unknown): string | null => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+/** `undefined` = omitido (persiste `"web"`). */
+const plataformaDoBody = (
+  body: unknown,
+): PlataformaDispositivo | undefined | "invalida" => {
+  if (!body || typeof body !== "object") {
+    return undefined;
+  }
+  const raw = (body as {plataforma?: unknown}).plataforma;
+  if (raw === undefined || raw === null || raw === "") {
+    return undefined;
+  }
+  return ehPlataformaDispositivo(raw) ? raw : "invalida";
+};
+
 dispositivosRouter.post("/", async (req: Request, res: Response) => {
   try {
     const uid = req.usuario?.uid;
@@ -42,10 +60,21 @@ dispositivosRouter.post("/", async (req: Request, res: Response) => {
       return;
     }
 
+    const plataforma = plataformaDoBody(req.body);
+    if (plataforma === "invalida") {
+      res.status(400).json({erro: "plataforma inválida"});
+      return;
+    }
+
     const existente = await dispositivoRepository.buscarPorToken(token);
-    const dispositivo = await dispositivoRepository.upsert(uid, token);
+    const dispositivo = await dispositivoRepository.upsert(
+      uid,
+      token,
+      plataforma ?? "web",
+    );
     log.info("Dispositivo", existente ? "Token atualizado" : "Token registrado", {
       uid,
+      plataforma: dispositivo.plataforma,
     });
     res.status(existente ? 200 : 201).json(dispositivo);
   } catch (error) {

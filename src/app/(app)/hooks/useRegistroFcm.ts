@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
+import { Capacitor } from "@capacitor/core";
 import { dispositivosService } from "../services/dispositivos.service";
 import {
   messagingSuportado,
   obterToken,
   type ResultadoPermissao,
 } from "@/lib/fcm";
+import {
+  pedirPermissaoERegistrarNativo,
+  registrarSeJaPermitidoNativo,
+} from "@/lib/fcm-nativo";
 
 let recusouNestaSessao = false;
 
@@ -15,11 +20,15 @@ const registrarTokenAtual = async (): Promise<void> => {
   if (!token) {
     return;
   }
-  await dispositivosService.registrar(token);
+  await dispositivosService.registrar(token, "web");
 };
 
 export const registrarSeJaPermitido = async (): Promise<void> => {
   try {
+    if (Capacitor.isNativePlatform()) {
+      await registrarSeJaPermitidoNativo();
+      return;
+    }
     if (typeof window === "undefined" || !("Notification" in window)) {
       return;
     }
@@ -34,6 +43,9 @@ export const registrarSeJaPermitido = async (): Promise<void> => {
 
 export const pedirPermissaoERegistrar = async (): Promise<ResultadoPermissao> => {
   try {
+    if (Capacitor.isNativePlatform()) {
+      return pedirPermissaoERegistrarNativo();
+    }
     if (typeof window === "undefined" || !("Notification" in window)) {
       return "unsupported";
     }
