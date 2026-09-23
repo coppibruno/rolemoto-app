@@ -39,6 +39,21 @@ describe("processarPontos", () => {
     expect(estado.ultimo?.lat).toBe(0);
   });
 
+  it("aceita ponto de rede com accuracy 80 m (networkFallback)", () => {
+    const estado = processarPontos([
+      ponto({ t: t0, lat: 0, lng: 0 }),
+      ponto({
+        t: t0 + 5000,
+        lat: 0.0003,
+        lng: 0,
+        accuracy: 80,
+        speed: 5,
+      }),
+    ]);
+    expect(estado.distanciaKm).toBeGreaterThan(0);
+    expect(estado.ultimo?.lat).toBeCloseTo(0.0003, 5);
+  });
+
   it("descarta salto teleporte (> 200 km/h)", () => {
     const estado = processarPontos([
       ponto({ t: t0, lat: 0, lng: 0 }),
@@ -143,5 +158,17 @@ describe("arredondarParaPost", () => {
       tempoSegundos: 100,
       tempoMovimentoSegundos: 80,
     });
+  });
+
+  it("não deixa média acima da máxima", () => {
+    const dados = arredondarParaPost({
+      velocidadeMaxKmh: 3.7,
+      velocidadeMediaKmh: 4.8,
+      distanciaKm: 0.16,
+      tempoSegundos: 125,
+      tempoMovimentoSegundos: 120,
+    });
+    expect(dados.velocidadeMediaKmh).toBe(3.7);
+    expect(dados.velocidadeMaxKmh).toBe(3.7);
   });
 });

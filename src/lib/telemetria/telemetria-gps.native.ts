@@ -236,8 +236,11 @@ const anexarCallback = async (remota?: SessaoRemota | null) => {
       backgroundTitle: "Rolemoto",
       requestPermissions: false,
       stale: false,
-      distanceFilter: 10,
+      // 5 m: menos “engolir” movimento com tela off; 0 geraria spam de fixes.
+      distanceFilter: 5,
       minIntervalMs: 2000,
+      // Com tela locked o GPS costuma calar; rede/Wi‑Fi preenche o buraco (Android).
+      networkFallback: true,
       ...(remota
         ? {
             url: urlPontoNativo(remota.id),

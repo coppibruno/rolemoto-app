@@ -3,7 +3,8 @@
  * Manter as constantes e a lógica alinhadas ao front.
  */
 const RAIO_TERRA_KM = 6371;
-const ACCURACY_MAX_M = 50;
+/** Aceita fixes de rede (Capgo networkFallback); GPS fino costuma ser < 20 m. */
+const ACCURACY_MAX_M = 100;
 const DELTA_TEMPO_MIN_MS = 1000;
 const VELOCIDADE_ABSURDA_KMH = 200;
 const PARADO_KMH = 3;

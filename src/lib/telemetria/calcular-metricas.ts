@@ -1,5 +1,6 @@
 const RAIO_TERRA_KM = 6371;
-const ACCURACY_MAX_M = 50;
+/** Aceita fixes de rede (Capgo networkFallback); GPS fino costuma ser < 20 m. */
+const ACCURACY_MAX_M = 100;
 const DELTA_TEMPO_MIN_MS = 1000;
 const VELOCIDADE_ABSURDA_KMH = 200;
 const PARADO_KMH = 3;
@@ -158,12 +159,19 @@ export const arredondarParaPost = (dados: {
   distanciaKm: number;
   tempoSegundos: number;
   tempoMovimentoSegundos: number;
-} => ({
-  velocidadeMaxKmh: Math.round(dados.velocidadeMaxKmh * 10) / 10,
-  velocidadeMediaKmh: Math.round(dados.velocidadeMediaKmh * 10) / 10,
-  distanciaKm: Math.round(dados.distanciaKm * 100) / 100,
-  tempoSegundos: Math.floor(dados.tempoSegundos),
-  tempoMovimentoSegundos: Math.floor(
-    Math.min(dados.tempoMovimentoSegundos, dados.tempoSegundos),
-  ),
-});
+} => {
+  const velocidadeMaxKmh = Math.round(dados.velocidadeMaxKmh * 10) / 10;
+  const velocidadeMediaKmh = Math.min(
+    Math.round(dados.velocidadeMediaKmh * 10) / 10,
+    velocidadeMaxKmh,
+  );
+  return {
+    velocidadeMaxKmh,
+    velocidadeMediaKmh,
+    distanciaKm: Math.round(dados.distanciaKm * 100) / 100,
+    tempoSegundos: Math.floor(dados.tempoSegundos),
+    tempoMovimentoSegundos: Math.floor(
+      Math.min(dados.tempoMovimentoSegundos, dados.tempoSegundos),
+    ),
+  };
+};
