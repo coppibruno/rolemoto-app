@@ -7,7 +7,6 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 @CapacitorPlugin(name = "TelemetriaBuffer")
@@ -40,21 +39,17 @@ public class TelemetriaBufferPlugin extends Plugin {
             if (item == null) {
                 continue;
             }
-            try {
-                JSObject ponto = new JSObject();
-                ponto.put("lat", item.optDouble("lat"));
-                ponto.put("lng", item.optDouble("lng"));
-                ponto.put("t", item.optLong("t"));
-                if (item.has("speed") && !item.isNull("speed")) {
-                    ponto.put("speed", item.optDouble("speed"));
-                }
-                if (item.has("accuracy") && !item.isNull("accuracy")) {
-                    ponto.put("accuracy", item.optDouble("accuracy"));
-                }
-                pontos.put(ponto);
-            } catch (JSONException ignore) {
-                /* ponto inválido */
+            JSObject ponto = new JSObject();
+            ponto.put("lat", item.optDouble("lat"));
+            ponto.put("lng", item.optDouble("lng"));
+            ponto.put("t", item.optLong("t"));
+            if (item.has("speed") && !item.isNull("speed")) {
+                ponto.put("speed", item.optDouble("speed"));
             }
+            if (item.has("accuracy") && !item.isNull("accuracy")) {
+                ponto.put("accuracy", item.optDouble("accuracy"));
+            }
+            pontos.put(ponto);
         }
         JSObject ret = new JSObject();
         ret.put("pontos", pontos);
