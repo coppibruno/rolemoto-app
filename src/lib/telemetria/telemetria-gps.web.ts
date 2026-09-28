@@ -9,6 +9,7 @@ export const webAdapter: TelemetriaGpsAdapter = {
   isNative: () => false,
   getSession: async () => null,
   getResumoPendente: async () => null,
+  salvarResumoPendente: async () => undefined,
   start: async (): Promise<SessaoTelemetriaLocal> => {
     throw new TelemetriaGpsErro(
       "nao_nativo",

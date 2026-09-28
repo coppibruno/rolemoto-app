@@ -8,6 +8,7 @@ type Props = {
   dados: RoleTelemetriaCreate;
   titulo: string;
   ocupado: boolean;
+  online: boolean;
   onTitulo: (valor: string) => void;
   onSalvar: () => void;
   onDescartar: () => void;
@@ -17,6 +18,7 @@ export const ResumoPreSave = ({
   dados,
   titulo,
   ocupado,
+  online,
   onTitulo,
   onSalvar,
   onDescartar,
@@ -34,6 +36,11 @@ export const ResumoPreSave = ({
         pontoFim={dados.pontoFim}
         tituloEditavel={{ valor: titulo, onMudar: onTitulo }}
       />
+      {!online ? (
+        <p className={styles.copyOffline}>
+          Sem internet — o passeio fica neste celular até enviar.
+        </p>
+      ) : null}
       <div className={styles.acoes}>
         <button
           type="button"

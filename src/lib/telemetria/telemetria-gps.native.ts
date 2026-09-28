@@ -15,6 +15,8 @@ import {
   velocidadeMediaKmh,
   type EstadoCalculo,
 } from "./calcular-metricas";
+import { incorporarBuffer, mesclarComRemoto } from "./aplicar-buffer";
+import { telemetriaBuffer } from "./telemetria-buffer";
 import {
   TelemetriaGpsErro,
   type ResultadoStopTelemetria,
@@ -25,6 +27,7 @@ import {
 const KEY_SESSAO = "rolemoto.telemetria.sessao";
 const KEY_RESUMO = "rolemoto.telemetria.resumo";
 const HEADER_SESSAO = "X-Rolemoto-Sessao-Token";
+const TIMEOUT_SESSAO_MS = 5_000;
 
 type SessaoRemota = {
   id: string;
@@ -51,6 +54,25 @@ let callbackAnexado = false;
 
 const backgroundOk = (valor: string | undefined): boolean =>
   valor === "granted" || valor === "always";
+
+const novoSessaoId = (): string =>
+  globalThis.crypto?.randomUUID?.() ??
+  `local-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+const comTimeout = <T>(promessa: Promise<T>, ms: number): Promise<T> =>
+  new Promise((resolve, reject) => {
+    const id = setTimeout(() => reject(new Error("timeout")), ms);
+    promessa.then(
+      (valor) => {
+        clearTimeout(id);
+        resolve(valor);
+      },
+      (erro) => {
+        clearTimeout(id);
+        reject(erro);
+      },
+    );
+  });
 
 const paraSessao = (s: SessaoPersistida): SessaoTelemetriaLocal => ({
   sessaoId: s.sessaoId,
@@ -108,6 +130,26 @@ const estadoDe = (sessao: SessaoPersistida): EstadoCalculo => ({
   paradoDesde: sessao.paradoDesde,
 });
 
+const aplicarEstado = (
+  sessao: SessaoPersistida,
+  estado: EstadoCalculo,
+): SessaoPersistida => ({
+  ...sessao,
+  distanciaKm: estado.distanciaKm,
+  velocidadeMaxKmh: estado.velocidadeMaxKmh,
+  tempoMovimentoSegundos: estado.tempoMovimentoSegundos,
+  primeiro: estado.primeiro,
+  ultimo: estado.ultimo,
+  paradoDesde: estado.paradoDesde,
+});
+
+const incorporarBufferNaSessao = async (
+  sessao: SessaoPersistida,
+): Promise<SessaoPersistida> => {
+  const pontos = await telemetriaBuffer.listar();
+  return aplicarEstado(sessao, incorporarBuffer(estadoDe(sessao), pontos));
+};
+
 const aplicarLocalizacao = async (
   lat: number,
   lng: number,
@@ -124,39 +166,35 @@ const aplicarLocalizacao = async (
     speed,
     accuracy,
   });
-  await gravarSessao({
-    ...sessao,
-    distanciaKm: proximo.distanciaKm,
-    velocidadeMaxKmh: proximo.velocidadeMaxKmh,
-    tempoMovimentoSegundos: proximo.tempoMovimentoSegundos,
-    primeiro: proximo.primeiro,
-    ultimo: proximo.ultimo,
-    paradoDesde: proximo.paradoDesde,
-  });
+  await gravarSessao(aplicarEstado(sessao, proximo));
 };
 
 const urlPontoNativo = (sessaoId: string): string =>
   `${functionsApiUrl}/telemetria/sessao/${sessaoId}/ponto`;
 
-const abrirSessaoRemota = async (): Promise<SessaoRemota | null> => {
+const abrirSessaoRemotaInterno = async (): Promise<SessaoRemota | null> => {
   const tokenAuth = await auth.currentUser?.getIdToken();
   if (!tokenAuth) return null;
+  const res = await fetch(`${functionsApiUrl}/telemetria/sessao`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${tokenAuth}`,
+      "Content-Type": "application/json",
+    },
+  });
+  if (!res.ok) return null;
+  const data = (await res.json()) as {
+    id?: string;
+    token?: string;
+    iniciadoEm?: string;
+  };
+  if (!data.id || !data.token || !data.iniciadoEm) return null;
+  return { id: data.id, token: data.token, iniciadoEm: data.iniciadoEm };
+};
+
+const abrirSessaoRemota = async (): Promise<SessaoRemota | null> => {
   try {
-    const res = await fetch(`${functionsApiUrl}/telemetria/sessao`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${tokenAuth}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      id?: string;
-      token?: string;
-      iniciadoEm?: string;
-    };
-    if (!data.id || !data.token || !data.iniciadoEm) return null;
-    return { id: data.id, token: data.token, iniciadoEm: data.iniciadoEm };
+    return await comTimeout(abrirSessaoRemotaInterno(), TIMEOUT_SESSAO_MS);
   } catch {
     return null;
   }
@@ -201,34 +239,6 @@ const encerrarSessaoRemota = async (remota: SessaoRemota): Promise<void> => {
   }
 };
 
-/** Prefere servidor (sobrevive a tela off); local é fallback offline. */
-const mesclarComRemoto = (
-  local: SessaoPersistida,
-  remoto: AgregadosRemotos | null,
-): SessaoPersistida => {
-  if (!remoto) return local;
-  const remotoTemDados =
-    remoto.distanciaKm > 0 ||
-    remoto.velocidadeMaxKmh > 0 ||
-    remoto.tempoMovimentoSegundos > 0 ||
-    remoto.ultimo != null;
-  if (!remotoTemDados) return local;
-  if (remoto.distanciaKm + 0.01 < local.distanciaKm) {
-    return local;
-  }
-  return {
-    ...local,
-    distanciaKm: remoto.distanciaKm,
-    velocidadeMaxKmh: Math.max(local.velocidadeMaxKmh, remoto.velocidadeMaxKmh),
-    tempoMovimentoSegundos: Math.max(
-      local.tempoMovimentoSegundos,
-      remoto.tempoMovimentoSegundos,
-    ),
-    primeiro: remoto.primeiro ?? local.primeiro,
-    ultimo: remoto.ultimo ?? local.ultimo,
-  };
-};
-
 const anexarCallback = async (remota?: SessaoRemota | null) => {
   await BackgroundGeolocation.start(
     {
@@ -236,10 +246,8 @@ const anexarCallback = async (remota?: SessaoRemota | null) => {
       backgroundTitle: "Rolemoto",
       requestPermissions: false,
       stale: false,
-      // 5 m: menos “engolir” movimento com tela off; 0 geraria spam de fixes.
       distanceFilter: 5,
       minIntervalMs: 2000,
-      // Com tela locked o GPS costuma calar; rede/Wi‑Fi preenche o buraco (Android).
       networkFallback: true,
       ...(remota
         ? {
@@ -329,23 +337,33 @@ const montarDados = (
   };
 };
 
+const limparBufferNativo = async () => {
+  await telemetriaBuffer.parar();
+  await telemetriaBuffer.limpar();
+};
+
 export const nativeAdapter: TelemetriaGpsAdapter = {
   isNative: () => true,
 
   getSession: async () => {
     const sessao = await lerSessao();
     if (!sessao?.ativa) return null;
+    const comBuffer = await incorporarBufferNaSessao(sessao);
+    await gravarSessao(comBuffer);
+    await telemetriaBuffer.garantir();
     if (!callbackAnexado) {
       try {
-        await anexarCallback(sessao.remota);
+        await anexarCallback(comBuffer.remota);
       } catch {
-        return paraSessao(sessao);
+        return paraSessao(comBuffer);
       }
     }
-    return paraSessao(sessao);
+    return paraSessao(comBuffer);
   },
 
   getResumoPendente: lerResumo,
+
+  salvarResumoPendente: gravarResumo,
 
   start: async () => {
     const atual = await lerSessao();
@@ -357,23 +375,38 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     }
 
     await exigirBackground();
-    const remota = await abrirSessaoRemota();
-    if (!remota) {
-      throw new TelemetriaGpsErro(
-        "sessao_remota",
-        "Não foi possível abrir a sessão de telemetria. Verifique a internet e tente de novo.",
-      );
-    }
+
     const iniciado: SessaoPersistida = {
       ...estadoCalculoInicial(),
-      sessaoId: remota.id,
-      iniciadoEm: remota.iniciadoEm,
+      sessaoId: novoSessaoId(),
+      iniciadoEm: new Date().toISOString(),
       ativa: true,
-      remota,
+      remota: null,
     };
     await gravarSessao(iniciado);
-    await anexarCallback(remota);
-    return paraSessao(iniciado);
+
+    try {
+      await telemetriaBuffer.iniciar();
+      await anexarCallback(null);
+    } catch (erro) {
+      await limparBufferNativo();
+      await gravarSessao(null);
+      throw erro;
+    }
+
+    const remota = await abrirSessaoRemota();
+    if (remota) {
+      const atual = (await lerSessao()) ?? iniciado;
+      await gravarSessao({ ...atual, remota });
+      try {
+        await anexarCallback(remota);
+      } catch {
+        /* GPS já está rodando sem url */
+      }
+    }
+
+    const persistida = (await lerSessao()) ?? iniciado;
+    return paraSessao(persistida);
   },
 
   stop: async (): Promise<ResultadoStopTelemetria> => {
@@ -382,32 +415,50 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
       throw new TelemetriaGpsErro("sem_sessao", "Nenhuma gravação ativa.");
     }
 
-    const remoto =
-      sessao.remota != null
-        ? await buscarAgregadosRemotos(sessao.remota)
-        : null;
-
     try {
       await BackgroundGeolocation.stop();
     } finally {
       callbackAnexado = false;
     }
 
-    if (sessao.remota) {
-      await encerrarSessaoRemota(sessao.remota);
+    const comBuffer = await incorporarBufferNaSessao(sessao);
+
+    const remoto =
+      comBuffer.remota != null
+        ? await buscarAgregadosRemotos(comBuffer.remota)
+        : null;
+
+    if (comBuffer.remota) {
+      await encerrarSessaoRemota(comBuffer.remota);
     }
 
-    const mesclada = mesclarComRemoto(sessao, remoto);
+    const estadoRemoto: EstadoCalculo | null = remoto
+      ? {
+          distanciaKm: remoto.distanciaKm,
+          velocidadeMaxKmh: remoto.velocidadeMaxKmh,
+          tempoMovimentoSegundos: remoto.tempoMovimentoSegundos,
+          primeiro: remoto.primeiro ?? null,
+          ultimo: remoto.ultimo ?? null,
+          paradoDesde: null,
+        }
+      : null;
+
+    const mesclada = aplicarEstado(
+      comBuffer,
+      mesclarComRemoto(estadoDe(comBuffer), estadoRemoto),
+    );
     const encerradoEm = new Date().toISOString();
     const local = paraSessao({ ...mesclada, ativa: false, remota: null });
     const dados = montarDados(local, encerradoEm);
     await gravarResumo({ dados });
     await gravarSessao(null);
+    await limparBufferNativo();
     return { sessao: local, encerradoEm, dados };
   },
 
   limparResumoPendente: async () => {
     await gravarResumo(null);
+    await limparBufferNativo();
   },
 
   abrirAjustes: async () => {

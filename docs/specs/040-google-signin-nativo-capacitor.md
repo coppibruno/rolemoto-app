@@ -1,6 +1,7 @@
 # SPEC 040 — Google Sign-In nativo (Capacitor)
 
-> **Status:** Em implementação  
+> **Status:** Descartada — número **040 reatribuído** a [043-telemetria-offline.md](./043-telemetria-offline.md)  
+> **Não implementar a partir deste arquivo.** Google nativo Capacitor será reescrito depois da telemetria offline.  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-21  
 > **Origem:** APK Capacitor — login Google falha no WebView (`signInWithPopup` / user-agent bloqueado)  

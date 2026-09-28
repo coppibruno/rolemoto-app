@@ -277,6 +277,13 @@
   color: var(--on-surface-variant);
 }
 
+.copyOffline {
+  margin: 8px 0 12px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
 .erro {
   margin: 0;
   font-size: 13px;

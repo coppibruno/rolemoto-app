@@ -1,6 +1,6 @@
 # SPEC 041 — Telemetria com tela off (Capgo native POST)
 
-> **Status:** Implementado  
+> **Status:** Implementado — trecho “Iniciar exige internet” / checklist “sem internet → não começa” **revogados** pela [SPEC 040](./043-telemetria-offline.md) (`url` Capgo permanece quando há rede)  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-22  
 > **Origem:** APK — notificação e “Permitir o tempo todo” OK; km/velocidade não avançavam com tela desligada  
@@ -45,7 +45,7 @@ Rate limit do ponto: 600/min por IP+sessão.
 ## 4. Limitações (honestas)
 
 - Capgo **não** enfileira POSTs offline — sem rede, pontos nativos podem se perder (callback JS também não roda com tela off).
-- Iniciar gravação nativa **exige internet** (abrir sessão remota).
+- Iniciar gravação nativa **não exige internet** (revogado pela [SPEC 040](./043-telemetria-offline.md); `url` Capgo continua **quando** a sessão remota abre).
 - iOS: matar o app pelo switcher ainda pode encerrar o GPS (limitação do SO).
 - Com tela off o GPS fino costuma calar; `networkFallback: true` usa rede/Wi‑Fi (mais grosso) para não zerar o trajeto.
 
@@ -69,7 +69,7 @@ Checklist:
 
 - [ ] Notificação “Rolemoto / Registrando seu rolê” visível com tela off
 - [ ] Após 10+ min, Finalizar mostra km ≈ trajeto
-- [ ] Sem internet no Iniciar → mensagem clara (não inicia)
+- [ ] Sem internet no Iniciar → grava **igual** (ver O1 na [SPEC 040](./043-telemetria-offline.md); este item da 041 foi **revogado**)
 - [ ] PWA inalterada (sem fingir tela off)
 
 ## 6. Arquivos

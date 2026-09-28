@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
+import { isErroAuth, isFalhaDeRede } from "@/lib/telemetria/falha-rede";
 import {
   TelemetriaGpsErro,
   obterAdapterGps,
@@ -11,6 +12,13 @@ import {
 import type { RoleTelemetriaCreate } from "@/types/role-telemetria";
 import { geocodePontosTelemetria } from "../../telemetria/services/geocode-telemetria.service";
 import { telemetriaService } from "../../telemetria/services/telemetria.service";
+import {
+  MENSAGEM_AUTH_PENDENTE,
+  MENSAGEM_SALVO_NO_CELULAR,
+  avisarFilaVazia,
+  onSyncResumo,
+  type ResultadoSyncResumo,
+} from "../services/sync-resumo-pendente";
 
 export type FaseGravarRole =
   | "carregando"
@@ -28,6 +36,9 @@ export const useGravarRole = () => {
   const [titulo, setTitulo] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [online, setOnline] = useState(
+    () => typeof navigator === "undefined" || navigator.onLine,
+  );
 
   useEffect(() => {
     let cancelado = false;
@@ -67,6 +78,42 @@ export const useGravarRole = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const atualizar = () => setOnline(navigator.onLine);
+    window.addEventListener("online", atualizar);
+    window.addEventListener("offline", atualizar);
+    return () => {
+      window.removeEventListener("online", atualizar);
+      window.removeEventListener("offline", atualizar);
+    };
+  }, []);
+
+  const irParaDashboard = useCallback(
+    (id: string) => {
+      setResumo(null);
+      setTitulo("");
+      setErro(null);
+      router.replace(`/telemetria/${id}`);
+    },
+    [router],
+  );
+
+  const aoSync = useCallback(
+    (resultado: ResultadoSyncResumo) => {
+      if (fase !== "resumo") return;
+      if (resultado.tipo === "ok") {
+        irParaDashboard(resultado.criado.id);
+        return;
+      }
+      if (resultado.tipo === "validacao") {
+        setErro(resultado.mensagem);
+      }
+    },
+    [fase, irParaDashboard],
+  );
+
+  useEffect(() => onSyncResumo(aoSync), [aoSync]);
+
   const iniciar = useCallback(async () => {
     if (!adapter) return;
     setErro(null);
@@ -97,6 +144,7 @@ export const useGravarRole = () => {
         resultado.dados.pontoFim,
       );
       const dados = { ...resultado.dados, ...pontos };
+      await adapter.salvarResumoPendente({ dados });
       setResumo(dados);
       setTitulo(dados.titulo);
       setIniciadoEm(null);
@@ -116,26 +164,31 @@ export const useGravarRole = () => {
     if (!resumo) return;
     setErro(null);
     setOcupado(true);
+    const dados = { ...resumo, titulo: titulo.trim() || resumo.titulo };
     try {
-      const criado = await telemetriaService.criar({
-        ...resumo,
-        titulo: titulo.trim() || resumo.titulo,
-      });
+      await adapter?.salvarResumoPendente({ dados });
+      const criado = await telemetriaService.criar(dados);
       await adapter?.limparResumoPendente();
-      router.replace(`/telemetria/${criado.id}`);
+      avisarFilaVazia();
+      irParaDashboard(criado.id);
     } catch (e) {
-      setErro(
-        e instanceof ApiError
-          ? e.message
-          : "Falha ao salvar. Tente de novo.",
-      );
+      if (isFalhaDeRede(e)) {
+        setErro(MENSAGEM_SALVO_NO_CELULAR);
+      } else if (isErroAuth(e)) {
+        setErro(MENSAGEM_AUTH_PENDENTE);
+      } else {
+        setErro(
+          e instanceof ApiError ? e.message : "Falha ao salvar. Tente de novo.",
+        );
+      }
     } finally {
       setOcupado(false);
     }
-  }, [adapter, resumo, router, titulo]);
+  }, [adapter, irParaDashboard, resumo, titulo]);
 
   const descartar = useCallback(async () => {
     await adapter?.limparResumoPendente();
+    avisarFilaVazia();
     setResumo(null);
     setTitulo("");
     setErro(null);
@@ -155,6 +208,7 @@ export const useGravarRole = () => {
     setTitulo,
     ocupado,
     erro,
+    online,
     iniciar,
     finalizar,
     salvar,

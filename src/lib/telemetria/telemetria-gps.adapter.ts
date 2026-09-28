@@ -32,6 +32,7 @@ export type TelemetriaGpsAdapter = {
   isNative: () => boolean;
   getSession: () => Promise<SessaoTelemetriaLocal | null>;
   getResumoPendente: () => Promise<ResumoTelemetriaPendente | null>;
+  salvarResumoPendente: (resumo: ResumoTelemetriaPendente) => Promise<void>;
   start: () => Promise<SessaoTelemetriaLocal>;
   stop: () => Promise<ResultadoStopTelemetria>;
   limparResumoPendente: () => Promise<void>;

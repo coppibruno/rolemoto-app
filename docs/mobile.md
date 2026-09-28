@@ -22,7 +22,7 @@ Auth no Capacitor: e-mail/senha pelo Firebase JS no WebView; **Google** usa Sign
 
 Push híbrido (SPEC 042): no APK/loja o token FCM vem de `@capacitor/push-notifications` (`plataforma: android|ios`); no Chrome/PWA continua VAPID + service worker (`plataforma: web`). A mesma coleção `dispositivos` e o mesmo `notificacoes.ts` enviam os dois formatos. Canal Android `rolemoto_push` (avisos de rolê) — distinto da notificação persistente da telemetria Capgo. Emulator de Functions **não** dispara FCM; QA de card nativo exige Functions deployadas.
 
-Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Com a opção Capgo **`url`**, cada ponto é POSTado **nativamente** para `POST /telemetria/sessao/:id/ponto` (agrega no Firestore mesmo com WebView congelado). Preferências: `networkFallback: true`, `distanceFilter: 5`, accuracy máx. 100 m (aceita fix de rede com tela off). Preferences no device guardam espelho local; no Finalizar o app lê os agregados do servidor. Detalhe: [SPEC 041](./specs/041-telemetria-tela-off-capgo-url.md).
+Plugin de GPS: `@capgo/background-geolocation` (foreground service + notificação). Com a opção Capgo **`url`**, cada ponto é POSTado **nativamente** para `POST /telemetria/sessao/:id/ponto` quando há rede (agrega no Firestore mesmo com WebView congelado). Sem internet no Iniciar, a gravação **começa igual** (sessão local + GPS); `url` é oportunista. Com tela off **sem** dados, o plugin local `TelemetriaBuffer` persiste os fixes em JSONL no disco — o JS não é a fonte da verdade. Preferências Capgo: `networkFallback: true`, `distanceFilter: 5`, accuracy máx. 100 m. Detalhe: [SPEC 041](./specs/041-telemetria-tela-off-capgo-url.md) (tela off **com** rede) e [SPEC 040 / 043](./specs/043-telemetria-offline.md) (offline).
 
 **Pré-requisito Google no APK:** app Android `br.com.rolemoto.app` no Firebase + SHA-1 (debug e release/Play) + `google-services.json` em `android/app/`. No iOS: `GoogleService-Info.plist` + URL scheme `REVERSED_CLIENT_ID`.
 
@@ -101,7 +101,7 @@ npx cap open android
 
 Reinicie `npm run dev` e `npm run emulators` depois de mudar o `.env.local` ou o `host: 0.0.0.0` no `firebase.json`.
 
-> **Tela off em LAN:** o POST nativo Capgo usa `NEXT_PUBLIC_FUNCTIONS_URL`. Sem a function alcançável no aparelho, **Iniciar** falha de propósito (SPEC 041). Em build de loja use API HTTPS de produção.
+> **Tela off em LAN:** o POST nativo Capgo usa `NEXT_PUBLIC_FUNCTIONS_URL` **quando** a sessão remota abre. Sem a function alcançável, o Iniciar **não** falha — grava só no device (SPEC 040). Em build de loja use API HTTPS de produção para o caminho com `url`.
 
 No Android Studio: Run no aparelho. Marque USB debugging.
 
@@ -127,7 +127,13 @@ Build de loja: **não** passe `CAPACITOR_SERVER_URL` HTTP; o default é o site d
 
 Sem “Sempre”, o app **não** inicia a gravação background — a UI explica.
 
-**Internet no Iniciar:** a sessão ao vivo (POST nativo Capgo) exige rede no momento de **Iniciar gravação**. Sem API alcançável, o app mostra erro e não começa. Com tela off, dados móveis (ou Wi‑Fi) precisam estar ok para os POSTs nativos; Capgo não reenvia pontos perdidos offline.
+**Internet no Iniciar:** **não** é pré-requisito (O1). Sem API, o GPS liga na mesma; Capgo `url` só entra se o `POST /telemetria/sessao` responder em até 5 s. Tela off sem dados usa o buffer nativo (`TelemetriaBuffer`), não o POST Capgo. O `POST /telemetria` (save no perfil) espera a rede voltar (O3/O4).
+
+### Spike Capgo 8.4.x — buffer nativo (O2)
+
+`@capgo/background-geolocation@8.4.6` **não** oferece `getLocations` nem fila em disco. O `LocationStore` nativo só persiste config do watcher (`url` / headers) para o FGS sticky; o POST `url` é best-effort (falhou → descarta). Transistorsoft tem SQLite; Capgo não.
+
+Por isso o Rolemoto grava cada fix num JSONL (`rolemoto-telemetria-buffer.jsonl`) via plugin local `TelemetriaBuffer` (LocationListener no mesmo processo do FGS Capgo). Com a tela off o WebView congela; o listener nativo continua enquanto o FGS segura o processo. No `stop()` e no `appStateChange` (ativo) o JS lê o arquivo e aplica `calcular-metricas`. Não há HTTP local.
 
 ### 3. Roteiro de campo
 
@@ -139,14 +145,16 @@ Sem “Sempre”, o app **não** inicia a gravação background — a UI explica
 6. Finalizar → conferir os 4 números (máx, média, tempo, km) ≈ Maps / relógio.
 7. Force-stop (Android) ou matar no switcher (iOS) **durante** a gravação e reabrir: a sessão deve voltar do storage nativo, ou a UI deixa claro que acabou. Com FGS no Android o processo costuma viver; no iOS, matar o app pelo switcher **pode** encerrar o GPS (limitação do SO).
 
-**Aceite:**
+**Aceite (O1–O4 + regressão T1 online):**
 
-- [ ] Tela off ≥ 10 min → distância > 0 (functions de produção ou emulator acessível na LAN)
+- [ ] **O1:** modo avião, app já aberto → Iniciar → GRAVANDO + notificação persistente
+- [ ] **O2:** tela off ≥ 10 min **sem dados** → Finalizar com distância > 0 ≈ trajeto
+- [ ] **O3:** Finalizar sem API → dashboard/resumo visível; Preferences intactas; copy honesta
+- [ ] **O4:** ligar 4G → sync automático **ou** Salvar → 201 → `/telemetria/:id` no perfil
+- [ ] Iniciar **com** internet: sessão remota + Capgo `url` (regressão T1)
 - [ ] Máxima ≥ média (salvo ritmo constante)
 - [ ] Tempo de parede ≈ relógio (± 1 min)
-- [ ] Notificação Android visível o tempo todo
 - [ ] Negar “Sempre” → não inicia + mensagem clara
-- [ ] Sem rede no Iniciar → não inicia + mensagem clara
 - [ ] Chrome PWA: botão disabled + copy do app, sem fingir tela off
 
 ### 4. Mesa (não conta como aceite)

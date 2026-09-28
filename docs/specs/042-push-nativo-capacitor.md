@@ -1,6 +1,6 @@
 # SPEC 042 — Push nativo Capacitor (híbrido web + loja)
 
-> **Status:** Proposta  
+> **Status:** Descartada para reescrita — ver [SPEC 040](./043-telemetria-offline.md) primeiro; este arquivo não é o backlog atual  
 > **Autor:** Assistente IA  
 > **Data:** 2026-09-23  
 > **Origem:** APK Capacitor — solicitar vaga não dispara card nativo; Web Push (SPEC 013) não roda de forma confiável no WebView  
