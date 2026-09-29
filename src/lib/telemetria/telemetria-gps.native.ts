@@ -38,12 +38,14 @@ type SessaoRemota = {
 type SessaoPersistida = SessaoTelemetriaLocal & {
   ativa: boolean;
   paradoDesde: number | null;
+  velocidadeAtualKmh: number;
   remota?: SessaoRemota | null;
 };
 
 type AgregadosRemotos = {
   distanciaKm: number;
   velocidadeMaxKmh: number;
+  velocidadeAtualKmh: number;
   tempoMovimentoSegundos: number;
   primeiro: SessaoTelemetriaLocal["primeiro"];
   ultimo: SessaoTelemetriaLocal["ultimo"];
@@ -124,6 +126,7 @@ const gravarResumo = async (resumo: ResumoTelemetriaPendente | null) => {
 const estadoDe = (sessao: SessaoPersistida): EstadoCalculo => ({
   distanciaKm: sessao.distanciaKm,
   velocidadeMaxKmh: sessao.velocidadeMaxKmh,
+  velocidadeAtualKmh: sessao.velocidadeAtualKmh ?? 0,
   tempoMovimentoSegundos: sessao.tempoMovimentoSegundos,
   primeiro: sessao.primeiro ?? null,
   ultimo: sessao.ultimo,
@@ -137,6 +140,7 @@ const aplicarEstado = (
   ...sessao,
   distanciaKm: estado.distanciaKm,
   velocidadeMaxKmh: estado.velocidadeMaxKmh,
+  velocidadeAtualKmh: estado.velocidadeAtualKmh,
   tempoMovimentoSegundos: estado.tempoMovimentoSegundos,
   primeiro: estado.primeiro,
   ultimo: estado.ultimo,
@@ -217,6 +221,7 @@ const buscarAgregadosRemotos = async (
     return {
       distanciaKm: Number(data.distanciaKm ?? 0),
       velocidadeMaxKmh: Number(data.velocidadeMaxKmh ?? 0),
+      velocidadeAtualKmh: Number(data.velocidadeAtualKmh ?? 0),
       tempoMovimentoSegundos: Number(data.tempoMovimentoSegundos ?? 0),
       primeiro: data.primeiro ?? null,
       ultimo: data.ultimo ?? null,
@@ -436,6 +441,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
       ? {
           distanciaKm: remoto.distanciaKm,
           velocidadeMaxKmh: remoto.velocidadeMaxKmh,
+          velocidadeAtualKmh: remoto.velocidadeAtualKmh,
           tempoMovimentoSegundos: remoto.tempoMovimentoSegundos,
           primeiro: remoto.primeiro ?? null,
           ultimo: remoto.ultimo ?? null,

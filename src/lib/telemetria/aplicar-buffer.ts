@@ -27,6 +27,7 @@ const preferirMaisDistancia = (
   return {
     distanciaKm: outro.distanciaKm,
     velocidadeMaxKmh: Math.max(local.velocidadeMaxKmh, outro.velocidadeMaxKmh),
+    velocidadeAtualKmh: outro.velocidadeAtualKmh,
     tempoMovimentoSegundos: Math.max(
       local.tempoMovimentoSegundos,
       outro.tempoMovimentoSegundos,

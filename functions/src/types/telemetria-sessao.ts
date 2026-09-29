@@ -7,6 +7,7 @@ export type TelemetriaSessao = {
   iniciadoEm: string;
   distanciaKm: number;
   velocidadeMaxKmh: number;
+  velocidadeAtualKmh: number;
   tempoMovimentoSegundos: number;
   primeiro: CoordGps | null;
   ultimo: CoordGps | null;
