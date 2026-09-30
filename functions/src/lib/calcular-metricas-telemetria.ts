@@ -30,6 +30,9 @@ export type EstadoCalculo = {
   velocidadeMaxKmh: number;
   /** Última velocidade aceita. A máxima da viagem não serve para julgar o próximo trecho. */
   velocidadeAtualKmh: number;
+  /** Soma das velocidades aceitas em movimento, para a média aritmética. */
+  somaVelocidadesKmh: number;
+  quantidadeVelocidades: number;
   tempoMovimentoSegundos: number;
   primeiro: CoordGps | null;
   ultimo: CoordGps | null;
@@ -56,6 +59,8 @@ export const estadoCalculoInicial = (): EstadoCalculo => ({
   distanciaKm: 0,
   velocidadeMaxKmh: 0,
   velocidadeAtualKmh: 0,
+  somaVelocidadesKmh: 0,
+  quantidadeVelocidades: 0,
   tempoMovimentoSegundos: 0,
   primeiro: null,
   ultimo: null,
@@ -178,6 +183,8 @@ export const aplicarPonto = (
     distanciaKm: estado.distanciaKm + trechoKm,
     velocidadeMaxKmh: Math.max(estado.velocidadeMaxKmh, picoKmh),
     velocidadeAtualKmh: atualKmh,
+    somaVelocidadesKmh: estado.somaVelocidadesKmh + atualKmh,
+    quantidadeVelocidades: estado.quantidadeVelocidades + 1,
     tempoMovimentoSegundos: estado.tempoMovimentoSegundos + deltaMovimento,
     primeiro: estado.primeiro,
     ultimo: aceito,
@@ -185,10 +192,11 @@ export const aplicarPonto = (
   };
 };
 
+/** Média aritmética: soma das velocidades aceitas / quantidade. */
 export const velocidadeMediaKmh = (
-  distanciaKm: number,
-  tempoMovimentoSegundos: number,
+  somaVelocidadesKmh: number,
+  quantidadeVelocidades: number,
 ): number => {
-  if (tempoMovimentoSegundos <= 0) return 0;
-  return distanciaKm / (tempoMovimentoSegundos / 3600);
+  if (quantidadeVelocidades <= 0) return 0;
+  return somaVelocidadesKmh / quantidadeVelocidades;
 };

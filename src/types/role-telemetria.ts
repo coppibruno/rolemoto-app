@@ -50,6 +50,8 @@ export type SessaoTelemetriaLocal = {
   iniciadoEm: string;
   distanciaKm: number;
   velocidadeMaxKmh: number;
+  somaVelocidadesKmh: number;
+  quantidadeVelocidades: number;
   primeiro: {lat: number; lng: number; t: number} | null;
   ultimo: {lat: number; lng: number; t: number} | null;
   tempoMovimentoSegundos: number;

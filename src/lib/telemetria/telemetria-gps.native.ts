@@ -46,6 +46,8 @@ type AgregadosRemotos = {
   distanciaKm: number;
   velocidadeMaxKmh: number;
   velocidadeAtualKmh: number;
+  somaVelocidadesKmh: number;
+  quantidadeVelocidades: number;
   tempoMovimentoSegundos: number;
   primeiro: SessaoTelemetriaLocal["primeiro"];
   ultimo: SessaoTelemetriaLocal["ultimo"];
@@ -81,6 +83,8 @@ const paraSessao = (s: SessaoPersistida): SessaoTelemetriaLocal => ({
   iniciadoEm: s.iniciadoEm,
   distanciaKm: s.distanciaKm,
   velocidadeMaxKmh: s.velocidadeMaxKmh,
+  somaVelocidadesKmh: s.somaVelocidadesKmh ?? 0,
+  quantidadeVelocidades: s.quantidadeVelocidades ?? 0,
   primeiro: s.primeiro ?? null,
   ultimo: s.ultimo,
   tempoMovimentoSegundos: s.tempoMovimentoSegundos,
@@ -127,6 +131,8 @@ const estadoDe = (sessao: SessaoPersistida): EstadoCalculo => ({
   distanciaKm: sessao.distanciaKm,
   velocidadeMaxKmh: sessao.velocidadeMaxKmh,
   velocidadeAtualKmh: sessao.velocidadeAtualKmh ?? 0,
+  somaVelocidadesKmh: sessao.somaVelocidadesKmh ?? 0,
+  quantidadeVelocidades: sessao.quantidadeVelocidades ?? 0,
   tempoMovimentoSegundos: sessao.tempoMovimentoSegundos,
   primeiro: sessao.primeiro ?? null,
   ultimo: sessao.ultimo,
@@ -141,6 +147,8 @@ const aplicarEstado = (
   distanciaKm: estado.distanciaKm,
   velocidadeMaxKmh: estado.velocidadeMaxKmh,
   velocidadeAtualKmh: estado.velocidadeAtualKmh,
+  somaVelocidadesKmh: estado.somaVelocidadesKmh,
+  quantidadeVelocidades: estado.quantidadeVelocidades,
   tempoMovimentoSegundos: estado.tempoMovimentoSegundos,
   primeiro: estado.primeiro,
   ultimo: estado.ultimo,
@@ -222,6 +230,8 @@ const buscarAgregadosRemotos = async (
       distanciaKm: Number(data.distanciaKm ?? 0),
       velocidadeMaxKmh: Number(data.velocidadeMaxKmh ?? 0),
       velocidadeAtualKmh: Number(data.velocidadeAtualKmh ?? 0),
+      somaVelocidadesKmh: Number(data.somaVelocidadesKmh ?? 0),
+      quantidadeVelocidades: Number(data.quantidadeVelocidades ?? 0),
       tempoMovimentoSegundos: Number(data.tempoMovimentoSegundos ?? 0),
       primeiro: data.primeiro ?? null,
       ultimo: data.ultimo ?? null,
@@ -328,8 +338,8 @@ const montarDados = (
     ...arredondarParaPost({
       velocidadeMaxKmh: sessao.velocidadeMaxKmh,
       velocidadeMediaKmh: velocidadeMediaKmh(
-        sessao.distanciaKm,
-        sessao.tempoMovimentoSegundos,
+        sessao.somaVelocidadesKmh,
+        sessao.quantidadeVelocidades,
       ),
       distanciaKm: sessao.distanciaKm,
       tempoSegundos,
@@ -442,6 +452,8 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
           distanciaKm: remoto.distanciaKm,
           velocidadeMaxKmh: remoto.velocidadeMaxKmh,
           velocidadeAtualKmh: remoto.velocidadeAtualKmh,
+          somaVelocidadesKmh: remoto.somaVelocidadesKmh,
+          quantidadeVelocidades: remoto.quantidadeVelocidades,
           tempoMovimentoSegundos: remoto.tempoMovimentoSegundos,
           primeiro: remoto.primeiro ?? null,
           ultimo: remoto.ultimo ?? null,

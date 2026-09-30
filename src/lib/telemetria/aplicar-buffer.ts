@@ -28,6 +28,8 @@ const preferirMaisDistancia = (
     distanciaKm: outro.distanciaKm,
     velocidadeMaxKmh: Math.max(local.velocidadeMaxKmh, outro.velocidadeMaxKmh),
     velocidadeAtualKmh: outro.velocidadeAtualKmh,
+    somaVelocidadesKmh: outro.somaVelocidadesKmh,
+    quantidadeVelocidades: outro.quantidadeVelocidades,
     tempoMovimentoSegundos: Math.max(
       local.tempoMovimentoSegundos,
       outro.tempoMovimentoSegundos,

@@ -8,6 +8,8 @@ export type TelemetriaSessao = {
   distanciaKm: number;
   velocidadeMaxKmh: number;
   velocidadeAtualKmh: number;
+  somaVelocidadesKmh: number;
+  quantidadeVelocidades: number;
   tempoMovimentoSegundos: number;
   primeiro: CoordGps | null;
   ultimo: CoordGps | null;

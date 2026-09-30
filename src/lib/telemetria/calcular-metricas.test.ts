@@ -156,6 +156,7 @@ describe("processarPontos", () => {
     const estado = processarPontos(pontos);
     expect(estado.distanciaKm).toBeLessThan(0.05);
     expect(estado.tempoMovimentoSegundos).toBeLessThan(20);
+    expect(estado.quantidadeVelocidades).toBe(0);
   });
 
   it("A/B são o primeiro e o último ponto aceitos", () => {
@@ -189,8 +190,8 @@ describe("processarPontos", () => {
     });
   });
 
-  it("média usa só tempo em movimento", () => {
-    expect(velocidadeMediaKmh(48, 1800)).toBeCloseTo(96, 5);
+  it("média é a soma das velocidades dividida pela quantidade", () => {
+    expect(velocidadeMediaKmh(80, 5)).toBe(16);
     expect(velocidadeMediaKmh(10, 0)).toBe(0);
   });
 
@@ -214,6 +215,30 @@ describe("aplicarPonto", () => {
     );
     expect(estado.distanciaKm).toBeCloseTo(haversineKm(0, 0, 0.01, 0), 5);
     expect(estado.tempoMovimentoSegundos).toBe(60);
+    expect(estado.quantidadeVelocidades).toBe(1);
+    expect(estado.somaVelocidadesKmh).toBeCloseTo(estado.velocidadeAtualKmh, 5);
+  });
+
+  it("média aritmética das velocidades aceitas", () => {
+    let estado = estadoCalculoInicial();
+    const pontos = [
+      ponto({ t: t0, lat: 0, lng: 0, speed: null }),
+      ponto({ t: t0 + 2000, lat: 0.00005, lng: 0, speed: null }),
+      ponto({ t: t0 + 4000, lat: 0.0001, lng: 0, speed: null }),
+    ];
+    const velocidades: number[] = [];
+    for (const amostra of pontos) {
+      estado = aplicarPonto(estado, amostra);
+      if (estado.quantidadeVelocidades > velocidades.length) {
+        velocidades.push(estado.velocidadeAtualKmh);
+      }
+    }
+    const soma = velocidades.reduce((acc, valor) => acc + valor, 0);
+    expect(estado.quantidadeVelocidades).toBe(2);
+    expect(estado.somaVelocidadesKmh).toBeCloseTo(soma, 5);
+    expect(
+      velocidadeMediaKmh(estado.somaVelocidadesKmh, estado.quantidadeVelocidades),
+    ).toBeCloseTo(soma / 2, 5);
   });
 });
 

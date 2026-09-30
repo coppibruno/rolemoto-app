@@ -55,16 +55,26 @@ describe("mesclarComRemoto", () => {
   });
 
   it("prefere o lado com mais distância", () => {
-    const local = { ...estadoCalculoInicial(), distanciaKm: 2, velocidadeMaxKmh: 30 };
+    const local = {
+      ...estadoCalculoInicial(),
+      distanciaKm: 2,
+      velocidadeMaxKmh: 30,
+      somaVelocidadesKmh: 40,
+      quantidadeVelocidades: 2,
+    };
     const remoto = {
       ...estadoCalculoInicial(),
       distanciaKm: 5,
       velocidadeMaxKmh: 20,
+      somaVelocidadesKmh: 100,
+      quantidadeVelocidades: 4,
       tempoMovimentoSegundos: 100,
       ultimo: { lat: 1, lng: 1, t: t0 },
     };
     const mesclado = mesclarComRemoto(local, remoto);
     expect(mesclado.distanciaKm).toBe(5);
     expect(mesclado.velocidadeMaxKmh).toBe(30);
+    expect(mesclado.somaVelocidadesKmh).toBe(100);
+    expect(mesclado.quantidadeVelocidades).toBe(4);
   });
 });

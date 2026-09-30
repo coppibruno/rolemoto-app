@@ -35,6 +35,8 @@ export const sessaoParaResposta = (
   distanciaKm: doc.distanciaKm,
   velocidadeMaxKmh: doc.velocidadeMaxKmh,
   velocidadeAtualKmh: doc.velocidadeAtualKmh,
+  somaVelocidadesKmh: doc.somaVelocidadesKmh,
+  quantidadeVelocidades: doc.quantidadeVelocidades,
   tempoMovimentoSegundos: doc.tempoMovimentoSegundos,
   primeiro: doc.primeiro,
   ultimo: doc.ultimo,
