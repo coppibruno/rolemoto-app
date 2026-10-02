@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
         source: "/__/auth/:path*",
         destination: "https://rolemoto-bc47f.firebaseapp.com/__/auth/:path*",
       },
+      // Mesma origem para o canvas poder exportar o mapa no card de compartilhar.
+      {
+        source: "/tiles/:z/:x/:y",
+        destination: "https://tile.openstreetmap.org/:z/:x/:y.png",
+      },
     ];
 
     if (process.env.NEXT_PUBLIC_STORAGE_EMULATOR_HOST) {

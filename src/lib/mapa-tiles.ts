@@ -68,3 +68,10 @@ export const urlTileOsm = (z: number, x: number, y: number): string => {
   const xWrap = ((x % n) + n) % n;
   return `https://tile.openstreetmap.org/${z}/${xWrap}/${y}.png`;
 };
+
+/** Mesmo tile via rewrite `/tiles` — necessário para desenhar em canvas exportável. */
+export const urlTileMesmaOrigem = (z: number, x: number, y: number): string => {
+  const n = 2 ** z;
+  const xWrap = ((x % n) + n) % n;
+  return `/tiles/${z}/${xWrap}/${y}`;
+};

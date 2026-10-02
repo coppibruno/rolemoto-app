@@ -15,6 +15,7 @@ type Props = {
   velocidadeMediaKmh: number;
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
+  tracado?: string;
   tituloEditavel?: {
     valor: string;
     onMudar: (valor: string) => void;
@@ -30,6 +31,7 @@ export const DashboardTelemetria = ({
   velocidadeMediaKmh,
   pontoInicio,
   pontoFim,
+  tracado,
   tituloEditavel,
 }: Props) => {
   return (
@@ -62,6 +64,7 @@ export const DashboardTelemetria = ({
         pontoInicio={pontoInicio}
         pontoFim={pontoFim}
         distanciaKm={distanciaKm}
+        tracado={tracado}
       />
       <GridMetricasTelemetria
         distanciaKm={distanciaKm}

@@ -23,6 +23,8 @@ type Props = {
   className?: string;
   /** Desenha linha reta entre o 1º e o 2º marcador (ex.: telemetria A→B). */
   ligarMarcadores?: boolean;
+  /** Caminho percorrido; com 2+ pontos substitui a linha reta e entra no enquadramento. */
+  trajeto?: PontoLatLng[];
   "aria-label"?: string;
 };
 
@@ -34,25 +36,30 @@ type Layout = {
   mosaicoLeft: number;
   mosaicoTop: number;
   marcadoresPx: Array<{ left: number; top: number; cor: string; rotulo?: string }>;
+  /** Atributo `points` do `<polyline>`; "" sem trajeto. */
+  trajetoPx: string;
 };
 
 const layoutMapa = (
   marcadores: MarcadorMapa[],
+  trajeto: PontoLatLng[],
   width: number,
   height: number,
   zoomFixo?: number,
 ): Layout | null => {
   if (width <= 0 || height <= 0 || marcadores.length === 0) return null;
 
+  const enquadrar: PontoLatLng[] =
+    trajeto.length >= 2 ? [...marcadores, ...trajeto] : marcadores;
   const zoom =
     zoomFixo ??
     zoomParaEnquadrar(
-      marcadores,
+      enquadrar,
       width,
       height,
-      marcadores.length > 1 ? 48 : 24,
+      enquadrar.length > 1 ? 48 : 24,
     );
-  const centro = centroPixelDosPontos(marcadores, zoom);
+  const centro = centroPixelDosPontos(enquadrar, zoom);
   const origemX = centro.x - width / 2;
   const origemY = centro.y - height / 2;
 
@@ -90,14 +97,27 @@ const layoutMapa = (
     };
   });
 
-  return { zoom, tiles, mosaicoLeft, mosaicoTop, marcadoresPx };
+  const trajetoPx =
+    trajeto.length >= 2
+      ? trajeto
+          .map((p) => {
+            const g = latLngParaPixelGlobal(p.lat, p.lng, zoom);
+            return `${(g.x - origemX).toFixed(1)},${(g.y - origemY).toFixed(1)}`;
+          })
+          .join(" ")
+      : "";
+
+  return { zoom, tiles, mosaicoLeft, mosaicoTop, marcadoresPx, trajetoPx };
 };
+
+const SEM_TRAJETO: PontoLatLng[] = [];
 
 export const MapaEstatico = ({
   marcadores,
   zoom,
   className,
   ligarMarcadores = false,
+  trajeto = SEM_TRAJETO,
   "aria-label": ariaLabel = "Mapa",
 }: Props) => {
   const [host, setHost] = useState<HTMLDivElement | null>(null);
@@ -116,12 +136,12 @@ export const MapaEstatico = ({
   }, [host]);
 
   const layout = useMemo(
-    () => layoutMapa(marcadores, tamanho.w, tamanho.h, zoom),
-    [marcadores, tamanho.w, tamanho.h, zoom],
+    () => layoutMapa(marcadores, trajeto, tamanho.w, tamanho.h, zoom),
+    [marcadores, trajeto, tamanho.w, tamanho.h, zoom],
   );
 
   const linha =
-    ligarMarcadores && layout && layout.marcadoresPx.length >= 2
+    ligarMarcadores && layout && !layout.trajetoPx && layout.marcadoresPx.length >= 2
       ? {
           x1: layout.marcadoresPx[0].left,
           y1: layout.marcadoresPx[0].top,
@@ -166,6 +186,27 @@ export const MapaEstatico = ({
                 strokeLinecap="round"
                 strokeDasharray="6 5"
                 opacity={0.9}
+              />
+            </svg>
+          ) : null}
+          {layout.trajetoPx ? (
+            <svg className={styles.overlaySvg} aria-hidden>
+              <polyline
+                points={layout.trajetoPx}
+                fill="none"
+                stroke="#121316"
+                strokeWidth={6}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.45}
+              />
+              <polyline
+                points={layout.trajetoPx}
+                fill="none"
+                stroke="#f97316"
+                strokeWidth={3.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           ) : null}

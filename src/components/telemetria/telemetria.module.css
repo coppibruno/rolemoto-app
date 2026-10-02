@@ -70,6 +70,31 @@
   margin-left: 4px;
 }
 
+.acoesHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.botaoShare {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--primary-container);
+  cursor: pointer;
+}
+
+.botaoShare:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .avatarHeader {
   display: flex;
   align-items: center;

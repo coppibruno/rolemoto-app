@@ -16,7 +16,9 @@ import {
   type EstadoCalculo,
 } from "./calcular-metricas";
 import { incorporarBuffer, mesclarComRemoto } from "./aplicar-buffer";
+import type { PontoGps } from "./calcular-metricas";
 import { telemetriaBuffer } from "./telemetria-buffer";
+import { gerarTracado } from "./tracado";
 import {
   TelemetriaGpsErro,
   type ResultadoStopTelemetria,
@@ -157,8 +159,9 @@ const aplicarEstado = (
 
 const incorporarBufferNaSessao = async (
   sessao: SessaoPersistida,
+  pontosLidos?: PontoGps[],
 ): Promise<SessaoPersistida> => {
-  const pontos = await telemetriaBuffer.listar();
+  const pontos = pontosLidos ?? (await telemetriaBuffer.listar());
   return aplicarEstado(sessao, incorporarBuffer(estadoDe(sessao), pontos));
 };
 
@@ -331,6 +334,7 @@ const pontoDe = (
 const montarDados = (
   sessao: SessaoTelemetriaLocal,
   encerradoEm: string,
+  tracado: string,
 ): RoleTelemetriaCreate => {
   const tempoSegundos = tempoParedeSegundos(sessao.iniciadoEm, encerradoEm);
   return {
@@ -349,6 +353,7 @@ const montarDados = (
     encerradoEm,
     pontoInicio: pontoDe(sessao.primeiro ?? sessao.ultimo),
     pontoFim: pontoDe(sessao.ultimo ?? sessao.primeiro),
+    tracado,
   };
 };
 
@@ -436,7 +441,8 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
       callbackAnexado = false;
     }
 
-    const comBuffer = await incorporarBufferNaSessao(sessao);
+    const pontosBuffer = await telemetriaBuffer.listar();
+    const comBuffer = await incorporarBufferNaSessao(sessao, pontosBuffer);
 
     const remoto =
       comBuffer.remota != null
@@ -467,7 +473,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     );
     const encerradoEm = new Date().toISOString();
     const local = paraSessao({ ...mesclada, ativa: false, remota: null });
-    const dados = montarDados(local, encerradoEm);
+    const dados = montarDados(local, encerradoEm, gerarTracado(pontosBuffer));
     await gravarResumo({ dados });
     await gravarSessao(null);
     await limparBufferNativo();

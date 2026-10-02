@@ -34,6 +34,7 @@ export const ResumoPreSave = ({
         velocidadeMediaKmh={dados.velocidadeMediaKmh}
         pontoInicio={dados.pontoInicio}
         pontoFim={dados.pontoFim}
+        tracado={dados.tracado}
         tituloEditavel={{ valor: titulo, onMudar: onTitulo }}
       />
       {!online ? (

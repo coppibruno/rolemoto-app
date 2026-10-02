@@ -10,6 +10,8 @@ const MAX_DISTANCIA_KM = 2000;
 const MAX_VELOCIDADE_KMH = 350;
 const TITULO_MAX = 80;
 const TEXTO_PONTO_MAX = 200;
+const TRACADO_MAX = 20_000;
+const TRACADO_CARACTERES = /^[?-~]*$/;
 const TZ = "America/Sao_Paulo";
 
 const isNumeroFinito = (valor: unknown): valor is number =>
@@ -131,6 +133,16 @@ export const validarBodyRoleTelemetria = (
     return fim;
   }
 
+  const tracado =
+    body.tracado === undefined || body.tracado === null ? "" : body.tracado;
+  if (
+    typeof tracado !== "string" ||
+    tracado.length > TRACADO_MAX ||
+    !TRACADO_CARACTERES.test(tracado)
+  ) {
+    return {ok: false, erro: "tracado inválido"};
+  }
+
   const tituloBruto = typeof body.titulo === "string" ? body.titulo.trim() : "";
   if (tituloBruto.length > TITULO_MAX) {
     return {ok: false, erro: "titulo inválido"};
@@ -153,6 +165,7 @@ export const validarBodyRoleTelemetria = (
       encerradoEm: body.encerradoEm,
       pontoInicio: inicio.ponto,
       pontoFim: fim.ponto,
+      tracado,
     },
   };
 };

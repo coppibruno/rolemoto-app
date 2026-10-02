@@ -18,6 +18,8 @@ export type RoleTelemetria = {
   encerradoEm: string;
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
+  /** Encoded polyline (precisão 5); vazio em passeios antigos. Só no detalhe. */
+  tracado?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -33,6 +35,7 @@ export type RoleTelemetriaCreate = {
   encerradoEm: string;
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
+  tracado?: string;
 };
 
 export type ItemHistoricoTelemetria = {

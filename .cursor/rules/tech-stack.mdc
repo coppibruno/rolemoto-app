@@ -188,13 +188,14 @@ Local: qualquer autenticado. Evento: só inscrito (`usersevento`) e após encerr
   iniciadoEm: timestamp,
   encerradoEm: timestamp,
   pontoInicio: { lat, lng, nome, endereco },
-  pontoFim: { lat, lng, nome, endereco },
-  createdAt: timestamp,
+ pontoFim: { lat, lng, nome, endereco },
+ tracado: string, // encoded polyline (precisão 5), ≤ 1500 pontos; "" em passeios antigos
+ createdAt: timestamp,
   updatedAt: timestamp
 }
 ```
 
-Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria`; detalhe autenticado em `GET /telemetria/:id`; perfil em `GET /usuarios/:uid/telemetria`.
+Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria` (sem `tracado`); detalhe autenticado em `GET /telemetria/:id`; perfil em `GET /usuarios/:uid/telemetria`.
 
 ### Garagem (`GET /meus-roles`)
 Telemetria: `rolesFeitos`, `eventosParticipados`, `locaisFavoritos`. `contagensTipo` (roles/eventos/locais). Subrotas lazy: `GET /meus-roles/eventos`, `GET /meus-roles/locais`.

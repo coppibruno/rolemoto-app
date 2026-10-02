@@ -23,7 +23,8 @@ const toPonto = (valor: unknown): PontoTelemetria => {
   };
 };
 
-const toDoc = (snap: DocumentSnapshot): RoleTelemetria => {
+/** Sem o traçado: listas não precisam dos KB do polyline por item. */
+const toResumo = (snap: DocumentSnapshot): RoleTelemetria => {
   const data = snap.data() ?? {};
   return {
     id: snap.id,
@@ -42,6 +43,11 @@ const toDoc = (snap: DocumentSnapshot): RoleTelemetria => {
     updatedAt: toIso(data.updatedAt),
   };
 };
+
+const toDoc = (snap: DocumentSnapshot): RoleTelemetria => ({
+  ...toResumo(snap),
+  tracado: String(snap.data()?.tracado ?? ""),
+});
 
 export class FirestoreRoleTelemetriaRepository
 implements RoleTelemetriaRepository {
@@ -66,6 +72,7 @@ implements RoleTelemetriaRepository {
       encerradoEm: toTimestamp(dados.encerradoEm),
       pontoInicio: dados.pontoInicio,
       pontoFim: dados.pontoFim,
+      tracado: dados.tracado,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -87,6 +94,6 @@ implements RoleTelemetriaRepository {
       .orderBy("encerradoEm", "desc")
       .limit(limite)
       .get();
-    return snap.docs.map(toDoc);
+    return snap.docs.map(toResumo);
   }
 }

@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { MapaEstatico } from "@/components/maps/MapaEstatico";
 import { urlRotaMaps } from "@/lib/maps";
 import { formatarDistancia, labelPontoTelemetria } from "@/lib/telemetria/formatar-telemetria";
+import { decodificarPolyline } from "@/lib/telemetria/tracado";
 import type { PontoTelemetria } from "@/types/role-telemetria";
 import styles from "./telemetria.module.css";
 
@@ -8,9 +10,16 @@ type Props = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   distanciaKm: number;
+  tracado?: string;
 };
 
-export const MapaPontosAB = ({ pontoInicio, pontoFim, distanciaKm }: Props) => {
+export const MapaPontosAB = ({
+  pontoInicio,
+  pontoFim,
+  distanciaKm,
+  tracado,
+}: Props) => {
+  const trajeto = useMemo(() => decodificarPolyline(tracado ?? ""), [tracado]);
   const hrefMaps = urlRotaMaps(
     {
       lat: pontoInicio.lat,
@@ -60,7 +69,12 @@ export const MapaPontosAB = ({ pontoInicio, pontoFim, distanciaKm }: Props) => {
             },
           ]}
           ligarMarcadores
-          aria-label="Mapa com partida e destino"
+          trajeto={trajeto}
+          aria-label={
+            trajeto.length >= 2
+              ? "Mapa com o caminho percorrido"
+              : "Mapa com partida e destino"
+          }
           className={styles.mapaImg}
         />
       </div>

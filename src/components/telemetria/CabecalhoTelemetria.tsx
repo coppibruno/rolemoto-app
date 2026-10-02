@@ -8,11 +8,15 @@ import styles from "./telemetria.module.css";
 type Props = {
   titulo: string;
   hrefVoltar?: string;
+  onCompartilhar?: () => void;
+  compartilhando?: boolean;
 };
 
 export const CabecalhoTelemetria = ({
   titulo,
   hrefVoltar = "/",
+  onCompartilhar,
+  compartilhando = false,
 }: Props) => {
   const { usuario } = useAuth();
   const fotoUrl = usuario?.fotoUrl ?? "";
@@ -39,20 +43,33 @@ export const CabecalhoTelemetria = ({
           />
           <h1 className={styles.tituloPagina}>{titulo}</h1>
         </div>
-        <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">
-          {fotoUrl ? (
-            <img
-              src={fotoUrl}
-              alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
-              className={styles.avatarImg}
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <span className={styles.avatarPlaceholder} aria-hidden>
-              <span className="material-symbols-outlined">account_circle</span>
-            </span>
-          )}
-        </Link>
+        <div className={styles.acoesHeader}>
+          {onCompartilhar ? (
+            <button
+              type="button"
+              className={styles.botaoShare}
+              aria-label="Compartilhar"
+              disabled={compartilhando}
+              onClick={onCompartilhar}
+            >
+              <span className="material-symbols-outlined">share</span>
+            </button>
+          ) : null}
+          <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">
+            {fotoUrl ? (
+              <img
+                src={fotoUrl}
+                alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
+                className={styles.avatarImg}
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <span className={styles.avatarPlaceholder} aria-hidden>
+                <span className="material-symbols-outlined">account_circle</span>
+              </span>
+            )}
+          </Link>
+        </div>
       </div>
     </header>
   );

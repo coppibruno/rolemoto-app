@@ -1,27 +1,23 @@
 "use client";
 
-import { useCompartilharTelemetria } from "../hooks/useCompartilharTelemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
 
 type Props = {
-  id: string;
-  titulo: string;
+  ocupado: boolean;
+  onCompartilhar: () => void;
 };
 
-export const BotaoCompartilharTelemetria = ({ id, titulo }: Props) => {
-  const { compartilhar, feedback } = useCompartilharTelemetria(titulo, id);
-
+export const BotaoCompartilharTelemetria = ({ ocupado, onCompartilhar }: Props) => {
   return (
-    <>
-      <button type="button" className={styles.cta} onClick={() => void compartilhar()}>
-        <span className="material-symbols-outlined">ios_share</span>
-        Compartilhar
-      </button>
-      {feedback ? (
-        <p className={styles.toast} role="status">
-          {feedback}
-        </p>
-      ) : null}
-    </>
+    <button
+      type="button"
+      className={styles.cta}
+      disabled={ocupado}
+      aria-busy={ocupado}
+      onClick={onCompartilhar}
+    >
+      <span className="material-symbols-outlined">ios_share</span>
+      {ocupado ? "Preparando imagem…" : "Compartilhar"}
+    </button>
   );
 };
