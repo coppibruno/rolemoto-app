@@ -22,7 +22,6 @@ const ACCURACY_MAX_ESTIMADA_M = 10;
 const INTERVALO_MAX_VELOCIDADE_MS = 10_000;
 /** A máxima é a 2ª maior das últimas N amostras: pico isolado não conta. */
 const AMOSTRAS_CONFIRMACAO = 3;
-const PROVIDER_REDE = "network";
 
 export type PontoGps = {
   lat: number;
@@ -30,8 +29,6 @@ export type PontoGps = {
   t: number;
   speed?: number | null;
   accuracy?: number | null;
-  /** `network` (Wi-Fi/celular) erra dezenas de metros e não traz velocidade. */
-  provider?: string | null;
 };
 
 export type CoordGps = {lat: number; lng: number; t: number};
@@ -168,9 +165,6 @@ export const aplicarPonto = (
   estado: EstadoCalculo,
   ponto: PontoGps,
 ): EstadoCalculo => {
-  if (ponto.provider === PROVIDER_REDE) {
-    return estado;
-  }
   if (
     ponto.accuracy !== null &&
     ponto.accuracy !== undefined &&

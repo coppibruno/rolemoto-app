@@ -410,26 +410,31 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
 
     try {
       await telemetriaBuffer.iniciar();
-      await anexarCallback(null);
     } catch (erro) {
       await limparBufferNativo();
       await gravarSessao(null);
       throw erro;
     }
 
+    // O Capgo recusa um segundo start (ALREADY_STARTED): a url tem de ir no
+    // primeiro. O buffer nativo já grava enquanto a sessão remota abre (≤ 5 s).
     const remota = await abrirSessaoRemota();
-    if (remota) {
-      const atual = (await lerSessao()) ?? iniciado;
-      await gravarSessao({ ...atual, remota });
-      try {
-        await anexarCallback(remota);
-      } catch {
-        /* GPS já está rodando sem url */
-      }
+    const comRemota: SessaoPersistida = {
+      ...((await lerSessao()) ?? iniciado),
+      remota,
+    };
+    await gravarSessao(comRemota);
+
+    try {
+      await anexarCallback(remota);
+    } catch (erro) {
+      if (remota) await encerrarSessaoRemota(remota);
+      await limparBufferNativo();
+      await gravarSessao(null);
+      throw erro;
     }
 
-    const persistida = (await lerSessao()) ?? iniciado;
-    return paraSessao(persistida);
+    return paraSessao(comRemota);
   },
 
   stop: async (): Promise<ResultadoStopTelemetria> => {

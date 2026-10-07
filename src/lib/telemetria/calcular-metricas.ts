@@ -19,6 +19,8 @@ const INTERVALO_MAX_VELOCIDADE_MS = 10_000;
 /** A máxima é a 2ª maior das últimas N amostras: pico isolado não conta. */
 const AMOSTRAS_CONFIRMACAO = 3;
 const PROVIDER_REDE = "network";
+/** Mesma janela do Capgo: perto de um fix GPS, o de rede só desenha zigue-zague. */
+const REDE_COM_GPS_MS = 20_000;
 
 export type PontoGps = {
   lat: number;
@@ -160,13 +162,29 @@ const velocidadeConfirmadaKmh = (recentes: number[]): number => {
   return [...recentes].sort((a, b) => b - a)[1];
 };
 
+/**
+ * Ordena por tempo e tira o fix de rede que tem GPS a menos de 20 s.
+ * Sem GPS por perto (tela off em alguns aparelhos) a rede é o que sobra.
+ */
+export const descartarRedeComGps = (pontos: PontoGps[]): PontoGps[] => {
+  const ordenados = [...pontos].sort((a, b) => a.t - b.t);
+  const temposGps = ordenados
+    .filter((ponto) => ponto.provider !== PROVIDER_REDE)
+    .map((ponto) => ponto.t);
+  let i = 0;
+  return ordenados.filter((ponto) => {
+    if (ponto.provider !== PROVIDER_REDE) return true;
+    while (i < temposGps.length && temposGps[i] < ponto.t - REDE_COM_GPS_MS) {
+      i += 1;
+    }
+    return !(i < temposGps.length && temposGps[i] <= ponto.t + REDE_COM_GPS_MS);
+  });
+};
+
 export const aplicarPonto = (
   estado: EstadoCalculo,
   ponto: PontoGps,
 ): EstadoCalculo => {
-  if (ponto.provider === PROVIDER_REDE) {
-    return estado;
-  }
   if (
     ponto.accuracy !== null &&
     ponto.accuracy !== undefined &&
@@ -258,7 +276,7 @@ export const aplicarPonto = (
 };
 
 export const processarPontos = (pontos: PontoGps[]): EstadoCalculo =>
-  pontos.reduce(aplicarPonto, estadoCalculoInicial());
+  descartarRedeComGps(pontos).reduce(aplicarPonto, estadoCalculoInicial());
 
 /** Média aritmética: soma das velocidades aceitas / quantidade. */
 export const velocidadeMediaKmh = (

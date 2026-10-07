@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   aplicarPonto,
   arredondarParaPost,
+  descartarRedeComGps,
   estadoCalculoInicial,
   haversineKm,
   processarPontos,
@@ -190,20 +191,40 @@ describe("processarPontos", () => {
     expect(estado.distanciaKm).toBeGreaterThan(0.6);
   });
 
-  it("ignora ponto de rede (Wi-Fi/celular) nas métricas", () => {
-    const estado = processarRodando([
+  it("tira o ponto de rede que tem GPS a menos de 20 s", () => {
+    const rede = ponto({
+      t: t0 + 5000,
+      lat: graus(66.6 + 80),
+      lng: 0,
+      speed: null,
+      accuracy: 40,
+      provider: "network",
+    });
+    const pontos = descartarRedeComGps([
       ...rodando60([0, 33.3, 33.3], [60, 60, 60]),
-      ponto({
-        t: t0 + 5000,
-        lat: graus(66.6 + 80),
-        lng: 0,
-        speed: null,
-        accuracy: 40,
-        provider: "network",
-      }),
+      rede,
     ]);
+    expect(pontos).not.toContain(rede);
+    const estado = processarRodando(pontos);
     expect(estado.ultimo?.lat).toBeCloseTo(graus(66.6), 8);
     expect(estado.distanciaKm).toBeCloseTo(0.0666, 3);
+  });
+
+  it("com só pontos de rede (tela off) soma km, mas não inventa máxima", () => {
+    const estado = processarPontos(
+      [0, 150, 300, 450, 600].map((metros, i) =>
+        ponto({
+          t: t0 + i * 10_000,
+          lat: graus(metros),
+          lng: 0,
+          speed: null,
+          accuracy: 35,
+          provider: "network",
+        }),
+      ),
+    );
+    expect(estado.distanciaKm).toBeGreaterThan(0.5);
+    expect(estado.velocidadeMaxKmh).toBe(0);
   });
 
   it("não passa de 350 km/h", () => {

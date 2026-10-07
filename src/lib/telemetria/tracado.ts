@@ -1,6 +1,7 @@
 import type { PontoLatLng } from "@/lib/mapa-tiles";
 import {
   aplicarPonto,
+  descartarRedeComGps,
   estadoCalculoInicial,
   type PontoGps,
 } from "./calcular-metricas";
@@ -17,7 +18,7 @@ type Xy = { x: number; y: number };
 
 /** Pontos aceitos pelo mesmo filtro de saltos das métricas, em ordem de tempo. */
 export const pontosDoTracado = (pontos: PontoGps[]): PontoLatLng[] => {
-  const ordenados = [...pontos].sort((a, b) => a.t - b.t);
+  const ordenados = descartarRedeComGps(pontos);
   const aceitos: PontoLatLng[] = [];
   let estado = estadoCalculoInicial();
   for (const ponto of ordenados) {

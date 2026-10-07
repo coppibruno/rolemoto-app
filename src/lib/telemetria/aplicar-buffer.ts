@@ -46,8 +46,7 @@ export const incorporarBuffer = (
   pontos: PontoGps[],
 ): EstadoCalculo => {
   if (pontos.length === 0) return local;
-  const ordenados = [...pontos].sort((a, b) => a.t - b.t);
-  return preferirMaisDistancia(local, processarPontos(ordenados));
+  return preferirMaisDistancia(local, processarPontos(pontos));
 };
 
 export const mesclarComRemoto = (
