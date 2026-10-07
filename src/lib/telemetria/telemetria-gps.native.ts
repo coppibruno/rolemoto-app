@@ -41,6 +41,7 @@ type SessaoPersistida = SessaoTelemetriaLocal & {
   ativa: boolean;
   paradoDesde: number | null;
   velocidadeAtualKmh: number;
+  velocidadesRecentesKmh?: number[];
   remota?: SessaoRemota | null;
 };
 
@@ -139,6 +140,7 @@ const estadoDe = (sessao: SessaoPersistida): EstadoCalculo => ({
   primeiro: sessao.primeiro ?? null,
   ultimo: sessao.ultimo,
   paradoDesde: sessao.paradoDesde,
+  velocidadesRecentesKmh: sessao.velocidadesRecentesKmh ?? [],
 });
 
 const aplicarEstado = (
@@ -155,6 +157,7 @@ const aplicarEstado = (
   primeiro: estado.primeiro,
   ultimo: estado.ultimo,
   paradoDesde: estado.paradoDesde,
+  velocidadesRecentesKmh: estado.velocidadesRecentesKmh ?? [],
 });
 
 const incorporarBufferNaSessao = async (

@@ -49,6 +49,9 @@ public class TelemetriaBufferPlugin extends Plugin {
             if (item.has("accuracy") && !item.isNull("accuracy")) {
                 ponto.put("accuracy", item.optDouble("accuracy"));
             }
+            if (item.has("provider") && !item.isNull("provider")) {
+                ponto.put("provider", item.optString("provider"));
+            }
             pontos.put(ponto);
         }
         JSObject ret = new JSObject();

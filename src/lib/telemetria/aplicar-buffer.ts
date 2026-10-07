@@ -37,6 +37,7 @@ const preferirMaisDistancia = (
     primeiro: outro.primeiro ?? local.primeiro,
     ultimo: outro.ultimo ?? local.ultimo,
     paradoDesde: outro.paradoDesde,
+    velocidadesRecentesKmh: outro.velocidadesRecentesKmh ?? [],
   };
 };
 

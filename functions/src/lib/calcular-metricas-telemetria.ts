@@ -14,6 +14,15 @@ const MARGEM_SENSOR_KMH = 15;
 const MARGEM_SENSOR_RATIO = 0.3;
 const PARADO_KMH = 3;
 const PARADO_MIN_MS = 10_000;
+/** Velocidade do chip só entra na máxima com fix fino. */
+const ACCURACY_MAX_VELOCIDADE_M = 20;
+/** Sem velocidade do chip, a haversine de 2 s só serve com fix muito fino. */
+const ACCURACY_MAX_ESTIMADA_M = 10;
+/** Depois de um buraco no GPS, as amostras antigas não confirmam as novas. */
+const INTERVALO_MAX_VELOCIDADE_MS = 10_000;
+/** A máxima é a 2ª maior das últimas N amostras: pico isolado não conta. */
+const AMOSTRAS_CONFIRMACAO = 3;
+const PROVIDER_REDE = "network";
 
 export type PontoGps = {
   lat: number;
@@ -21,6 +30,8 @@ export type PontoGps = {
   t: number;
   speed?: number | null;
   accuracy?: number | null;
+  /** `network` (Wi-Fi/celular) erra dezenas de metros e não traz velocidade. */
+  provider?: string | null;
 };
 
 export type CoordGps = {lat: number; lng: number; t: number};
@@ -37,6 +48,8 @@ export type EstadoCalculo = {
   primeiro: CoordGps | null;
   ultimo: CoordGps | null;
   paradoDesde: number | null;
+  /** Últimas velocidades candidatas à máxima. Opcional: sessões antigas não têm. */
+  velocidadesRecentesKmh?: number[];
 };
 
 const toRad = (graus: number): number => (graus * Math.PI) / 180;
@@ -65,6 +78,7 @@ export const estadoCalculoInicial = (): EstadoCalculo => ({
   primeiro: null,
   ultimo: null,
   paradoDesde: null,
+  velocidadesRecentesKmh: [],
 });
 
 const velocidadeDoSensorKmh = (ponto: PontoGps): number | null => {
@@ -113,10 +127,50 @@ const sensorDoTrecho = (
   return sensorKmh;
 };
 
+const fixFino = (ponto: PontoGps, limiteM: number): boolean =>
+  ponto.accuracy !== null &&
+  ponto.accuracy !== undefined &&
+  ponto.accuracy <= limiteM;
+
+/**
+ * Candidata à máxima: o Doppler do chip, que não sofre com o salto da posição.
+ * A haversine só entra se o aparelho não informa velocidade nenhuma.
+ */
+const candidataMaximaKmh = (
+  ponto: PontoGps,
+  estimadaKmh: number | null,
+  tetoKmh: number,
+): number | null => {
+  const sensorKmh = velocidadeDoSensorKmh(ponto);
+  if (sensorKmh !== null) {
+    if (sensorKmh > tetoKmh) return null;
+    return fixFino(ponto, ACCURACY_MAX_VELOCIDADE_M) ? sensorKmh : null;
+  }
+  if (estimadaKmh === null || estimadaKmh > tetoKmh) return null;
+  return fixFino(ponto, ACCURACY_MAX_ESTIMADA_M) ? estimadaKmh : null;
+};
+
+/** Sem candidata a sequência quebra: a confirmação exige amostras seguidas. */
+const comCandidata = (
+  recentes: number[],
+  candidataKmh: number | null,
+): number[] =>
+  candidataKmh === null ?
+    [] :
+    [...recentes, candidataKmh].slice(-AMOSTRAS_CONFIRMACAO);
+
+const velocidadeConfirmadaKmh = (recentes: number[]): number => {
+  if (recentes.length < 2) return 0;
+  return [...recentes].sort((a, b) => b - a)[1];
+};
+
 export const aplicarPonto = (
   estado: EstadoCalculo,
   ponto: PontoGps,
 ): EstadoCalculo => {
+  if (ponto.provider === PROVIDER_REDE) {
+    return estado;
+  }
   if (
     ponto.accuracy !== null &&
     ponto.accuracy !== undefined &&
@@ -132,6 +186,10 @@ export const aplicarPonto = (
       ...estado,
       primeiro: estado.primeiro ?? aceito,
       ultimo: aceito,
+      velocidadesRecentesKmh: comCandidata(
+        [],
+        candidataMaximaKmh(ponto, null, VELOCIDADE_TETO_KMH),
+      ),
     };
   }
 
@@ -160,8 +218,19 @@ export const aplicarPonto = (
     fimKmh,
     tetoKmh,
   );
-  const picoKmh = sensorOk ?? estimadaKmh;
   const atualKmh = sensorOk ?? fimKmh;
+  const recentesAntes =
+    deltaMs > INTERVALO_MAX_VELOCIDADE_MS ?
+      [] :
+      (estado.velocidadesRecentesKmh ?? []);
+  const velocidadesRecentesKmh = comCandidata(
+    recentesAntes,
+    candidataMaximaKmh(ponto, estimadaKmh, tetoKmh),
+  );
+  const velocidadeMaxKmh = Math.max(
+    estado.velocidadeMaxKmh,
+    velocidadeConfirmadaKmh(velocidadesRecentesKmh),
+  );
   const parado =
     estimadaKmh < PARADO_KMH ?
       (estado.paradoDesde ?? estado.ultimo.t) :
@@ -172,16 +241,18 @@ export const aplicarPonto = (
   if (ignoraMicroRuido) {
     return {
       ...estado,
+      velocidadeMaxKmh,
       velocidadeAtualKmh: atualKmh,
       paradoDesde: parado,
       ultimo: {lat: ponto.lat, lng: ponto.lng, t: ponto.t},
+      velocidadesRecentesKmh,
     };
   }
 
   const deltaMovimento = Math.floor(deltaMs / 1000);
   return {
     distanciaKm: estado.distanciaKm + trechoKm,
-    velocidadeMaxKmh: Math.max(estado.velocidadeMaxKmh, picoKmh),
+    velocidadeMaxKmh,
     velocidadeAtualKmh: atualKmh,
     somaVelocidadesKmh: estado.somaVelocidadesKmh + atualKmh,
     quantidadeVelocidades: estado.quantidadeVelocidades + 1,
@@ -189,6 +260,7 @@ export const aplicarPonto = (
     primeiro: estado.primeiro,
     ultimo: aceito,
     paradoDesde: parado,
+    velocidadesRecentesKmh,
   };
 };
 

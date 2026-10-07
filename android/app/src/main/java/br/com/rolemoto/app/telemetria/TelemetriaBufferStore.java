@@ -108,6 +108,7 @@ final class TelemetriaBufferStore {
             } else {
                 obj.put("accuracy", JSONObject.NULL);
             }
+            obj.put("provider", location.getProvider() != null ? location.getProvider() : JSONObject.NULL);
         } catch (JSONException ignore) {
             return;
         }

@@ -6,6 +6,7 @@ import type {
 
 export type TelemetriaSessaoInterna = TelemetriaSessao & {
   tokenHash: string;
+  velocidadesRecentesKmh: number[];
 };
 
 export interface TelemetriaSessaoRepository {

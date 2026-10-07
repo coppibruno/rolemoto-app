@@ -90,8 +90,26 @@ describe("processarPontos", () => {
       ponto({ t: t0, lat: 0, lng: 0, speed: null }),
       ponto({ t: t0 + 2000, lat: graus(18), lng: 0, speed: null }),
       ponto({ t: t0 + 4000, lat: graus(18 + 36), lng: 0, speed: null }),
+      ponto({ t: t0 + 6000, lat: graus(18 + 72), lng: 0, speed: null }),
     ]);
     expect(estado.velocidadeMaxKmh).toBeGreaterThan(60);
+    expect(estado.distanciaKm).toBeGreaterThan(0.05);
+  });
+
+  it("não usa a haversine na máxima com fix de 15 m sem velocidade", () => {
+    const graus = (metros: number) => metros / 1000 / (2 * Math.PI * 6371 / 360);
+    const estado = processarPontos(
+      [0, 18, 54, 90].map((metros, i) =>
+        ponto({
+          t: t0 + i * 2000,
+          lat: graus(metros),
+          lng: 0,
+          speed: null,
+          accuracy: 15,
+        }),
+      ),
+    );
+    expect(estado.velocidadeMaxKmh).toBe(0);
     expect(estado.distanciaKm).toBeGreaterThan(0.05);
   });
 
@@ -111,9 +129,81 @@ describe("processarPontos", () => {
         lng: 0,
         speed: 100 / 3.6,
       }),
+      ponto({
+        t: t0 + 6000,
+        lat: graus(125.01),
+        lng: 0,
+        speed: 100 / 3.6,
+      }),
     ]);
     expect(estado.velocidadeMaxKmh).toBeCloseTo(100, 0);
     expect(estado.distanciaKm).toBeGreaterThan(0.06);
+  });
+
+  const graus = (metros: number) => metros / 1000 / (2 * Math.PI * 6371 / 360);
+  const processarRodando = (pontos: PontoGps[]) =>
+    pontos.reduce(aplicarPonto, {
+      ...estadoCalculoInicial(),
+      velocidadeAtualKmh: 60,
+    });
+  const rodando60 = (metrosPorPonto: number[], speedKmh: number[]): PontoGps[] => {
+    let acumulado = 0;
+    return metrosPorPonto.map((metros, i) => {
+      acumulado += metros;
+      return ponto({
+        t: t0 + i * 2000,
+        lat: graus(acumulado),
+        lng: 0,
+        speed: speedKmh[i] / 3.6,
+      });
+    });
+  };
+
+  it("não grava pico isolado do sensor numa reta a 60 km/h", () => {
+    const estado = processarRodando(
+      rodando60(
+        [0, 33.3, 33.3, 33.3, 33.3, 33.3, 33.3],
+        [60, 60, 60, 120, 60, 60, 60],
+      ),
+    );
+    expect(estado.velocidadeMaxKmh).toBeCloseTo(60, 0);
+  });
+
+  it("usa o chip quando a posição salta 20 m a 60 km/h", () => {
+    const estado = processarRodando(
+      rodando60(
+        [0, 33.3, 33.3, 53.3, 13.3, 33.3, 33.3],
+        [60, 60, 60, 60, 60, 60, 60],
+      ),
+    );
+    expect(estado.velocidadeMaxKmh).toBeLessThan(65);
+    expect(estado.velocidadeMaxKmh).toBeGreaterThan(55);
+  });
+
+  it("não confirma a máxima com amostras separadas por buraco de GPS", () => {
+    const estado = processarPontos([
+      ponto({ t: t0, lat: 0, lng: 0, speed: 0 }),
+      ponto({ t: t0 + 2000, lat: graus(20), lng: 0, speed: 70 / 3.6 }),
+      ponto({ t: t0 + 32_000, lat: graus(620), lng: 0, speed: 70 / 3.6 }),
+    ]);
+    expect(estado.velocidadeMaxKmh).toBe(0);
+    expect(estado.distanciaKm).toBeGreaterThan(0.6);
+  });
+
+  it("ignora ponto de rede (Wi-Fi/celular) nas métricas", () => {
+    const estado = processarRodando([
+      ...rodando60([0, 33.3, 33.3], [60, 60, 60]),
+      ponto({
+        t: t0 + 5000,
+        lat: graus(66.6 + 80),
+        lng: 0,
+        speed: null,
+        accuracy: 40,
+        provider: "network",
+      }),
+    ]);
+    expect(estado.ultimo?.lat).toBeCloseTo(graus(66.6), 8);
+    expect(estado.distanciaKm).toBeCloseTo(0.0666, 3);
   });
 
   it("não passa de 350 km/h", () => {

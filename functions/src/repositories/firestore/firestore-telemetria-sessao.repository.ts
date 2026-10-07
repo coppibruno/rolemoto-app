@@ -46,6 +46,9 @@ const toDoc = (snap: DocumentSnapshot): TelemetriaSessaoInterna => {
     ultimo: toCoord(data.ultimo),
     paradoDesde:
       typeof data.paradoDesde === "number" ? data.paradoDesde : null,
+    velocidadesRecentesKmh: Array.isArray(data.velocidadesRecentesKmh) ?
+      data.velocidadesRecentesKmh.map(Number).filter(Number.isFinite) :
+      [],
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -61,6 +64,7 @@ const estadoDe = (doc: TelemetriaSessaoInterna): EstadoCalculo => ({
   primeiro: doc.primeiro,
   ultimo: doc.ultimo,
   paradoDesde: doc.paradoDesde,
+  velocidadesRecentesKmh: doc.velocidadesRecentesKmh,
 });
 
 const omitirTokenHash = (doc: TelemetriaSessaoInterna): TelemetriaSessao => ({
@@ -96,6 +100,7 @@ implements TelemetriaSessaoRepository {
       primeiro: dados.primeiro,
       ultimo: dados.ultimo,
       paradoDesde: dados.paradoDesde,
+      velocidadesRecentesKmh: dados.velocidadesRecentesKmh ?? [],
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -140,6 +145,7 @@ implements TelemetriaSessaoRepository {
         primeiro: proximo.primeiro,
         ultimo: proximo.ultimo,
         paradoDesde: proximo.paradoDesde,
+        velocidadesRecentesKmh: proximo.velocidadesRecentesKmh ?? [],
         updatedAt: FieldValue.serverTimestamp(),
       });
       return true;

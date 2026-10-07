@@ -37,6 +37,7 @@ export const telemetriaBuffer = {
         t: Number(ponto.t),
         speed: ponto.speed == null ? null : Number(ponto.speed),
         accuracy: ponto.accuracy == null ? null : Number(ponto.accuracy),
+        provider: ponto.provider == null ? null : String(ponto.provider),
       }));
     } catch {
       return [];
