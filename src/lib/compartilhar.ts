@@ -1,8 +1,16 @@
+import {
+  appNativo,
+  compartilharImagemNativa,
+  imagemNativaDisponivel,
+  salvarImagemNativa,
+} from "@/lib/compartilhar-imagem-nativo";
+
 export type ResultadoCompartilhar =
   | "compartilhado"
   | "copiado"
   | "salvo"
   | "cancelado"
+  | "desatualizado"
   | "erro";
 
 type Payload = {
@@ -48,11 +56,10 @@ const baixarArquivo = (arquivo: File) => {
   window.setTimeout(() => URL.revokeObjectURL(url), 1500);
 };
 
-/** Abre o menu nativo com a imagem (Instagram, WhatsApp, etc.). */
-export const compartilharArquivo = async (
+const compartilharNoNavegador = async (
   arquivo: File,
   texto: string,
-): Promise<ResultadoCompartilhar> => {
+): Promise<ResultadoCompartilhar | null> => {
   if (typeof navigator !== "undefined" && navigator.share) {
     const aceitaArquivo =
       !navigator.canShare || navigator.canShare({ files: [arquivo] });
@@ -71,11 +78,51 @@ export const compartilharArquivo = async (
       }
     }
   }
+  return null;
+};
 
+const baixar = (arquivo: File): ResultadoCompartilhar => {
   try {
     baixarArquivo(arquivo);
     return "salvo";
   } catch {
     return "erro";
   }
+};
+
+/** Abre o menu nativo com a imagem (Instagram, WhatsApp, etc.). */
+export const compartilharArquivo = async (
+  arquivo: File,
+  texto: string,
+): Promise<ResultadoCompartilhar> => {
+  if (imagemNativaDisponivel()) {
+    try {
+      await compartilharImagemNativa(arquivo, texto);
+      return "compartilhado";
+    } catch {
+      return "erro";
+    }
+  }
+  const resultado = await compartilharNoNavegador(arquivo, texto);
+  if (resultado) return resultado;
+  return appNativo() ? "desatualizado" : baixar(arquivo);
+};
+
+/** Galeria no Android; no navegador, download. No iOS o menu nativo traz "Salvar imagem". */
+export const salvarArquivo = async (
+  arquivo: File,
+  texto: string,
+): Promise<ResultadoCompartilhar> => {
+  if (imagemNativaDisponivel()) {
+    try {
+      if (await salvarImagemNativa(arquivo)) return "salvo";
+      await compartilharImagemNativa(arquivo, texto);
+      return "compartilhado";
+    } catch {
+      return "erro";
+    }
+  }
+  if (!appNativo()) return baixar(arquivo);
+  const resultado = await compartilharNoNavegador(arquivo, texto);
+  return resultado ?? "desatualizado";
 };

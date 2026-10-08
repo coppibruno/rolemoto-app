@@ -6,6 +6,7 @@ import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
 import { BotaoCompartilharTelemetria } from "./BotaoCompartilharTelemetria";
+import { ModalCompartilharTelemetria } from "./ModalCompartilharTelemetria";
 import { useCompartilharTelemetria } from "../hooks/useCompartilharTelemetria";
 import { useTelemetriaDetalhe } from "../hooks/useTelemetriaDetalhe";
 
@@ -33,15 +34,15 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
       tracado: doc.tracado,
     };
   }, [apelido, doc, eDono]);
-  const { compartilhar, feedback, ocupado } = useCompartilharTelemetria(dadosShare);
+  const share = useCompartilharTelemetria(dadosShare);
 
   return (
     <div className={styles.tela}>
       <CabecalhoTelemetria
         titulo="Telemetria"
         hrefVoltar="/perfil"
-        onCompartilhar={eDono ? () => void compartilhar() : undefined}
-        compartilhando={ocupado}
+        onCompartilhar={eDono ? share.abrir : undefined}
+        compartilhando={share.ocupado}
       />
       <div className={styles.conteudo}>
         {carregando ? (
@@ -74,13 +75,22 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
             />
             {eDono ? (
               <BotaoCompartilharTelemetria
-                ocupado={ocupado}
-                onCompartilhar={() => void compartilhar()}
+                ocupado={share.ocupado}
+                onCompartilhar={share.abrir}
               />
             ) : null}
-            {feedback ? (
+            {share.aberto ? (
+              <ModalCompartilharTelemetria
+                previewUrl={share.previewUrl}
+                ocupado={share.ocupado}
+                onCompartilhar={() => void share.compartilhar()}
+                onSalvar={() => void share.salvar()}
+                onFechar={share.fechar}
+              />
+            ) : null}
+            {share.feedback ? (
               <p className={styles.toast} role="status">
-                {feedback}
+                {share.feedback}
               </p>
             ) : null}
           </>

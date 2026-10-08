@@ -597,7 +597,7 @@
   position: fixed;
   left: 50%;
   bottom: calc(96px + env(safe-area-inset-bottom, 0px));
-  z-index: 50;
+  z-index: 90;
   padding: 10px 16px;
   border-radius: 9999px;
   background: var(--surface-container-highest);
