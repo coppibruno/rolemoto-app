@@ -205,9 +205,15 @@ export const useGravarRole = () => {
     await adapter?.abrirAjustes();
   }, [adapter]);
 
+  const fecharErro = useCallback(() => {
+    setErro(null);
+    setErroCodigo(null);
+  }, []);
+
   const abrirAjustesEconomia = useCallback(async () => {
+    fecharErro();
     await adapter?.abrirAjustesEconomia();
-  }, [adapter]);
+  }, [adapter, fecharErro]);
 
   return {
     fase,
@@ -226,5 +232,6 @@ export const useGravarRole = () => {
     descartar,
     abrirAjustes,
     abrirAjustesEconomia,
+    fecharErro,
   };
 };

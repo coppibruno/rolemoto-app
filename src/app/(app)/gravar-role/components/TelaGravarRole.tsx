@@ -4,6 +4,7 @@ import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria
 import styles from "@/components/telemetria/telemetria.module.css";
 import { useGravarRole } from "../hooks/useGravarRole";
 import { BotaoControleGravacao } from "./BotaoControleGravacao";
+import { ModalEconomiaBateria } from "./ModalEconomiaBateria";
 import { PainelGravacaoAtiva } from "./PainelGravacaoAtiva";
 import { ResumoPreSave } from "./ResumoPreSave";
 import { StatusGravacao } from "./StatusGravacao";
@@ -72,7 +73,14 @@ export const TelaGravarRole = () => {
           />
         ) : null}
 
-        {g.erro ? (
+        {g.erroCodigo === "economia_bateria" ? (
+          <ModalEconomiaBateria
+            onDesativar={() => void g.abrirAjustesEconomia()}
+            onFechar={g.fecharErro}
+          />
+        ) : null}
+
+        {g.erro && g.erroCodigo !== "economia_bateria" ? (
           <div>
             <p className={styles.erro} role="alert">
               {g.erro}
@@ -84,15 +92,6 @@ export const TelaGravarRole = () => {
                 onClick={() => void g.abrirAjustes()}
               >
                 Abrir ajustes
-              </button>
-            ) : null}
-            {g.erroCodigo === "economia_bateria" ? (
-              <button
-                type="button"
-                className={styles.ctaSecundario}
-                onClick={() => void g.abrirAjustesEconomia()}
-              >
-                Desativar economia de bateria
               </button>
             ) : null}
           </div>
