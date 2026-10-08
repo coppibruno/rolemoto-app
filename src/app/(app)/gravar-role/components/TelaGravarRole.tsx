@@ -77,13 +77,22 @@ export const TelaGravarRole = () => {
             <p className={styles.erro} role="alert">
               {g.erro}
             </p>
-            {g.erro.includes("sempre") ? (
+            {g.erroCodigo === "permissao_background" ? (
               <button
                 type="button"
                 className={styles.ctaSecundario}
                 onClick={() => void g.abrirAjustes()}
               >
                 Abrir ajustes
+              </button>
+            ) : null}
+            {g.erroCodigo === "economia_bateria" ? (
+              <button
+                type="button"
+                className={styles.ctaSecundario}
+                onClick={() => void g.abrirAjustesEconomia()}
+              >
+                Desativar economia de bateria
               </button>
             ) : null}
           </div>

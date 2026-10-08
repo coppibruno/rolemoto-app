@@ -397,6 +397,13 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
       );
     }
 
+    if (await telemetriaBuffer.economiaAfetaGps()) {
+      throw new TelemetriaGpsErro(
+        "economia_bateria",
+        "A economia de bateria desliga o GPS com a tela apagada. Desative para gravar a velocidade do rolê.",
+      );
+    }
+
     await exigirBackground();
 
     const iniciado: SessaoPersistida = {
@@ -495,5 +502,9 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
 
   abrirAjustes: async () => {
     await BackgroundGeolocation.openSettings();
+  },
+
+  abrirAjustesEconomia: async () => {
+    await telemetriaBuffer.abrirAjustesEconomia();
   },
 };

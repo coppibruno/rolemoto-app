@@ -7,6 +7,8 @@ export type TelemetriaBufferPlugin = {
   parar: () => Promise<void>;
   listar: () => Promise<{ pontos: PontoGps[] }>;
   limpar: () => Promise<void>;
+  statusEnergia: () => Promise<{ economiaAtiva: boolean; afetaGps: boolean }>;
+  abrirAjustesEconomia: () => Promise<void>;
 };
 
 const plugin = registerPlugin<TelemetriaBufferPlugin>("TelemetriaBuffer", {
@@ -27,6 +29,16 @@ export const telemetriaBuffer = {
   garantir: () => silenciar(() => plugin.garantir()),
   parar: () => silenciar(() => plugin.parar()),
   limpar: () => silenciar(() => plugin.limpar()),
+  abrirAjustesEconomia: () => silenciar(() => plugin.abrirAjustesEconomia()),
+  /** APK sem o método (antes do versionCode 3) não bloqueia: segue o fluxo antigo. */
+  economiaAfetaGps: async (): Promise<boolean> => {
+    try {
+      const { afetaGps } = await plugin.statusEnergia();
+      return afetaGps === true;
+    } catch {
+      return false;
+    }
+  },
   listar: async (): Promise<PontoGps[]> => {
     try {
       const { pontos } = await plugin.listar();

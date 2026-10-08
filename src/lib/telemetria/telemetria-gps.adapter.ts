@@ -18,6 +18,7 @@ export class TelemetriaGpsErro extends Error {
     public codigo:
       | "nao_nativo"
       | "permissao_background"
+      | "economia_bateria"
       | "sessao_ativa"
       | "sem_sessao"
       | "sessao_remota",
@@ -37,6 +38,7 @@ export type TelemetriaGpsAdapter = {
   stop: () => Promise<ResultadoStopTelemetria>;
   limparResumoPendente: () => Promise<void>;
   abrirAjustes: () => Promise<void>;
+  abrirAjustesEconomia: () => Promise<void>;
 };
 
 export const obterAdapterGps = async (): Promise<TelemetriaGpsAdapter> => {

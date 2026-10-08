@@ -21,4 +21,5 @@ export const webAdapter: TelemetriaGpsAdapter = {
   },
   limparResumoPendente: async () => undefined,
   abrirAjustes: async () => undefined,
+  abrirAjustesEconomia: async () => undefined,
 };

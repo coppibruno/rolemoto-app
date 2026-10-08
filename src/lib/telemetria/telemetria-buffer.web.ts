@@ -11,4 +11,9 @@ export class TelemetriaBufferWeb
   parar = async (): Promise<void> => undefined;
   listar = async (): Promise<{ pontos: PontoGps[] }> => ({ pontos: [] });
   limpar = async (): Promise<void> => undefined;
+  statusEnergia = async (): Promise<{
+    economiaAtiva: boolean;
+    afetaGps: boolean;
+  }> => ({ economiaAtiva: false, afetaGps: false });
+  abrirAjustesEconomia = async (): Promise<void> => undefined;
 }

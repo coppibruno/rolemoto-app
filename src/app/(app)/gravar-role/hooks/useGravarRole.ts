@@ -36,6 +36,9 @@ export const useGravarRole = () => {
   const [titulo, setTitulo] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [erroCodigo, setErroCodigo] = useState<TelemetriaGpsErro["codigo"] | null>(
+    null,
+  );
   const [online, setOnline] = useState(
     () => typeof navigator === "undefined" || navigator.onLine,
   );
@@ -117,6 +120,7 @@ export const useGravarRole = () => {
   const iniciar = useCallback(async () => {
     if (!adapter) return;
     setErro(null);
+    setErroCodigo(null);
     setOcupado(true);
     try {
       const sessao = await adapter.start();
@@ -125,6 +129,7 @@ export const useGravarRole = () => {
     } catch (e) {
       if (e instanceof TelemetriaGpsErro) {
         setErro(e.message);
+        setErroCodigo(e.codigo);
       } else {
         setErro("Não foi possível iniciar a gravação.");
       }
@@ -136,6 +141,7 @@ export const useGravarRole = () => {
   const finalizar = useCallback(async () => {
     if (!adapter) return;
     setErro(null);
+    setErroCodigo(null);
     setOcupado(true);
     try {
       const resultado = await adapter.stop();
@@ -199,6 +205,10 @@ export const useGravarRole = () => {
     await adapter?.abrirAjustes();
   }, [adapter]);
 
+  const abrirAjustesEconomia = useCallback(async () => {
+    await adapter?.abrirAjustesEconomia();
+  }, [adapter]);
+
   return {
     fase,
     nativo: adapter?.isNative() ?? false,
@@ -208,11 +218,13 @@ export const useGravarRole = () => {
     setTitulo,
     ocupado,
     erro,
+    erroCodigo,
     online,
     iniciar,
     finalizar,
     salvar,
     descartar,
     abrirAjustes,
+    abrirAjustesEconomia,
   };
 };
