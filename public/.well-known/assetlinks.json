@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.rolemoto.app",
+      "sha256_cert_fingerprints": [
+        "AA:82:58:BD:92:11:CF:7B:B6:8B:F7:91:F1:2F:74:BB:E6:3D:CA:FA:7B:19:86:BC:16:B6:E3:50:99:B1:88:A2",
+        "00:A3:01:5D:19:77:43:BF:FB:70:7A:65:DB:F7:88:24:4D:0F:48:F2:B6:AD:43:97:D4:82:D2:81:92:F6:00:8F",
+        "71:11:37:35:0A:A7:A0:EE:AF:45:6B:BC:1C:A8:A3:FC:6F:D0:26:F7:EF:B7:EC:AB:C2:04:38:57:96:34:57:93"
+      ]
+    }
+  }
+]

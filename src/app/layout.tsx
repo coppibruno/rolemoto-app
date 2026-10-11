@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { IniciarDeepLinkNativo } from "@/components/nativo/IniciarDeepLinkNativo";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { IniciarPushNativo } from "@/components/push/IniciarPushNativo";
 import "./globals.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <IniciarPushNativo />
+          <IniciarDeepLinkNativo />
           {children}
         </AuthProvider>
       </body>

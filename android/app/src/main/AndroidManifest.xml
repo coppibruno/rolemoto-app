@@ -22,6 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Só www: o apex responde 308 e o Android não segue redirect ao verificar assetlinks.json. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="www.rolemoto.com.br" />
+                <data android:pathPrefix="/r/" />
+                <data android:pathPrefix="/perfil/" />
+                <data android:pathPrefix="/eventos/" />
+                <data android:pathPrefix="/locais/" />
+                <data android:pathPrefix="/roles/" />
+                <data android:pathPrefix="/telemetria/" />
+            </intent-filter>
+
         </activity>
 
         <provider

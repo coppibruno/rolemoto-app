@@ -1,9 +1,9 @@
-import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
 import { Preferences } from "@capacitor/preferences";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
 import type { PlataformaDispositivo } from "@/types/dispositivo";
+import { navegarNoWebView } from "./deep-link-nativo";
 import type { PayloadForeground, ResultadoPermissao } from "./fcm";
 
 const CANAL_ID = "rolemoto_push";
@@ -49,32 +49,6 @@ export const limparTokenNativoLocal = async () => {
   await Preferences.remove({ key: PREF_TOKEN });
 };
 
-const caminhoRelativo = (url: unknown): string => {
-  if (typeof url !== "string" || !url.trim()) {
-    return "/";
-  }
-  const trimmed = url.trim();
-  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
-    return trimmed;
-  }
-  try {
-    const parsed = new URL(trimmed, window.location.origin);
-    if (parsed.origin === window.location.origin) {
-      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
-    }
-  } catch {
-    // URL absoluta de outro origin — ignora
-  }
-  return "/";
-};
-
-const navegarNoWebView = (url: unknown) => {
-  if (typeof window === "undefined") {
-    return;
-  }
-  window.location.assign(caminhoRelativo(url));
-};
-
 const textoDoCampo = (valor: unknown): string =>
   typeof valor === "string" ? valor : "";
 
@@ -101,21 +75,6 @@ const criarCanal = async () => {
     });
   } catch (error) {
     console.warn("FCM nativo: falha ao criar canal", error);
-  }
-};
-
-const tentarLaunchUrl = async () => {
-  try {
-    const launch = await App.getLaunchUrl();
-    if (!launch?.url) {
-      return;
-    }
-    const caminho = caminhoRelativo(launch.url);
-    if (caminho !== "/") {
-      navegarNoWebView(caminho);
-    }
-  } catch {
-    // launch URL ausente não bloqueia o registro
   }
 };
 
@@ -152,8 +111,6 @@ const instalarListeners = async () => {
       navegarNoWebView(data.url);
     },
   );
-
-  await tentarLaunchUrl();
 };
 
 const garantirListeners = () => {
