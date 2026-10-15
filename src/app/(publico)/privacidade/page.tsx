@@ -197,7 +197,8 @@ const PrivacidadePage = () => {
         </p>
         <p>
           Se não conseguir acessar o app, solicite a exclusão completa pelo mesmo
-          e-mail, a partir do endereço cadastrado na conta.
+          e-mail, a partir do endereço cadastrado na conta. O passo a passo está em{" "}
+          <Link href="/excluir-conta">Excluir conta e dados</Link>.
         </p>
       </SecaoPolitica>
 

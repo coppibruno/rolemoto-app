@@ -63,12 +63,14 @@
 }
 
 .secao p,
-.secao ul {
+.secao ul,
+.secao ol {
   margin-bottom: 12px;
   color: var(--on-surface);
 }
 
-.secao ul {
+.secao ul,
+.secao ol {
   padding-left: 20px;
 }
 
