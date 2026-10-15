@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useLoginRedirect } from "../hooks/useLoginRedirect";
 import { LoginHeader } from "./LoginHeader";
@@ -54,6 +55,10 @@ export const TelaLogin = ({ next, modoCadastro, senhaRedefinida }: Props) => {
         </div>
 
         <CtaInstalarApp />
+
+        <Link href="/privacidade" className={styles.linkPrivacidade}>
+          Política de Privacidade
+        </Link>
       </div>
     </main>
   );
