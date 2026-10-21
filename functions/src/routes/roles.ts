@@ -3,6 +3,7 @@ import {autenticar} from "../middleware/auth";
 import {isDonoOuAdmin} from "../middleware/authorize";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {apelidoExibicao} from "../lib/apelido";
 import {param} from "../lib/params";
 import {distanciaRotaKm, haversineKm} from "../lib/geo";
 import {
@@ -121,7 +122,7 @@ const enriquecerCriadores = async (
       const usuario = await usuarioRepository.buscarPorId(uid);
       cache.set(uid, {
         uid,
-        apelido: usuario?.apelido || "piloto",
+        apelido: apelidoExibicao(usuario),
         fotoUrl: usuario?.fotoUrl || "",
       });
     }),
@@ -157,7 +158,7 @@ const resumoCriador = async (criadorId: string): Promise<RoleCriadorResumo> => {
   const usuario = await usuarioRepository.buscarPorId(criadorId);
   return {
     uid: criadorId,
-    apelido: usuario?.apelido || "piloto",
+    apelido: apelidoExibicao(usuario),
     fotoUrl: usuario?.fotoUrl || "",
   };
 };

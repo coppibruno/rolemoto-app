@@ -14,12 +14,16 @@
   margin: 0 auto;
 }
 
+.corpoSemTopo {
+  padding-top: 0;
+}
+
 .cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding-top: 4px;
+  padding-top: calc(4px + env(safe-area-inset-top, 0px));
 }
 
 .botaoIcone {
@@ -63,39 +67,8 @@
   color: var(--on-surface);
 }
 
-.kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 16px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary-container);
-}
 
-.kickerPing {
-  width: 6px;
-  height: 6px;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  animation: ping 1.4s ease-in-out infinite;
-}
 
-@keyframes ping {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.45;
-    transform: scale(1.35);
-  }
-}
 
 .cardAlvo {
   display: flex;

@@ -33,8 +33,7 @@ export const EstadoErroPublico = ({
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <div className={styles.cabecalhoTitulos}>
-          <span className={styles.kicker}>Visão Comunitária</span>
-          <span className={styles.tituloCabecalho}>Perfil do Piloto</span>
+          <span className={styles.tituloCabecalho}>Perfil do piloto</span>
         </div>
         <span
           className={`${styles.botaoIcone} ${styles.botaoIconeEspaco}`}

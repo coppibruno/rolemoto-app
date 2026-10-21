@@ -25,7 +25,7 @@ export const CardConfirmado = ({ item, ocultarFaixa = false }: Props) => {
         <span className="material-symbols-outlined" aria-hidden>
           check_circle
         </span>
-        Na grade
+        No comboio
       </span>
       {aceitoEm ? (
         <p className={styles.aceitoEm}>

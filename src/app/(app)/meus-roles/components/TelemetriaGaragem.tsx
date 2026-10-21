@@ -31,7 +31,7 @@ export const TelemetriaGaragem = ({ telemetria }: Props) => {
   ];
 
   return (
-    <div className={styles.telemetriaStrip} role="group" aria-label="Telemetria da garagem">
+    <div className={styles.telemetriaStrip} role="group" aria-label="Resumo da garagem">
       {itens.map((item) => (
         <div
           key={item.rotulo}

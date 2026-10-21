@@ -19,7 +19,7 @@ export const BarraBuscaRaio = ({
   onCiclarRaio,
 }: Props) => {
   const pill =
-    OPCOES_RAIO.find((opcao) => opcao.valor === raioKm)?.pill ?? "TODOS";
+    OPCOES_RAIO.find((opcao) => opcao.valor === raioKm)?.pill ?? "SEM LIMITE";
 
   return (
     <section className={styles.barraBuscaRaio}>

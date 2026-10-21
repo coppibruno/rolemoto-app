@@ -21,7 +21,7 @@ export const ITENS_MENU_INCLUIR: ItemMenuIncluirConfig[] = [
     href: "/gravar-role",
     icone: "speed",
     titulo: "Gravar meu rolê",
-    subtitulo: "Telemetria GPS do seu passeio",
+    subtitulo: "Grave seu passeio pelo GPS",
   },
   {
     id: "evento",

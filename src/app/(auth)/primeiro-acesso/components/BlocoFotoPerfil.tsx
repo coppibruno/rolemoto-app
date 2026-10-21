@@ -28,53 +28,39 @@ export const BlocoFotoPerfil = ({
     e.target.value = "";
   };
 
-  const rotulo = previewUrl ? COPY.fotoTrocar : COPY.fotoAdicionar;
-
   return (
-    <section className={`${styles.card} ${styles.cardFoto}`}>
-      <div className={styles.fotoBloco}>
-        <div className={styles.avatar}>
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
-              className={styles.avatarImg}
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <span className={`material-symbols-outlined ${styles.avatarPlaceholder}`} aria-hidden>
-              person
-            </span>
-          )}
-        </div>
-        <button
-          type="button"
-          className={styles.botaoCamera}
-          aria-label="Trocar foto de perfil"
-          aria-invalid={Boolean(erro)}
-          aria-describedby={erro ? "foto-erro" : undefined}
-          onClick={onAbrirSeletor}
-          disabled={desabilitado}
-        >
-          <span className={styles.botaoCameraIcone}>
-            <span className="material-symbols-outlined">photo_camera</span>
-          </span>
-        </button>
-      </div>
-
-      <span className={styles.fotoTitulo}>{COPY.fotoTitulo}</span>
-      <p className={styles.fotoSubtitulo}>{COPY.fotoSubtitulo}</p>
-
+    <section className={styles.fotoBloco}>
       <button
         type="button"
-        className={styles.botaoAdicionarFoto}
+        className={styles.avatar}
+        aria-label={previewUrl ? COPY.fotoTrocar : COPY.fotoAdicionar}
+        aria-invalid={Boolean(erro)}
+        aria-describedby={erro ? "foto-erro" : undefined}
         onClick={onAbrirSeletor}
         disabled={desabilitado}
       >
-        <span className="material-symbols-outlined" aria-hidden>
-          add_a_photo
-        </span>
-        {rotulo}
+        {previewUrl ? (
+          <img
+            src={previewUrl}
+            alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
+            className={styles.avatarImg}
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className={`material-symbols-outlined ${styles.avatarPlaceholder}`} aria-hidden>
+            add_a_photo
+          </span>
+        )}
+      </button>
+
+      <button
+        type="button"
+        className={styles.botaoFoto}
+        onClick={onAbrirSeletor}
+        disabled={desabilitado}
+      >
+        {previewUrl ? COPY.fotoTrocar : COPY.fotoAdicionar}
+        {previewUrl ? null : <span className={styles.opcional}>· {COPY.fotoOpcional}</span>}
       </button>
 
       <input

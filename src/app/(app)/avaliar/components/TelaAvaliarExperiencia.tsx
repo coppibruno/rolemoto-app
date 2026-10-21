@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import type { TipoAlvoAvaliacao } from "@/types/avaliacao-experiencia";
-import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { useAvaliarExperiencia } from "../hooks/useAvaliarExperiencia";
 import { useFormularioAvaliacao } from "../hooks/useFormularioAvaliacao";
 import { useFotosVisita } from "../hooks/useFotosVisita";
@@ -57,7 +56,12 @@ export const TelaAvaliarExperiencia = ({ tipo, alvoId }: Props) => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoFeed />
+      <div className={styles.corpo}>
+        <CabecalhoAvaliar
+          onVoltar={avaliar.voltar}
+          titulo={form.modoEdicao ? TITULO_PAGINA_EDITAR : undefined}
+        />
+      </div>
       {avaliar.carregando ? <EstadoCarregando /> : null}
       {!avaliar.carregando && avaliar.erro ? (
         <EstadoErro
@@ -68,11 +72,7 @@ export const TelaAvaliarExperiencia = ({ tipo, alvoId }: Props) => {
         />
       ) : null}
       {!avaliar.carregando && avaliar.alvo && !avaliar.erro ? (
-        <div className={styles.corpo}>
-          <CabecalhoAvaliar
-            onVoltar={avaliar.voltar}
-            titulo={form.modoEdicao ? TITULO_PAGINA_EDITAR : undefined}
-          />
+        <div className={`${styles.corpo} ${styles.corpoSemTopo}`}>
           <CardAlvoAvaliacao alvo={avaliar.alvo} />
           {avaliar.toast ? (
             <p className={styles.toastSucesso} role="status">

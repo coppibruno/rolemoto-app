@@ -72,7 +72,7 @@ export const VAZIOS: Record<AbaMeusRoles | "tune", { titulo: string; corpo: stri
   },
   tune: {
     titulo: "Nenhum rolê com esses filtros",
-    corpo: "Limpe o ritmo ou o papel no tune.",
+    corpo: "Limpe os filtros de ritmo ou papel.",
   },
 };
 
@@ -127,7 +127,7 @@ export const OPCOES_PAPEL: { id: PapelMeuRole | "todos"; label: string }[] = [
 
 export const LABELS_TELEMETRIA = {
   rolesFeitos: "Rolês feitos",
-  eventosParticipados: "Eventos part.",
+  eventosParticipados: "Eventos",
   locaisFavoritos: "Locais favoritos",
 } as const;
 

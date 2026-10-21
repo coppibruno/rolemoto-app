@@ -10,8 +10,8 @@ export const COPY_CTA_SUB = "Solicitar entrada no comboio";
 export const COPY_GERENCIAR = "Gerenciar rolê";
 export const COPY_LINK_COPIADO = "Link copiado";
 export const COPY_PILL = "Convite aberto";
-export const COPY_FICHA = "Ficha Técnica do Comboio";
-export const COPY_BRIEFING = "Briefing obrigatório";
+export const COPY_FICHA = "Detalhes do rolê";
+export const COPY_BRIEFING = "Leia antes de pedir vaga";
 
 export const LABELS_RITMO_CAPA: Record<RitmoRole, string> = {
   tranquila: "Ritmo Tranquilo",
@@ -22,7 +22,7 @@ export const LABELS_RITMO_CAPA: Record<RitmoRole, string> = {
 export const LABELS_RITMO_FICHA: Record<RitmoRole, string> = {
   tranquila: "Tranquila (abaixo de 90 km/h)",
   moderada: "Moderada (90-120 km/h)",
-  agressiva: "Agressiva (track / ritmo forte)",
+  agressiva: "Agressiva (ritmo forte)",
 };
 
 export const iniciaisDe = (nome: string, apelido: string): string => {

@@ -22,7 +22,7 @@ export const ToastSucesso = ({ visivel, onFechar }: Props) => {
     <div className={styles.toast} role="status">
       <div className={styles.toastConteudo}>
         <span className="material-symbols-outlined">check_circle</span>
-        <span>Perfil atualizado com sucesso no Cockpit!</span>
+        <span>Perfil atualizado.</span>
       </div>
       <button
         type="button"

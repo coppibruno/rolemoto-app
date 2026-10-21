@@ -9,7 +9,7 @@ export const OPCOES_RAIO: { valor: RaioKm; label: string; pill: string }[] = [
   { valor: 25, label: "Até 25 km", pill: "25 KM" },
   { valor: 50, label: "Até 50 km", pill: "50 KM" },
   { valor: 100, label: "Até 100 km", pill: "100 KM" },
-  { valor: null, label: "Sem limite", pill: "TODOS" },
+  { valor: null, label: "Sem limite", pill: "SEM LIMITE" },
 ];
 
 export const CICLO_RAIO: RaioKm[] = [25, 50, 100, null];
@@ -18,14 +18,14 @@ export const OPCOES_QUANDO: {
   valor: Exclude<FiltroQuando, { tipo: "data" }>;
   label: string;
 }[] = [
-  { valor: "proximos_roles", label: "Próximos Rolês" },
+  { valor: "proximos_roles", label: "Próximos" },
   { valor: "hoje", label: "Hoje" },
   { valor: "amanha", label: "Amanhã" },
-  { valor: "fim_de_semana", label: "Neste Fim de Semana" },
+  { valor: "fim_de_semana", label: "Fim de semana" },
 ];
 
-export const OPCOES_RITMO: { valor: FiltroRitmo; label: string }[] = [
-  { valor: "todas", label: "Todas" },
+/** Sem chip "Todas": tocar no ritmo ativo volta para todos. */
+export const OPCOES_RITMO: { valor: Exclude<FiltroRitmo, "todas">; label: string }[] = [
   { valor: "tranquila", label: "Tranquila" },
   { valor: "moderada", label: "Moderada" },
   { valor: "agressiva", label: "Agressiva" },

@@ -79,7 +79,7 @@ export const OPCOES_RITMO: OpcaoRitmo[] = [
   {
     valor: "agressiva",
     label: "Agressiva",
-    subtitulo: "Track / Ritmo Forte",
+    subtitulo: "Ritmo forte",
     hint: "Curvas técnicas, ritmo acelerado e poucas paradas",
   },
 ];

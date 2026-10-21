@@ -14,7 +14,7 @@ export const IntroGaragem = ({ mostrarTune, sheetAberto, onTune }: Props) => {
         <div>
           <span className={styles.kicker}>
             <span className={styles.kickerPulso} aria-hidden />
-            Painel de Garagem
+            Garagem
           </span>
           <h1 className={styles.titulo}>
             MEUS <span>ROLÊS</span>

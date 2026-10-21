@@ -7,6 +7,7 @@ import type {
   UsuarioLocalFeedbackDoc,
 } from "../types/avaliacao-experiencia";
 import type {Usuario} from "../types/usuario";
+import {apelidoExibicao} from "./apelido";
 
 export const LIMITE_COMENTARIO_AVALIACAO = 500;
 export const LIMITE_FOTOS_AVALIACAO = 4;
@@ -121,7 +122,7 @@ export const hidratarAvaliacaoLocal = (
     {
       uid: usuario.uid,
       nome: usuario.nome,
-      apelido: usuario.apelido,
+      apelido: apelidoExibicao(usuario),
       fotoUrl: usuario.fotoUrl,
     } :
     fallbackAutorAvaliacao(doc.usuarioId),
@@ -145,7 +146,7 @@ export const hidratarAvaliacaoEvento = (
     {
       uid: usuario.uid,
       nome: usuario.nome,
-      apelido: usuario.apelido,
+      apelido: apelidoExibicao(usuario),
       fotoUrl: usuario.fotoUrl,
     } :
     fallbackAutorAvaliacao(doc.usuarioId),

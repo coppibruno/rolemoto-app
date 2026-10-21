@@ -14,7 +14,7 @@ export const tituloSharePerfil = (apelido: string): string =>
   `Perfil · @${apelido} · Rolemoto`;
 
 export const textoSharePerfil = (apelido: string): string =>
-  `Olha o cockpit do @${apelido} no Rolemoto`;
+  `Olha o perfil de @${apelido} no Rolemoto`;
 
 export type DefAbaHistoricoPublico = {
   id: AbaHistoricoPublico;

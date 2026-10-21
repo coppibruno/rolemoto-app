@@ -36,8 +36,7 @@ export const CabecalhoVisaoComunitaria = ({ uid, apelido }: Props) => {
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <div className={styles.cabecalhoTitulos}>
-          <span className={styles.kicker}>Visão Comunitária</span>
-          <span className={styles.tituloCabecalho}>Perfil do Piloto</span>
+          <h1 className={styles.tituloCabecalho}>Perfil do piloto</h1>
         </div>
         <div className={styles.cabecalhoAcoes}>
           <button

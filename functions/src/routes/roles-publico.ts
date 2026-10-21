@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
 import {rateLimit} from "../middleware/rate-limit";
+import {apelidoExibicao} from "../lib/apelido";
 import {param} from "../lib/params";
 import {distanciaRotaKm} from "../lib/geo";
 import {
@@ -45,7 +46,7 @@ const criadorPublico = (
 ): CriadorPublico => ({
   uid: criadorId,
   nome: usuario?.nome ?? "",
-  apelido: usuario?.apelido || "piloto",
+  apelido: apelidoExibicao(usuario),
   fotoUrl: usuario?.fotoUrl ?? "",
   moto: usuario?.moto ?? "",
 });

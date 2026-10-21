@@ -1,3 +1,4 @@
+import {apelidoExibicao} from "./apelido";
 import {ePedidoAceito} from "./historico";
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
@@ -137,7 +138,7 @@ export const hidratarFeedback = (
     {
       uid: usuario.uid,
       nome: usuario.nome,
-      apelido: usuario.apelido,
+      apelido: apelidoExibicao(usuario),
       fotoUrl: usuario.fotoUrl,
     } :
     fallbackAutor(doc.usuarioId),

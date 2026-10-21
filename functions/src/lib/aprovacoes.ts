@@ -13,6 +13,7 @@ import type {
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
 import type {UsuarioRole} from "../types/usuario-role";
+import {apelidoExibicao} from "./apelido";
 import {ePedidoAceito} from "./historico";
 
 const fallbackUsuario = (uid: string): UsuarioResumoSolicitacao => ({
@@ -32,7 +33,7 @@ const paraUsuarioResumo = (
 ): UsuarioResumoSolicitacao => ({
   uid: usuario.uid,
   nome: usuario.nome,
-  apelido: usuario.apelido,
+  apelido: apelidoExibicao(usuario),
   fotoUrl: usuario.fotoUrl,
   moto: usuario.moto,
   pilotagem: usuario.pilotagem,

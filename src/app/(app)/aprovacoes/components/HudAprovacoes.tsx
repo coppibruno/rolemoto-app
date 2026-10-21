@@ -15,9 +15,7 @@ export const HudAprovacoes = ({ resumo }: Props) => {
         <span className={styles.hudDestaque}>
           {rotuloPilotos(resumo.pendentes)}
         </span>{" "}
-        na fila de triagem aguardando seu aval em{" "}
-        {rotuloRoles(resumo.rolesComPendentes)}{" "}
-        {resumo.rolesComPendentes === 1 ? "ativo" : "ativos"}.
+        esperando sua aprovação em {rotuloRoles(resumo.rolesComPendentes)}.
       </>
     ) : (
       <>
@@ -25,7 +23,7 @@ export const HudAprovacoes = ({ resumo }: Props) => {
         <span className={styles.hudDestaque}>
           {rotuloPilotos(resumo.aceitos)}
         </span>{" "}
-        já confirmado{resumo.aceitos === 1 ? "" : "s"} na grade.
+        já confirmado{resumo.aceitos === 1 ? "" : "s"} no comboio.
       </>
     );
 

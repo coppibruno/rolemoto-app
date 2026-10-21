@@ -1,3 +1,4 @@
+import {apelidoExibicao} from "./apelido";
 import {distanciaRotaKm} from "./geo";
 import {ePedidoAceito, ePedidoPendente, ePedidoRecusado} from "./historico";
 import type {Role} from "../types/role";
@@ -158,7 +159,7 @@ const criadorDe = (
 ): CriadorMeuRole => ({
   uid: criadorId,
   nome: usuario?.nome ?? "",
-  apelido: usuario?.apelido || "piloto",
+  apelido: apelidoExibicao(usuario),
   fotoUrl: usuario?.fotoUrl ?? "",
 });
 
@@ -174,7 +175,7 @@ export const destaquesDe = (
     }
     destaques.push({
       uid: usuario.uid,
-      apelido: usuario.apelido || "piloto",
+      apelido: apelidoExibicao(usuario),
       fotoUrl: usuario.fotoUrl || "",
       iniciais: iniciaisDe(usuario.nome, usuario.apelido),
     });

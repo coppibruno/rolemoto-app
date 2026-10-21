@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import type { Pilotagem, TipoMoto, Usuario } from "@/types/user";
@@ -22,37 +22,25 @@ const validar = (campos: {
   nome: string;
   apelido: string;
   moto: string;
-  tipoMoto: TipoMoto | null;
   cidade: string;
-  fotoUrlAtual: string;
-  photoFile: File | null;
   pilotagem: Pilotagem | null;
 }): ErrosEdicaoPerfil => {
   const erros: ErrosEdicaoPerfil = {};
   const nome = campos.nome.trim();
-  const apelido = campos.apelido.trim();
+  const apelido = campos.apelido.trim().replace(/^@+/, "");
   const moto = campos.moto.trim();
   const cidade = campos.cidade.trim();
 
   if (!nome) erros.nome = "Informe o nome";
   else if (nome.length < 2) erros.nome = "Mínimo 2 caracteres";
 
-  if (!apelido) erros.apelido = "Informe o apelido";
-  else if (apelido.length < 2) erros.apelido = "Mínimo 2 caracteres";
+  if (apelido.length === 1) erros.apelido = "Mínimo 2 caracteres";
 
   if (!moto) erros.moto = "Informe a moto";
   else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
 
-  if (!campos.tipoMoto) {
-    erros.tipoMoto = "Selecione o tipo de moto";
-  }
-
   if (cidade && cidade.length < CIDADE_MIN) erros.cidade = "Mínimo 2 caracteres";
   else if (cidade.length > CIDADE_MAX) erros.cidade = "Máximo 80 caracteres";
-
-  if (!campos.fotoUrlAtual.trim() && !campos.photoFile) {
-    erros.foto = "Inclua uma foto de perfil";
-  }
 
   if (!campos.pilotagem) {
     erros.pilotagem = "Selecione o ritmo de pilotagem";
@@ -61,7 +49,7 @@ const validar = (campos: {
   return erros;
 };
 
-export const useFormularioPerfil = (usuario: Usuario) => {
+export const useFormularioPerfil = (usuario: Usuario, onSalvo: () => void) => {
   const { firebaseUser, recarregarPerfil } = useAuth();
   const foto = useFotoPerfil(usuario.fotoUrl);
 
@@ -80,35 +68,30 @@ export const useFormularioPerfil = (usuario: Usuario) => {
   );
   const [erros, setErros] = useState<ErrosEdicaoPerfil>({});
   const [salvando, setSalvando] = useState(false);
-  const [sucesso, setSucesso] = useState(false);
   const [erroGeral, setErroGeral] = useState<string | null>(null);
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
-    setSucesso(false);
     setErroGeral(null);
 
     const errosAtuais = validar({
       nome,
       apelido,
       moto,
-      tipoMoto,
       cidade,
-      fotoUrlAtual: foto.previewUrl,
-      photoFile: foto.arquivo,
       pilotagem,
     });
     setErros(errosAtuais);
 
     if (Object.keys(errosAtuais).length > 0) return;
-    if (!firebaseUser || !pilotagem || !tipoMoto) return;
+    if (!firebaseUser || !pilotagem) return;
 
     setSalvando(true);
     try {
       const fotoUrl = await foto.enviar(firebaseUser.uid, usuario.fotoUrl);
       await perfilService.atualizar({
         nome: nome.trim(),
-        apelido: apelido.trim(),
+        apelido: apelido.trim().replace(/^@+/, ""),
         fotoUrl,
         pilotagem,
         moto: moto.trim(),
@@ -118,8 +101,8 @@ export const useFormularioPerfil = (usuario: Usuario) => {
       });
       await recarregarPerfil();
       foto.limparArquivo();
-      setSucesso(true);
       setErros({});
+      onSalvo();
     } catch (erro) {
       console.error(erro);
       const mensagem =
@@ -131,8 +114,6 @@ export const useFormularioPerfil = (usuario: Usuario) => {
       setSalvando(false);
     }
   };
-
-  const fecharToast = useCallback(() => setSucesso(false), []);
 
   return {
     nome,
@@ -152,8 +133,6 @@ export const useFormularioPerfil = (usuario: Usuario) => {
     foto,
     erros,
     salvando,
-    sucesso,
-    fecharToast,
     erroGeral,
     salvar,
   };

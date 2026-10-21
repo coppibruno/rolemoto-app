@@ -1,6 +1,6 @@
 "use client";
 
-import { KICKER_PAGINA, TITULO_PAGINA } from "../constants";
+import { TITULO_PAGINA } from "../constants";
 import styles from "../avaliar.module.css";
 
 type Props = {
@@ -26,10 +26,6 @@ export const CabecalhoAvaliar = ({
       </button>
       <div className={styles.cabecalhoCentro}>
         <h1 className={styles.tituloPagina}>{titulo}</h1>
-        <span className={styles.kicker}>
-          <span className={styles.kickerPing} aria-hidden />
-          {KICKER_PAGINA}
-        </span>
       </div>
       <span className={`${styles.botaoIcone} ${styles.botaoIconeGhost}`} aria-hidden />
     </header>

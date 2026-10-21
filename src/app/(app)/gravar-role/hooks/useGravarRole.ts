@@ -36,6 +36,7 @@ export const useGravarRole = () => {
   const [titulo, setTitulo] = useState("");
   const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
   const [erroCodigo, setErroCodigo] = useState<TelemetriaGpsErro["codigo"] | null>(
     null,
   );
@@ -169,6 +170,7 @@ export const useGravarRole = () => {
   const salvar = useCallback(async () => {
     if (!resumo) return;
     setErro(null);
+    setAviso(null);
     setOcupado(true);
     const dados = { ...resumo, titulo: titulo.trim() || resumo.titulo };
     try {
@@ -179,7 +181,7 @@ export const useGravarRole = () => {
       irParaDashboard(criado.id);
     } catch (e) {
       if (isFalhaDeRede(e)) {
-        setErro(MENSAGEM_SALVO_NO_CELULAR);
+        setAviso(MENSAGEM_SALVO_NO_CELULAR);
       } else if (isErroAuth(e)) {
         setErro(MENSAGEM_AUTH_PENDENTE);
       } else {
@@ -198,6 +200,7 @@ export const useGravarRole = () => {
     setResumo(null);
     setTitulo("");
     setErro(null);
+    setAviso(null);
     setFase(adapter?.isNative() ? "idle" : "web");
   }, [adapter]);
 
@@ -224,6 +227,7 @@ export const useGravarRole = () => {
     setTitulo,
     ocupado,
     erro,
+    aviso,
     erroCodigo,
     online,
     iniciar,

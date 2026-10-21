@@ -5,12 +5,12 @@ export const TOAST_MS = 2500;
 export const ANIMACAO_CARD_MS = 280;
 
 export const HUD_TITULO = "Aprovações de Comboio";
-export const HUD_BADGE = "Cockpit Líder";
+export const HUD_BADGE = "Líder";
 
 export const LABELS_PILOTAGEM: Record<Pilotagem, string> = {
   tranquila: "Tranquila (até 90 km/h)",
   moderada: "Moderada (90-120 km/h)",
-  agressiva: "Agressiva (track / ritmo forte)",
+  agressiva: "Agressiva (ritmo forte)",
 };
 
 export const ICONES_PILOTAGEM: Record<Pilotagem, string> = {
@@ -49,9 +49,9 @@ export const confirmRecusar = (nome: string, titulo: string): string =>
 export const TEXTO_ALERTA_RITMO = (ritmo: RitmoRole): string =>
   `O ritmo planejado é ${LABELS_RITMO[ritmo]}. Certifique-se de que o piloto está ciente da velocidade dos trechos sinuosos antes de autorizar.`;
 
-export const EMPTY_ORGANIZADO_TITULO = "Grid 100% Organizado!";
+export const EMPTY_ORGANIZADO_TITULO = "Tudo em dia!";
 export const EMPTY_ORGANIZADO_TEXTO =
-  "Todas as solicitações de pilotos foram avaliadas.";
+  "Você já respondeu todos os pedidos.";
 export const EMPTY_SEM_HISTORICO =
   "Você ainda não recebeu pedidos. Publique um rolê para montar o comboio.";
 export const EMPTY_CONFIRMADOS =

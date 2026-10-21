@@ -5,43 +5,25 @@ import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 import { useAuth } from "@/hooks/useAuth";
-import type { ErrosPrimeiroAcesso, Pilotagem, TipoMoto } from "@/types/user";
-import {
-  COPY,
-  DELAY_MOTOR_MS,
-  DELAY_SUCESSO_MS,
-  normalizarApelido,
-} from "../constants";
+import type { ErrosPrimeiroAcesso, Pilotagem } from "@/types/user";
+import { COPY } from "../constants";
 import { perfilPrimeiroAcessoService } from "../services/perfil.service";
 import { useFotoPrimeiroAcesso } from "./useFotoPrimeiroAcesso";
 
-const esperar = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
 const validar = (campos: {
   nome: string;
-  apelido: string;
   moto: string;
-  tipoMoto: TipoMoto | null;
   pilotagem: Pilotagem | null;
 }): ErrosPrimeiroAcesso => {
   const erros: ErrosPrimeiroAcesso = {};
   const nome = campos.nome.trim();
-  const apelido = normalizarApelido(campos.apelido);
   const moto = campos.moto.trim();
 
   if (!nome) erros.nome = "Informe o nome";
   else if (nome.length < 2) erros.nome = "Mínimo 2 caracteres";
 
-  if (!apelido) erros.apelido = "Informe o apelido";
-  else if (apelido.length < 2) erros.apelido = "Mínimo 2 caracteres";
-
   if (!moto) erros.moto = "Informe a moto";
   else if (moto.length < 2) erros.moto = "Mínimo 2 caracteres";
-
-  if (!campos.tipoMoto) {
-    erros.tipoMoto = "Selecione o tipo de moto";
-  }
 
   if (!campos.pilotagem) {
     erros.pilotagem = "Selecione o ritmo de pilotagem";
@@ -56,20 +38,13 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
   const foto = useFotoPrimeiroAcesso(firebaseUser?.photoURL ?? "");
 
   const [nome, setNome] = useState(firebaseUser?.displayName ?? "");
-  const [apelido, setApelidoEstado] = useState("");
   const [moto, setMoto] = useState("");
-  const [tipoMoto, setTipoMoto] = useState<TipoMoto | null>(null);
-  const [garupaFrequente, setGarupaFrequente] = useState(false);
   const [pilotagem, setPilotagem] = useState<Pilotagem | null>(null);
   const [erros, setErros] = useState<ErrosPrimeiroAcesso>({});
   const [salvando, setSalvando] = useState(false);
-  const [sucesso, setSucesso] = useState(false);
+  const [concluido, setConcluido] = useState(false);
   const [erroGeral, setErroGeral] = useState<string | null>(null);
   const nomeHidratado = useRef(Boolean(firebaseUser?.displayName));
-
-  const setApelido = (valor: string) => {
-    setApelidoEstado(valor.replace(/^@+/, ""));
-  };
 
   useEffect(() => {
     if (nomeHidratado.current || !firebaseUser) return;
@@ -79,41 +54,25 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
     }
   }, [firebaseUser]);
 
-  useEffect(() => {
-    const id = nome.trim().length >= 2 ? "apelido" : "nome-completo";
-    document.getElementById(id)?.focus();
-  }, []);
-
-  const preenchidos = [
-    nome.trim().length >= 2,
-    normalizarApelido(apelido).length >= 2,
-    moto.trim().length >= 2,
-    tipoMoto !== null,
-    pilotagem !== null,
-  ].filter(Boolean).length;
-
-  const percentual = Math.round((preenchidos / 5) * 100);
-  const valido = preenchidos === 5 && !foto.erro;
+  const valido =
+    nome.trim().length >= 2 &&
+    moto.trim().length >= 2 &&
+    pilotagem !== null &&
+    !foto.erro;
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
     setErroGeral(null);
 
-    const errosAtuais = validar({ nome, apelido, moto, tipoMoto, pilotagem });
+    const errosAtuais = validar({ nome, moto, pilotagem });
     if (foto.erro) errosAtuais.foto = foto.erro;
     setErros(errosAtuais);
 
-    if (
-      Object.keys(errosAtuais).length > 0 ||
-      !firebaseUser ||
-      !pilotagem ||
-      !tipoMoto
-    ) {
+    if (Object.keys(errosAtuais).length > 0 || !firebaseUser || !pilotagem) {
       return;
     }
 
     setSalvando(true);
-    const inicio = Date.now();
 
     try {
       const fotoUrl = await foto.enviar(
@@ -123,21 +82,12 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
 
       await perfilPrimeiroAcessoService.criar({
         nome: nome.trim(),
-        apelido: normalizarApelido(apelido),
         moto: moto.trim(),
-        tipoMoto,
         pilotagem,
         fotoUrl,
-        garupaFrequente,
       });
 
-      const decorrido = Date.now() - inicio;
-      if (decorrido < DELAY_MOTOR_MS) {
-        await esperar(DELAY_MOTOR_MS - decorrido);
-      }
-
-      setSucesso(true);
-      await esperar(DELAY_SUCESSO_MS);
+      setConcluido(true);
       await recarregarPerfil();
       router.replace(destinoSeguro(next));
     } catch (erro) {
@@ -160,22 +110,15 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
   return {
     nome,
     setNome,
-    apelido,
-    setApelido,
     moto,
     setMoto,
-    tipoMoto,
-    setTipoMoto,
-    garupaFrequente,
-    setGarupaFrequente,
     pilotagem,
     setPilotagem,
     foto,
     erros,
     salvando,
-    sucesso,
+    concluido,
     erroGeral,
-    percentual,
     valido,
     salvar,
   };

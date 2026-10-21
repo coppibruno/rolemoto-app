@@ -36,32 +36,6 @@
   object-fit: contain;
 }
 
-.cabecalhoTitulos {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.tituloPagina {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface);
-}
-
-.subtituloPagina {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary-container);
-}
-
 .avatarHeader {
   display: flex;
   align-items: center;
@@ -142,111 +116,82 @@
   color: var(--primary-container);
 }
 
-.painel {
-  background: var(--surface-container-high);
-  border-radius: 0.75rem;
-  padding: 16px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.painelLinha {
+.bannerFeedback {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 4px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
 }
 
-.painelPonto {
+.bannerFeedbackLink {
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 10px;
   min-width: 0;
-}
-
-.pontoPulse {
-  flex-shrink: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  box-shadow: 0 0 8px rgba(255, 107, 0, 0.8);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-
-.painelTextos {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.painelLabel {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--on-surface-variant);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.painelValor {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
+  min-height: var(--touch-min);
+  padding: 12px 0 12px 14px;
   color: var(--on-surface);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-decoration: none;
 }
 
-.botaoAlterar {
+.bannerFeedbackLink .material-symbols-outlined {
+  flex-shrink: 0;
+  color: var(--primary-container);
+}
+
+.bannerFechar {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: var(--touch-min);
-  padding: 6px 12px;
+  width: var(--touch-min);
+  height: var(--touch-min);
   border: none;
-  border-radius: 9999px;
-  background: var(--surface-variant);
-  color: var(--primary);
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0.02em;
+  background: transparent;
+  color: var(--on-surface-variant);
   cursor: pointer;
 }
 
-.botaoAlterar:active {
-  transform: scale(0.95);
-}
-
-.botaoAlterar .material-symbols-outlined {
-  font-size: 16px;
-}
-
-.linkPontosOficiais {
-  display: inline-flex;
+.linhaLocal {
+  display: flex;
   align-items: center;
   gap: 6px;
   min-height: var(--touch-min);
-  margin-top: 8px;
-  color: var(--primary);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--on-surface);
+  text-align: left;
+  cursor: pointer;
+}
+
+.linhaLocalIcone {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--primary-container);
+}
+
+.linhaLocalTexto {
+  flex: 1;
+  min-width: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linhaLocalAcao {
+  flex-shrink: 0;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 16px;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-}
-
-.linkPontosOficiais .material-symbols-outlined {
-  font-size: 18px;
+  color: var(--primary);
 }
 
 .buscaWrap {
@@ -428,51 +373,27 @@
   overflow: hidden;
 }
 
-.filtros {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.filtroGrupo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.filtroLabel {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--on-surface-variant);
-}
-
-.filtroLabel .material-symbols-outlined {
-  font-size: 14px;
-  color: var(--primary-container);
-}
-
-.iconeQuando {
-  color: var(--secondary-container) !important;
-}
-
-.iconeRitmo {
-  color: var(--tertiary) !important;
-}
-
 .chips {
   display: flex;
   align-items: center;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 28px 4px 0;
+  padding: 2px 24px 2px 0;
   scrollbar-width: none;
+}
+
+.chipsGrupo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.chipsDivisor {
+  flex-shrink: 0;
+  width: 1px;
+  height: 24px;
+  background: var(--outline-variant);
 }
 
 .chips::-webkit-scrollbar {
@@ -504,32 +425,9 @@
   transform: scale(0.95);
 }
 
-.chipRaioAtivo {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  box-shadow: 0 0 14px rgba(255, 107, 0, 0.45);
-}
-
-.chipQuando {
-  background: var(--surface-container);
-}
-
-.chipQuandoAtivo {
-  background: var(--surface-bright);
-  color: var(--on-surface);
-}
-
-.chipRitmo {
-  font-family: "Barlow Condensed", sans-serif;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--surface-container);
-}
-
-.chipRitmoAtivo {
-  background: var(--surface-bright);
-  color: var(--on-surface);
+.chipAtivo {
+  background: var(--on-surface);
+  color: var(--surface);
 }
 
 .chipTranquila {
@@ -1626,25 +1524,6 @@
 
 .botaoFavorito:active {
   transform: scale(0.92);
-}
-
-.cueFim {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 24px 8px;
-  margin: 0;
-  text-align: center;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--outline);
-}
-
-.cueFim .material-symbols-outlined {
-  font-size: 28px;
 }
 
 @media (min-width: 480px) {

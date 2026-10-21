@@ -9,9 +9,9 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 560px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 8px var(--gutter-md) 32px;
+  padding: 32px var(--gutter-md) 32px;
 }
 
 .loadingContainer {
@@ -34,90 +34,21 @@
 .formulario {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
 .cabecalho {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-bottom: 8px;
-}
-
-.kickerLinha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.kicker {
-  display: flex;
-  align-items: center;
   gap: 6px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.kickerPulso {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  animation: pulso 1.4s ease-in-out infinite;
-}
-
-.percentual {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 16px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--secondary-container);
-  white-space: nowrap;
-}
-
-.trilha {
-  width: 100%;
-  height: 6px;
-  border-radius: 9999px;
-  background: var(--surface-container-highest);
-  overflow: hidden;
-}
-
-.trilhaFill {
-  height: 100%;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  box-shadow: 0 0 12px rgba(255, 107, 0, 0.6);
-  transition: width 0.5s ease;
-}
-
-.tituloLinha {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  margin-bottom: 4px;
-}
-
-.tituloIcone {
-  color: var(--primary-container);
-  font-size: 26px;
+  margin-bottom: 28px;
 }
 
 .titulo {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
-  line-height: 36px;
+  line-height: 32px;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   color: var(--on-surface);
@@ -125,42 +56,33 @@
 
 .subtitulo {
   font-size: 14px;
-  font-weight: 400;
   line-height: 20px;
   color: var(--on-surface-variant);
 }
 
-.card {
+.fotoBloco {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 16px;
-  background: var(--surface-container-low);
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
-}
-
-.cardFoto {
   align-items: center;
-  text-align: center;
-}
-
-.fotoBloco {
-  position: relative;
-  margin-bottom: 4px;
-  padding: 0 8px 8px;
+  gap: 8px;
 }
 
 .avatar {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
+  padding: 0;
+  border: none;
   border-radius: 9999px;
   overflow: hidden;
-  background: var(--surface-container-highest);
+  background: var(--surface-container-high);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(255, 107, 0, 0.25);
+  cursor: pointer;
+}
+
+.avatar:disabled {
+  cursor: not-allowed;
 }
 
 .avatarImg {
@@ -170,134 +92,41 @@
 }
 
 .avatarPlaceholder {
-  color: var(--outline);
-  font-size: 40px;
+  color: var(--on-surface-variant);
+  font-size: 28px;
 }
 
-.botaoCamera {
-  position: absolute;
-  right: -8px;
-  bottom: -8px;
-  width: var(--touch-min);
-  height: var(--touch-min);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+.botaoFoto {
+  min-height: var(--touch-min);
+  padding: 0 12px;
   border: none;
   background: transparent;
-  cursor: pointer;
-}
-
-.botaoCameraIcone {
-  width: 32px;
-  height: 32px;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-}
-
-.botaoCameraIcone .material-symbols-outlined {
-  font-size: 18px;
-}
-
-.botaoCamera:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.fotoTitulo {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface);
-}
-
-.fotoSubtitulo {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--on-surface-variant);
-  margin-top: -8px;
-}
-
-.botaoAdicionarFoto {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: var(--touch-min);
-  padding: 8px 16px;
-  border: none;
-  border-radius: 9999px;
-  background: var(--surface-container-high);
   color: var(--primary);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0.02em;
+  line-height: 20px;
   cursor: pointer;
 }
 
-.botaoAdicionarFoto:active:not(:disabled) {
-  background: var(--surface-bright);
-}
-
-.botaoAdicionarFoto:disabled {
+.botaoFoto:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.botaoAdicionarFoto .material-symbols-outlined {
-  font-size: 16px;
+.opcional {
+  margin-left: 4px;
+  font-weight: 400;
+  color: var(--outline);
 }
 
 .inputFile {
   display: none;
 }
 
-.secaoCabecalho {
+.campos {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.secaoTitulo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface);
-}
-
-.secaoTitulo .material-symbols-outlined {
-  color: var(--primary-container);
-  font-size: 20px;
-}
-
-.badgeMoto {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: var(--surface-container-highest);
-  color: var(--secondary);
+  flex-direction: column;
+  gap: 16px;
 }
 
 .campo {
@@ -306,75 +135,47 @@
   gap: 6px;
 }
 
-.labelLinha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
 .label {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface-variant);
-}
-
-.hintDestaque {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--primary);
+  line-height: 18px;
+  color: var(--on-surface);
 }
 
 .inputWrap {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: var(--touch-min);
+  min-height: 48px;
   padding: 0 12px;
   border-radius: 0.5rem;
   background: var(--surface-container);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
 .inputWrap:focus-within {
   background: var(--surface-container-high);
+  outline: 1px solid var(--primary-container);
 }
 
 .inputWrapErro {
   outline: 1px solid var(--error);
 }
 
-.inputIcon,
-.iconeDireita {
+.inputIcon {
   color: var(--outline);
   font-size: 20px;
   flex-shrink: 0;
 }
 
-.iconeDireita {
-  font-size: 18px;
-}
-
-.prefixo {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  color: var(--primary-container);
-}
-
 .input {
   width: 100%;
-  min-height: var(--touch-min);
+  min-height: 48px;
   border: none;
   background: transparent;
   color: var(--on-surface);
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 22px;
   outline: none;
 }
 
@@ -386,131 +187,44 @@
   opacity: 0.5;
 }
 
-.hintAbaixo {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--outline);
-}
-
 .erroCampo {
   font-size: 12px;
   line-height: 16px;
   color: var(--error);
 }
 
-.garupaLinha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 4px;
-}
-
-.garupaTextos {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.garupaLabel {
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  color: var(--on-surface);
-}
-
-.garupaHint {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--outline);
-}
-
-.toggle {
-  display: flex;
-  flex-shrink: 0;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 0.5rem;
-  background: var(--surface-container-highest);
-}
-
-.toggleBtn {
-  min-width: var(--touch-min);
-  min-height: var(--touch-min);
-  padding: 0 12px;
-  border: none;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: var(--on-surface-variant);
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.toggleBtnAtivo {
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-.toggleBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .ritmoBloco {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.ritmoCabecalho {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.ritmoSelecione {
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--outline);
+  gap: 10px;
 }
 
 .ritmoSubtitulo {
+  margin-top: 2px;
   font-size: 12px;
   line-height: 16px;
-  color: var(--on-surface-variant);
-  margin-top: -4px;
+  color: var(--outline);
 }
 
 .ritmoLista {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .cardRitmo {
-  position: relative;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   width: 100%;
-  min-height: var(--touch-min);
-  padding: 16px;
-  border: none;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
   border-radius: 0.75rem;
-  background: var(--surface-container-low);
+  background: var(--surface-container);
   text-align: left;
   cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .cardRitmo:active:not(:disabled) {
@@ -518,8 +232,8 @@
 }
 
 .cardRitmoAtivo {
-  background: var(--surface-container);
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.18);
+  border-color: var(--primary-container);
+  background: var(--surface-container-high);
 }
 
 .cardRitmo:disabled {
@@ -527,100 +241,51 @@
   opacity: 0.7;
 }
 
-.badgeRecomendado {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 4px 10px;
-  border-radius: 0 0.75rem 0 0.5rem;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.ritmoTopo {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.ritmoIdentidade {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.ritmoIconeBox {
-  width: 40px;
-  height: 40px;
-  border-radius: 0.5rem;
-  background: var(--surface-container-highest);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ritmoBolinha {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
   flex-shrink: 0;
 }
 
-.ritmoIconeBox .material-symbols-outlined {
-  font-size: 22px;
+.cardRitmoTranquila .ritmoBolinha {
+  background: var(--ritmo-tranquila);
 }
 
-.ritmoNomes {
+.cardRitmoModerada .ritmoBolinha {
+  background: var(--primary-container);
+}
+
+.cardRitmoAgressiva .ritmoBolinha {
+  background: var(--ritmo-agressiva);
+}
+
+.ritmoTextos {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  flex: 1;
   min-width: 0;
 }
 
 .ritmoLabel {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  line-height: 20px;
   color: var(--on-surface);
 }
 
-.telemetria {
-  font-family: "Barlow Condensed", sans-serif;
+.ritmoDescricao {
   font-size: 12px;
-  font-weight: 800;
   line-height: 16px;
-  letter-spacing: 0.03em;
-}
-
-.cardRitmoTranquila .ritmoIconeBox,
-.cardRitmoTranquila .telemetria {
-  color: var(--ritmo-tranquila);
-}
-
-.cardRitmoModerada .ritmoIconeBox,
-.cardRitmoModerada .telemetria {
-  color: var(--primary-container);
-}
-
-.cardRitmoModerada .telemetria {
-  color: var(--primary);
-}
-
-.cardRitmoAgressiva .ritmoIconeBox,
-.cardRitmoAgressiva .telemetria {
-  color: var(--ritmo-agressiva);
+  color: var(--on-surface-variant);
 }
 
 .radio {
   width: 20px;
   height: 20px;
-  margin-top: 4px;
   border-radius: 9999px;
-  background: var(--surface-container-highest);
+  border: 2px solid var(--outline-variant);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -628,7 +293,7 @@
 }
 
 .radioAtivo {
-  background: var(--primary-container);
+  border-color: var(--primary-container);
 }
 
 .radioPonto {
@@ -639,23 +304,13 @@
 }
 
 .radioAtivo .radioPonto {
-  width: 8px;
-  height: 8px;
-  background: var(--on-primary-container);
-}
-
-.ritmoDescricao {
-  margin-top: 10px;
-  font-size: 12px;
-  line-height: 16px;
-  color: var(--on-surface-variant);
+  background: var(--primary-container);
 }
 
 .ctaBloco {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 8px;
 }
 
 .botaoConcluir {
@@ -664,19 +319,17 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  height: 54px;
-  min-height: 54px;
+  min-height: 52px;
   border: none;
   border-radius: 0.75rem;
   background: var(--primary-container);
   color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 28px;
+  line-height: 24px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
-  box-shadow: 0 4px 18px rgba(255, 107, 0, 0.38);
   cursor: pointer;
 }
 
@@ -685,18 +338,8 @@
 }
 
 .botaoConcluir:disabled {
-  cursor: not-allowed;
-}
-
-.botaoConcluir:disabled:not(.botaoConcluirSucesso) {
   opacity: 0.5;
-}
-
-.botaoConcluirSucesso {
-  background: var(--ritmo-tranquila);
-  color: var(--surface);
-  opacity: 1;
-  box-shadow: 0 4px 18px color-mix(in srgb, var(--ritmo-tranquila) 40%, transparent);
+  cursor: not-allowed;
 }
 
 .iconeGirando {
@@ -704,21 +347,11 @@
 }
 
 .rodape {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 6px;
   padding: 0 8px;
   text-align: center;
   font-size: 12px;
   line-height: 16px;
   color: var(--outline);
-}
-
-.rodape .material-symbols-outlined {
-  font-size: 16px;
-  flex-shrink: 0;
-  margin-top: 1px;
 }
 
 .erroGeral {
@@ -741,27 +374,5 @@
 @keyframes girar {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes pulso {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-@media (max-width: 359px) {
-  .titulo {
-    font-size: 28px;
-    line-height: 32px;
-  }
-
-  .garupaLinha {
-    flex-direction: column;
-    align-items: stretch;
   }
 }

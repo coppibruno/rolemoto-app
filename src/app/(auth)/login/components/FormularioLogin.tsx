@@ -1,7 +1,7 @@
 "use client";
 
 import { OpcoesSalvarSenha } from "../../components/OpcoesSalvarSenha";
-import { useLoginForm } from "../hooks/useLoginForm";
+import { useLoginForm, type CampoLogin } from "../hooks/useLoginForm";
 import { useRecuperarSenha } from "../hooks/useRecuperarSenha";
 import { SheetRecuperarSenha } from "./SheetRecuperarSenha";
 import styles from "../login.module.css";
@@ -23,6 +23,7 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
     setEntrarAutomatico,
     avisoGoogle,
     erro,
+    campoErro,
     carregando,
     alternarModo,
     submeter,
@@ -31,6 +32,12 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
 
   const bloqueado = desabilitado || carregando;
   const eCadastro = modo === "cadastro";
+  const invalido = (campo: CampoLogin) => (erro && campoErro === campo ? true : undefined);
+  const descricao = (campo: CampoLogin) =>
+    erro && (campoErro === campo || campoErro === null) ? "login-erro" : undefined;
+  const rotuloEnviar = eCadastro
+    ? carregando ? "Criando conta…" : "Criar conta"
+    : carregando ? "Entrando…" : "Entrar";
 
   return (
     <>
@@ -53,6 +60,8 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
               onChange={(e) => campos.setEmail(e.target.value)}
               disabled={bloqueado}
               autoComplete="email"
+              aria-invalid={invalido("identificador")}
+              aria-describedby={descricao("identificador")}
             />
           </div>
         </div>
@@ -81,11 +90,13 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
               id="login-pass"
               type={mostrarSenha ? "text" : "password"}
               className={styles.input}
-              placeholder={eCadastro ? "Mínimo 6 caracteres" : "Digite seu passe"}
+              placeholder={eCadastro ? "Mínimo 6 caracteres" : "Digite sua senha"}
               value={campos.senha}
               onChange={(e) => campos.setSenha(e.target.value)}
               disabled={bloqueado}
               autoComplete={eCadastro ? "new-password" : "current-password"}
+              aria-invalid={invalido("senha")}
+              aria-describedby={descricao("senha")}
             />
             <button
               type="button"
@@ -126,6 +137,8 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
                 onChange={(e) => campos.setConfirmarSenha(e.target.value)}
                 disabled={bloqueado}
                 autoComplete="new-password"
+                aria-invalid={invalido("confirmar")}
+                aria-describedby={descricao("confirmar")}
               />
             </div>
           </div>
@@ -139,20 +152,31 @@ export const FormularioLogin = ({ desabilitado, modoCadastro }: Props) => {
           onEntrarAutomatico={setEntrarAutomatico}
         />
 
-        <button type="submit" className={styles.botaoPrimario} disabled={bloqueado}>
-          <span>{eCadastro ? "Criar conta" : "Acelerar / Entrar"}</span>
-          <span className="material-symbols-outlined">
-            {eCadastro ? "person_add" : "arrow_forward"}
-          </span>
+        {erro && (
+          <div id="login-erro" className={styles.erro} role="alert">
+            <span className="material-symbols-outlined" aria-hidden>
+              warning
+            </span>
+            {erro}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className={styles.botaoPrimario}
+          disabled={bloqueado}
+          aria-busy={carregando}
+        >
+          <span>{rotuloEnviar}</span>
+          {carregando ? (
+            <span className={styles.spinnerBotao} aria-hidden />
+          ) : (
+            <span className="material-symbols-outlined" aria-hidden>
+              {eCadastro ? "person_add" : "arrow_forward"}
+            </span>
+          )}
         </button>
       </form>
-
-      {erro && (
-        <div className={styles.erro}>
-          <span className="material-symbols-outlined">warning</span>
-          {erro}
-        </div>
-      )}
 
       <p className={styles.cadastroLink}>
         {eCadastro ? "Já tem uma conta?" : "Não tem uma conta?"}{" "}

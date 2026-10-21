@@ -23,7 +23,6 @@ export const CabecalhoPerfil = ({ fotoUrl, nome }: Props) => {
           />
           <div className={styles.cabecalhoTitulos}>
             <span className={styles.tituloPagina}>Perfil</span>
-            <span className={styles.subtituloPagina}>Cockpit</span>
           </div>
         </div>
 

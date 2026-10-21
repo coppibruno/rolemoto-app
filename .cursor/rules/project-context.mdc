@@ -17,7 +17,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 
 ### 1. Autenticação (Firebase Auth)
 - Login com **Google** e **e-mail/senha**
-- Após o primeiro login, completar perfil: **apelido, moto, tipo de moto, ritmo/pilotagem, foto, garupa**. Cidade é opcional no perfil (aparece na fila de aprovação)
+- Após o primeiro login, primeiro acesso enxuto: **nome, moto e ritmo/pilotagem** (foto opcional). Apelido, tipo de moto, garupa e cidade são opcionais e completados depois no perfil; sem apelido, a exibição usa o primeiro nome
 
 ### 2. Feed (Rolês / Eventos / Locais)
 - Home `/` com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)

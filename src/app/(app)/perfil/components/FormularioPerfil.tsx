@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import type { Usuario } from "@/types/user";
 import { useFormularioPerfil } from "../hooks/useFormularioPerfil";
 import { HINT_CIDADE } from "../constants";
@@ -8,20 +7,16 @@ import { CampoTexto } from "./CampoTexto";
 import { CartaoIdentidade } from "./CartaoIdentidade";
 import { SecaoGaragem } from "./SecaoGaragem";
 import { SeletorPilotagem } from "./SeletorPilotagem";
-import { BotaoCriarSenha } from "./BotaoCriarSenha";
-import { BotaoInstalarApp } from "./BotaoInstalarApp";
-import { BotaoSair } from "./BotaoSair";
-import { BotaoExcluirConta } from "./BotaoExcluirConta";
-import { ToastSucesso } from "./ToastSucesso";
 import styles from "../perfil.module.css";
 
 type Props = {
   usuario: Usuario;
-  antesDasAcoes?: ReactNode;
+  onSalvo: () => void;
+  onCancelar: () => void;
 };
 
-export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
-  const form = useFormularioPerfil(usuario);
+export const FormularioPerfil = ({ usuario, onSalvo, onCancelar }: Props) => {
+  const form = useFormularioPerfil(usuario, onSalvo);
 
   return (
     <form className={styles.formulario} onSubmit={form.salvar} noValidate>
@@ -57,7 +52,7 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
       <CampoTexto
         id="apelido"
         label="Apelido"
-        hint="visível no comboio"
+        hint="opcional · visível no comboio"
         icone="alternate_email"
         valor={form.apelido}
         onChange={form.setApelido}
@@ -103,10 +98,6 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
         </p>
       ) : null}
 
-      {antesDasAcoes}
-
-      <ToastSucesso visivel={form.sucesso} onFechar={form.fecharToast} />
-
       <div className={styles.acoes}>
         <button type="submit" className={styles.botaoSalvar} disabled={form.salvando}>
           {form.salvando ? (
@@ -116,10 +107,14 @@ export const FormularioPerfil = ({ usuario, antesDasAcoes }: Props) => {
           )}
           {form.salvando ? "Salvando..." : "Salvar Alterações"}
         </button>
-        <BotaoInstalarApp />
-        <BotaoCriarSenha />
-        <BotaoSair desabilitado={form.salvando} />
-        <BotaoExcluirConta desabilitado={form.salvando} />
+        <button
+          type="button"
+          className={styles.botaoSair}
+          onClick={onCancelar}
+          disabled={form.salvando}
+        >
+          Cancelar
+        </button>
       </div>
     </form>
   );

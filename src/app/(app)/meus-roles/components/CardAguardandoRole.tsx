@@ -40,12 +40,8 @@ export const CardAguardandoRole = ({ item, processando, onCancelar }: Props) => 
             Você receberá um alerta quando @{item.criador.apelido} decidir.
           </p>
         </div>
-        <span className={styles.chipTriagem}>Triagem</span>
       </div>
-      <p className={styles.notaAmigavel}>
-        O líder está avaliando seu pedido. Você recebe um aviso quando a vaga for
-        validada.
-      </p>
+     
       <div className={styles.cardAcoes}>
         <button
           type="button"

@@ -13,11 +13,12 @@ import {
   LIMITE_DESTAQUES_FEED,
   LIMITE_LISTA_PARTICIPANTES,
 } from "../types/participante";
+import {apelidoExibicao} from "./apelido";
 import {iniciaisDe} from "./meus-roles";
 
 const resumoDe = (usuario: Usuario): ParticipanteResumo => ({
   uid: usuario.uid,
-  apelido: usuario.apelido || "piloto",
+  apelido: apelidoExibicao(usuario),
   fotoUrl: usuario.fotoUrl || "",
   iniciais: iniciaisDe(usuario.nome, usuario.apelido),
   moto: usuario.moto || "",

@@ -38,7 +38,9 @@ export const CartaoIdentidade = ({
         onSelecionar={onSelecionarFoto}
       />
       <h1 className={styles.nomeExibicao}>{nome || "Nome completo"}</h1>
-      <p className={styles.apelidoExibicao}>@{apelido || "apelido"}</p>
+      <p className={styles.apelidoExibicao}>
+        @{apelido.trim() || nome.trim().split(/\s+/)[0] || "apelido"}
+      </p>
     </section>
   );
 };

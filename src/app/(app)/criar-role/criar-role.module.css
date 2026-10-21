@@ -110,60 +110,6 @@
   padding: 12px var(--gutter-md) 16px;
 }
 
-.introTopo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 4px;
-}
-
-.introBriefing {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pontoPulse {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: var(--primary-container);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
-.badgeBriefing {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary);
-}
-
-.badgePasso {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0.02em;
-  color: color-mix(in srgb, var(--on-surface-variant) 70%, transparent);
-  background: var(--surface-container-high);
-  padding: 2px 8px;
-  border-radius: 9999px;
-}
-
 .introTitulo {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 32px;

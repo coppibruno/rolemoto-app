@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
 import { useGravarRole } from "../hooks/useGravarRole";
@@ -23,18 +24,16 @@ export const TelaGravarRole = () => {
         {g.fase === "web" ? (
           <section className={`${styles.card} ${styles.cardCockpit}`}>
             <StatusGravacao
-              label="GPS pronto só no app"
-              hint="Telemetria com tela desligada só no app Rolemoto (Android/iOS)."
-            />
-            <BotaoControleGravacao
-              label="Iniciar gravação"
-              icone="play_circle"
-              disabled
-              onClick={() => undefined}
+              label="Disponível só no app"
+              hint="O navegador para de medir quando a tela apaga."
             />
             <p className={styles.copyWeb}>
-              Telemetria com tela desligada só no app Rolemoto (Android/iOS).
+              Para gravar seu passeio com o celular no bolso, use o app Rolemoto
+              no Android ou iOS.
             </p>
+            <Link href="/" className={`${styles.ctaSecundario} ${styles.ctaNeutro}`}>
+              Voltar ao feed
+            </Link>
           </section>
         ) : null}
 
@@ -78,6 +77,15 @@ export const TelaGravarRole = () => {
             onDesativar={() => void g.abrirAjustesEconomia()}
             onFechar={g.fecharErro}
           />
+        ) : null}
+
+        {g.aviso ? (
+          <p className={styles.aviso} role="status">
+            <span className="material-symbols-outlined" aria-hidden>
+              cloud_upload
+            </span>
+            {g.aviso}
+          </p>
         ) : null}
 
         {g.erro && g.erroCodigo !== "economia_bateria" ? (

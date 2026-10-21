@@ -47,6 +47,9 @@
   --touch-target: 56px;
   --gutter-sm: 12px;
   --gutter-md: 16px;
+  --card-padding-sm: 12px;
+  --card-padding-md: 16px;
+  --card-padding-lg: 20px;
 }
 
 * {

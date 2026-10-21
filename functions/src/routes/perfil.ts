@@ -15,8 +15,7 @@ import type {
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
 const TIPOS_MOTO_VALIDOS: TipoMoto[] = ["trail", "speed", "custom"];
-const ERRO_CAMPOS_OBRIGATORIOS =
-  "nome, apelido, fotoUrl, pilotagem, moto, tipoMoto e garupaFrequente são obrigatórios";
+const ERRO_CAMPOS_OBRIGATORIOS = "nome, moto e pilotagem são obrigatórios";
 
 type ResultadoEdicao =
   | {ok: true; dados: UsuarioEdicao}
@@ -26,19 +25,43 @@ type ResultadoPrimeiroAcesso =
   | {ok: true; dados: UsuarioPrimeiroAcesso}
   | {ok: false; erro: string};
 
-const validarTipoMoto = (
-  bruto: Record<string, unknown>,
-): {ok: true; valor: TipoMoto} | {ok: false; erro: string} => {
-  if (bruto.tipoMoto === undefined || bruto.tipoMoto === null) {
-    return {ok: false, erro: "tipoMoto é obrigatório"};
+type Validado<T> = {ok: true; valor: T} | {ok: false; erro: string};
+
+const validarTipoMoto = (bruto: Record<string, unknown>): Validado<TipoMoto | null> => {
+  if (bruto.tipoMoto === undefined || bruto.tipoMoto === null || bruto.tipoMoto === "") {
+    return {ok: true, valor: null};
   }
-  if (typeof bruto.tipoMoto !== "string" || !bruto.tipoMoto) {
-    return {ok: false, erro: "tipoMoto é obrigatório"};
-  }
-  if (!TIPOS_MOTO_VALIDOS.includes(bruto.tipoMoto as TipoMoto)) {
+  if (
+    typeof bruto.tipoMoto !== "string" ||
+    !TIPOS_MOTO_VALIDOS.includes(bruto.tipoMoto as TipoMoto)
+  ) {
     return {ok: false, erro: "tipoMoto inválido"};
   }
   return {ok: true, valor: bruto.tipoMoto as TipoMoto};
+};
+
+const validarApelido = (bruto: Record<string, unknown>): Validado<string> => {
+  if (bruto.apelido === undefined || bruto.apelido === null) {
+    return {ok: true, valor: ""};
+  }
+  if (typeof bruto.apelido !== "string") {
+    return {ok: false, erro: "apelido inválido"};
+  }
+  const apelido = bruto.apelido.trim().replace(/^@+/, "");
+  if (apelido.length === 1) {
+    return {ok: false, erro: "apelido deve ter ao menos 2 caracteres"};
+  }
+  return {ok: true, valor: apelido};
+};
+
+const validarGarupa = (bruto: Record<string, unknown>): Validado<boolean> => {
+  if (bruto.garupaFrequente === undefined || bruto.garupaFrequente === null) {
+    return {ok: true, valor: false};
+  }
+  if (typeof bruto.garupaFrequente !== "boolean") {
+    return {ok: false, erro: "garupaFrequente inválido"};
+  }
+  return {ok: true, valor: bruto.garupaFrequente};
 };
 
 const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
@@ -48,12 +71,11 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
 
   const bruto = body as Record<string, unknown>;
   const nome = typeof bruto.nome === "string" ? bruto.nome.trim() : "";
-  const apelido = typeof bruto.apelido === "string" ? bruto.apelido.trim() : "";
   const fotoUrl = typeof bruto.fotoUrl === "string" ? bruto.fotoUrl.trim() : "";
   const moto = typeof bruto.moto === "string" ? bruto.moto.trim() : "";
   const pilotagem = bruto.pilotagem;
 
-  if (nome.length < 2 || apelido.length < 2 || fotoUrl.length === 0) {
+  if (nome.length < 2) {
     return {ok: false, erro: ERRO_CAMPOS_OBRIGATORIOS};
   }
 
@@ -61,13 +83,19 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
     return {ok: false, erro: "moto é obrigatório"};
   }
 
+  const apelido = validarApelido(bruto);
+  if (!apelido.ok) {
+    return {ok: false, erro: apelido.erro};
+  }
+
   const tipoMoto = validarTipoMoto(bruto);
   if (!tipoMoto.ok) {
     return {ok: false, erro: tipoMoto.erro};
   }
 
-  if (typeof bruto.garupaFrequente !== "boolean") {
-    return {ok: false, erro: "garupaFrequente é obrigatório"};
+  const garupa = validarGarupa(bruto);
+  if (!garupa.ok) {
+    return {ok: false, erro: garupa.erro};
   }
 
   if (typeof pilotagem !== "string" || !pilotagem) {
@@ -93,12 +121,12 @@ const validarUsuarioEdicao = (body: unknown): ResultadoEdicao => {
     ok: true,
     dados: {
       nome,
-      apelido,
+      apelido: apelido.valor,
       fotoUrl,
       pilotagem: pilotagem as Pilotagem,
       moto,
       tipoMoto: tipoMoto.valor,
-      garupaFrequente: bruto.garupaFrequente,
+      garupaFrequente: garupa.valor,
       cidade: cidadeBruta,
     },
   };
@@ -113,10 +141,6 @@ const validarUsuarioPrimeiroAcesso = (
 
   const bruto = body as Record<string, unknown>;
   const nome = typeof bruto.nome === "string" ? bruto.nome.trim() : "";
-  const apelido =
-    typeof bruto.apelido === "string" ?
-      bruto.apelido.trim().replace(/^@+/, "") :
-      "";
   const moto = typeof bruto.moto === "string" ? bruto.moto.trim() : "";
   const fotoUrl = typeof bruto.fotoUrl === "string" ? bruto.fotoUrl : "";
   const pilotagem = bruto.pilotagem;
@@ -124,11 +148,12 @@ const validarUsuarioPrimeiroAcesso = (
   if (nome.length < 2) {
     return {ok: false, erro: "nome é obrigatório"};
   }
-  if (apelido.length < 2) {
-    return {ok: false, erro: "apelido é obrigatório"};
-  }
   if (moto.length < 2) {
     return {ok: false, erro: "moto é obrigatório"};
+  }
+  const apelido = validarApelido(bruto);
+  if (!apelido.ok) {
+    return {ok: false, erro: apelido.erro};
   }
   const tipoMoto = validarTipoMoto(bruto);
   if (!tipoMoto.ok) {
@@ -137,8 +162,9 @@ const validarUsuarioPrimeiroAcesso = (
   if (bruto.fotoUrl !== undefined && typeof bruto.fotoUrl !== "string") {
     return {ok: false, erro: "fotoUrl inválido"};
   }
-  if (typeof bruto.garupaFrequente !== "boolean") {
-    return {ok: false, erro: "garupaFrequente é obrigatório"};
+  const garupa = validarGarupa(bruto);
+  if (!garupa.ok) {
+    return {ok: false, erro: garupa.erro};
   }
   if (typeof pilotagem !== "string" || !pilotagem) {
     return {ok: false, erro: "pilotagem é obrigatória"};
@@ -151,12 +177,12 @@ const validarUsuarioPrimeiroAcesso = (
     ok: true,
     dados: {
       nome,
-      apelido,
+      apelido: apelido.valor,
       moto,
       tipoMoto: tipoMoto.valor,
       fotoUrl,
       pilotagem: pilotagem as Pilotagem,
-      garupaFrequente: bruto.garupaFrequente,
+      garupaFrequente: garupa.valor,
     },
   };
 };

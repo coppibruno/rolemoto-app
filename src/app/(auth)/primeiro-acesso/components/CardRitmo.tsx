@@ -29,26 +29,14 @@ export const CardRitmo = ({ opcao, selecionado, onSelect, desabilitado }: Props)
       onClick={onSelect}
       disabled={desabilitado}
     >
-      {opcao.recomendado ? (
-        <span className={styles.badgeRecomendado}>Recomendado</span>
-      ) : null}
-      <div className={styles.ritmoTopo}>
-        <div className={styles.ritmoIdentidade}>
-          <div className={styles.ritmoIconeBox}>
-            <span className="material-symbols-outlined" aria-hidden>
-              {opcao.icone}
-            </span>
-          </div>
-          <div className={styles.ritmoNomes}>
-            <span className={styles.ritmoLabel}>{opcao.label}</span>
-            <span className={styles.telemetria}>{opcao.telemetria}</span>
-          </div>
-        </div>
-        <span className={`${styles.radio} ${selecionado ? styles.radioAtivo : ""}`}>
-          <span className={styles.radioPonto} />
-        </span>
-      </div>
-      <p className={styles.ritmoDescricao}>{opcao.descricao}</p>
+      <span className={styles.ritmoBolinha} aria-hidden />
+      <span className={styles.ritmoTextos}>
+        <span className={styles.ritmoLabel}>{opcao.label}</span>
+        <span className={styles.ritmoDescricao}>{opcao.descricao}</span>
+      </span>
+      <span className={`${styles.radio} ${selecionado ? styles.radioAtivo : ""}`} aria-hidden>
+        <span className={styles.radioPonto} />
+      </span>
     </button>
   );
 };

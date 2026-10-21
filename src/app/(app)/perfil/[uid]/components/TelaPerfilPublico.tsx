@@ -5,14 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useHistoricoPublico } from "../hooks/useHistoricoPublico";
 import { usePerfilPublico } from "../hooks/usePerfilPublico";
-import { CabecalhoPerfil } from "../../components/CabecalhoPerfil";
 import { CabecalhoVisaoComunitaria } from "./CabecalhoVisaoComunitaria";
-import { CapsulaIdentidadePublica } from "./CapsulaIdentidadePublica";
+import { CartaoPiloto } from "./CartaoPiloto";
 import { EstadoCarregandoPublico } from "./EstadoCarregandoPublico";
 import { EstadoErroPublico } from "./EstadoErroPublico";
-import { GaragemPublica } from "./GaragemPublica";
 import { HistoricoPublicoSecao } from "./HistoricoPublico";
-import { RitmoPublico } from "./RitmoPublico";
 import styles from "../perfil-publico.module.css";
 
 type Props = {
@@ -54,13 +51,8 @@ export const TelaPerfilPublico = ({ uid }: Props) => {
 
   return (
     <div className={styles.tela}>
-      <div className={styles.marcaShell}>
-        <CabecalhoPerfil fotoUrl="" nome="" />
-      </div>
       <CabecalhoVisaoComunitaria uid={perfil.uid} apelido={perfil.apelido} />
-      <CapsulaIdentidadePublica perfil={perfil} />
-      <GaragemPublica perfil={perfil} />
-      <RitmoPublico pilotagem={perfil.pilotagem} />
+      <CartaoPiloto perfil={perfil} />
       <HistoricoPublicoSecao
         historico={historico.historico}
         aba={historico.aba}

@@ -2,6 +2,7 @@
 
 import { useAbaFeed } from "../hooks/useAbaFeed";
 import { useContagensFeed } from "../hooks/useContagensFeed";
+import { useFeedbackPendente } from "../hooks/useFeedbackPendente";
 import { useFiltrosFeed } from "../hooks/useFiltrosFeed";
 import { useListaEventos } from "../hooks/useListaEventos";
 import { useListaLocais } from "../hooks/useListaLocais";
@@ -12,6 +13,7 @@ import { AbasFeed } from "./AbasFeed";
 import { BannerCockpitLider } from "./BannerCockpitLider";
 import { BarraBuscaRaio } from "./BarraBuscaRaio";
 import { CabecalhoFeed } from "./CabecalhoFeed";
+import { CardFeedbackPendente } from "./CardFeedbackPendente";
 import { FiltrosData } from "./FiltrosData";
 import { FiltrosRitmo } from "./FiltrosRitmo";
 import { ListaEventos } from "./ListaEventos";
@@ -26,6 +28,7 @@ export const TelaFeed = () => {
   const filtros = useFiltrosFeed();
   const { aba, setAba } = useAbaFeed();
   const resumoAprovacoes = useResumoAprovacoes();
+  const feedbackPendente = useFeedbackPendente();
 
   const filtrosBase = {
     ponto: localizacao.ponto,
@@ -41,7 +44,6 @@ export const TelaFeed = () => {
     ...filtrosBase,
     ativo: aba === "roles",
   });
-  console.log({filtros})
   const listaEventos = useListaEventos({
     ponto: localizacao.ponto,
     raioKm: filtros.raioKm,
@@ -64,6 +66,13 @@ export const TelaFeed = () => {
     <div className={styles.tela}>
       <CabecalhoFeed />
       <div className={styles.corpo}>
+        {feedbackPendente.role ? (
+          <CardFeedbackPendente
+            role={feedbackPendente.role}
+            onDispensar={feedbackPendente.dispensar}
+          />
+        ) : null}
+
         {resumoAprovacoes ? (
           <BannerCockpitLider resumo={resumoAprovacoes} />
         ) : null}
@@ -89,7 +98,7 @@ export const TelaFeed = () => {
         />
 
         {mostrarQuando || mostrarRitmo ? (
-          <section id="filtros-feed" className={styles.filtros}>
+          <section id="filtros-feed" className={styles.chips} aria-label="Filtros">
             {mostrarQuando ? (
               <FiltrosData
                 valor={filtros.quando}
@@ -97,6 +106,9 @@ export const TelaFeed = () => {
                 onEscolherData={filtros.escolherData}
                 onLimparData={filtros.limparData}
               />
+            ) : null}
+            {mostrarQuando && mostrarRitmo ? (
+              <span className={styles.chipsDivisor} aria-hidden />
             ) : null}
             {mostrarRitmo ? (
               <FiltrosRitmo valor={filtros.ritmo} onChange={filtros.setRitmo} />
@@ -135,13 +147,6 @@ export const TelaFeed = () => {
             onTentarDeNovo={listaLocais.recarregar}
           />
         ) : null}
-
-        <p className={styles.cueFim}>
-          <span className="material-symbols-outlined" aria-hidden>
-            two_wheeler
-          </span>
-          Você está atualizado com o asfalto ao redor.
-        </p>
       </div>
 
       {localizacao.seletorAberto ? (

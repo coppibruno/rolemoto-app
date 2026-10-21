@@ -2,6 +2,7 @@ import {Router, Request, Response} from "express";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {apelidoExibicao} from "../lib/apelido";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
 import {roleTelemetriaRepository, usuarioRepository} from "../repositories";
@@ -22,7 +23,7 @@ usuariosRouter.use(rateLimitAutenticado);
 const paraPerfilPublico = (usuario: Usuario): PerfilPublico => ({
   uid: usuario.uid,
   nome: usuario.nome,
-  apelido: usuario.apelido,
+  apelido: apelidoExibicao(usuario),
   fotoUrl: usuario.fotoUrl,
   moto: usuario.moto,
   tipoMoto: usuario.tipoMoto,

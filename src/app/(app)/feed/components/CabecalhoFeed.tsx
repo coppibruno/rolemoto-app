@@ -13,7 +13,7 @@ export const CabecalhoFeed = () => {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
-        <div className={styles.cabecalhoMarca}>
+        <h1 className={styles.cabecalhoMarca}>
           <Image
             src="/logo-rolemoto.jpeg"
             alt="Rolê Moto"
@@ -22,8 +22,7 @@ export const CabecalhoFeed = () => {
             className={styles.logo}
             priority
           />
-          <h1 className={styles.tituloPagina}>Feed</h1>
-        </div>
+        </h1>
 
         <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">
           {fotoUrl ? (

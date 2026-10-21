@@ -129,10 +129,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
-  border-radius: 0.75rem;
+  padding: var(--card-padding-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
   background: var(--surface-container-low);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 .cardCockpit {
@@ -295,6 +295,11 @@
   cursor: pointer;
 }
 
+.ctaNeutro {
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
 .copyWeb {
   margin: 0;
   font-size: 13px;
@@ -307,6 +312,26 @@
   font-size: 13px;
   line-height: 18px;
   color: var(--on-surface-variant);
+}
+
+.aviso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: var(--card-padding-sm);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  background: var(--surface-container-low);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface);
+}
+
+.aviso .material-symbols-outlined {
+  flex-shrink: 0;
+  font-size: 20px;
+  color: var(--primary-container);
 }
 
 .erro {

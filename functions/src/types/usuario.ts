@@ -31,31 +31,32 @@ export type PerfilPublico = {
   garupaFrequente: boolean;
 };
 
-export type UsuarioCreate = Omit<Usuario, "uid" | "createdAt" | "tipoMoto"> & {
-  tipoMoto: TipoMoto;
-};
+export type UsuarioCreate = Omit<Usuario, "uid" | "createdAt">;
 
 export type UsuarioUpdate = Partial<Omit<UsuarioCreate, "admin">>;
 
-/** Body de POST /perfil — uid só do token; cidade nasce vazia. */
+/**
+ * Body de POST /perfil — uid só do token; cidade nasce vazia.
+ * Só nome, moto e pilotagem são obrigatórios; o resto completa no perfil.
+ */
 export type UsuarioPrimeiroAcesso = {
   nome: string;
   apelido: string;
   moto: string;
-  tipoMoto: TipoMoto;
+  tipoMoto: TipoMoto | null;
   pilotagem: Pilotagem;
   fotoUrl: string;
   garupaFrequente: boolean;
 };
 
-/** Edição autenticada do próprio perfil — campos obrigatórios. */
+/** Edição autenticada do próprio perfil — nome, moto e pilotagem obrigatórios. */
 export type UsuarioEdicao = {
   nome: string;
   apelido: string;
   fotoUrl: string;
   pilotagem: Pilotagem;
   moto: string;
-  tipoMoto: TipoMoto;
+  tipoMoto: TipoMoto | null;
   garupaFrequente: boolean;
   cidade: string;
 };

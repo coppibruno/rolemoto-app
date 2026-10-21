@@ -73,7 +73,7 @@ export const FILTROS_TIPO_HISTORICO = [
   { id: "todos" as const, label: "Todos" },
   { id: "roles" as const, label: "Rolês" },
   { id: "eventos" as const, label: "Eventos" },
-  { id: "telemetria" as const, label: "Telemetria" },
+  { id: "telemetria" as const, label: "Gravados" },
 ];
 
 export const VAZIO_TELEMETRIA = {

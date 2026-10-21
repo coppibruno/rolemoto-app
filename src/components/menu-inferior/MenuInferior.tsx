@@ -5,11 +5,13 @@ import { ItemMenu } from "./ItemMenu";
 import { BotaoIncluir } from "./BotaoIncluir";
 import { ITENS_MENU } from "./itens-menu";
 import { useItemMenuAtivo } from "./hooks/useItemMenuAtivo";
+import { useMostrarFila } from "./hooks/useMostrarFila";
 import styles from "./menu-inferior.module.css";
 
 export const MenuInferior = () => {
   const { estaAtivo } = useItemMenuAtivo();
   const { usuario } = useAuth();
+  const mostrarFila = useMostrarFila();
   const [roles, meusRoles, incluir, aprovacoes, perfil] = ITENS_MENU;
 
   return (
@@ -25,7 +27,9 @@ export const MenuInferior = () => {
           admin={usuario?.admin === true}
         />
         <div className={styles.grupo}>
-          <ItemMenu item={aprovacoes} ativo={estaAtivo(aprovacoes.href)} />
+          {mostrarFila ? (
+            <ItemMenu item={aprovacoes} ativo={estaAtivo(aprovacoes.href)} />
+          ) : null}
           <ItemMenu item={perfil} ativo={estaAtivo(perfil.href)} />
         </div>
       </div>

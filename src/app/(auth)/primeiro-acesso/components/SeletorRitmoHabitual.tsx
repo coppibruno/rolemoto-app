@@ -22,21 +22,16 @@ export const SeletorRitmoHabitual = ({
 
   return (
     <div className={styles.ritmoBloco}>
-      <div className={styles.ritmoCabecalho}>
-        <div className={styles.secaoTitulo} id="ritmo-label">
-          <span className="material-symbols-outlined" aria-hidden>
-            speed
-          </span>
+      <div>
+        <span className={styles.label} id="ritmo-label">
           {COPY.ritmoTitulo}
-        </div>
-        <span className={styles.ritmoSelecione}>{COPY.ritmoSelecione}</span>
+        </span>
+        <p className={styles.ritmoSubtitulo}>{COPY.ritmoSubtitulo}</p>
       </div>
-      <p className={styles.ritmoSubtitulo}>{COPY.ritmoSubtitulo}</p>
       <div
         className={styles.ritmoLista}
         role="radiogroup"
         aria-labelledby="ritmo-label"
-        aria-label="Ritmo de pilotagem habitual"
         aria-describedby={erro ? erroId : undefined}
       >
         {OPCOES_RITMO_HABITUAL.map((opcao) => (

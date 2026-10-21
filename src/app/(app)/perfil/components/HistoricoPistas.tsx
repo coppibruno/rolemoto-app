@@ -37,9 +37,11 @@ export const HistoricoPistas = () => {
   return (
     <section className={styles.secao} aria-labelledby="titulo-historico-pistas">
       <div className={perfil.secaoCabecalho}>
-        <span className={perfil.secaoBarra} />
+        <span className={`material-symbols-outlined ${perfil.secaoIcone}`} aria-hidden>
+          history
+        </span>
         <h2 id="titulo-historico-pistas" className={perfil.secaoTitulo}>
-          Histórico de Pistas
+          Histórico
         </h2>
       </div>
 

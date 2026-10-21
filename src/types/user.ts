@@ -19,35 +19,19 @@ export interface Usuario {
 
 export type UsuarioForm = Omit<Usuario, "uid" | "createdAt" | "admin">;
 
-export type PrimeiroAcessoForm = {
-  nome: string;
-  apelido: string;
-  moto: string;
-  tipoMoto: TipoMoto | null;
-  garupaFrequente: boolean;
-  photoFile: File | null;
-  fotoUrlAtual: string;
-  pilotagem: Pilotagem | null;
-};
-
 export type ErrosPrimeiroAcesso = {
   nome?: string;
-  apelido?: string;
   moto?: string;
-  tipoMoto?: string;
   foto?: string;
   pilotagem?: string;
 };
 
-/** Body do POST /perfil após upload (se houver). */
+/** Body do POST /perfil — apelido, tipo, garupa e cidade completam depois no perfil. */
 export type UsuarioPrimeiroAcesso = {
   nome: string;
-  apelido: string;
   moto: string;
-  tipoMoto: TipoMoto;
   pilotagem: Pilotagem;
   fotoUrl: string;
-  garupaFrequente: boolean;
 };
 
 /** Payload de edição de perfil. */
@@ -57,7 +41,7 @@ export type UsuarioEdicao = {
   fotoUrl: string;
   pilotagem: Pilotagem;
   moto: string;
-  tipoMoto: TipoMoto;
+  tipoMoto: TipoMoto | null;
   garupaFrequente: boolean;
   cidade: string;
 };

@@ -31,9 +31,9 @@ alwaysApply: true
 {
   uid: string,
   nome: string,
-  apelido: string,
-  moto: string,
-  tipoMoto: 'trail' | 'speed' | 'custom', // legado pode faltar até o próximo save
+ apelido: string, // "" até o piloto definir; exibição cai no primeiro nome
+ moto: string,
+ tipoMoto: 'trail' | 'speed' | 'custom' | null, // opcional
   pilotagem: 'agressiva' | 'moderada' | 'tranquila',
   fotoUrl: string,
   cidade: string,

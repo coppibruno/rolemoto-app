@@ -46,7 +46,7 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
       />
       <div className={styles.conteudo}>
         {carregando ? (
-          <p className={styles.statusHint}>Carregando dashboard…</p>
+          <p className={styles.statusHint}>Carregando seu passeio…</p>
         ) : null}
         {erro ? (
           <p className={styles.erro} role="alert">

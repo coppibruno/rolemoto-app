@@ -21,7 +21,7 @@ export const SeletorTipoMoto = ({
     <div className={styles.campo}>
       <span className={styles.label} id="label-tipo-moto">
         Tipo de Moto
-        <span className={styles.hint}>obrigatório</span>
+        <span className={styles.hint}>opcional</span>
       </span>
       <div
         className={styles.grid}

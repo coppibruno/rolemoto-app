@@ -21,6 +21,8 @@ import {
 
 type Modo = "login" | "cadastro";
 
+export type CampoLogin = "identificador" | "senha" | "confirmar";
+
 const ERRO_CREDENCIAL = "Email ou senha incorretos.";
 const ERRO_CONTA_GOOGLE =
   "Esta conta entra com o Google. Use o botão abaixo ou crie uma senha depois de entrar.";
@@ -37,6 +39,7 @@ export const useLoginForm = (modoCadastro: boolean) => {
   const [entrarAutomatico, setEntrarAutomatico] = useState(true);
   const [avisoGoogle, setAvisoGoogle] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [campoErro, setCampoErro] = useState<CampoLogin | null>(null);
   const [carregando, setCarregando] = useState(false);
 
   const toggleSenha = () => setMostrarSenha((v) => !v);
@@ -52,14 +55,23 @@ export const useLoginForm = (modoCadastro: boolean) => {
 
   const entrar = async (identificador: string, senhaConta: string) => {
     setErro(null);
+    setCampoErro(null);
 
-    if (!identificador.trim() || !senhaConta.trim()) {
-      setErro("Preencha todos os campos.");
+    if (!identificador.trim()) {
+      setErro(modo === "cadastro" ? "Informe seu e-mail." : "Informe seu e-mail ou apelido.");
+      setCampoErro("identificador");
+      return;
+    }
+
+    if (!senhaConta.trim()) {
+      setErro("Informe sua senha.");
+      setCampoErro("senha");
       return;
     }
 
     if (modo === "cadastro" && senhaConta !== confirmarSenha) {
       setErro("As senhas não coincidem.");
+      setCampoErro("confirmar");
       return;
     }
 
@@ -127,6 +139,7 @@ export const useLoginForm = (modoCadastro: boolean) => {
   const alternarModo = () => {
     setModo((m) => (m === "login" ? "cadastro" : "login"));
     setErro(null);
+    setCampoErro(null);
     setConfirmarSenha("");
   };
 
@@ -153,6 +166,7 @@ export const useLoginForm = (modoCadastro: boolean) => {
     setEntrarAutomatico,
     avisoGoogle,
     erro,
+    campoErro,
     carregando,
     alternarModo,
     submeter,

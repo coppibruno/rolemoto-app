@@ -8,10 +8,6 @@
   overflow-x: hidden;
 }
 
-.marcaShell {
-  margin: 0 calc(-1 * var(--gutter-md));
-}
-
 .cabecalhoFaixa {
   position: sticky;
   top: 0;
@@ -21,7 +17,7 @@
   justify-content: space-between;
   gap: 8px;
   margin: 0 calc(-1 * var(--gutter-md));
-  padding: 8px var(--gutter-md);
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -59,7 +55,6 @@
   height: 32px;
   border-radius: 9999px;
   object-fit: cover;
-  box-shadow: 0 0 8px rgba(255, 107, 0, 0.3);
   outline: 2px solid color-mix(in srgb, var(--primary-container) 60%, transparent);
 }
 
@@ -72,7 +67,6 @@
   border-radius: 9999px;
   background: var(--surface-container-highest);
   color: var(--on-surface-variant);
-  box-shadow: 0 0 8px rgba(255, 107, 0, 0.2);
   outline: 2px solid color-mix(in srgb, var(--primary-container) 40%, transparent);
 }
 
@@ -110,17 +104,8 @@
   min-width: 0;
 }
 
-.kicker {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary-container);
-}
-
 .tituloCabecalho {
+  margin: 0;
   font-family: "Barlow Condensed", sans-serif;
   font-size: 20px;
   font-weight: 600;
@@ -147,54 +132,60 @@
   white-space: nowrap;
 }
 
-.capsula {
+.cartaoPiloto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-padding-md);
+  padding: var(--card-padding-md);
+  background: var(--surface-container-low);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+}
+
+.identidade {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: var(--card-padding-md);
-  background: var(--surface-container-low);
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+  min-width: 0;
 }
 
-.avatarWrap {
-  position: relative;
+.avatar,
+.avatarPlaceholder {
   flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  outline: 2px solid color-mix(in srgb, var(--primary-container) 60%, transparent);
+  outline-offset: 2px;
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 9999px;
   object-fit: cover;
-  background: var(--surface-container-highest);
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
 }
 
 .avatarPlaceholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  border-radius: 9999px;
-  background: var(--surface-container-highest);
   color: var(--on-surface-variant);
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
 }
 
 .avatarPlaceholder .material-symbols-outlined {
-  font-size: 40px;
+  font-size: 36px;
 }
 
-.capsulaTextos {
+.identidadeTextos {
   display: flex;
-  flex-direction: column;
-  min-width: 0;
   flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
 }
 
 .nome {
+  max-width: 100%;
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 700;
@@ -209,10 +200,88 @@
 
 .apelido {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 20px;
   color: var(--primary);
+}
+
+.pillRitmo {
+  margin-top: 6px;
+  padding: 4px 10px;
+  border: 1px solid currentColor;
+  border-radius: 9999px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ritmoTranquila {
+  color: var(--ritmo-tranquila);
+  background: color-mix(in srgb, var(--ritmo-tranquila) 15%, transparent);
+}
+
+.ritmoModerada {
+  color: var(--ritmo-moderada);
+  background: color-mix(in srgb, var(--ritmo-moderada) 15%, transparent);
+}
+
+.ritmoAgressiva {
+  color: var(--ritmo-agressiva);
+  background: color-mix(in srgb, var(--ritmo-agressiva) 15%, transparent);
+}
+
+.divisor {
+  height: 1px;
+  background: #2d323a;
+  box-shadow: 0 -1px 0 #0d0e10;
+}
+
+.ficha {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fichaLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+}
+
+.fichaRotulo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+}
+
+.fichaRotulo .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--primary-container);
+}
+
+.fichaValor {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface);
+  text-align: right;
 }
 
 .secao {
@@ -252,165 +321,36 @@
   color: var(--on-surface);
 }
 
-.chipAtiva {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary);
-  padding: 2px 8px;
-  border-radius: 0.25rem;
-  background: color-mix(in srgb, var(--primary-container) 10%, transparent);
-  flex-shrink: 0;
-}
-
 .card {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: var(--card-padding-md);
   background: var(--surface-container-low);
-  border-radius: 0.75rem;
-}
-
-.garagemTopo {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-}
-
-.garagemTextos {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
 }
 
 .motoNome {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 28px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface);
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.divisorGaragem {
-  height: 1px;
-  width: 100%;
-  background: color-mix(in srgb, var(--surface-variant) 40%, transparent);
-}
-
-.chipsTipoMoto {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.chipTipoMoto {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  min-height: 48px;
-  padding: 8px 4px;
-  border-radius: 0.5rem;
-  background: var(--surface-container);
-  color: var(--on-surface-variant);
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  opacity: 0.55;
-}
-
-.chipTipoMoto .material-symbols-outlined {
-  font-size: 20px;
-  color: var(--on-surface-variant);
-}
-
-.chipTipoMotoAtivo {
-  opacity: 1;
-  background: var(--primary-container);
-  color: var(--on-primary);
-  box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
-}
-
-.chipTipoMotoAtivo .material-symbols-outlined {
-  color: var(--on-primary);
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .badgeTipo {
   flex-shrink: 0;
-  padding: 4px 8px;
-  border-radius: 0.25rem;
-  background: var(--surface-container-highest);
-  color: var(--on-surface);
+  padding: 4px 10px;
+  border: 1px solid #353a44;
+  border-radius: 9999px;
+  color: var(--on-surface-variant);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 12px;
   font-weight: 700;
   line-height: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.ritmoLinha {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.ritmoLabel {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--on-surface-variant);
-}
-
-.badgeRitmo {
-  padding: 4px 10px;
-  border-radius: 0.375rem;
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.badgeTranquila {
-  background: color-mix(in srgb, #00e676 15%, transparent);
-  color: #00e676;
-  border: 1px solid #00e676;
-}
-
-.badgeModerada {
-  background: color-mix(in srgb, var(--secondary-container) 20%, transparent);
-  color: var(--secondary-container);
-}
-
-.badgeAgressiva {
-  background: color-mix(in srgb, #ff334b 15%, transparent);
-  color: #ff334b;
-  border: 1px solid #ff334b;
-}
-
-.iconeRitmoSecao {
-  color: var(--secondary-container) !important;
 }
 
 .totalRoles {
@@ -469,7 +409,8 @@
   gap: 10px;
   padding: var(--card-padding-md);
   background: var(--surface-container-low);
-  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
   text-decoration: none;
   color: inherit;
   transition: transform 0.12s ease;
@@ -608,7 +549,7 @@
 
 .skeleton {
   height: 120px;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   background: linear-gradient(
     90deg,
     var(--surface-container-low) 0%,

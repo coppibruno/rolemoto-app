@@ -28,13 +28,6 @@ const SUBTITULOS: Record<ModoCriarRole, string> = {
 export const IntroBriefing = ({ modo }: Props) => {
   return (
     <div className={styles.intro}>
-      <div className={styles.introTopo}>
-        <div className={styles.introBriefing}>
-          <span className={styles.pontoPulse} aria-hidden />
-          <span className={styles.badgeBriefing}>Briefing Inicial</span>
-        </div>
-        <span className={styles.badgePasso}>Passo 1 de 1</span>
-      </div>
       <h2 className={styles.introTitulo}>{TITULOS[modo]}</h2>
       <p className={styles.introSubtitulo}>{SUBTITULOS[modo]}</p>
     </div>

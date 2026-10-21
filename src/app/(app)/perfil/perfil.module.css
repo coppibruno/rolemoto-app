@@ -51,16 +51,6 @@
   color: var(--on-surface);
 }
 
-.subtituloPagina {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--primary-container);
-}
-
 .avatarHeaderWrap {
   display: flex;
   align-items: center;
@@ -233,7 +223,13 @@
   background: var(--primary-container);
 }
 
+.secaoIcone {
+  font-size: 18px;
+  color: var(--primary-container);
+}
+
 .secaoTitulo {
+  margin: 0;
   font-family: "Barlow Condensed", sans-serif;
   font-size: 20px;
   font-weight: 600;
@@ -544,6 +540,78 @@
   gap: 12px;
   margin-top: 8px;
   padding-top: 8px;
+}
+
+.visao {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px var(--gutter-md) 48px;
+}
+
+.botaoEditar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  border: 1.5px solid #353a44;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.botaoEditar:active {
+  transform: scale(0.98);
+}
+
+.botaoEditar .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.cardCompletar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary-container) 35%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--primary-container) 10%, var(--surface-container-low));
+  color: var(--on-surface);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cardCompletar .material-symbols-outlined {
+  flex-shrink: 0;
+  color: var(--primary-container);
+}
+
+.cardCompletarTexto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.cardCompletarTexto strong {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--on-surface);
 }
 
 .botaoSalvar {

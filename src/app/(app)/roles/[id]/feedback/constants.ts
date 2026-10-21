@@ -26,7 +26,7 @@ export const AVISO_COMBOIO_CORPO =
   "O organizador e os pilotos confirmados veem seu @apelido, a nota e o relato.";
 export const AVISO_LOCK = "Só quem confirmou neste rolê";
 export const AVISO_FEED =
-  "Sua nota e os destaques ficam neste rolê para o comboio consultar depois. Não publicamos média no feed nesta versão.";
+  "Sua nota e os destaques ficam neste rolê para o comboio consultar depois.";
 
 export const CTA_SALVAR = "Salvar Avaliação da Rota";
 export const CTA_ENVIANDO = "Gravando...";

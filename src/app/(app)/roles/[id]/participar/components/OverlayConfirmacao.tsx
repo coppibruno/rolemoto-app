@@ -14,11 +14,7 @@ export const OverlayConfirmacao = ({ onFechar, children }: Props) => {
 
   return (
     <>
-      <div
-        className={styles.overlay}
-        onClick={onFechar}
-        aria-hidden="true"
-      />
+      <div className={styles.overlay} aria-hidden="true" />
       <div ref={ref} className={styles.sheetWrap}>
         {children}
       </div>

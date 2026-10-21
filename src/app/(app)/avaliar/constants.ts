@@ -13,7 +13,6 @@ export const LIMITE_FOTOS = 4;
 export const TITULO_PAGINA = "Avaliar Experiência";
 export const TITULO_PAGINA_EDITAR = "Sua avaliação";
 export const TITULO_PAGINA_LISTA = "Avaliações";
-export const KICKER_PAGINA = "Feedback da Irmandade";
 
 export const LABEL_NOTA = "Nota geral da experiência";
 export const LABEL_RELATO = "Relato do piloto";

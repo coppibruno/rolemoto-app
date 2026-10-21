@@ -1,7 +1,7 @@
 import type { RitmoRole } from "@/types/role";
 
 export const TITULO_TELA = "Gerenciar rolê";
-export const BADGE_LIDER = "Cockpit líder";
+export const BADGE_LIDER = "Líder";
 
 export const ERRO_CARREGAR = "Não foi possível carregar o rolê";
 export const ERRO_ROLE_NAO_ENCONTRADO = "Rolê não encontrado";

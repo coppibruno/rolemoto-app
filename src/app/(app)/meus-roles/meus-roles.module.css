@@ -676,17 +676,6 @@
   background: color-mix(in srgb, var(--surface-container-high) 60%, transparent);
 }
 
-.chipTriagem {
-  padding: 4px 8px;
-  border-radius: 0.25rem;
-  background: var(--surface-container-high);
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--secondary);
-}
 
 .botaoCancelar,
 .botaoSecundario,

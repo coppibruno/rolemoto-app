@@ -5,17 +5,16 @@ import { BlocoFotoPerfil } from "./BlocoFotoPerfil";
 import { BotaoConcluir } from "./BotaoConcluir";
 import { CabecalhoOnboarding } from "./CabecalhoOnboarding";
 import { SecaoDadosPiloto } from "./SecaoDadosPiloto";
-import { SecaoGaragem } from "./SecaoGaragem";
 import { SeletorRitmoHabitual } from "./SeletorRitmoHabitual";
 import styles from "../primeiro-acesso.module.css";
 
 export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
   const form = useFormularioPrimeiroAcesso(next);
-  const ocupado = form.salvando || form.sucesso;
+  const ocupado = form.salvando || form.concluido;
 
   return (
     <>
-      <CabecalhoOnboarding percentual={form.percentual} />
+      <CabecalhoOnboarding />
       <form className={styles.formulario} onSubmit={form.salvar} noValidate>
         <BlocoFotoPerfil
           previewUrl={form.foto.previewUrl}
@@ -28,22 +27,11 @@ export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
         />
         <SecaoDadosPiloto
           nome={form.nome}
-          apelido={form.apelido}
-          onNome={form.setNome}
-          onApelido={form.setApelido}
-          erroNome={form.erros.nome}
-          erroApelido={form.erros.apelido}
-          desabilitado={ocupado}
-        />
-        <SecaoGaragem
           moto={form.moto}
-          tipoMoto={form.tipoMoto}
-          garupaFrequente={form.garupaFrequente}
+          onNome={form.setNome}
           onMoto={form.setMoto}
-          onTipoMoto={form.setTipoMoto}
-          onGarupa={form.setGarupaFrequente}
+          erroNome={form.erros.nome}
           erroMoto={form.erros.moto}
-          erroTipoMoto={form.erros.tipoMoto}
           desabilitado={ocupado}
         />
         <SeletorRitmoHabitual
@@ -60,11 +48,7 @@ export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
             {form.erroGeral}
           </p>
         ) : null}
-        <BotaoConcluir
-          valido={form.valido}
-          salvando={form.salvando}
-          sucesso={form.sucesso}
-        />
+        <BotaoConcluir valido={form.valido} ocupado={ocupado} />
       </form>
     </>
   );

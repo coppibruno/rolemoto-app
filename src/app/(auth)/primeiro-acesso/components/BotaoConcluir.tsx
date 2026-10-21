@@ -5,28 +5,18 @@ import styles from "../primeiro-acesso.module.css";
 
 type Props = {
   valido: boolean;
-  salvando: boolean;
-  sucesso: boolean;
+  ocupado: boolean;
 };
 
-export const BotaoConcluir = ({ valido, salvando, sucesso }: Props) => {
-  const desabilitado = !valido || salvando || sucesso;
-
+export const BotaoConcluir = ({ valido, ocupado }: Props) => {
   return (
     <div className={styles.ctaBloco}>
       <button
         type="submit"
-        className={`${styles.botaoConcluir} ${sucesso ? styles.botaoConcluirSucesso : ""}`}
-        disabled={desabilitado}
+        className={styles.botaoConcluir}
+        disabled={!valido || ocupado}
       >
-        {sucesso ? (
-          <>
-            <span className="material-symbols-outlined" aria-hidden>
-              check_circle
-            </span>
-            {COPY.ctaSucesso}
-          </>
-        ) : salvando ? (
+        {ocupado ? (
           <>
             <span className={`material-symbols-outlined ${styles.iconeGirando}`} aria-hidden>
               progress_activity
@@ -34,22 +24,10 @@ export const BotaoConcluir = ({ valido, salvando, sucesso }: Props) => {
             {COPY.ctaEnviando}
           </>
         ) : (
-          <>
-            {COPY.ctaIdle}
-            {valido ? (
-              <span className="material-symbols-outlined" aria-hidden>
-                double_arrow
-              </span>
-            ) : null}
-          </>
+          COPY.ctaIdle
         )}
       </button>
-      <div className={styles.rodape}>
-        <span className="material-symbols-outlined" aria-hidden>
-          lock_reset
-        </span>
-        <p>{COPY.rodape}</p>
-      </div>
+      <p className={styles.rodape}>{COPY.rodape}</p>
     </div>
   );
 };

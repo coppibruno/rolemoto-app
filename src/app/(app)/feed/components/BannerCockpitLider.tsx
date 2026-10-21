@@ -18,9 +18,8 @@ export const BannerCockpitLider = ({ resumo }: Props) => {
       <Link href="/aprovacoes" className={styles.bannerLider}>
         <span className={styles.bannerPulso} aria-hidden />
         <span className={styles.bannerTexto}>
-          <strong>{rotuloPilotos(resumo.pendentes)}</strong> na fila de triagem
-          em {rotuloRoles(resumo.rolesComPendentes)}{" "}
-          {resumo.rolesComPendentes === 1 ? "ativo" : "ativos"}
+          <strong>{rotuloPilotos(resumo.pendentes)}</strong> esperando sua
+          aprovação em {rotuloRoles(resumo.rolesComPendentes)}
         </span>
         <span className="material-symbols-outlined" aria-hidden>
           chevron_right
