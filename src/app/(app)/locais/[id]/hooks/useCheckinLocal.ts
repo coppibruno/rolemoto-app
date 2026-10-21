@@ -89,7 +89,7 @@ export const useCheckinLocal = ({ local }: Props) => {
         accuracy,
       );
       setCheckinProprio(true);
-      setSeloNovo(resposta.seloNovo?.label ?? null);
+      setSeloNovo(resposta.seloNovo?.nome ?? null);
       void recarregarPerfil();
     } catch (e) {
       const code = (e as GeolocationPositionError)?.code;

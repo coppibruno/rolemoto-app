@@ -4,7 +4,7 @@ import {erroDe, log} from "../lib/log";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
-import {paraSelosPublicos} from "../lib/selos";
+import {hidratarSelosSeVazio} from "../lib/checkin-local";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
@@ -15,9 +15,9 @@ import type {
   UsuarioPrimeiroAcesso,
 } from "../types/usuario";
 
-const paraPerfilCliente = (usuario: Usuario) => ({
+const paraPerfilCliente = async (usuario: Usuario) => ({
   ...usuario,
-  selos: paraSelosPublicos(usuario.selos),
+  selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
 });
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
@@ -222,7 +222,7 @@ perfilRouter.get("/", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
     }
-    res.json(paraPerfilCliente(perfil));
+    res.json(await paraPerfilCliente(perfil));
   } catch (error) {
     responderErro(res, error);
   }
@@ -260,7 +260,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       admin: false,
     });
     log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
-    res.status(201).json(paraPerfilCliente(criado));
+    res.status(201).json(await paraPerfilCliente(criado));
   } catch (error) {
     responderErro(res, error);
   }
@@ -286,7 +286,7 @@ perfilRouter.put("/", async (req: Request, res: Response) => {
       return;
     }
     log.info("Perfil", "Perfil atualizado", {uid});
-    res.json(paraPerfilCliente(atualizado));
+    res.json(await paraPerfilCliente(atualizado));
   } catch (error) {
     responderErro(res, error);
   }

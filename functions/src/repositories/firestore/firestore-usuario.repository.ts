@@ -4,11 +4,11 @@ import {firestore} from "../../lib/firebase-admin";
 import {
   agregadoCheckinVazio,
   categoriasZeradas,
+  normalizarSelos,
 } from "../../lib/selos";
 import type {AgregadoCheckinUsuario, CheckinsPorCategoria} from "../../types/checkin-local";
 import type {CategoriaLocal} from "../../types/local";
 import {CATEGORIAS_LOCAL} from "../../types/local";
-import type {SeloId} from "../../types/selo";
 import type {
   TipoMoto,
   Usuario,
@@ -21,16 +21,6 @@ import {toIso} from "./mapper";
 const COLECAO = "users";
 const CHUNK = 100;
 const TIPOS_MOTO: TipoMoto[] = ["trail", "speed", "custom"];
-const SELOS_VALIDOS: SeloId[] = [
-  "primeira_parada",
-  "postos_da_estrada",
-  "moto_point",
-  "cacador_de_vista",
-  "parada_de_fome",
-  "oficina_confianca",
-  "rodou_o_mapa",
-];
-
 const emChunks = <T>(itens: T[]): T[][] => {
   const saida: T[][] = [];
   for (let i = 0; i < itens.length; i += CHUNK) {
@@ -44,15 +34,6 @@ const normalizarTipoMoto = (valor: unknown): TipoMoto | null => {
     return null;
   }
   return TIPOS_MOTO.includes(valor as TipoMoto) ? (valor as TipoMoto) : null;
-};
-
-const normalizarSelos = (valor: unknown): SeloId[] => {
-  if (!Array.isArray(valor)) {
-    return [];
-  }
-  return valor.filter((item): item is SeloId =>
-    typeof item === "string" && SELOS_VALIDOS.includes(item as SeloId),
-  );
 };
 
 const normalizarIds = (valor: unknown): string[] => {

@@ -5,7 +5,7 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
-import {paraSelosPublicos} from "../lib/selos";
+import {hidratarSelosSeVazio} from "../lib/checkin-local";
 import {roleTelemetriaRepository, usuarioRepository} from "../repositories";
 import type {PerfilPublico, Usuario} from "../types/usuario";
 
@@ -21,7 +21,7 @@ export const usuariosRouter = Router();
 usuariosRouter.use(autenticar);
 usuariosRouter.use(rateLimitAutenticado);
 
-const paraPerfilPublico = (usuario: Usuario): PerfilPublico => ({
+const paraPerfilPublico = async (usuario: Usuario): Promise<PerfilPublico> => ({
   uid: usuario.uid,
   nome: usuario.nome,
   apelido: apelidoExibicao(usuario),
@@ -31,7 +31,7 @@ const paraPerfilPublico = (usuario: Usuario): PerfilPublico => ({
   pilotagem: usuario.pilotagem,
   cidade: usuario.cidade,
   garupaFrequente: usuario.garupaFrequente,
-  selos: paraSelosPublicos(usuario.selos),
+  selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
 });
 
 const lerUid = (req: Request): string =>
@@ -94,7 +94,7 @@ usuariosRouter.get("/:uid", async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(paraPerfilPublico(perfil));
+    res.json(await paraPerfilPublico(perfil));
   } catch (error) {
     responderErro(res, error);
   }

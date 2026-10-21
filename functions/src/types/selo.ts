@@ -1,13 +1,8 @@
-export type SeloId =
-  | "primeira_parada"
-  | "postos_da_estrada"
-  | "moto_point"
-  | "cacador_de_vista"
-  | "parada_de_fome"
-  | "oficina_confianca"
-  | "rodou_o_mapa";
+import type {CategoriaLocal} from "./local";
 
+/** Carimbo de um local único em que o piloto fez check-in. */
 export type SeloPublico = {
-  id: SeloId;
-  label: string;
+  localId: string;
+  nome: string;
+  categoria: CategoriaLocal;
 };

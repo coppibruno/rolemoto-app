@@ -40,7 +40,7 @@ alwaysApply: true
   garupaFrequente: boolean,
   admin: boolean,          // default false; promoção só no Firestore
   locaisVisitadosUnicos: number, // check-in; docs antigos = 0
-  selos: string[],         // ids do catálogo SPEC 044; docs antigos = []
+  selos: { localId, nome, categoria }[], // carimbo por local único (SPEC 044)
   createdAt: timestamp
 }
 ```

@@ -7,7 +7,7 @@
 > **Backend:** Cloud Function `api` (Express) — `POST /locais/:id/checkin`; enriquecer `GET /locais/:id`, `GET /usuarios/:uid`, `GET /perfil`, `GET /meus-roles/locais`  
 > **Coleção Firestore:** `userslocalcheckin` (**nova**); agregados no documento `users`  
 > **Depende de:** SPEC 023 (locais), SPEC 025 (perfil público), SPEC 027 (avaliação), SPEC 028 (garagem / favoritos), SPEC 031 (detalhe do local)  
-> **Fase:** 1 — verbo (Estou aqui) + selo **Primeira parada** + pill Visitados. Catálogo completo de selos já é calculado no servidor.
+> **Fase:** 1 — verbo (Estou aqui) + carimbo com **nome do local** no perfil + pill Visitados.
 
 ---
 
@@ -19,7 +19,7 @@ O que permanece no app:
 
 1. CTA **Estou aqui** no detalhe do local (`/locais/:id`), só com GPS no raio.
 2. Estado **Você já passou aqui** depois do primeiro check-in naquele ponto.
-3. **Selos** no perfil (público e próprio) — identidade de estrada, estilo badge Airbnb.
+3. **Selos** no perfil (público e próprio) — um carimbo por local único, com o **nome do ponto** e o ícone da categoria. Sem data, sem timeline.
 4. Pill **Visitados** na aba Locais da garagem (coleção privada do dono).
 
 | Camada | Responsabilidade |
@@ -38,7 +38,7 @@ O que permanece no app:
 - `POST /locais/:id/checkin` `{ lat, lng, accuracy }`.
 - Coleção `userslocalcheckin` (id auto).
 - `GET /locais/:id` → `checkinProprio: boolean` (já passou neste ponto, alguma vez).
-- Agregado no piloto: locais únicos + selos. `GET /usuarios/:uid` e `GET /perfil` devolvem `selos: { id, label }[]` (sem datas, sem ids de local).
+- Agregado no piloto: locais únicos + selos. `GET /usuarios/:uid` e `GET /perfil` devolvem `selos: { localId, nome, categoria }[]` (sem datas).
 - CTA no detalhe; após sucesso, prompt leve e opcional para avaliar se ainda não há relato.
 - Garagem: `GET /meus-roles/locais?recorte=visitados` + pill **Visitados**.
 
@@ -139,10 +139,10 @@ checkinProprio: boolean
 Campo extra:
 
 ```
-selos: { id: SeloId, label: string }[]
+selos: { localId: string, nome: string, categoria: CategoriaLocal }[]
 ```
 
-Vazio `[]` se o piloto ainda não tem selo (docs antigos sem o campo). **Não** devolver ids de local nem datas.
+Vazio `[]` se o piloto ainda não tem selo. Sem datas. O chip do perfil usa `nome` do local.
 
 ### 4.4 `GET /meus-roles/locais`
 
@@ -172,34 +172,26 @@ Query opcional `recorte=favoritos|visitados`. Default `favoritos` (comportamento
 - `usuarioId` ASC + `createdAt` DESC
 - `usuarioId` ASC + `localId` ASC + `createdAt` DESC
 
-### 5.2 Agregado no `users` (não expor ids de local na API)
+### 5.2 Agregado no `users`
 
 ```
 locaisVisitadosUnicos: number
 locaisVisitadosIds: string[]          // interno
 checkinsPorCategoria: { posto, bar_moto_point, restaurante_estrada, oficina, mirante }
-selos: SeloId[]
+selos: { localId, nome, categoria }[]  // mais recente primeiro
 ```
 
 Docs antigos: mapper lê `0` / `[]` / zeros. Cliente **não** envia esses campos em POST/PUT `/perfil`.
 
 ---
 
-## 6. Catálogo de selos
+## 6. Carimbo do local
 
-Conta **local único**, não repetição no mesmo ponto. O servidor calcula o conjunto inteiro; a fase 1 só costuma desbloquear o primeiro.
+Um selo por **local único**. O label é o **nome do ponto** (ex.: “Posto Graal da Serra”). Ícone = categoria (`posto`, `mirante`, …). Voltar no mesmo local não gera selo novo.
 
-| id | Label | Critério |
-|----|-------|----------|
-| `primeira_parada` | Primeira parada | 1 local único |
-| `postos_da_estrada` | Postos da estrada | 3 postos únicos |
-| `moto_point` | Moto point | 3 `bar_moto_point` únicos |
-| `cacador_de_vista` | Caçador de vista | 3 mirantes únicos |
-| `parada_de_fome` | Parada de fome | 3 restaurantes únicos |
-| `oficina_confianca` | Oficina de confiança | 1 oficina única |
-| `rodou_o_mapa` | Rodou o mapa | 10 locais únicos |
+`seloNovo` no POST é `{ localId, nome, categoria }` na primeira visita daquele ponto; `null` se já tinha o carimbo.
 
-`seloNovo` no POST é o selo que **acabou de entrar** no conjunto (o de maior prioridade da tabela se vários subirem no mesmo check-in — na prática, o primeiro único só libera `primeira_parada`).
+Não há catálogo genérico (“Primeira parada”, “Rodou o mapa”) nesta versão.
 
 ---
 
@@ -216,7 +208,7 @@ GPS: `navigator.geolocation.getCurrentPosition` com `enableHighAccuracy: true`, 
 
 ### 7.2 Perfil (`CartaoPiloto`)
 
-Faixa de selos abaixo da ficha. Some se `selos.length === 0`. Máx. 4 chips visíveis; se houver mais, CTA **Ver selos** expande o restante. Vale no perfil público e na visão própria (`/perfil` já reusa `CartaoPiloto`).
+Faixa **Paradas** abaixo da ficha. Chip = ícone da categoria + nome do local (trunca se longo); toque abre `/locais/:id`. Some se `selos.length === 0`. Máx. 4 visíveis; **Ver selos** expande. Vale no perfil público e no próprio.
 
 ### 7.3 Garagem aba Locais
 
@@ -244,7 +236,7 @@ O cliente pode recusar cedo (copy igual); o servidor é a fonte da verdade.
 |----|------|--------------------|
 | **K1** | Detalhe | Fora do raio → 400 + copy “Chegue mais perto…”; no raio → 201 e chip “Você já passou aqui” |
 | **K2** | GPS | Permissão negada não grava check-in; copy de localização |
-| **K3** | Perfil | Após o 1º check-in único, `primeira_parada` aparece no perfil público e no próprio |
+| **K3** | Perfil | Após o 1º check-in único, o chip com o **nome do local** aparece no perfil público e no próprio |
 | **K4** | Garagem | Pill Visitados lista o local; Favoritos continua só coração |
 | **K5** | Cooldown | Segundo POST no mesmo local em < 24 h → 409 |
 

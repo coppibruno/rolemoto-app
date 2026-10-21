@@ -1,4 +1,4 @@
-import type {SeloId, SeloPublico} from "./selo";
+import type {SeloPublico} from "./selo";
 
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
 
@@ -18,7 +18,7 @@ export interface Usuario {
   garupaFrequente: boolean;
   admin: boolean;
   locaisVisitadosUnicos: number;
-  selos: SeloId[];
+  selos: SeloPublico[];
   createdAt: string;
 }
 

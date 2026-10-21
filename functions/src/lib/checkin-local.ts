@@ -2,15 +2,15 @@ import {haversineKm} from "./geo";
 import {
   agregadoCheckinVazio,
   aplicarCheckinUnico,
-  paraSelosPublicos,
-  seloNovoEntre,
 } from "./selos";
 import {
+  localRepository,
   usuarioLocalCheckinRepository,
   usuarioRepository,
 } from "../repositories";
 import type {CheckinLocalResposta} from "../types/checkin-local";
 import type {Local} from "../types/local";
+import type {SeloPublico} from "../types/selo";
 
 export const RAIO_CHECKIN_KM = 0.4;
 export const PRECISAO_MAX_M = 80;
@@ -72,6 +72,28 @@ export const validarPresenca = (
   return null;
 };
 
+/** Docs antigos gravaram ids de catálogo; monta carimbos pelo nome do local. */
+export const hidratarSelosSeVazio = async (
+  uid: string,
+  selos: SeloPublico[],
+): Promise<SeloPublico[]> => {
+  if (selos.length > 0) {
+    return selos;
+  }
+  const agregado = await usuarioRepository.buscarAgregadoCheckin(uid);
+  if (!agregado || agregado.locaisVisitadosIds.length === 0) {
+    return [];
+  }
+  const locais = await localRepository.buscarPorIds(agregado.locaisVisitadosIds);
+  const porId = new Map(locais.map((local) => [local.id, local]));
+  return [...agregado.locaisVisitadosIds].reverse().flatMap((id) => {
+    const local = porId.get(id);
+    return local ?
+      [{localId: local.id, nome: local.nome, categoria: local.categoria}] :
+      [];
+  });
+};
+
 export const registrarCheckin = async (
   uid: string,
   local: Local,
@@ -107,10 +129,21 @@ export const registrarCheckin = async (
   const atual =
     (await usuarioRepository.buscarAgregadoCheckin(uid)) ??
     agregadoCheckinVazio();
-  const proximo = aplicarCheckinUnico(atual, local.id, local.categoria);
+  const proximo = aplicarCheckinUnico(
+    atual,
+    local.id,
+    local.nome,
+    local.categoria,
+  );
   if (proximo !== atual) {
     await usuarioRepository.salvarAgregadoCheckin(uid, proximo);
   }
+
+  const seloNovo =
+    proximo.selos[0]?.localId === local.id &&
+    !atual.selos.some((item) => item.localId === local.id) ?
+      proximo.selos[0] :
+      null;
 
   return {
     ok: true,
@@ -119,8 +152,8 @@ export const registrarCheckin = async (
       localId: criado.localId,
       createdAt: criado.createdAt,
       checkinProprio: true,
-      seloNovo: seloNovoEntre(atual.selos, proximo.selos),
-      selos: paraSelosPublicos(proximo.selos),
+      seloNovo,
+      selos: proximo.selos,
     },
   };
 };

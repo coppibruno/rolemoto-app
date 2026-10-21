@@ -1,5 +1,5 @@
 import type {CategoriaLocal} from "./local";
-import type {SeloId, SeloPublico} from "./selo";
+import type {SeloPublico} from "./selo";
 
 export type UsuarioLocalCheckin = {
   id: string;
@@ -23,7 +23,7 @@ export type AgregadoCheckinUsuario = {
   locaisVisitadosUnicos: number;
   locaisVisitadosIds: string[];
   checkinsPorCategoria: CheckinsPorCategoria;
-  selos: SeloId[];
+  selos: SeloPublico[];
 };
 
 export type CheckinLocalResposta = {

@@ -298,16 +298,23 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  max-width: 180px;
   min-height: 32px;
   padding: 4px 10px;
   border-radius: 9999px;
   background: var(--surface-container-high);
   color: var(--primary);
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.chipSeloNome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chipSelo .material-symbols-outlined {
