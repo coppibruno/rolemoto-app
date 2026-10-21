@@ -4,14 +4,21 @@ import {erroDe, log} from "../lib/log";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {paraSelosPublicos} from "../lib/selos";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
   Pilotagem,
   TipoMoto,
+  Usuario,
   UsuarioEdicao,
   UsuarioPrimeiroAcesso,
 } from "../types/usuario";
+
+const paraPerfilCliente = (usuario: Usuario) => ({
+  ...usuario,
+  selos: paraSelosPublicos(usuario.selos),
+});
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
 const TIPOS_MOTO_VALIDOS: TipoMoto[] = ["trail", "speed", "custom"];
@@ -215,7 +222,7 @@ perfilRouter.get("/", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
     }
-    res.json(perfil);
+    res.json(paraPerfilCliente(perfil));
   } catch (error) {
     responderErro(res, error);
   }
@@ -253,7 +260,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       admin: false,
     });
     log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
-    res.status(201).json(criado);
+    res.status(201).json(paraPerfilCliente(criado));
   } catch (error) {
     responderErro(res, error);
   }
@@ -279,7 +286,7 @@ perfilRouter.put("/", async (req: Request, res: Response) => {
       return;
     }
     log.info("Perfil", "Perfil atualizado", {uid});
-    res.json(atualizado);
+    res.json(paraPerfilCliente(atualizado));
   } catch (error) {
     responderErro(res, error);
   }

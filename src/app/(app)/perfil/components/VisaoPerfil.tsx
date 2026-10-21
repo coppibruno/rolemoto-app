@@ -20,7 +20,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
 
   return (
     <div className={styles.visao}>
-      <CartaoPiloto perfil={{ ...usuario, apelido }} />
+      <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} />
       <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
       <button type="button" className={styles.botaoEditar} onClick={onEditar}>
         <span className="material-symbols-outlined" aria-hidden>

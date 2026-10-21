@@ -4,6 +4,7 @@ import type {
   MeuRoleItem,
   PapelMeuRole,
   PillAvaliacaoGaragem,
+  RecorteLocaisGaragem,
 } from "@/types/meus-roles";
 import type { RitmoRole } from "@/types/role";
 
@@ -34,6 +35,15 @@ export const ABAS_TIPO_GARAGEM: {
   { id: "roles", label: "Rolês", icone: "two_wheeler" },
   { id: "eventos", label: "Eventos", icone: "local_activity" },
   { id: "locais", label: "Locais", icone: "local_gas_station" },
+];
+
+export const PILLS_RECORTE_LOCAIS: {
+  id: RecorteLocaisGaragem;
+  label: string;
+  icone: string;
+}[] = [
+  { id: "favoritos", label: "Favoritos", icone: "favorite" },
+  { id: "visitados", label: "Visitados", icone: "where_to_vote" },
 ];
 
 export const PILLS_AVALIACAO: {
@@ -108,6 +118,21 @@ export const VAZIOS_LOCAIS: Record<
     corpo: "Nenhum favorito avaliado ainda.",
   },
 };
+
+export const VAZIO_LOCAIS_VISITADOS = {
+  todos: {
+    titulo: "Nenhum check-in ainda",
+    corpo: "Chegue num ponto oficial e toque em Estou aqui.",
+  },
+  aguardando_avaliacao: {
+    titulo: "Nada pendente",
+    corpo: "Os pontos que você visitou já estão em dia — ou ainda sem avaliação.",
+  },
+  avaliados: {
+    titulo: "Sem relatos ainda",
+    corpo: "Nenhum ponto visitado avaliado ainda.",
+  },
+} as const;
 
 export const OPCOES_RITMO: { id: RitmoRole | "todas"; label: string }[] = [
   { id: "todas", label: "Todas" },

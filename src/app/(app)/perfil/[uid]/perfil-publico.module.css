@@ -271,6 +271,62 @@
   color: var(--primary-container);
 }
 
+.faixaSelos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.selosRotulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--on-surface-variant);
+}
+
+.listaSelos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chipSelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chipSelo .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--primary-container);
+}
+
+.botaoVerSelos {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .fichaValor {
   display: flex;
   align-items: center;

@@ -1,3 +1,5 @@
+import type { SeloPublico } from "./selo";
+
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
 
 export type TipoMoto = "trail" | "speed" | "custom";
@@ -14,10 +16,11 @@ export interface Usuario {
   cidade: string;
   garupaFrequente: boolean;
   admin: boolean;
+  selos: SeloPublico[];
   createdAt: string;
 }
 
-export type UsuarioForm = Omit<Usuario, "uid" | "createdAt" | "admin">;
+export type UsuarioForm = Omit<Usuario, "uid" | "createdAt" | "admin" | "selos">;
 
 export type ErrosPrimeiroAcesso = {
   nome?: string;

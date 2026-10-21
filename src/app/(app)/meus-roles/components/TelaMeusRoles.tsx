@@ -1,6 +1,12 @@
 "use client";
 
-import type { ContagensMeusRoles, ContagensTipoGaragem, TelemetriaMeusRoles } from "@/types/meus-roles";
+import { useState } from "react";
+import type {
+  ContagensMeusRoles,
+  ContagensTipoGaragem,
+  RecorteLocaisGaragem,
+  TelemetriaMeusRoles,
+} from "@/types/meus-roles";
 import { useMeusRoles } from "../hooks/useMeusRoles";
 import { useFiltrosMeusRoles } from "../hooks/useFiltrosMeusRoles";
 import { useAcaoParticipacaoGaragem } from "../hooks/useAcaoParticipacaoGaragem";
@@ -21,6 +27,7 @@ import { ListaMeusEventos } from "./ListaMeusEventos";
 import { ListaMeusLocais } from "./ListaMeusLocais";
 import { ListaMeusRoles } from "./ListaMeusRoles";
 import { PillsAvaliacaoGaragem } from "./PillsAvaliacaoGaragem";
+import { PillsRecorteLocais } from "./PillsRecorteLocais";
 import { SheetFiltrosMeusRoles } from "./SheetFiltrosMeusRoles";
 import { TelemetriaGaragem } from "./TelemetriaGaragem";
 import { ToastMeusRoles } from "./ToastMeusRoles";
@@ -52,8 +59,10 @@ export const TelaMeusRoles = () => {
   const acao = useAcaoParticipacaoGaragem({ recarregar });
   const cancelarRole = useCancelarRole({ recarregar });
 
+  const [recorteLocais, setRecorteLocais] =
+    useState<RecorteLocaisGaragem>("favoritos");
   const eventos = useMeusEventosGaragem(abaTipo === "eventos");
-  const locais = useMeusLocaisGaragem(abaTipo === "locais");
+  const locais = useMeusLocaisGaragem(abaTipo === "locais", recorteLocais);
   const filtroEventos = useFiltroAvaliacaoGaragem(eventos.itens, "eventos");
   const filtroLocais = useFiltroAvaliacaoGaragem(locais.itens, "locais");
 
@@ -104,11 +113,17 @@ export const TelaMeusRoles = () => {
             />
           ) : null}
           {abaTipo === "locais" ? (
-            <PillsAvaliacaoGaragem
-              pill={filtroLocais.pill}
-              contagens={filtroLocais.contagensPill}
-              onSelecionar={filtroLocais.setPill}
-            />
+            <>
+              <PillsRecorteLocais
+                recorte={recorteLocais}
+                onSelecionar={setRecorteLocais}
+              />
+              <PillsAvaliacaoGaragem
+                pill={filtroLocais.pill}
+                contagens={filtroLocais.contagensPill}
+                onSelecionar={filtroLocais.setPill}
+              />
+            </>
           ) : null}
         </div>
 
@@ -182,7 +197,11 @@ export const TelaMeusRoles = () => {
             ) : null}
             {locais.carregando ? <EstadoCarregandoMeusRoles /> : null}
             {vazioLocais ? (
-              <EstadoVazioGaragem tipo="locais" pill={filtroLocais.pill} />
+              <EstadoVazioGaragem
+                tipo="locais"
+                pill={filtroLocais.pill}
+                recorteLocais={recorteLocais}
+              />
             ) : null}
             {!locais.carregando &&
             !locais.erro &&

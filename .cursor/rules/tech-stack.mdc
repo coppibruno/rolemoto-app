@@ -39,6 +39,8 @@ alwaysApply: true
   cidade: string,
   garupaFrequente: boolean,
   admin: boolean,          // default false; promoção só no Firestore
+  locaisVisitadosUnicos: number, // check-in; docs antigos = 0
+  selos: string[],         // ids do catálogo SPEC 044; docs antigos = []
   createdAt: timestamp
 }
 ```
@@ -155,7 +157,22 @@ Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locai
 }
 ```
 
-Um doc por par. Garagem lista favoritos em `GET /meus-roles/locais`.
+Um doc por par. Garagem lista favoritos em `GET /meus-roles/locais` (default). Visitados: `GET /meus-roles/locais?recorte=visitados`.
+
+### Coleção `userslocalcheckin` (presença GPS em local oficial)
+
+```
+{
+  id: string,              // autoId
+  usuarioId: string,
+  localId: string,
+  lat: number,             // posição do piloto no momento
+  lng: number,
+  createdAt: timestamp
+}
+```
+
+Qualquer autenticado cria via `POST /locais/:id/checkin` `{ lat, lng, accuracy }` — servidor valida raio 400 m, precisão ≤ 80 m e cooldown 24 h por par. `GET /locais/:id` inclui `checkinProprio`. Selos (ids) ficam denormalizados em `users`; a API pública só devolve `{ id, label }[]`. Sem timeline.
 
 ### Coleção `userslocalfeedback` / `userseventofeedback`
 ```

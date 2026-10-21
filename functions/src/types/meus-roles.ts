@@ -101,7 +101,8 @@ export type MeuLocalGaragemItem = {
   endereco: string;
   fotoFachadaUrl: string;
   facilidadesResumo: string;
-  favoritadoEm: string;
+  favoritadoEm: string | null;
+  visitadoEm: string | null;
   avaliado: boolean;
   minhaAvaliacao: {
     nota: number;

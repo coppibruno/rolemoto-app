@@ -63,6 +63,7 @@ export type LocalFeedItem = Local & {
 export type LocalDetalhe = Local & {
   avaliado: boolean;
   favorito: boolean;
+  checkinProprio: boolean;
 };
 
 export type HorarioDiaForm = {

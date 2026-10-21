@@ -285,6 +285,86 @@
   background: var(--surface-container-low);
 }
 
+.blocoCheckin {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ctaCheckin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch-target);
+  padding: 0 16px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.ctaCheckin:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.ctaCheckin .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.chipCheckin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  margin: 0;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--tertiary-container) 35%, var(--surface-container));
+  color: var(--tertiary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chipCheckin .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.textoCheckin {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
+.erroCheckin {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--error);
+}
+
+.linkAvaliarCheckin {
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .ctaAvaliacao {
   display: inline-flex;
   align-items: center;

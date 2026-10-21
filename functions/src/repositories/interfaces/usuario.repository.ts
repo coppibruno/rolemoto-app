@@ -1,3 +1,4 @@
+import type {AgregadoCheckinUsuario} from "../../types/checkin-local";
 import type {Usuario, UsuarioCreate, UsuarioUpdate} from "../../types/usuario";
 
 /**
@@ -8,6 +9,11 @@ export interface UsuarioRepository {
   buscarPorId(uid: string): Promise<Usuario | null>;
   buscarPorIds(uids: string[]): Promise<Usuario[]>;
   buscarPorApelido(apelido: string): Promise<Usuario[]>;
+  buscarAgregadoCheckin(uid: string): Promise<AgregadoCheckinUsuario | null>;
+  salvarAgregadoCheckin(
+    uid: string,
+    dados: AgregadoCheckinUsuario,
+  ): Promise<void>;
   criar(uid: string, dados: UsuarioCreate): Promise<Usuario>;
   atualizar(uid: string, dados: UsuarioUpdate): Promise<Usuario | null>;
   remover(uid: string): Promise<boolean>;

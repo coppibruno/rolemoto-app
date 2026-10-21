@@ -1,36 +1,42 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { MeuLocalGaragemItem } from "@/types/meus-roles";
+import type {
+  MeuLocalGaragemItem,
+  RecorteLocaisGaragem,
+} from "@/types/meus-roles";
 import { ERRO_MEUS_LOCAIS } from "../constants";
 import { meusRolesService } from "../services/meus-roles.service";
 
-export const useMeusLocaisGaragem = (ativo: boolean) => {
+export const useMeusLocaisGaragem = (
+  ativo: boolean,
+  recorte: RecorteLocaisGaragem,
+) => {
   const [itens, setItens] = useState<MeuLocalGaragemItem[]>([]);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [ticket, setTicket] = useState(0);
-  const jaCarregou = useRef(false);
+  const recorteCarregado = useRef<RecorteLocaisGaragem | null>(null);
 
   const recarregar = useCallback(() => {
-    jaCarregou.current = false;
+    recorteCarregado.current = null;
     setTicket((n) => n + 1);
   }, []);
 
   useEffect(() => {
     if (!ativo) return;
-    if (jaCarregou.current && ticket === 0) return;
+    if (recorteCarregado.current === recorte && ticket === 0) return;
 
     let cancelado = false;
     setCarregando(true);
     setErro(null);
 
     meusRolesService
-      .listarLocais()
+      .listarLocais(recorte)
       .then((resposta) => {
         if (cancelado) return;
         setItens(resposta.itens);
-        jaCarregou.current = true;
+        recorteCarregado.current = recorte;
       })
       .catch(() => {
         if (cancelado) return;
@@ -44,7 +50,7 @@ export const useMeusLocaisGaragem = (ativo: boolean) => {
     return () => {
       cancelado = true;
     };
-  }, [ativo, ticket]);
+  }, [ativo, recorte, ticket]);
 
   return { itens, carregando, erro, recarregar };
 };

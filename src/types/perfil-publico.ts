@@ -1,4 +1,5 @@
 import type { ItemHistoricoPista, ItemHistoricoRole } from "./historico-pistas";
+import type { SeloPublico } from "./selo";
 import type { Pilotagem, TipoMoto } from "./user";
 
 export type PerfilPublico = {
@@ -11,6 +12,7 @@ export type PerfilPublico = {
   pilotagem: Pilotagem;
   cidade: string;
   garupaFrequente: boolean;
+  selos: SeloPublico[];
 };
 
 export type AbaHistoricoPublico = "concluidos" | "comoLider";

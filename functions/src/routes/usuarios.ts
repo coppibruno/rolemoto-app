@@ -5,6 +5,7 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
+import {paraSelosPublicos} from "../lib/selos";
 import {roleTelemetriaRepository, usuarioRepository} from "../repositories";
 import type {PerfilPublico, Usuario} from "../types/usuario";
 
@@ -30,6 +31,7 @@ const paraPerfilPublico = (usuario: Usuario): PerfilPublico => ({
   pilotagem: usuario.pilotagem,
   cidade: usuario.cidade,
   garupaFrequente: usuario.garupaFrequente,
+  selos: paraSelosPublicos(usuario.selos),
 });
 
 const lerUid = (req: Request): string =>

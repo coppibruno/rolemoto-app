@@ -10,6 +10,8 @@ export type AbaTipoGaragem = "roles" | "eventos" | "locais";
 
 export type PillAvaliacaoGaragem = "todos" | "aguardando_avaliacao" | "avaliados";
 
+export type RecorteLocaisGaragem = "favoritos" | "visitados";
+
 export type PapelMeuRole = "participante" | "organizador";
 
 export type CriadorMeuRole = {
@@ -107,7 +109,8 @@ export type MeuLocalGaragemItem = {
   endereco: string;
   fotoFachadaUrl: string;
   facilidadesResumo: string;
-  favoritadoEm: string;
+  favoritadoEm: string | null;
+  visitadoEm: string | null;
   avaliado: boolean;
   minhaAvaliacao: {
     nota: number;

@@ -1,6 +1,14 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
+import {
+  agregadoCheckinVazio,
+  categoriasZeradas,
+} from "../../lib/selos";
+import type {AgregadoCheckinUsuario, CheckinsPorCategoria} from "../../types/checkin-local";
+import type {CategoriaLocal} from "../../types/local";
+import {CATEGORIAS_LOCAL} from "../../types/local";
+import type {SeloId} from "../../types/selo";
 import type {
   TipoMoto,
   Usuario,
@@ -13,6 +21,15 @@ import {toIso} from "./mapper";
 const COLECAO = "users";
 const CHUNK = 100;
 const TIPOS_MOTO: TipoMoto[] = ["trail", "speed", "custom"];
+const SELOS_VALIDOS: SeloId[] = [
+  "primeira_parada",
+  "postos_da_estrada",
+  "moto_point",
+  "cacador_de_vista",
+  "parada_de_fome",
+  "oficina_confianca",
+  "rodou_o_mapa",
+];
 
 const emChunks = <T>(itens: T[]): T[][] => {
   const saida: T[][] = [];
@@ -29,8 +46,49 @@ const normalizarTipoMoto = (valor: unknown): TipoMoto | null => {
   return TIPOS_MOTO.includes(valor as TipoMoto) ? (valor as TipoMoto) : null;
 };
 
+const normalizarSelos = (valor: unknown): SeloId[] => {
+  if (!Array.isArray(valor)) {
+    return [];
+  }
+  return valor.filter((item): item is SeloId =>
+    typeof item === "string" && SELOS_VALIDOS.includes(item as SeloId),
+  );
+};
+
+const normalizarIds = (valor: unknown): string[] => {
+  if (!Array.isArray(valor)) {
+    return [];
+  }
+  return valor.filter((item): item is string =>
+    typeof item === "string" && item.length > 0,
+  );
+};
+
+const normalizarPorCategoria = (valor: unknown): CheckinsPorCategoria => {
+  const base = categoriasZeradas();
+  if (!valor || typeof valor !== "object") {
+    return base;
+  }
+  const bruto = valor as Record<string, unknown>;
+  for (const categoria of CATEGORIAS_LOCAL) {
+    const n = bruto[categoria];
+    if (typeof n === "number" && Number.isFinite(n) && n >= 0) {
+      base[categoria as CategoriaLocal] = Math.floor(n);
+    }
+  }
+  return base;
+};
+
+const toAgregado = (data: Record<string, unknown>): AgregadoCheckinUsuario => ({
+  locaisVisitadosUnicos: Number(data.locaisVisitadosUnicos ?? 0) || 0,
+  locaisVisitadosIds: normalizarIds(data.locaisVisitadosIds),
+  checkinsPorCategoria: normalizarPorCategoria(data.checkinsPorCategoria),
+  selos: normalizarSelos(data.selos),
+});
+
 const toUsuario = (snap: DocumentSnapshot): Usuario => {
   const data = snap.data() ?? {};
+  const agregado = toAgregado(data);
   return {
     uid: snap.id,
     nome: String(data.nome ?? ""),
@@ -42,6 +100,8 @@ const toUsuario = (snap: DocumentSnapshot): Usuario => {
     cidade: String(data.cidade ?? ""),
     garupaFrequente: Boolean(data.garupaFrequente),
     admin: Boolean(data.admin),
+    locaisVisitadosUnicos: agregado.locaisVisitadosUnicos,
+    selos: agregado.selos,
     createdAt: toIso(data.createdAt),
   };
 };
@@ -83,10 +143,38 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
     return snap.docs.map((doc) => toUsuario(doc));
   }
 
+  async buscarAgregadoCheckin(
+    uid: string,
+  ): Promise<AgregadoCheckinUsuario | null> {
+    const snap = await firestore.collection(COLECAO).doc(uid).get();
+    if (!snap.exists) {
+      return null;
+    }
+    return toAgregado(snap.data() ?? {});
+  }
+
+  async salvarAgregadoCheckin(
+    uid: string,
+    dados: AgregadoCheckinUsuario,
+  ): Promise<void> {
+    const ref = firestore.collection(COLECAO).doc(uid);
+    await ref.set(
+      {
+        locaisVisitadosUnicos: dados.locaisVisitadosUnicos,
+        locaisVisitadosIds: dados.locaisVisitadosIds,
+        checkinsPorCategoria: dados.checkinsPorCategoria,
+        selos: dados.selos,
+      },
+      {merge: true},
+    );
+  }
+
   async criar(uid: string, dados: UsuarioCreate): Promise<Usuario> {
+    const vazio = agregadoCheckinVazio();
     const ref = firestore.collection(COLECAO).doc(uid);
     await ref.set({
       ...dados,
+      ...vazio,
       createdAt: FieldValue.serverTimestamp(),
     });
     const criado = await this.buscarPorId(uid);

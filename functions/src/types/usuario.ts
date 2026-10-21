@@ -1,3 +1,5 @@
+import type {SeloId, SeloPublico} from "./selo";
+
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
 
 export type TipoMoto = "trail" | "speed" | "custom";
@@ -15,10 +17,12 @@ export interface Usuario {
   cidade: string;
   garupaFrequente: boolean;
   admin: boolean;
+  locaisVisitadosUnicos: number;
+  selos: SeloId[];
   createdAt: string;
 }
 
-/** DTO público — sem admin, e-mail ou dados sensíveis. */
+/** DTO público — sem admin, e-mail, ids de local ou dados sensíveis. */
 export type PerfilPublico = {
   uid: string;
   nome: string;
@@ -29,9 +33,13 @@ export type PerfilPublico = {
   pilotagem: Pilotagem;
   cidade: string;
   garupaFrequente: boolean;
+  selos: SeloPublico[];
 };
 
-export type UsuarioCreate = Omit<Usuario, "uid" | "createdAt">;
+export type UsuarioCreate = Omit<
+  Usuario,
+  "uid" | "createdAt" | "locaisVisitadosUnicos" | "selos"
+>;
 
 export type UsuarioUpdate = Partial<Omit<UsuarioCreate, "admin">>;
 

@@ -12,6 +12,17 @@ export const ABERTO_24H = "Aberto 24 horas";
 export const CTA_VER_REVIEWS = "Ver reviews";
 export const CTA_AVALIAR = "Avaliar este ponto";
 export const CTA_VER_AVALIACAO = "Ver avaliação";
+export const CTA_CHECKIN = "Estou aqui";
+export const CHECKIN_FEITO = "Você já passou aqui";
+export const CHECKIN_PEDINDO_GPS = "Obtendo localização…";
+export const CHECKIN_PERMISSAO =
+  "Precisamos da localização na hora para marcar presença.";
+export const CHECKIN_IMPRECISO = "GPS impreciso. Tente ao ar livre.";
+export const CHECKIN_LONGE = "Chegue mais perto para marcar presença";
+export const CHECKIN_ERRO = "Não foi possível marcar presença. Tente de novo.";
+export const CHECKIN_AVALIAR = "Quer avaliar este ponto?";
+export const RAIO_CHECKIN_M = 400;
+export const PRECISAO_MAX_CHECKIN_M = 80;
 
 export const textoShareLocal = (nome: string): string =>
   `📍 ${nome} — ponto no Rolê Moto`;

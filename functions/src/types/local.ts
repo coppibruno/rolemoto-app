@@ -65,6 +65,7 @@ export type LocalFeedItem = Local & {
 export type LocalDetalhe = Local & {
   avaliado: boolean;
   favorito: boolean;
+  checkinProprio: boolean;
 };
 
 export const CATEGORIAS_LOCAL: CategoriaLocal[] = [

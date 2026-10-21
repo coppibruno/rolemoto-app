@@ -2,6 +2,7 @@
 
 import { useDetalheLocal } from "../hooks/useDetalheLocal";
 import { BlocoAvaliacaoLocal } from "./BlocoAvaliacaoLocal";
+import { BlocoCheckinLocal } from "./BlocoCheckinLocal";
 import { BlocoFacilidadesLocal } from "./BlocoFacilidadesLocal";
 import { BlocoHorariosLocal } from "./BlocoHorariosLocal";
 import { BlocoLocalizacaoLocal } from "./BlocoLocalizacaoLocal";
@@ -25,6 +26,7 @@ export const TelaDetalheLocal = ({ id }: Props) => {
       <CabecalhoDetalheLocal id={local.id} nome={local.nome} />
       <main className={styles.conteudo}>
         <HeroLocal local={local} />
+        <BlocoCheckinLocal local={local} />
         <BlocoHorariosLocal local={local} />
         <BlocoFacilidadesLocal facilidades={local.facilidades} />
         <BlocoLocalizacaoLocal local={local} />

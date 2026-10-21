@@ -15,8 +15,10 @@ import {
   localRepository,
   usuarioLocalFavoritoRepository,
   usuarioLocalFeedbackRepository,
+  usuarioRepository,
 } from "../repositories";
 import {avaliacaoLocalRouter} from "./avaliacao-local";
+import {checkinLocalRouter} from "./checkin-local";
 import {favoritoLocalRouter} from "./favorito-local";
 import type {
   CategoriaLocal,
@@ -40,12 +42,14 @@ import {
  * GET|POST /locais/:id/avaliacoes
  * GET    /locais/:id/avaliacao
  * POST|DELETE /locais/:id/favorito
+ * POST   /locais/:id/checkin
  */
 export const locaisRouter = Router();
 
 locaisRouter.use(autenticar);
 locaisRouter.use(rateLimitAutenticado);
 locaisRouter.use(avaliacaoLocalRouter);
+locaisRouter.use(checkinLocalRouter);
 locaisRouter.use(favoritoLocalRouter);
 
 const idFeedbackLocal = (usuarioId: string, localId: string): string =>
@@ -308,14 +312,16 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const [feedback, favorito] = await Promise.all([
+    const [feedback, favorito, agregado] = await Promise.all([
       usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(uid, local.id),
       usuarioLocalFavoritoRepository.buscarPorUsuarioELocal(uid, local.id),
+      usuarioRepository.buscarAgregadoCheckin(uid),
     ]);
     res.json({
       ...local,
       avaliado: feedback !== null,
       favorito: favorito !== null,
+      checkinProprio: Boolean(agregado?.locaisVisitadosIds.includes(local.id)),
     });
   } catch (error) {
     responderErro(res, error);

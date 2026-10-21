@@ -8,7 +8,9 @@ import {
 } from "../lib/meus-eventos-garagem";
 import {
   idsFeedbackLocal,
+  locaisUnicosDeCheckins,
   montarItensLocaisGaragem,
+  montarItensLocaisVisitados,
 } from "../lib/meus-locais-garagem";
 import {
   classificarMeusRoles,
@@ -29,6 +31,7 @@ import {
   roleRepository,
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
+  usuarioLocalCheckinRepository,
   usuarioLocalFavoritoRepository,
   usuarioLocalFeedbackRepository,
   usuarioRepository,
@@ -190,11 +193,44 @@ meusRolesRouter.get("/eventos", async (req: Request, res: Response) => {
   }
 });
 
+const recorteLocais = (req: Request): "favoritos" | "visitados" => {
+  const bruto = req.query.recorte;
+  return bruto === "visitados" ? "visitados" : "favoritos";
+};
+
 meusRolesRouter.get("/locais", async (req: Request, res: Response) => {
   try {
     const uid = req.usuario?.uid;
     if (!uid) {
       res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    if (recorteLocais(req) === "visitados") {
+      const checkins = await usuarioLocalCheckinRepository.listarPorUsuario(uid);
+      const visitas = locaisUnicosDeCheckins(checkins);
+      if (visitas.length === 0) {
+        res.json({itens: []});
+        return;
+      }
+
+      const localIds = visitas.map((item) => item.localId);
+      const [locais, feedbacks] = await Promise.all([
+        localRepository.buscarPorIds(localIds),
+        usuarioLocalFeedbackRepository.buscarPorIds(
+          idsFeedbackLocal(uid, localIds),
+        ),
+      ]);
+      const locaisPorId = new Map<string, Local>(
+        locais.map((local) => [local.id, local]),
+      );
+      const feedbacksPorLocalId = new Map<string, UsuarioLocalFeedbackDoc>();
+      for (const feedback of feedbacks) {
+        feedbacksPorLocalId.set(feedback.localId, feedback);
+      }
+      res.json(
+        montarItensLocaisVisitados(visitas, locaisPorId, feedbacksPorLocalId),
+      );
       return;
     }
 
