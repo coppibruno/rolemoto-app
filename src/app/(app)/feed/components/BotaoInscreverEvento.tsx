@@ -22,12 +22,15 @@ export const BotaoInscreverEvento = ({
     inscrito,
     enviando,
     modalAberto,
+    etapaModal,
     erro,
     toast,
     inscrever,
     cancelar,
     fecharModal,
     abrirModalIngresso,
+    abrirLinkIngresso,
+    confirmarInscricao,
   } = useInscricaoEvento({
     id,
     acesso,
@@ -50,7 +53,11 @@ export const BotaoInscreverEvento = ({
           <span className="material-symbols-outlined" aria-hidden>
             {enviando ? "autorenew" : icone}
           </span>
-          {enviando ? "Inscrevendo…" : "Inscrever-se"}
+          {enviando
+            ? "Inscrevendo…"
+            : acesso === "ingresso"
+              ? "Comprar ingresso"
+              : "Inscrever-se"}
         </button>
       ) : (
         <div className={styles.acoesInscritoEvento}>
@@ -58,7 +65,7 @@ export const BotaoInscreverEvento = ({
             <span className="material-symbols-outlined" aria-hidden>
               check_circle
             </span>
-            Inscrito
+            {acesso === "ingresso" ? "Inscrito · ingresso por sua conta" : "Inscrito"}
           </span>
           {acesso === "ingresso" ? (
             <button
@@ -96,7 +103,11 @@ export const BotaoInscreverEvento = ({
 
       {modalAberto ? (
         <ModalIngressoEvento
+          etapa={etapaModal}
+          enviando={enviando}
           linkIngresso={linkIngresso}
+          onComprar={abrirLinkIngresso}
+          onConfirmar={() => void confirmarInscricao()}
           onFechar={fecharModal}
         />
       ) : null}

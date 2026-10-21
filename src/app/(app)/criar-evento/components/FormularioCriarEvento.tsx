@@ -41,12 +41,15 @@ export const FormularioCriarEvento = () => {
         <CampoDataHorarios
           dataEvento={form.dataEvento}
           horaAbertura={form.horaAbertura}
+          dataEncerramento={form.dataEncerramento}
           horaEncerramento={form.horaEncerramento}
           onChangeData={form.setDataEvento}
           onChangeAbertura={form.setHoraAbertura}
+          onChangeDataEncerramento={form.setDataEncerramento}
           onChangeEncerramento={form.setHoraEncerramento}
           erroData={form.erros.dataEvento}
           erroAbertura={form.erros.horaAbertura}
+          erroDataEncerramento={form.erros.dataEncerramento}
           erroEncerramento={form.erros.horaEncerramento}
           desabilitado={form.publicando}
         />

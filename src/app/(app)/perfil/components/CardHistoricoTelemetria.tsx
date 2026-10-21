@@ -23,7 +23,9 @@ export const CardHistoricoTelemetria = ({ item }: Props) => {
             <span className={`${styles.cardTitulo} ${styles.tituloConcluido}`}>
               {item.titulo}
             </span>
-            <span className={styles.statusConcluido}>GPS</span>
+            <span className={styles.statusConcluido}>
+              {item.publica ? "GPS" : "Privado"}
+            </span>
           </div>
           <p className={styles.cardSubtitulo}>
             {formatarDataMeta(item.encerradoEm)}

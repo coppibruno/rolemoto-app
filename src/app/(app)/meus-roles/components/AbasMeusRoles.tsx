@@ -12,15 +12,19 @@ type Props = {
 };
 
 export const AbasMeusRoles = ({ aba, contagens, onSelecionar }: Props) => {
+  const abas = ABAS_MEUS_ROLES.filter(
+    (item) => item.id !== "recusados" || contagens.recusados > 0 || aba === "recusados",
+  );
+
   const onKeyDown = (evento: KeyboardEvent<HTMLDivElement>) => {
     if (evento.key !== "ArrowLeft" && evento.key !== "ArrowRight") return;
     evento.preventDefault();
     const idx = Math.max(
       0,
-      ABAS_MEUS_ROLES.findIndex((item) => item.id === aba),
+      abas.findIndex((item) => item.id === aba),
     );
     const delta = evento.key === "ArrowRight" ? 1 : -1;
-    const proxima = ABAS_MEUS_ROLES[(idx + delta + ABAS_MEUS_ROLES.length) % ABAS_MEUS_ROLES.length];
+    const proxima = abas[(idx + delta + abas.length) % abas.length];
     onSelecionar(proxima.id);
     requestAnimationFrame(() => {
       document.getElementById(`tab-meus-roles-${proxima.id}`)?.focus();
@@ -34,7 +38,7 @@ export const AbasMeusRoles = ({ aba, contagens, onSelecionar }: Props) => {
       aria-label="Filtro de status dos rolês"
       onKeyDown={onKeyDown}
     >
-      {ABAS_MEUS_ROLES.map((item) => {
+      {abas.map((item) => {
         const selecionada = aba === item.id;
         const n = contagens[item.id];
         return (

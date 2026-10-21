@@ -57,3 +57,19 @@
   text-transform: uppercase;
   cursor: pointer;
 }
+
+.linkSecundario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 28rem;
+  min-height: 48px;
+  border: 1.5px solid #353a44;
+  border-radius: 0.5rem;
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}

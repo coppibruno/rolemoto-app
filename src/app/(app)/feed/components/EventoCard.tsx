@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { EventoFeedItem } from "@/types/evento";
 import { LABELS_ACESSO_EVENTO } from "../constants";
-import { formatarHorarioEvento } from "../formatar-horario";
+import { formatarPeriodoEvento } from "../formatar-horario";
 import { BotaoInscreverEvento } from "./BotaoInscreverEvento";
 import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
 import styles from "../feed.module.css";
@@ -35,7 +35,10 @@ export const EventoCard = ({ evento }: Props) => {
         <div className={styles.cardEventoInfo}>
           <div className={styles.cardEventoBadges}>
             <span className={styles.badgeQuando}>
-              {formatarHorarioEvento(evento.dataHoraAbertura)}
+              {formatarPeriodoEvento(
+                evento.dataHoraAbertura,
+                evento.dataHoraEncerramento,
+              )}
             </span>
             <span className={styles.badgeAcesso}>
               {LABELS_ACESSO_EVENTO[evento.acesso]}

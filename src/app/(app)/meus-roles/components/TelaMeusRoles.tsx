@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/hooks/useAuth";
 import type { ContagensMeusRoles, ContagensTipoGaragem, TelemetriaMeusRoles } from "@/types/meus-roles";
 import { useMeusRoles } from "../hooks/useMeusRoles";
 import { useFiltrosMeusRoles } from "../hooks/useFiltrosMeusRoles";
@@ -13,7 +12,6 @@ import { useFiltroAvaliacaoGaragem } from "../hooks/useFiltroAvaliacaoGaragem";
 import { AbasMeusRoles } from "./AbasMeusRoles";
 import { AbasTipoGaragem } from "./AbasTipoGaragem";
 import { CabecalhoMeusRoles } from "./CabecalhoMeusRoles";
-import { CardPilotoGaragem } from "./CardPilotoGaragem";
 import { EstadoCarregandoMeusRoles } from "./EstadoCarregandoMeusRoles";
 import { EstadoErroMeusRoles } from "./EstadoErroMeusRoles";
 import { EstadoVazioGaragem } from "./EstadoVazioGaragem";
@@ -24,6 +22,7 @@ import { ListaMeusLocais } from "./ListaMeusLocais";
 import { ListaMeusRoles } from "./ListaMeusRoles";
 import { PillsAvaliacaoGaragem } from "./PillsAvaliacaoGaragem";
 import { SheetFiltrosMeusRoles } from "./SheetFiltrosMeusRoles";
+import { TelemetriaGaragem } from "./TelemetriaGaragem";
 import { ToastMeusRoles } from "./ToastMeusRoles";
 import styles from "../meus-roles.module.css";
 
@@ -47,7 +46,6 @@ const CONTAGENS_TIPO_ZERO: ContagensTipoGaragem = {
 };
 
 export const TelaMeusRoles = () => {
-  const { usuario } = useAuth();
   const { payload, carregando, erro, recarregar } = useMeusRoles();
   const { abaTipo, setAbaTipo } = useAbaTipoGaragem();
   const filtros = useFiltrosMeusRoles(payload?.itens ?? []);
@@ -86,13 +84,11 @@ export const TelaMeusRoles = () => {
       <div className={styles.corpo}>
         <IntroGaragem
           mostrarTune={abaTipo === "roles"}
+          tuneAtivo={filtros.tuneAtivo}
           sheetAberto={filtros.sheetAberto}
           onTune={() => filtros.setSheetAberto(true)}
         />
-        <CardPilotoGaragem
-          usuario={usuario}
-          telemetria={payload?.telemetria ?? TELEMETRIA_ZERO}
-        />
+        <TelemetriaGaragem telemetria={payload?.telemetria ?? TELEMETRIA_ZERO} />
 
         <div className={styles.stickyTipo}>
           <AbasTipoGaragem
@@ -123,6 +119,18 @@ export const TelaMeusRoles = () => {
               contagens={payload?.contagens ?? CONTAGENS_ZERO}
               onSelecionar={filtros.selecionarAba}
             />
+            {filtros.tuneAtivo ? (
+              <button
+                type="button"
+                className={styles.chipFiltrosAtivos}
+                onClick={filtros.limparTune}
+              >
+                <span className="material-symbols-outlined" aria-hidden>
+                  filter_alt_off
+                </span>
+                Filtros ativos · Limpar
+              </button>
+            ) : null}
             {erroAcao ? (
               <p className={styles.alertaAcao} role="alert">
                 {erroAcao}

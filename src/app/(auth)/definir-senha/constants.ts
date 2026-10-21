@@ -14,7 +14,7 @@ export const COPY = {
   ctaEnviando: "Salvando…",
   pular: "Agora não",
   senhasDiferentes: "As senhas não coincidem.",
-  senhaFraca: "A senha deve ter no mínimo 6 caracteres.",
+  senhaFraca: "Senha fraca: use pelo menos 6 caracteres.",
   semEmail: "Esta conta não tem e-mail para criar senha.",
   erroGenerico: "Não foi possível criar a senha. Tente de novo.",
 } as const;

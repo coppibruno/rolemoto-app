@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
+import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
 import styles from "@/components/telemetria/telemetria.module.css";
 import { BotaoCompartilharTelemetria } from "./BotaoCompartilharTelemetria";
 import { ModalCompartilharTelemetria } from "./ModalCompartilharTelemetria";
@@ -16,7 +17,8 @@ type Props = {
 
 export const TelaTelemetriaDetalhe = ({ id }: Props) => {
   const { usuario } = useAuth();
-  const { doc, carregando, erro } = useTelemetriaDetalhe(id);
+  const { doc, carregando, erro, salvandoVisibilidade, setPublica } =
+    useTelemetriaDetalhe(id);
   const eDono = Boolean(doc && usuario && doc.usuarioId === usuario.uid);
   const apelido = usuario?.apelido?.trim() ?? "";
   const dadosShare = useMemo(() => {
@@ -73,6 +75,13 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
               pontoFim={doc.pontoFim}
               tracado={doc.tracado}
             />
+            {eDono ? (
+              <SeletorVisibilidade
+                publica={doc.publica}
+                desabilitado={salvandoVisibilidade}
+                onMudar={(publica) => void setPublica(publica)}
+              />
+            ) : null}
             {eDono ? (
               <BotaoCompartilharTelemetria
                 ocupado={share.ocupado}

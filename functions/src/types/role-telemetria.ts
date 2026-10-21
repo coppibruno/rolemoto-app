@@ -20,6 +20,8 @@ export type RoleTelemetria = {
   pontoFim: PontoTelemetria;
   /** Encoded polyline (precisão 5); "" em passeios antigos. Só no detalhe. */
   tracado?: string;
+  /** Ausente em docs antigos → lido como true. */
+  publica: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -36,6 +38,7 @@ export type RoleTelemetriaCreate = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   tracado: string;
+  publica: boolean;
 };
 
 export type RoleTelemetriaNovo = RoleTelemetriaCreate & {
@@ -49,4 +52,5 @@ export type ItemHistoricoTelemetria = {
   distanciaKm: number;
   tempoSegundos: number;
   encerradoEm: string;
+  publica: boolean;
 };

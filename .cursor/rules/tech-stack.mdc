@@ -89,7 +89,7 @@ Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/histori
 }
 ```
 
-Sem `aceito` / fila: `POST /eventos/:id/inscricao` confirma na hora. Qualquer autenticado (incl. criador) pode se inscrever. Feed de eventos devolve `inscrito: boolean` por item.
+Sem `aceito` / fila: evento grátis confirma na hora com `POST /eventos/:id/inscricao`. Evento pago só envia o POST depois que o piloto confirma “Já comprei meu ingresso” (autodeclarado; sem webhook da Sympla). Feed de eventos devolve `inscrito: boolean` por item. Encerramento pode ser em outro dia (máx. 7 dias após a abertura); o feed lista eventos que se sobrepõem ao período.
 
 ### Coleção `eventos` (destino fixo — moto point, track day, café)
 ```
@@ -190,12 +190,13 @@ Local: qualquer autenticado. Evento: só inscrito (`usersevento`) e após encerr
   pontoInicio: { lat, lng, nome, endereco },
  pontoFim: { lat, lng, nome, endereco },
  tracado: string, // encoded polyline (precisão 5), ≤ 1500 pontos; "" em passeios antigos
+ publica: boolean, // padrão false no POST; docs antigos sem o campo são lidos como true
  createdAt: timestamp,
   updatedAt: timestamp
 }
 ```
 
-Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria` (sem `tracado`); detalhe autenticado em `GET /telemetria/:id`; perfil em `GET /usuarios/:uid/telemetria`.
+Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria` (sem `tracado`); detalhe autenticado em `GET /telemetria/:id` (404 se privada e quem pede não é o dono); dono altera visibilidade em `PATCH /telemetria/:id` `{publica}`. Perfil em `GET /usuarios/:uid/telemetria` devolve só as públicas quando o uid não é o do token.
 
 ### Garagem (`GET /meus-roles`)
 Telemetria: `rolesFeitos`, `eventosParticipados`, `locaisFavoritos`. `contagensTipo` (roles/eventos/locais). Subrotas lazy: `GET /meus-roles/eventos`, `GET /meus-roles/locais`.

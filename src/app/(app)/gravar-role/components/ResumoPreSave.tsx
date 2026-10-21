@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
+import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
 import type { RoleTelemetriaCreate } from "@/types/role-telemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
 
@@ -10,6 +11,7 @@ type Props = {
   ocupado: boolean;
   online: boolean;
   onTitulo: (valor: string) => void;
+  onPublica: (publica: boolean) => void;
   onSalvar: () => void;
   onDescartar: () => void;
 };
@@ -20,6 +22,7 @@ export const ResumoPreSave = ({
   ocupado,
   online,
   onTitulo,
+  onPublica,
   onSalvar,
   onDescartar,
 }: Props) => {
@@ -36,6 +39,11 @@ export const ResumoPreSave = ({
         pontoFim={dados.pontoFim}
         tracado={dados.tracado}
         tituloEditavel={{ valor: titulo, onMudar: onTitulo }}
+      />
+      <SeletorVisibilidade
+        publica={Boolean(dados.publica)}
+        desabilitado={ocupado}
+        onMudar={onPublica}
       />
       {!online ? (
         <p className={styles.copyOffline}>

@@ -1,32 +1,23 @@
-import { SUBTITULO_GARAGEM } from "../constants";
 import styles from "../meus-roles.module.css";
 
 type Props = {
   mostrarTune: boolean;
+  tuneAtivo: boolean;
   sheetAberto: boolean;
   onTune: () => void;
 };
 
-export const IntroGaragem = ({ mostrarTune, sheetAberto, onTune }: Props) => {
+export const IntroGaragem = ({ mostrarTune, tuneAtivo, sheetAberto, onTune }: Props) => {
   return (
     <section className={styles.intro}>
       <div className={styles.introTopo}>
-        <div>
-          <span className={styles.kicker}>
-            <span className={styles.kickerPulso} aria-hidden />
-            Garagem
-          </span>
-          <h1 className={styles.titulo}>
-            MEUS <span>ROLÊS</span>
-          </h1>
-          <p className={styles.subtitulo}>{SUBTITULO_GARAGEM}</p>
-        </div>
+        <h1 className={styles.titulo}>Meus rolês</h1>
         {mostrarTune ? (
           <button
             type="button"
-            className={styles.tune}
+            className={tuneAtivo ? `${styles.tune} ${styles.tuneAtivo}` : styles.tune}
             onClick={onTune}
-            aria-label="Filtros"
+            aria-label={tuneAtivo ? "Filtros (ativos)" : "Filtros"}
             aria-expanded={sheetAberto}
             aria-controls="sheet-filtros-meus-roles"
           >

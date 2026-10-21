@@ -19,6 +19,9 @@ type Props = {
   campo: Campo;
   erro?: string;
   desabilitado?: boolean;
+  mapaAberto: boolean;
+  onAlternarMapa: () => void;
+  onPontoDefinido: () => void;
 };
 
 const textoGps = (status: Campo["gpsStatus"], erroGps?: string) => {
@@ -40,10 +43,14 @@ export const CampoLocalizacao = ({
   campo,
   erro,
   desabilitado,
+  mapaAberto,
+  onAlternarMapa,
+  onPontoDefinido,
 }: Props) => {
   const erroId = `${id}-erro`;
   const nomeId = `${id}-nome`;
   const mensagem = erro ?? campo.erroGps;
+  const temPonto = campo.valor.lat != null && campo.valor.lng != null;
 
   return (
     <div className={`${styles.cartao} ${mensagem ? styles.cartaoErro : ""}`}>
@@ -58,7 +65,10 @@ export const CampoLocalizacao = ({
           <button
             type="button"
             className={styles.botaoGps}
-            onClick={() => void campo.usarGps()}
+            onClick={() => {
+              void campo.usarGps();
+              onPontoDefinido();
+            }}
             disabled={desabilitado || campo.gpsStatus === "buscando"}
             aria-label="Usar minha localização atual"
           >
@@ -101,21 +111,38 @@ export const CampoLocalizacao = ({
             termo={campo.valor.endereco}
             sugestoes={campo.sugestoes}
             buscando={campo.buscando}
-            onEscolher={campo.escolher}
+            onEscolher={(item) => {
+              campo.escolher(item);
+              onPontoDefinido();
+            }}
           />
         ) : null}
       </div>
-      <div className={styles.mapaInterativo}>
-        <MapaSelecaoLocalClient
-          lat={campo.valor.lat}
-          lng={campo.valor.lng}
-          vooId={campo.vooId}
-          onMoverPonto={campo.atualizarDoMapa}
-          desabilitado={desabilitado}
-          hintVazio={HINT_MAPA_VAZIO}
-          hintAjuste={HINT_MAPA_AJUSTE}
-        />
-      </div>
+      {mapaAberto ? (
+        <div className={styles.mapaInterativo}>
+          <MapaSelecaoLocalClient
+            lat={campo.valor.lat}
+            lng={campo.valor.lng}
+            vooId={campo.vooId}
+            onMoverPonto={campo.atualizarDoMapa}
+            desabilitado={desabilitado}
+            hintVazio={HINT_MAPA_VAZIO}
+            hintAjuste={HINT_MAPA_AJUSTE}
+          />
+        </div>
+      ) : (
+        <button
+          type="button"
+          className={styles.botaoMapa}
+          onClick={onAlternarMapa}
+          disabled={desabilitado}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            map
+          </span>
+          {temPonto ? "Ver no mapa" : "Ajustar no mapa"}
+        </button>
+      )}
       <label htmlFor={nomeId} className={styles.labelNome}>
         Nome do local <span className={styles.labelOpcional}>(opcional)</span>
       </label>

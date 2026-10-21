@@ -197,21 +197,27 @@ const parseIsoFuturo = (
   return {ok: true, iso: valor};
 };
 
+const MAX_DURACAO_EVENTO_MS = 7 * 24 * 60 * 60 * 1000;
+
 const parseEncerramento = (
   valor: unknown,
   aberturaIso: string,
-): string | null | undefined => {
+): {ok: true; iso: string | null} | {ok: false; erro: string} => {
   if (valor === undefined || valor === null) {
-    return null;
+    return {ok: true, iso: null};
   }
   if (typeof valor !== "string" || !valor.trim()) {
-    return undefined;
+    return {ok: false, erro: "dataHoraEncerramento inválida"};
   }
   const instante = Date.parse(valor);
-  if (Number.isNaN(instante) || instante <= Date.parse(aberturaIso)) {
-    return undefined;
+  const abertura = Date.parse(aberturaIso);
+  if (Number.isNaN(instante) || instante <= abertura) {
+    return {ok: false, erro: "dataHoraEncerramento inválida"};
   }
-  return valor;
+  if (instante - abertura > MAX_DURACAO_EVENTO_MS) {
+    return {ok: false, erro: "o evento pode durar no máximo 7 dias"};
+  }
+  return {ok: true, iso: valor};
 };
 
 type ResultadoValidacao =
@@ -256,8 +262,8 @@ const validarBody = (body: unknown): ResultadoValidacao => {
     bruto.dataHoraEncerramento,
     abertura.iso,
   );
-  if (encerramento === undefined) {
-    return {ok: false, erro: "dataHoraEncerramento inválida"};
+  if (!encerramento.ok) {
+    return {ok: false, erro: encerramento.erro};
   }
 
   if (!isAcesso(bruto.acesso)) {
@@ -296,7 +302,7 @@ const validarBody = (body: unknown): ResultadoValidacao => {
       tipo: bruto.tipo,
       local,
       dataHoraAbertura: abertura.iso,
-      dataHoraEncerramento: encerramento,
+      dataHoraEncerramento: encerramento.iso,
       acesso: bruto.acesso,
       linkIngresso: linkIngresso.link,
       atracoes,

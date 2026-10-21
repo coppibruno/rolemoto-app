@@ -7,9 +7,6 @@ import type {
 } from "@/types/meus-roles";
 import type { RitmoRole } from "@/types/role";
 
-export const SUBTITULO_GARAGEM =
-  "Seus comboios, eventos inscritos e pontos favoritos — tudo na garagem.";
-
 export const ERRO_MEUS_ROLES = "Não foi possível carregar seus rolês";
 export const ERRO_MEUS_EVENTOS = "Não foi possível carregar seus eventos";
 export const ERRO_MEUS_LOCAIS = "Não foi possível carregar seus locais";
@@ -18,7 +15,7 @@ export const ERRO_ACAO = "Não foi possível atualizar a participação.";
 export const LABELS_RITMO: Record<RitmoRole, string> = {
   tranquila: "Tranquila (abaixo de 90 km/h)",
   moderada: "Moderada (90-120 km/h)",
-  agressiva: "Agressiva (track / ritmo forte)",
+  agressiva: "Agressiva (ritmo forte)",
 };
 
 export const ABAS_MEUS_ROLES: { id: Exclude<AbaMeusRoles, "proximos">; label: string }[] =

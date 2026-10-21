@@ -27,7 +27,7 @@ describe("countdown-evento", () => {
         "2026-09-20T18:00:00.000Z",
         agora,
       ),
-    ).toBe("Hoje");
+    ).toBe("Acontecendo agora");
   });
 
   it("formata dias, horas e começa em breve", () => {

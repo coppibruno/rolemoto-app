@@ -152,6 +152,11 @@ export const validarBodyRoleTelemetria = (
       tituloBruto :
       tituloDefaultTelemetria(body.encerradoEm);
 
+  const publica = parsePublica(body.publica);
+  if (publica === undefined) {
+    return {ok: false, erro: "publica inválida"};
+  }
+
   return {
     ok: true,
     dados: {
@@ -166,8 +171,20 @@ export const validarBodyRoleTelemetria = (
       pontoInicio: inicio.ponto,
       pontoFim: fim.ponto,
       tracado,
+      publica,
     },
   };
+};
+
+/** `undefined` no body → privado (padrão do POST). `undefined` de retorno = inválido. */
+export const parsePublica = (valor: unknown): boolean | undefined => {
+  if (valor === undefined || valor === null) {
+    return false;
+  }
+  if (typeof valor !== "boolean") {
+    return undefined;
+  }
+  return valor;
 };
 
 export const paraItemHistoricoTelemetria = (
@@ -179,6 +196,7 @@ export const paraItemHistoricoTelemetria = (
   distanciaKm: doc.distanciaKm,
   tempoSegundos: doc.tempoSegundos,
   encerradoEm: doc.encerradoEm,
+  publica: doc.publica,
 });
 
 export const parseLimiteTelemetria = (raw: unknown): number => {

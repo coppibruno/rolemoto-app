@@ -22,7 +22,13 @@ export const labelCountdownEvento = (
   if (!Number.isFinite(abertura)) return "Encerrado";
 
   const falta = abertura - agora;
-  if (falta <= 0) return "Hoje";
+  if (falta <= 0) {
+    const fim = Date.parse(encerramentoIso ?? aberturaIso);
+    if (Number.isFinite(fim) && fim > agora && encerramentoIso) {
+      return "Acontecendo agora";
+    }
+    return "Hoje";
+  }
   if (falta < HORA_MS) return "Começa em breve";
   if (falta < DIA_MS) {
     const horas = Math.max(1, Math.round(falta / HORA_MS));

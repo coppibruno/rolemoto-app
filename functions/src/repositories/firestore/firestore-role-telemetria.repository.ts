@@ -39,6 +39,7 @@ const toResumo = (snap: DocumentSnapshot): RoleTelemetria => {
     encerradoEm: toIso(data.encerradoEm),
     pontoInicio: toPonto(data.pontoInicio),
     pontoFim: toPonto(data.pontoFim),
+    publica: data.publica === undefined ? true : Boolean(data.publica),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -73,6 +74,7 @@ implements RoleTelemetriaRepository {
       pontoInicio: dados.pontoInicio,
       pontoFim: dados.pontoFim,
       tracado: dados.tracado,
+      publica: dados.publica,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -95,5 +97,21 @@ implements RoleTelemetriaRepository {
       .limit(limite)
       .get();
     return snap.docs.map(toResumo);
+  }
+
+  async atualizarVisibilidade(
+    id: string,
+    publica: boolean,
+  ): Promise<RoleTelemetria | null> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      return null;
+    }
+    await ref.update({
+      publica,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    return this.buscarPorId(id);
   }
 }

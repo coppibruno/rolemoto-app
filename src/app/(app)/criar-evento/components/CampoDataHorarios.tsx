@@ -6,12 +6,15 @@ import styles from "../criar-evento.module.css";
 type Props = {
   dataEvento: string;
   horaAbertura: string;
+  dataEncerramento: string;
   horaEncerramento: string;
   onChangeData: (valor: string) => void;
   onChangeAbertura: (valor: string) => void;
+  onChangeDataEncerramento: (valor: string) => void;
   onChangeEncerramento: (valor: string) => void;
   erroData?: string;
   erroAbertura?: string;
+  erroDataEncerramento?: string;
   erroEncerramento?: string;
   desabilitado?: boolean;
 };
@@ -19,27 +22,34 @@ type Props = {
 export const CampoDataHorarios = ({
   dataEvento,
   horaAbertura,
+  dataEncerramento,
   horaEncerramento,
   onChangeData,
   onChangeAbertura,
+  onChangeDataEncerramento,
   onChangeEncerramento,
   erroData,
   erroAbertura,
+  erroDataEncerramento,
   erroEncerramento,
   desabilitado,
 }: Props) => {
   const erroDataId = "data-evento-erro";
   const erroAberturaId = "hora-abertura-erro";
+  const erroDataFimId = "data-encerramento-erro";
   const erroFimId = "hora-encerramento-erro";
   const minData = hojeYmdSaoPaulo();
-  const temErro = Boolean(erroData || erroAbertura || erroEncerramento);
+  const minFim = dataEvento || minData;
+  const temErro = Boolean(
+    erroData || erroAbertura || erroDataEncerramento || erroEncerramento,
+  );
 
   return (
     <div className={`${styles.cartao} ${temErro ? styles.cartaoErro : ""}`}>
       <div className={styles.gradeDataHora}>
         <div className={styles.campo}>
           <label htmlFor="data-evento" className={styles.label}>
-            Data <span className={styles.obrigatorio}>*</span>
+            Data de abertura <span className={styles.obrigatorio}>*</span>
           </label>
           <input
             id="data-evento"
@@ -55,7 +65,7 @@ export const CampoDataHorarios = ({
         </div>
         <div className={styles.campo}>
           <label htmlFor="hora-abertura" className={styles.label}>
-            Abertura <span className={styles.obrigatorio}>*</span>
+            Hora de abertura <span className={styles.obrigatorio}>*</span>
           </label>
           <input
             id="hora-abertura"
@@ -69,21 +79,40 @@ export const CampoDataHorarios = ({
           />
         </div>
       </div>
-      <div className={styles.campo}>
-        <label htmlFor="hora-encerramento" className={`${styles.label} ${styles.labelLinha}`}>
-          <span>Horário de Encerramento</span>
-          <span className={styles.hintOpcional}>Opcional</span>
-        </label>
-        <input
-          id="hora-encerramento"
-          type="time"
-          className={`${styles.input} ${erroEncerramento ? styles.inputErro : ""}`}
-          value={horaEncerramento}
-          onChange={(e) => onChangeEncerramento(e.target.value)}
-          disabled={desabilitado}
-          aria-invalid={Boolean(erroEncerramento)}
-          aria-describedby={erroEncerramento ? erroFimId : undefined}
-        />
+      <div className={styles.gradeDataHora}>
+        <div className={styles.campo}>
+          <label htmlFor="data-encerramento" className={`${styles.label} ${styles.labelLinha}`}>
+            <span>Data de encerramento</span>
+            <span className={styles.hintOpcional}>Opcional</span>
+          </label>
+          <input
+            id="data-encerramento"
+            type="date"
+            className={`${styles.input} ${erroDataEncerramento ? styles.inputErro : ""}`}
+            value={dataEncerramento}
+            min={minFim}
+            onChange={(e) => onChangeDataEncerramento(e.target.value)}
+            disabled={desabilitado}
+            aria-invalid={Boolean(erroDataEncerramento)}
+            aria-describedby={erroDataEncerramento ? erroDataFimId : undefined}
+          />
+        </div>
+        <div className={styles.campo}>
+          <label htmlFor="hora-encerramento" className={`${styles.label} ${styles.labelLinha}`}>
+            <span>Hora de encerramento</span>
+            <span className={styles.hintOpcional}>Opcional</span>
+          </label>
+          <input
+            id="hora-encerramento"
+            type="time"
+            className={`${styles.input} ${erroEncerramento ? styles.inputErro : ""}`}
+            value={horaEncerramento}
+            onChange={(e) => onChangeEncerramento(e.target.value)}
+            disabled={desabilitado}
+            aria-invalid={Boolean(erroEncerramento)}
+            aria-describedby={erroEncerramento ? erroFimId : undefined}
+          />
+        </div>
       </div>
       {erroData ? (
         <p id={erroDataId} className={styles.erroCampo} role="alert">
@@ -93,6 +122,11 @@ export const CampoDataHorarios = ({
       {erroAbertura ? (
         <p id={erroAberturaId} className={styles.erroCampo} role="alert">
           {erroAbertura}
+        </p>
+      ) : null}
+      {erroDataEncerramento ? (
+        <p id={erroDataFimId} className={styles.erroCampo} role="alert">
+          {erroDataEncerramento}
         </p>
       ) : null}
       {erroEncerramento ? (

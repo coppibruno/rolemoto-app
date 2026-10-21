@@ -28,6 +28,7 @@ const paraCard = (doc: {
   distanciaKm: number;
   tempoSegundos: number;
   encerradoEm: string;
+  publica?: boolean;
 }): ItemHistoricoTelemetria => ({
   id: doc.id,
   tipo: "telemetria",
@@ -35,6 +36,7 @@ const paraCard = (doc: {
   distanciaKm: doc.distanciaKm,
   tempoSegundos: doc.tempoSegundos,
   encerradoEm: doc.encerradoEm,
+  publica: doc.publica !== false,
 });
 
 export const useHistoricoPistas = () => {

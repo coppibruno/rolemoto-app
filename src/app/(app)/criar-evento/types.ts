@@ -13,6 +13,7 @@ export type ErrosCriarEvento = {
   local?: string;
   dataEvento?: string;
   horaAbertura?: string;
+  dataEncerramento?: string;
   horaEncerramento?: string;
   acesso?: string;
   linkIngresso?: string;

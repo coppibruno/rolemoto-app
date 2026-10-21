@@ -16,7 +16,7 @@
  * - /telemetria/sessao → POST
  * - /telemetria/sessao/:id → GET, DELETE
  * - /telemetria/sessao/:id/ponto → POST (token de sessão Capgo)
- * - /telemetria/:id → GET
+ * - /telemetria/:id → GET, PATCH
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE

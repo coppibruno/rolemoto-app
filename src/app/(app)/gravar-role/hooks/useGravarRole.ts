@@ -67,7 +67,7 @@ export const useGravarRole = () => {
       const pendente = await gps.getResumoPendente();
       if (cancelado) return;
       if (pendente) {
-        setResumo(pendente.dados);
+        setResumo({ ...pendente.dados, publica: pendente.dados.publica ?? false });
         setTitulo(pendente.dados.titulo);
         setFase("resumo");
         return;
@@ -150,7 +150,7 @@ export const useGravarRole = () => {
         resultado.dados.pontoInicio,
         resultado.dados.pontoFim,
       );
-      const dados = { ...resultado.dados, ...pontos };
+      const dados = { ...resultado.dados, ...pontos, publica: false };
       await adapter.salvarResumoPendente({ dados });
       setResumo(dados);
       setTitulo(dados.titulo);
@@ -172,7 +172,11 @@ export const useGravarRole = () => {
     setErro(null);
     setAviso(null);
     setOcupado(true);
-    const dados = { ...resumo, titulo: titulo.trim() || resumo.titulo };
+    const dados = {
+      ...resumo,
+      titulo: titulo.trim() || resumo.titulo,
+      publica: resumo.publica ?? false,
+    };
     try {
       await adapter?.salvarResumoPendente({ dados });
       const criado = await telemetriaService.criar(dados);
@@ -193,6 +197,10 @@ export const useGravarRole = () => {
       setOcupado(false);
     }
   }, [adapter, irParaDashboard, resumo, titulo]);
+
+  const setPublica = useCallback((publica: boolean) => {
+    setResumo((atual) => (atual ? { ...atual, publica } : atual));
+  }, []);
 
   const descartar = useCallback(async () => {
     await adapter?.limparResumoPendente();
@@ -225,6 +233,7 @@ export const useGravarRole = () => {
     resumo,
     titulo,
     setTitulo,
+    setPublica,
     ocupado,
     erro,
     aviso,

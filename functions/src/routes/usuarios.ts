@@ -50,7 +50,9 @@ usuariosRouter.get("/:uid/telemetria", async (req: Request, res: Response) => {
     }
 
     const lista = await roleTelemetriaRepository.listarPorUsuario(uid);
-    res.json(lista.map(paraItemHistoricoTelemetria));
+    const visiveis =
+      req.usuario?.uid === uid ? lista : lista.filter((item) => item.publica);
+    res.json(visiveis.map(paraItemHistoricoTelemetria));
   } catch (error) {
     responderErro(res, error);
   }

@@ -19,6 +19,12 @@ export const telemetriaService = {
       `/usuarios/${encodeURIComponent(uid)}/telemetria`,
     ),
 
+  atualizarVisibilidade: (id: string, publica: boolean) =>
+    api<RoleTelemetria>(`/telemetria/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ publica }),
+    }),
+
   buscar: async (id: string): Promise<RoleTelemetria | null> => {
     try {
       return await api<RoleTelemetria>(`/telemetria/${encodeURIComponent(id)}`);

@@ -23,7 +23,16 @@ export const useFormularioCriarEvento = () => {
   const [tipo, setTipo] = useState<TipoEvento | null>(null);
   const [dataEvento, setDataEvento] = useState("");
   const [horaAbertura, setHoraAbertura] = useState(HORA_PADRAO);
+  const [dataEncerramento, setDataEncerramento] = useState("");
   const [horaEncerramento, setHoraEncerramento] = useState("");
+
+  const aoMudarDataInicio = (valor: string) => {
+    setDataEvento(valor);
+    setDataEncerramento((atual) => {
+      if (!atual || atual < valor) return valor;
+      return atual;
+    });
+  };
   const [acesso, setAcesso] = useState<AcessoEvento>(ACESSO_PADRAO);
   const [linkIngresso, setLinkIngresso] = useState("");
   const [atracoes, setAtracoes] = useState<AtracaoEvento[]>([]);
@@ -63,6 +72,7 @@ export const useFormularioCriarEvento = () => {
         local: localResolvido,
         dataEvento,
         horaAbertura,
+        dataEncerramento,
         horaEncerramento,
         acesso,
         linkIngresso,
@@ -97,7 +107,10 @@ export const useFormularioCriarEvento = () => {
         },
         dataHoraAbertura: montarIsoEvento(dataEvento, horaAbertura),
         dataHoraEncerramento: horaEncerramento.trim()
-          ? montarIsoEncerramento(dataEvento, horaAbertura, horaEncerramento)
+          ? montarIsoEncerramento(
+              dataEncerramento.trim() || dataEvento,
+              horaEncerramento,
+            )
           : null,
         acesso,
         linkIngresso: acesso === "ingresso" ? linkIngresso.trim() : null,
@@ -127,7 +140,9 @@ export const useFormularioCriarEvento = () => {
     setTipo,
     local,
     dataEvento,
-    setDataEvento,
+    setDataEvento: aoMudarDataInicio,
+    dataEncerramento,
+    setDataEncerramento,
     horaAbertura,
     setHoraAbertura,
     horaEncerramento,

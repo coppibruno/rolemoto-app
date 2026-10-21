@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useFormularioCriarRole } from "../hooks/useFormularioCriarRole";
 import { useModeloRole } from "../hooks/useModeloRole";
 import { BotaoCancelar } from "./BotaoCancelar";
@@ -36,6 +37,17 @@ export const FormularioCriarRole = ({ origemId, editarId, modo }: Props) => {
   const { modelo, carregando, erro, recarregar } = useModeloRole(roleId);
   const form = useFormularioCriarRole(modelo, modo);
   const precisaModelo = modo !== "criar";
+  const [mapaAberto, setMapaAberto] = useState<"partida" | "destino" | null>(null);
+
+  useEffect(() => {
+    if (form.erros.partida) {
+      setMapaAberto("partida");
+      return;
+    }
+    if (form.erros.destino) {
+      setMapaAberto("destino");
+    }
+  }, [form.erros.partida, form.erros.destino]);
 
   if (precisaModelo && (carregando || form.hidratando)) {
     return <EstadoCarregandoModelo />;
@@ -78,6 +90,11 @@ export const FormularioCriarRole = ({ origemId, editarId, modo }: Props) => {
           campo={form.partida}
           erro={form.erros.partida}
           desabilitado={form.publicando}
+          mapaAberto={mapaAberto === "partida"}
+          onAlternarMapa={() =>
+            setMapaAberto((atual) => (atual === "partida" ? null : "partida"))
+          }
+          onPontoDefinido={() => setMapaAberto("partida")}
         />
 
         <CampoDataHora
@@ -98,6 +115,11 @@ export const FormularioCriarRole = ({ origemId, editarId, modo }: Props) => {
           campo={form.destino}
           erro={form.erros.destino}
           desabilitado={form.publicando}
+          mapaAberto={mapaAberto === "destino"}
+          onAlternarMapa={() =>
+            setMapaAberto((atual) => (atual === "destino" ? null : "destino"))
+          }
+          onPontoDefinido={() => setMapaAberto("destino")}
         />
 
         <SeletorRitmo

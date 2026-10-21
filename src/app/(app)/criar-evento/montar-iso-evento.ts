@@ -44,17 +44,11 @@ export const montarIsoEvento = (dataEvento: string, hora: string): string => {
 };
 
 export const montarIsoEncerramento = (
-  dataEvento: string,
-  horaAbertura: string,
-  horaEncerramento: string
-): string => {
-  const isoAbertura = montarIsoEvento(dataEvento, horaAbertura);
-  const mesmoDia = montarIsoEvento(dataEvento, horaEncerramento);
-  if (Date.parse(mesmoDia) > Date.parse(isoAbertura)) {
-    return mesmoDia;
-  }
-  return new Date(Date.parse(mesmoDia) + 24 * 60 * 60 * 1000).toISOString();
-};
+  dataEncerramento: string,
+  horaEncerramento: string,
+): string => montarIsoEvento(dataEncerramento, horaEncerramento);
+
+export const MAX_DURACAO_EVENTO_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const hojeYmdSaoPaulo = (): string =>
   new Intl.DateTimeFormat("en-CA", {

@@ -97,9 +97,14 @@ export const CONFIRMA_CANCELAR_INSCRICAO =
 export const MODAL_INGRESSO = {
   titulo: "Ingresso necessário",
   corpo:
-    "Sua inscrição no evento foi confirmada. Para garantir a entrada, compre o ingresso no link do organizador.",
+    "Este evento tem ingresso pago no site do organizador. Depois de comprar, confirme aqui para aparecer na lista de presença.",
   comprar: "Ir para a compra",
   agoraNao: "Agora não",
+  confirmarTitulo: "Já comprou?",
+  confirmarCorpo:
+    "Sua inscrição só entra na lista quando você confirmar a compra. Sem integração com o site de ingressos, a confirmação é por sua conta.",
+  jaComprei: "Já comprei meu ingresso",
+  aindaNao: "Ainda não",
 } as const;
 
 export const ERRO_LINK_INGRESSO = "Link de ingresso indisponível";

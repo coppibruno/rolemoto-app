@@ -67,6 +67,7 @@ export const TelaGravarRole = () => {
             ocupado={g.ocupado}
             online={g.online}
             onTitulo={g.setTitulo}
+            onPublica={g.setPublica}
             onSalvar={() => void g.salvar()}
             onDescartar={() => void g.descartar()}
           />

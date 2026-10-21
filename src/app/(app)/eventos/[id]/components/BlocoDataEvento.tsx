@@ -11,11 +11,26 @@ type Props = {
   evento: EventoDetalhe;
 };
 
+const mesmoDia = (a: string, b: string): boolean => {
+  const dia = (iso: string) =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Sao_Paulo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date(iso));
+  return dia(a) === dia(b);
+};
+
 export const BlocoDataEvento = ({ evento }: Props) => {
   const abertura = formatarHoraEvento(evento.dataHoraAbertura);
-  const encerramento = evento.dataHoraEncerramento
-    ? formatarHoraEvento(evento.dataHoraEncerramento)
+  const encerramentoIso = evento.dataHoraEncerramento;
+  const encerramento = encerramentoIso
+    ? formatarHoraEvento(encerramentoIso)
     : null;
+  const diasDiferentes = Boolean(
+    encerramentoIso && !mesmoDia(evento.dataHoraAbertura, encerramentoIso),
+  );
 
   return (
     <section className={styles.card}>
@@ -25,13 +40,17 @@ export const BlocoDataEvento = ({ evento }: Props) => {
           calendar_today
         </span>
         <p className={styles.dataTexto}>
-          {formatarDataExtenso(evento.dataHoraAbertura)}
+          {diasDiferentes && encerramentoIso
+            ? `${formatarDataExtenso(evento.dataHoraAbertura)} ${abertura} até ${formatarDataExtenso(encerramentoIso)} ${encerramento}`
+            : formatarDataExtenso(evento.dataHoraAbertura)}
         </p>
       </div>
-      <p className={styles.horaTexto}>
-        Abertura {abertura}
-        {encerramento ? ` · até ${encerramento}` : null}
-      </p>
+      {diasDiferentes ? null : (
+        <p className={styles.horaTexto}>
+          Abertura {abertura}
+          {encerramento ? ` · até ${encerramento}` : null}
+        </p>
+      )}
       <span className={styles.badgeAcesso}>
         {LABELS_ACESSO_EVENTO[evento.acesso]}
       </span>

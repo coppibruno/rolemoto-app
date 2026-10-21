@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OpcoesSalvarSenha } from "../../components/OpcoesSalvarSenha";
 import { COPY } from "../constants";
 import { useDefinirSenha } from "../hooks/useDefinirSenha";
@@ -14,8 +14,24 @@ type Props = {
 export const FormularioDefinirSenha = ({ next, email }: Props) => {
   const form = useDefinirSenha(next, email);
   const [mostrar, setMostrar] = useState(false);
+  const senhaRef = useRef<HTMLInputElement>(null);
+  const confirmaRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (form.campoErro === "senha") senhaRef.current?.focus();
+    if (form.campoErro === "confirmacao") confirmaRef.current?.focus();
+  }, [form.campoErro, form.erro]);
 
   return (
+    <>
+      {form.toast ? (
+        <div className={styles.toast} role="alert">
+          <span className="material-symbols-outlined" aria-hidden>
+            warning
+          </span>
+          {form.toast}
+        </div>
+      ) : null}
     <form className={styles.form} onSubmit={form.submeter}>
       <div className={styles.campo}>
         <label htmlFor="definir-senha" className={styles.label}>
@@ -25,6 +41,7 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
         <div className={styles.inputWrap}>
           <input
             id="definir-senha"
+            ref={senhaRef}
             type={mostrar ? "text" : "password"}
             className={styles.input}
             value={form.senha}
@@ -32,6 +49,8 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
             placeholder={COPY.placeholderSenha}
             autoComplete="new-password"
             disabled={form.enviando}
+            aria-invalid={form.campoErro === "senha"}
+            aria-describedby={form.campoErro === "senha" ? "definir-senha-erro" : undefined}
           />
           <button
             type="button"
@@ -44,6 +63,11 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
             </span>
           </button>
         </div>
+        {form.campoErro === "senha" && form.erro ? (
+          <p id="definir-senha-erro" className={styles.erro} role="alert">
+            {form.erro}
+          </p>
+        ) : null}
       </div>
 
       <div className={styles.campo}>
@@ -53,6 +77,7 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
         <div className={styles.inputWrap}>
           <input
             id="definir-confirma"
+            ref={confirmaRef}
             type={mostrar ? "text" : "password"}
             className={styles.input}
             value={form.confirmacao}
@@ -60,8 +85,17 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
             placeholder={COPY.placeholderConfirmar}
             autoComplete="new-password"
             disabled={form.enviando}
+            aria-invalid={form.campoErro === "confirmacao"}
+            aria-describedby={
+              form.campoErro === "confirmacao" ? "definir-confirma-erro" : undefined
+            }
           />
         </div>
+        {form.campoErro === "confirmacao" && form.erro ? (
+          <p id="definir-confirma-erro" className={styles.erro} role="alert">
+            {form.erro}
+          </p>
+        ) : null}
       </div>
 
       <OpcoesSalvarSenha
@@ -72,7 +106,7 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
         onEntrarAutomatico={form.setEntrarAutomatico}
       />
 
-      {form.erro ? (
+      {form.erro && !form.campoErro ? (
         <p className={styles.erro} role="alert">
           {form.erro}
         </p>
@@ -90,5 +124,6 @@ export const FormularioDefinirSenha = ({ next, email }: Props) => {
         {COPY.pular}
       </button>
     </form>
+    </>
   );
 };

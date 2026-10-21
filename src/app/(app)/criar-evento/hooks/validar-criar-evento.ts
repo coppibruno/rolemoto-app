@@ -7,7 +7,11 @@ import {
   TITULO_MAX,
   TITULO_MIN,
 } from "../constants";
-import { montarIsoEncerramento, montarIsoEvento } from "../montar-iso-evento";
+import {
+  MAX_DURACAO_EVENTO_MS,
+  montarIsoEncerramento,
+  montarIsoEvento,
+} from "../montar-iso-evento";
 import type { ErrosCriarEvento, LocalizacaoForm } from "../types";
 
 const DATA_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -52,6 +56,7 @@ export const validarCriarEvento = (campos: {
   local: LocalizacaoForm;
   dataEvento: string;
   horaAbertura: string;
+  dataEncerramento: string;
   horaEncerramento: string;
   acesso: AcessoEvento;
   linkIngresso: string;
@@ -90,17 +95,21 @@ export const validarCriarEvento = (campos: {
   }
 
   const horaFim = campos.horaEncerramento.trim();
-  if (horaFim) {
-    if (!HORA_RE.test(horaFim) || horaFim === campos.horaAbertura) {
-      erros.horaEncerramento = "O encerramento precisa ser depois da abertura";
+  const dataFim = campos.dataEncerramento.trim() || campos.dataEvento;
+  if (campos.dataEncerramento.trim() && !horaFim) {
+    erros.horaEncerramento = "Informe o horário de encerramento";
+  } else if (horaFim) {
+    if (!HORA_RE.test(horaFim)) {
+      erros.horaEncerramento = "Informe o horário de encerramento";
+    } else if (!dataCalendarioValida(dataFim)) {
+      erros.dataEncerramento = "Informe a data de encerramento";
     } else if (aberturaIso) {
-      const isoFim = montarIsoEncerramento(
-        campos.dataEvento,
-        campos.horaAbertura,
-        horaFim
-      );
-      if (Date.parse(isoFim) <= Date.parse(aberturaIso)) {
+      const isoFim = montarIsoEncerramento(dataFim, horaFim);
+      const delta = Date.parse(isoFim) - Date.parse(aberturaIso);
+      if (delta <= 0) {
         erros.horaEncerramento = "O encerramento precisa ser depois da abertura";
+      } else if (delta > MAX_DURACAO_EVENTO_MS) {
+        erros.dataEncerramento = "O evento pode durar no máximo 7 dias";
       }
     }
   }

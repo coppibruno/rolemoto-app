@@ -31,6 +31,7 @@ import {
  * POST /telemetria
  * GET  /telemetria
  * GET  /telemetria/:id
+ * PATCH /telemetria/:id
  */
 export const telemetriaRouter = Router();
 
@@ -193,11 +194,41 @@ telemetriaRouter.get("/:id", async (req: Request, res: Response) => {
     }
 
     const doc = await roleTelemetriaRepository.buscarPorId(param(req, "id"));
-    if (!doc) {
+    if (!doc || (!doc.publica && doc.usuarioId !== uid)) {
       res.status(404).json({erro: "Telemetria não encontrada"});
       return;
     }
     res.json(doc);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+telemetriaRouter.patch("/:id", async (req: Request, res: Response) => {
+  try {
+    const uid = uidAutenticado(req, res);
+    if (!uid) {
+      return;
+    }
+
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    if (typeof body.publica !== "boolean") {
+      res.status(400).json({erro: "publica inválida"});
+      return;
+    }
+
+    const id = param(req, "id");
+    const atual = await roleTelemetriaRepository.buscarPorId(id);
+    if (!atual || atual.usuarioId !== uid) {
+      res.status(404).json({erro: "Telemetria não encontrada"});
+      return;
+    }
+
+    const atualizado = await roleTelemetriaRepository.atualizarVisibilidade(
+      id,
+      body.publica,
+    );
+    res.json(atualizado);
   } catch (error) {
     responderErro(res, error);
   }

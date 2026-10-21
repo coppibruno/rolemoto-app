@@ -600,6 +600,68 @@
   gap: 8px;
 }
 
+.visibilidade {
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.visibilidadeLegenda {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.visibilidadeOpcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.visibilidadeOpcao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 48px;
+  padding: 8px;
+  border: 1.5px solid #353a44;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.visibilidadeOpcao input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.visibilidadeOpcao .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.visibilidadeOpcaoAtiva {
+  border-color: var(--primary-container);
+  background: color-mix(in srgb, var(--primary-container) 12%, transparent);
+  color: var(--on-surface);
+}
+
+.visibilidade:disabled {
+  opacity: 0.55;
+}
+
 .vazio {
   display: flex;
   flex-direction: column;

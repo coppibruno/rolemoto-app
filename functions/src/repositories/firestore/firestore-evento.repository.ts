@@ -83,13 +83,15 @@ export class FirestoreEventoRepository implements EventoRepository {
   }
 
   async listarFuturos(filtros?: FiltroListagemEventos): Promise<Evento[]> {
-    const inicio = filtros?.dataInicioIso ?
-      toTimestamp(filtros.dataInicioIso) :
-      Timestamp.now();
+    const MAX_DURACAO_MS = 7 * 24 * 60 * 60 * 1000;
+    const inicioMs = filtros?.dataInicioIso ?
+      Date.parse(filtros.dataInicioIso) :
+      Date.now();
+    const consultaInicio = Timestamp.fromMillis(inicioMs - MAX_DURACAO_MS);
 
     let query = firestore
       .collection(COLECAO)
-      .where("dataHoraAbertura", ">=", inicio)
+      .where("dataHoraAbertura", ">=", consultaInicio)
       .orderBy("dataHoraAbertura", "asc");
 
     if (filtros?.dataFimIso) {
@@ -101,7 +103,14 @@ export class FirestoreEventoRepository implements EventoRepository {
     }
 
     const snap = await query.limit(LIMITE_LISTAGEM).get();
-    return snap.docs.map(toEvento);
+    return snap.docs
+      .map(toEvento)
+      .filter((evento) => {
+        const fim = Date.parse(
+          evento.dataHoraEncerramento ?? evento.dataHoraAbertura,
+        );
+        return Number.isFinite(fim) && fim >= inicioMs;
+      });
   }
 
   async buscarPorId(id: string): Promise<Evento | null> {

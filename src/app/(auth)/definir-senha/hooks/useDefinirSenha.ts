@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { dispensarOfertaSenha, persistirAposSenha } from "@/lib/credenciais-login";
 import { destinoAposDefinirSenha } from "@/lib/destino-apos-auth";
 import { extrairCodigoErro, traduzirErroFirebase } from "../../login/utils/erros-firebase";
 import { COPY, MIN_SENHA } from "../constants";
+
+export type CampoDefinirSenha = "senha" | "confirmacao";
+
+const TOAST_MS = 4000;
 
 export const useDefinirSenha = (next: string | null, email: string) => {
   const { vincularSenha, loginComGoogle, usuario } = useAuth();
@@ -18,6 +22,20 @@ export const useDefinirSenha = (next: string | null, email: string) => {
   const [entrarAutomatico, setEntrarAutomatico] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [campoErro, setCampoErro] = useState<CampoDefinirSenha | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => setToast(null), TOAST_MS);
+    return () => window.clearTimeout(id);
+  }, [toast]);
+
+  const reportar = (mensagem: string, campo: CampoDefinirSenha | null) => {
+    setErro(mensagem);
+    setCampoErro(campo);
+    setToast(mensagem);
+  };
 
   const seguir = () => {
     router.replace(destinoAposDefinirSenha(usuario, next));
@@ -31,17 +49,19 @@ export const useDefinirSenha = (next: string | null, email: string) => {
   const submeter = async (e: FormEvent) => {
     e.preventDefault();
     setErro(null);
+    setCampoErro(null);
+    setToast(null);
 
     if (!email) {
-      setErro(COPY.semEmail);
+      reportar(COPY.semEmail, null);
       return;
     }
     if (senha.length < MIN_SENHA) {
-      setErro(COPY.senhaFraca);
+      reportar(COPY.senhaFraca, "senha");
       return;
     }
     if (senha !== confirmacao) {
-      setErro(COPY.senhasDiferentes);
+      reportar(COPY.senhasDiferentes, "confirmacao");
       return;
     }
 
@@ -66,7 +86,10 @@ export const useDefinirSenha = (next: string | null, email: string) => {
     } catch (error: unknown) {
       console.error(error);
       const codigo = extrairCodigoErro(error);
-      setErro(codigo ? traduzirErroFirebase(codigo) : COPY.erroGenerico);
+      const mensagem = codigo ? traduzirErroFirebase(codigo) : COPY.erroGenerico;
+      const campo: CampoDefinirSenha | null =
+        codigo === "auth/weak-password" ? "senha" : null;
+      reportar(mensagem, campo);
     } finally {
       setEnviando(false);
     }
@@ -83,6 +106,8 @@ export const useDefinirSenha = (next: string | null, email: string) => {
     setEntrarAutomatico,
     enviando,
     erro,
+    campoErro,
+    toast,
     submeter,
     pular,
   };

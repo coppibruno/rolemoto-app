@@ -10,4 +10,5 @@ export interface RoleTelemetriaRepository {
     usuarioId: string,
     opcoes?: {limite?: number},
   ): Promise<RoleTelemetria[]>;
+  atualizarVisibilidade(id: string, publica: boolean): Promise<RoleTelemetria | null>;
 }

@@ -40,7 +40,8 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Só **administrador** (`users.admin === true`, promoção manual no Firestore) cadastra eventos em `/criar-evento`
 - Evento não é rolê: um único local (moto point, track day, café, exposição), sem comboio em estrada
 - Piloto comum **não** cria; **vê** no feed (aba Eventos) e via `GET /eventos`
-- Qualquer autenticado **se inscreve** no evento (`POST /eventos/:id/inscricao`) sem aceite do criador; ingresso pago abre modal com `linkIngresso`
+- Qualquer autenticado **se inscreve** no evento (`POST /eventos/:id/inscricao`) sem aceite do criador. Evento grátis confirma na hora; evento pago abre o link de ingresso e só inscreve depois de “Já comprei meu ingresso”
+- Evento pode durar vários dias: data/hora de abertura e data/hora de encerramento (máx. 7 dias)
 - Após o evento encerrar, inscritos **avaliam** em `/eventos/:id/avaliar` (nota, relato, fotos, recomendo comboio)
 - Locais oficiais: qualquer autenticado avalia em `/locais/:id/avaliar`
 - **Meus Rolês** (`/meus-roles`) é a garagem: abas Rolês · Eventos (inscritos) · Locais (favoritos); CTAs Avaliar / Ver relato (SPEC 027/028)
@@ -56,7 +57,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Apelido, moto, tipo de moto (`trail` | `speed` | `custom`), ritmo/pilotagem, foto, garupa, cidade (opcional)
 - Histórico de pistas (SPEC 008 + eventos da SPEC 026 + telemetria SPEC 030), Meus Rolês / garagem (SPEC 017 + 028), fila de aprovações (SPEC 007)
 - Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura; histórico inclui eventos inscritos e filtro Telemetria
-- Qualquer autenticado grava passeio próprio em `/gravar-role` (GPS nativo); dashboard em `/telemetria/[id]` (SPEC 030)
+- Qualquer autenticado grava passeio próprio em `/gravar-role` (GPS nativo); dashboard em `/telemetria/[id]` (SPEC 030). Ao salvar, escolhe se o passeio fica só para ele ou visível no perfil; passeios antigos continuam públicos
 ## Modelo de Negócio
 
 - App **gratuito** sem monetização inicial

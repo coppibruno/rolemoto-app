@@ -77,6 +77,20 @@ export const formatarHorarioEvento = (iso: string): string => {
   return `${capitalizado} às ${hora}`;
 };
 
+export const formatarPeriodoEvento = (
+  aberturaIso: string,
+  encerramentoIso: string | null,
+): string => {
+  const inicio = formatarHorarioEvento(aberturaIso);
+  if (!encerramentoIso) return inicio;
+  const ymdAbertura = ymdSaoPaulo(new Date(aberturaIso));
+  const ymdFim = ymdSaoPaulo(new Date(encerramentoIso));
+  if (ymdAbertura === ymdFim) {
+    return `${inicio} · até ${formatarHora(encerramentoIso)}`;
+  }
+  return `${inicio} até ${formatarHorarioEvento(encerramentoIso)}`;
+};
+
 export const formatarDataCurta = (ymd: string): string => {
   const [ano, mes, dia] = ymd.split("-").map(Number);
   return `${String(dia).padStart(2, "0")}/${String(mes).padStart(2, "0")}/${ano}`;
