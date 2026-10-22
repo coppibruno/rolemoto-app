@@ -4,6 +4,11 @@ import { useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/lib/api";
 import {
+  cameraStoryDisponivel,
+  capturarFotoStory,
+  foiCancelamentoCaptura,
+} from "@/lib/capturar-foto-story";
+import {
   ERRO_FOTO_GRANDE,
   MAX_FOTO_BYTES,
   TIPOS_FOTO_ACEITOS,
@@ -37,12 +42,6 @@ export const usePostarStory = (
   const inputRef = useRef<HTMLInputElement>(null);
   const [fase, setFase] = useState<Fase>("idle");
   const [erro, setErro] = useState<string | null>(null);
-
-  const abrir = () => {
-    if (fase !== "idle") return;
-    setErro(null);
-    inputRef.current?.click();
-  };
 
   const aoArquivo = async (file: File | undefined) => {
     if (!file || fase !== "idle") return;
@@ -87,6 +86,24 @@ export const usePostarStory = (
       setFase("idle");
       if (inputRef.current) inputRef.current.value = "";
     }
+  };
+
+  const abrir = () => {
+    if (fase !== "idle") return;
+    setErro(null);
+    if (!cameraStoryDisponivel()) {
+      inputRef.current?.click();
+      return;
+    }
+    void (async () => {
+      try {
+        const file = await capturarFotoStory();
+        await aoArquivo(file);
+      } catch (e) {
+        if (foiCancelamentoCaptura(e)) return;
+        setErro("Não foi possível abrir a câmera.");
+      }
+    })();
   };
 
   const rotulo =

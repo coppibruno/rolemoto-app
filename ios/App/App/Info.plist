@@ -66,6 +66,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>O Rolemoto usa a câmera para você postar um story no momento.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>O Rolemoto acessa suas fotos só se você escolher uma da galeria.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>O Rolemoto pode salvar uma foto na galeria se você pedir.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>O Rolemoto usa sua localização para registrar a telemetria do rolê.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

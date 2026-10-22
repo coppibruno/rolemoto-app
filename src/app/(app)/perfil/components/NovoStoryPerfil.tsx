@@ -9,6 +9,11 @@ import {
   usePublicarStoryPerfil,
   type MencaoOpcao,
 } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
+import {
+  cameraStoryDisponivel,
+  capturarFotoStory,
+  foiCancelamentoCaptura,
+} from "@/lib/capturar-foto-story";
 import styles from "../perfil.module.css";
 
 export const NovoStoryPerfil = () => {
@@ -35,6 +40,23 @@ export const NovoStoryPerfil = () => {
     setErro(null);
   };
 
+  const abrirCamera = () => {
+    setErro(null);
+    if (!cameraStoryDisponivel()) {
+      inputRef.current?.click();
+      return;
+    }
+    void (async () => {
+      try {
+        const file = await capturarFotoStory();
+        setArquivo(file);
+      } catch (e) {
+        if (foiCancelamentoCaptura(e)) return;
+        setErro("Não foi possível abrir a câmera.");
+      }
+    })();
+  };
+
   const enviar = async () => {
     if (!arquivo) return;
     const story = await publicar(arquivo, escolhida);
@@ -57,7 +79,7 @@ export const NovoStoryPerfil = () => {
           e.target.value = "";
         }}
       />
-      <button type="button" className={styles.botaoStory} onClick={() => inputRef.current?.click()}>
+      <button type="button" className={styles.botaoStory} onClick={abrirCamera}>
         <span className="material-symbols-outlined" aria-hidden>
           photo_camera
         </span>
