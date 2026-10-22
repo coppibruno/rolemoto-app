@@ -54,6 +54,10 @@ import type {
 import type {UsuarioLocalCheckinRepository} from "./interfaces/usuario-local-checkin.repository";
 import type {RoleTelemetriaRepository} from "./interfaces/role-telemetria.repository";
 import type {TelemetriaSessaoRepository} from "./interfaces/telemetria-sessao.repository";
+import type {StoryLocalRepository} from "./interfaces/story-local.repository";
+import {
+  FirestoreStoryLocalRepository,
+} from "./firestore/firestore-story-local.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -95,3 +99,6 @@ export const roleTelemetriaRepository: RoleTelemetriaRepository =
 
 export const telemetriaSessaoRepository: TelemetriaSessaoRepository =
   new FirestoreTelemetriaSessaoRepository();
+
+export const storyLocalRepository: StoryLocalRepository =
+  new FirestoreStoryLocalRepository();

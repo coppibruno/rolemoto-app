@@ -9,4 +9,6 @@ export interface LocalRepository {
   listar(): Promise<Local[]>;
   buscarPorId(id: string): Promise<Local | null>;
   buscarPorIds(ids: string[]): Promise<Local[]>;
+  /** `true` quando esta chamada gravou o dia e deve disparar o push. */
+  reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
 }

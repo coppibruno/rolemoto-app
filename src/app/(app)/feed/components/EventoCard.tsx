@@ -43,6 +43,18 @@ export const EventoCard = ({ evento }: Props) => {
             <span className={styles.badgeAcesso}>
               {LABELS_ACESSO_EVENTO[evento.acesso]}
             </span>
+            {evento.aoVivo ? (
+              <Link
+                href={
+                  evento.localId
+                    ? `/locais/${evento.localId}?stories=1`
+                    : `/eventos/${evento.id}?stories=1`
+                }
+                className={styles.chipAoVivo}
+              >
+                Ao vivo
+              </Link>
+            ) : null}
             <SeloMediaAvaliacoes
               notaMedia={evento.notaMedia ?? 0}
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}

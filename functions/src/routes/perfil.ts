@@ -5,6 +5,7 @@ import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
+import {apagarStoriesDoUsuario} from "../lib/story-local";
 import {dispositivoRepository, usuarioRepository} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
@@ -317,6 +318,12 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await dispositivoRepository.removerPorUid(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover dispositivos", {uid, ...erroDe(error)});
+    }
+
+    try {
+      await apagarStoriesDoUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover stories", {uid, ...erroDe(error)});
     }
 
     try {

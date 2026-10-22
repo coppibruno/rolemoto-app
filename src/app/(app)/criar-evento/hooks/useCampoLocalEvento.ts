@@ -32,19 +32,22 @@ export const useCampoLocalEvento = () => {
   const [erroGps, setErroGps] = useState<string | undefined>();
   const [listaAberta, setListaAberta] = useState(false);
   const [vooId, setVooId] = useState(0);
+  const [nome, setNome] = useState("");
   const escolhendoRef = useRef(false);
   const reversoTimerRef = useRef<number | null>(null);
   const reversoSeqRef = useRef(0);
   const enderecoRef = useRef("");
   const latRef = useRef<number | null>(null);
   const lngRef = useRef<number | null>(null);
+  const nomeRef = useRef("");
   const pendenteMapaRef = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     enderecoRef.current = endereco;
     latRef.current = lat;
     lngRef.current = lng;
-  }, [endereco, lat, lng]);
+    nomeRef.current = nome;
+  }, [endereco, lat, lng, nome]);
 
   useEffect(() => {
     if (escolhendoRef.current) {
@@ -117,6 +120,8 @@ export const useCampoLocalEvento = () => {
     setEndereco(texto);
     setLat(null);
     setLng(null);
+    setNome("");
+    nomeRef.current = "";
     enderecoRef.current = texto;
     latRef.current = null;
     lngRef.current = null;
@@ -138,6 +143,8 @@ export const useCampoLocalEvento = () => {
     pendenteMapaRef.current = null;
     setResolvendoEndereco(false);
     gravarPonto(item.label, item.lat, item.lng);
+    setNome("");
+    nomeRef.current = "";
     setSugestoes([]);
     setListaAberta(false);
     setGpsStatus("idle");
@@ -185,7 +192,7 @@ export const useCampoLocalEvento = () => {
       endereco: enderecoRef.current,
       lat: latRef.current,
       lng: lngRef.current,
-      nome: "",
+      nome: nomeRef.current,
     };
   };
 
@@ -211,6 +218,8 @@ export const useCampoLocalEvento = () => {
       pendenteMapaRef.current = null;
       setResolvendoEndereco(false);
       gravarPonto(label, novaLat, novaLng);
+      setNome("");
+      nomeRef.current = "";
       setSugestoes([]);
       setGpsStatus("fixado");
       setVooId((n) => n + 1);
@@ -220,7 +229,30 @@ export const useCampoLocalEvento = () => {
     }
   };
 
-  const valor: LocalizacaoForm = { endereco, lat, lng, nome: "" };
+  const aplicarPontoOficial = (ponto: {
+    nome: string;
+    endereco: string;
+    lat: number;
+    lng: number;
+  }) => {
+    if (reversoTimerRef.current != null) {
+      window.clearTimeout(reversoTimerRef.current);
+      reversoTimerRef.current = null;
+    }
+    reversoSeqRef.current += 1;
+    pendenteMapaRef.current = null;
+    setResolvendoEndereco(false);
+    nomeRef.current = ponto.nome;
+    setNome(ponto.nome);
+    gravarPonto(ponto.endereco, ponto.lat, ponto.lng);
+    setSugestoes([]);
+    setListaAberta(false);
+    setGpsStatus("idle");
+    setErroGps(undefined);
+    setVooId((n) => n + 1);
+  };
+
+  const valor: LocalizacaoForm = { endereco, lat, lng, nome };
 
   return {
     valor,
@@ -235,6 +267,7 @@ export const useCampoLocalEvento = () => {
     escolher,
     atualizarDoMapa,
     resolverPontoPendente,
+    aplicarPontoOficial,
     fecharLista: () => setListaAberta(false),
     usarGps,
   };

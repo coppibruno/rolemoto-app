@@ -1,5 +1,7 @@
 "use client";
 
+import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
+import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useDetalheEvento } from "../hooks/useDetalheEvento";
 import { BlocoAtracoesEvento } from "./BlocoAtracoesEvento";
 import { BlocoAvaliacaoEvento } from "./BlocoAvaliacaoEvento";
@@ -19,15 +21,24 @@ type Props = {
 
 export const TelaDetalheEvento = ({ id }: Props) => {
   const { evento, carregando, erro } = useDetalheEvento(id);
+  const player = usePlayerDetalhe(Boolean(evento));
 
   if (carregando) return <EstadoCarregandoEvento />;
   if (erro || !evento) return <EstadoVazioEvento mensagem={erro} />;
+
+  const alvoAlbum = evento.localId
+    ? { tipo: "local" as const, id: evento.localId }
+    : { tipo: "evento" as const, id: evento.id };
 
   return (
     <div className={styles.tela}>
       <CabecalhoDetalheEvento id={evento.id} titulo={evento.titulo} />
       <main className={styles.conteudo}>
-        <HeroEvento evento={evento} />
+        <HeroEvento
+          evento={evento}
+          onAbrirStories={() => player.abrir(null)}
+          onStoryCriada={(storyId) => player.abrir(storyId)}
+        />
         <BlocoDataEvento evento={evento} />
         <BlocoIngressoEvento evento={evento} />
         <BlocoAtracoesEvento atracoes={evento.atracoes} />
@@ -36,6 +47,12 @@ export const TelaDetalheEvento = ({ id }: Props) => {
         <BlocoPresencasEvento evento={evento} />
         <BlocoAvaliacaoEvento evento={evento} />
       </main>
+      <PlayerStories
+        aberto={player.aberto}
+        alvo={alvoAlbum}
+        destaqueId={player.destaqueId}
+        onFechar={player.fechar}
+      />
     </div>
   );
 };

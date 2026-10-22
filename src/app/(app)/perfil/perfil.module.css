@@ -575,6 +575,177 @@
   font-size: 18px;
 }
 
+.cardPonto {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.cardPontoTopo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cardPontoFoto,
+.cardPontoFotoVazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  background: var(--surface-container-high);
+}
+
+.cardPontoTexto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
+.cardPontoTexto strong {
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--on-surface);
+}
+
+.cardPontoStatus {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
+.cardPontoErro {
+  margin: 0;
+  color: var(--error);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.botaoPontoSecundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid #353a44;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoPontoSecundario:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.inputStory {
+  display: none;
+}
+
+.botaoStory {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoStory:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.folhaStory {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chipMencao,
+.chipMencaoAtivo,
+.itemMencao {
+  min-height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, #3ddc84 16%, transparent);
+  color: #3ddc84;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.chipMencaoAtivo {
+  align-self: flex-start;
+  font-weight: 700;
+}
+
+.buscaMencao {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #353a44;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-size: 16px;
+}
+
+.listaMencao {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.itemMencao {
+  width: 100%;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+}
+
+.acoesStory {
+  display: flex;
+  gap: 8px;
+}
+
+.acoesStory .botaoPontoSecundario,
+.acoesStory .botaoStory {
+  flex: 1;
+}
+
 .cardCompletar {
   display: flex;
   align-items: center;

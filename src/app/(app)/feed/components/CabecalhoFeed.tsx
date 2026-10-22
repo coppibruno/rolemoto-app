@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "../feed.module.css";
 
 export const CabecalhoFeed = () => {
@@ -24,20 +24,14 @@ export const CabecalhoFeed = () => {
           />
         </h1>
 
-        <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">
-          {fotoUrl ? (
-            <img
-              src={fotoUrl}
-              alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
-              className={styles.avatarImg}
-              referrerPolicy="no-referrer"
-            />
-          ) : (
-            <span className={styles.avatarPlaceholder} aria-hidden>
-              <span className="material-symbols-outlined">account_circle</span>
-            </span>
-          )}
-        </Link>
+        {usuario ? (
+          <AvatarStories
+            uid={usuario.uid}
+            fotoUrl={fotoUrl}
+            nome={nome}
+            tamanho="header"
+          />
+        ) : null}
       </div>
     </header>
   );

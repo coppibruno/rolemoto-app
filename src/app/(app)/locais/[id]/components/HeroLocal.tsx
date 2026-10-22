@@ -6,17 +6,22 @@ import {
 } from "@/app/(app)/feed/constants";
 import { labelStatusAberto } from "@/lib/horario-local";
 import type { LocalDetalhe } from "@/types/local";
+import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
+import { AnelCapaStory } from "@/app/(app)/feed/components/AnelCapaStory";
 import { CTA_VER_REVIEWS } from "../constants";
 import { BotaoFavoritoHero } from "./BotaoFavoritoHero";
 import styles from "../local-detalhe.module.css";
 
 type Props = {
   local: LocalDetalhe;
+  onAbrirStories: () => void;
+  onStoryCriada: (storyId: string) => void;
 };
 
-export const HeroLocal = ({ local }: Props) => {
+export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
   const status = labelStatusAberto(local);
   const aberto = status !== "Fechado";
+  const nomeStory = local.eventoAoVivo?.titulo ?? local.nome;
 
   return (
     <section className={styles.hero}>
@@ -29,6 +34,16 @@ export const HeroLocal = ({ local }: Props) => {
           </span>
         )}
         <div className={styles.heroGradiente} />
+        {local.storiesAtivas > 0 ? (
+          <div className={styles.anelHero}>
+            <AnelCapaStory
+              alvo={{ tipo: "local", id: local.id }}
+              nome={nomeStory}
+              contagem={local.storiesAtivas}
+              onAbrir={onAbrirStories}
+            />
+          </div>
+        ) : null}
         <div className={styles.heroTopo}>
           <span
             className={`${styles.badgeStatus} ${aberto ? styles.badgeAberto : styles.badgeFechado}`}
@@ -44,6 +59,10 @@ export const HeroLocal = ({ local }: Props) => {
         </div>
       </div>
       <div className={styles.heroCorpo}>
+        <BotaoPostarStory
+          alvo={{ tipo: "local", id: local.id }}
+          onCriada={(story) => onStoryCriada(story.id)}
+        />
         <span className={styles.badgeCategoria}>
           <span className="material-symbols-outlined" aria-hidden>
             {ICONES_CATEGORIA_LOCAL[local.categoria]}

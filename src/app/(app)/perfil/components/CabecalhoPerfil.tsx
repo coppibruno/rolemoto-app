@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { useAuth } from "@/hooks/useAuth";
+import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "../perfil.module.css";
 
 type Props = {
@@ -9,6 +11,8 @@ type Props = {
 };
 
 export const CabecalhoPerfil = ({ fotoUrl, nome }: Props) => {
+  const { usuario } = useAuth();
+
   return (
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
@@ -26,15 +30,13 @@ export const CabecalhoPerfil = ({ fotoUrl, nome }: Props) => {
           </div>
         </div>
 
-        {fotoUrl ? (
-          <span className={styles.avatarHeaderWrap}>
-            <img
-              src={fotoUrl}
-              alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
-              className={styles.avatarHeader}
-              referrerPolicy="no-referrer"
-            />
-          </span>
+        {usuario ? (
+          <AvatarStories
+            uid={usuario.uid}
+            fotoUrl={fotoUrl}
+            nome={nome}
+            tamanho="header"
+          />
         ) : null}
       </div>
     </header>

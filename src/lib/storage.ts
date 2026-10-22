@@ -64,3 +64,17 @@ export const uploadFotoAvaliacao = async (
   await uploadBytes(storageRef, file);
   return getDownloadURL(storageRef);
 };
+
+export const uploadFotoStory = async (
+  album: "local" | "evento" | "perfil",
+  alvoId: string,
+  uid: string,
+  file: File,
+): Promise<string> => {
+  const id = crypto.randomUUID();
+  const pasta = album === "local" ? "stories/locais" : album === "evento" ? "stories/eventos" : "stories/perfil";
+  const caminho = album === "perfil" ? `${pasta}/${uid}/${id}.jpg` : `${pasta}/${alvoId}/${uid}/${id}.jpg`;
+  const storageRef = ref(storage, caminho);
+  await uploadBytes(storageRef, file);
+  return getDownloadURL(storageRef);
+};

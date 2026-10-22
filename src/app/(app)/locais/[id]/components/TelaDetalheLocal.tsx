@@ -1,5 +1,7 @@
 "use client";
 
+import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
+import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useDetalheLocal } from "../hooks/useDetalheLocal";
 import { BlocoAvaliacaoLocal } from "./BlocoAvaliacaoLocal";
 import { BlocoCheckinLocal } from "./BlocoCheckinLocal";
@@ -17,6 +19,7 @@ type Props = {
 
 export const TelaDetalheLocal = ({ id }: Props) => {
   const { local, carregando, erro } = useDetalheLocal(id);
+  const player = usePlayerDetalhe(Boolean(local));
 
   if (carregando) return <EstadoCarregandoLocal />;
   if (erro || !local) return <EstadoVazioLocal mensagem={erro} />;
@@ -25,13 +28,23 @@ export const TelaDetalheLocal = ({ id }: Props) => {
     <div className={styles.tela}>
       <CabecalhoDetalheLocal id={local.id} nome={local.nome} />
       <main className={styles.conteudo}>
-        <HeroLocal local={local} />
+        <HeroLocal
+          local={local}
+          onAbrirStories={() => player.abrir(null)}
+          onStoryCriada={(storyId) => player.abrir(storyId)}
+        />
         <BlocoCheckinLocal local={local} />
         <BlocoHorariosLocal local={local} />
         <BlocoFacilidadesLocal facilidades={local.facilidades} />
         <BlocoLocalizacaoLocal local={local} />
         <BlocoAvaliacaoLocal local={local} />
       </main>
+      <PlayerStories
+        aberto={player.aberto}
+        alvo={{ tipo: "local", id: local.id }}
+        destaqueId={player.destaqueId}
+        onFechar={player.fechar}
+      />
     </div>
   );
 };

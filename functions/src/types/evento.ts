@@ -22,6 +22,8 @@ export interface Evento {
   titulo: string;
   tipo: TipoEvento;
   local: Localizacao;
+  /** Ponto do catálogo. Docs antigos sem o campo são `null`. */
+  localId: string | null;
   dataHoraAbertura: string;
   dataHoraEncerramento: string | null;
   acesso: AcessoEvento;
@@ -55,6 +57,8 @@ export type EventoFeedItem = Evento & {
   inscrito: boolean;
   avaliado: boolean;
   participantes: ParticipantesBloco;
+  /** Há story ativa no álbum que o encontro abre. */
+  aoVivo: boolean;
 };
 
 export type EventoDetalhe = Evento & {
@@ -62,6 +66,8 @@ export type EventoDetalhe = Evento & {
   inscritos: {total: number};
   avaliado: boolean;
   participantes: ParticipantesBloco;
+  storiesAtivas: number;
+  podePostarStory: boolean;
 };
 
 export const TIPOS_EVENTO: TipoEvento[] = [

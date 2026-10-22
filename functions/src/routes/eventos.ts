@@ -5,7 +5,7 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {filtrarEventosFeed} from "../lib/feed-filtros";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
-import {log} from "../lib/log";
+import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
 import {
   ERRO_LOCALIZACAO_FORA_DO_SUL,
@@ -20,11 +20,14 @@ import {
 import {resolverIntervaloQuando} from "../lib/quando";
 import {
   eventoRepository,
+  localRepository,
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
 } from "../repositories";
+import {aoVivoPorEvento, detalheStoriesEvento, eventoEstaAoVivo} from "../lib/story-local";
 import {inscricaoEventoRouter} from "./inscricao-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
+import {storiesEventoRouter} from "./stories-evento";
 import type {Localizacao} from "../types/role";
 import {
   ACESSOS_EVENTO,
@@ -53,6 +56,7 @@ eventosRouter.use(autenticar);
 eventosRouter.use(rateLimitAutenticado);
 eventosRouter.use(inscricaoEventoRouter);
 eventosRouter.use(avaliacaoEventoRouter);
+eventosRouter.use(storiesEventoRouter);
 
 const idFeedbackEvento = (usuarioId: string, eventoId: string): string =>
   `${usuarioId}_${eventoId}`;
@@ -308,8 +312,66 @@ const validarBody = (body: unknown): ResultadoValidacao => {
       atracoes,
       fotoCapaUrl: bruto.fotoCapaUrl.trim(),
       informacoes,
+      localId: null,
     },
   };
+};
+
+const resolverLocalIdPost = async (
+  body: unknown,
+): Promise<{ok: true; localId: string | null} | {ok: false; erro: string}> => {
+  if (!body || typeof body !== "object") {
+    return {ok: true, localId: null};
+  }
+  const valor = (body as Record<string, unknown>).localId;
+  if (valor === undefined || valor === null || valor === "") {
+    return {ok: true, localId: null};
+  }
+  if (typeof valor !== "string") {
+    return {ok: false, erro: "local não encontrado"};
+  }
+  const local = await localRepository.buscarPorId(valor.trim());
+  if (!local) {
+    return {ok: false, erro: "local não encontrado"};
+  }
+  return {ok: true, localId: local.id};
+};
+
+const resolverLocalIdPatch = async (
+  body: unknown,
+): Promise<{ok: true; localId: string | null} | {ok: false; erro: string}> => {
+  if (!body || typeof body !== "object" || !("localId" in body)) {
+    return {ok: false, erro: "localId é obrigatório"};
+  }
+  const valor = (body as Record<string, unknown>).localId;
+  if (valor === null) {
+    return {ok: true, localId: null};
+  }
+  if (typeof valor !== "string") {
+    return {ok: false, erro: "localId é obrigatório"};
+  }
+  const id = valor.trim();
+  if (!id) {
+    return {ok: false, erro: "local não encontrado"};
+  }
+  const local = await localRepository.buscarPorId(id);
+  if (!local) {
+    return {ok: false, erro: "local não encontrado"};
+  }
+  return {ok: true, localId: local.id};
+};
+
+const comAoVivo = async <T extends {id: string; localId: string | null}>(
+  itens: T[],
+): Promise<Array<T & {aoVivo: boolean}>> => {
+  if (itens.length === 0) {
+    return [];
+  }
+  const mapa = await aoVivoPorEvento(itens);
+  return itens.map((item) => ({
+    ...item,
+    aoVivo: mapa.get(item.id) ?? false,
+  }));
 };
 
 eventosRouter.get("/", async (req: Request, res: Response) => {
@@ -333,8 +395,9 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
         enriquecerParticipantesEventos(eventos.map((e) => e.id)),
       ]);
       const comAvaliado = await marcarAvaliados(comInscrito, uid);
+      const comStory = await comAoVivo(comAvaliado);
       res.json(
-        comAvaliado.map((item) => ({
+        comStory.map((item) => ({
           ...item,
           participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
         })),
@@ -357,8 +420,9 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
       enriquecerParticipantesEventos(itens.map((e) => e.id)),
     ]);
     const comAvaliado = await marcarAvaliados(comInscrito, uid);
+    const comStory = await comAoVivo(comAvaliado);
     res.json(
-      comAvaliado.map((item) => ({
+      comStory.map((item) => ({
         ...item,
         participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
       })),
@@ -402,11 +466,15 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const [inscricao, total, feedback, participantes] = await Promise.all([
+    const [inscricao, total, feedback, participantes, stories] = await Promise.all([
       usuarioEventoRepository.buscarPorUsuarioEEvento(uid, evento.id),
       usuarioEventoRepository.contarPorEvento(evento.id),
       usuarioEventoFeedbackRepository.buscarPorUsuarioEEvento(uid, evento.id),
       blocoParticipantesEvento(evento.id),
+      detalheStoriesEvento(evento).catch((error) => {
+        log.warn("Evento", "Stories do detalhe indisponíveis", erroDe(error));
+        return {storiesAtivas: 0, podePostarStory: eventoEstaAoVivo(evento)};
+      }),
     ]);
 
     res.json({
@@ -415,6 +483,8 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       inscritos: {total},
       avaliado: feedback !== null,
       participantes,
+      storiesAtivas: stories.storiesAtivas,
+      podePostarStory: stories.podePostarStory,
     });
   } catch (error) {
     responderErro(res, error);
@@ -435,12 +505,46 @@ eventosRouter.post("/", exigirAdmin, async (req: Request, res: Response) => {
       return;
     }
 
+    const localId = await resolverLocalIdPost(req.body);
+    if (!localId.ok) {
+      res.status(400).json({erro: localId.erro});
+      return;
+    }
+
     const criado = await eventoRepository.criar({
       ...validado.dados,
+      localId: localId.localId,
       criadorId: uid,
     });
     log.info("Evento", "Evento criado", {eventoId: criado.id, criadorId: uid});
     res.status(201).json(criado);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+eventosRouter.patch("/:id", exigirAdmin, async (req: Request, res: Response) => {
+  try {
+    if (!req.usuario?.uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    const localId = await resolverLocalIdPatch(req.body);
+    if (!localId.ok) {
+      res.status(400).json({erro: localId.erro});
+      return;
+    }
+
+    const atualizado = await eventoRepository.atualizarLocalId(
+      param(req, "id"),
+      localId.localId,
+    );
+    if (!atualizado) {
+      res.status(404).json({erro: "Evento não encontrado"});
+      return;
+    }
+    res.json(atualizado);
   } catch (error) {
     responderErro(res, error);
   }

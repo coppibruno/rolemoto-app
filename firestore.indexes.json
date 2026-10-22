@@ -93,6 +93,58 @@
       ]
     },
     {
+      "collectionGroup": "userslocalfavorito",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "localId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "eventos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "localId", "order": "ASCENDING" },
+        { "fieldPath": "dataHoraAbertura", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "album", "order": "ASCENDING" },
+        { "fieldPath": "localId", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "album", "order": "ASCENDING" },
+        { "fieldPath": "eventoId", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId", "order": "ASCENDING" },
+        { "fieldPath": "localId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "usuarioId", "order": "ASCENDING" },
+        { "fieldPath": "eventoId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "rolestelemetria",
       "queryScope": "COLLECTION",
       "fields": [

@@ -5,6 +5,7 @@ import {
 import type { PerfilPublico } from "@/types/perfil-publico";
 import type { Pilotagem } from "@/types/user";
 import { FaixaSelos } from "./FaixaSelos";
+import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "../perfil-publico.module.css";
 
 type Props = {
@@ -23,18 +24,12 @@ export const CartaoPiloto = ({ perfil }: Props) => {
   return (
     <section className={styles.cartaoPiloto} aria-label="Identidade do piloto">
       <div className={styles.identidade}>
-        {perfil.fotoUrl ? (
-          <img
-            src={perfil.fotoUrl}
-            alt={`Foto de ${perfil.nome}`}
-            className={styles.avatar}
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <span className={styles.avatarPlaceholder} aria-hidden>
-            <span className="material-symbols-outlined">person</span>
-          </span>
-        )}
+        <AvatarStories
+          uid={perfil.uid}
+          fotoUrl={perfil.fotoUrl}
+          nome={perfil.nome}
+          tamanho="cartao"
+        />
         <div className={styles.identidadeTextos}>
           <span className={styles.nome}>{perfil.nome}</span>
           {perfil.apelido ? <span className={styles.apelido}>@{perfil.apelido}</span> : null}

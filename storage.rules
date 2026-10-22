@@ -45,5 +45,26 @@ service firebase.storage {
         && (alvoTipo == 'local' || alvoTipo == 'evento')
         && imagemValida();
     }
+
+    match /stories/locais/{alvoId}/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
+
+    match /stories/eventos/{alvoId}/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
+
+    match /stories/perfil/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
   }
 }

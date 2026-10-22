@@ -9,7 +9,8 @@ export type TipoPush =
   | "pedido_vaga"
   | "aceite_vaga"
   | "lembrete_role"
-  | "cancelamento_role";
+  | "cancelamento_role"
+  | "story_local";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -17,6 +18,8 @@ type PayloadPush = {
   body: string;
   url: string;
   roleId: string;
+  localId: string;
+  eventoId: string;
 };
 
 const COPY = {
@@ -128,6 +131,8 @@ const mensagemWeb = (
     tipo: payload.tipo,
     url: payload.url,
     roleId: payload.roleId,
+    localId: payload.localId,
+    eventoId: payload.eventoId,
     title: payload.title,
     body: payload.body,
     icon,
@@ -153,6 +158,8 @@ const mensagemNativa = (
     tipo: payload.tipo,
     url: payload.url,
     roleId: payload.roleId,
+    localId: payload.localId,
+    eventoId: payload.eventoId,
     title: payload.title,
     body: payload.body,
   },
@@ -274,6 +281,8 @@ export const notificarPedidoVaga = async (
     body: titulo,
     url: "/aprovacoes",
     roleId,
+    localId: "",
+    eventoId: "",
   });
 };
 
@@ -288,6 +297,8 @@ export const notificarAceite = async (
     body: titulo,
     url: `/roles/${roleId}/participar`,
     roleId,
+    localId: "",
+    eventoId: "",
   });
 };
 
@@ -302,6 +313,8 @@ export const notificarLembrete = async (
     body: titulo,
     url: `/roles/${roleId}/participar`,
     roleId,
+    localId: "",
+    eventoId: "",
   });
 };
 
@@ -317,5 +330,37 @@ export const notificarCancelamentoRole = async (
     body: `${titulo} foi cancelado pelo organizador.`,
     url: "/meus-roles",
     roleId,
+    localId: "",
+    eventoId: "",
   });
+};
+
+const LOTE_PUSH = 8;
+
+/** Um envio por uid. Falha de um não aborta os outros nem o POST da story. */
+export const notificarStory = async (
+  uids: string[],
+  title: string,
+  body: string,
+  url: string,
+  refs: {localId: string; eventoId: string},
+): Promise<void> => {
+  for (let i = 0; i < uids.length; i += LOTE_PUSH) {
+    const lote = uids.slice(i, i + LOTE_PUSH);
+    await Promise.all(lote.map(async (uid) => {
+      try {
+        await enviar(uid, {
+          tipo: "story_local",
+          title,
+          body,
+          url,
+          roleId: "",
+          localId: refs.localId,
+          eventoId: refs.eventoId,
+        });
+      } catch (error) {
+        log.warn("Push", "Falha ao notificar story", {uid, ...erroDe(error)});
+      }
+    }));
+  }
 };

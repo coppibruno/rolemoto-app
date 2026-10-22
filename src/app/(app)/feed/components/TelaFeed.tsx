@@ -134,6 +134,8 @@ export const TelaFeed = () => {
             carregando={listaEventos.carregando}
             erro={listaEventos.erro}
             semPonto={semPonto}
+            ponto={localizacao.ponto}
+            raioKm={filtros.raioKm}
             onTentarDeNovo={listaEventos.recarregar}
           />
         ) : null}
@@ -144,6 +146,8 @@ export const TelaFeed = () => {
             carregando={listaLocais.carregando}
             erro={listaLocais.erro}
             semPonto={semPonto}
+            ponto={localizacao.ponto}
+            raioKm={filtros.raioKm}
             onTentarDeNovo={listaLocais.recarregar}
           />
         ) : null}

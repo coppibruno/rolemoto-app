@@ -100,6 +100,7 @@ Sem `aceito` / fila: evento grátis confirma na hora com `POST /eventos/:id/insc
   titulo: string,
   tipo: 'moto_point_semanal' | 'track_day' | 'cafe_pilotos' | 'exposicao_custom',
   local: { lat: number, lng: number, endereco: string, nome: string },
+  localId: string | null,         // ponto do catálogo; null = álbum próprio do evento
   dataHoraAbertura: timestamp,
   dataHoraEncerramento: timestamp | null,
   acesso: 'gratis' | 'ingresso',
@@ -112,12 +113,13 @@ Sem `aceito` / fila: evento grátis confirma na hora com `POST /eventos/:id/insc
   totalAvaliacoes: number,
   recomendacoesComboio: number,
   somaNotas: number,              // interno; NÃO expor na API
+  storyPushYmd: string,           // interno; 1º push do dia no álbum do local
   createdAt: timestamp,
   updatedAt: timestamp
 }
 ```
 
-Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`) e se inscreve (`POST|GET|DELETE /eventos/:id/inscricao`). Avalia após encerrar (`POST|GET /eventos/:id/avaliacoes`, `GET /eventos/:id/avaliacao`). Não misturar com a coleção `roles`.
+Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`) e se inscreve (`POST|GET|DELETE /eventos/:id/inscricao`). Avalia após encerrar (`POST|GET /eventos/:id/avaliacoes`, `GET /eventos/:id/avaliacao`). `localId` opcional aponta para um local do catálogo: as stories do encontro vão para o álbum desse ponto. Sem o campo, o evento tem o próprio álbum. Não misturar com a coleção `roles`.
 
 ### Coleção `locais` (pontos oficiais permanentes)
 ```
@@ -140,6 +142,7 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
   totalAvaliacoes: number,
   recomendacoesComboio: number,
   somaNotas: number,              // interno; NÃO expor na API
+  storyPushYmd: string,           // interno; 1º push do dia neste ponto
   createdAt: timestamp,
   updatedAt: timestamp
 }
@@ -173,6 +176,40 @@ Um doc por par. Garagem lista favoritos em `GET /meus-roles/locais` (default). V
 ```
 
 Qualquer autenticado cria via `POST /locais/:id/checkin` `{ lat, lng, accuracy }` — servidor valida raio 400 m, precisão ≤ 80 m e cooldown 24 h por par. `GET /locais/:id` inclui `checkinProprio`. Selos (ids) ficam denormalizados em `users`; a API pública só devolve `{ id, label }[]`. Sem timeline.
+
+### Coleção `userslocalstory` (foto que some em 24 h)
+
+```
+{
+  id: string,                  // autoId
+  usuarioId: string,
+  album: 'local' | 'evento',   // local exige localId; evento exige eventoId e localId null
+  localId: string | null,
+  eventoId: string | null,
+  fotoUrl: string,
+  storagePath: string,
+  createdAt: timestamp,
+  expiresAt: timestamp         // createdAt + 24 h
+}
+```
+
+Qualquer autenticado no raio (400 m, precisão ≤ 80 m) posta em `POST /locais/:id/stories` ou, com o encontro ao vivo, em `POST /eventos/:id/stories`. Também pode postar no próprio perfil em `POST /stories` e marcar um local ou evento com @nome: a foto entra no álbum daquele lugar e, ao abrir o status da pessoa, aparecem as fotos que os outros marcaram no mesmo ponto. Sem marca, o álbum é `perfil` e só aparece no status dela. Evento com `localId` grava no álbum do local. Lat/lng do piloto não são persistidos. `GET /stories/ao-vivo?aba=locais|eventos` monta a faixa. Push `story_local` só na primeira foto do dia (`storyPushYmd`, America/Sao_Paulo).
+
+### Coleção `userslocalstoryvisto`
+
+```
+{
+  id: string,                  // `{usuarioId}_local_{localId}` ou `{usuarioId}_evento_{eventoId}`
+  usuarioId: string,
+  album: 'local' | 'evento',
+  localId: string | null,
+  eventoId: string | null,
+  vistoAte: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Um doc por par uid+álbum. `vistoAte` só avança.
 
 ### Coleção `userslocalfeedback` / `userseventofeedback`
 ```

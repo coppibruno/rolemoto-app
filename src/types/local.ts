@@ -1,3 +1,5 @@
+import type { EventoAoVivoResumo } from "./story-local";
+
 export type CategoriaLocal =
   | "posto"
   | "bar_moto_point"
@@ -64,6 +66,8 @@ export type LocalDetalhe = Local & {
   avaliado: boolean;
   favorito: boolean;
   checkinProprio: boolean;
+  storiesAtivas: number;
+  eventoAoVivo: EventoAoVivoResumo | null;
 };
 
 export type HorarioDiaForm = {

@@ -7,6 +7,7 @@ import type {
   FiltroListagemEventos,
 } from "../interfaces/evento.repository";
 import {toIso, toIsoOrNull, toTimestamp} from "./mapper";
+import {reservarYmd} from "./reservar-ymd";
 
 const COLECAO = "eventos";
 const LIMITE_LISTAGEM = 200;
@@ -34,6 +35,9 @@ const toEvento = (snap: DocumentSnapshot): Evento => {
       endereco: String(data.local?.endereco ?? ""),
       nome: String(data.local?.nome ?? ""),
     },
+    localId: typeof data.localId === "string" && data.localId ?
+      data.localId :
+      null,
     dataHoraAbertura: toIso(data.dataHoraAbertura),
     dataHoraEncerramento: toIsoOrNull(data.dataHoraEncerramento),
     acesso: data.acesso === "ingresso" ? "ingresso" : "gratis",
@@ -61,6 +65,7 @@ export class FirestoreEventoRepository implements EventoRepository {
       titulo: dados.titulo,
       tipo: dados.tipo,
       local: dados.local,
+      localId: dados.localId,
       dataHoraAbertura: toTimestamp(dados.dataHoraAbertura),
       dataHoraEncerramento: dados.dataHoraEncerramento ?
         toTimestamp(dados.dataHoraEncerramento) :
@@ -138,5 +143,35 @@ export class FirestoreEventoRepository implements EventoRepository {
       }
     }
     return encontrados;
+  }
+
+  async listarPorLocalId(localId: string, limite: number): Promise<Evento[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("localId", "==", localId)
+      .orderBy("dataHoraAbertura", "desc")
+      .limit(limite)
+      .get();
+    return snap.docs.map(toEvento);
+  }
+
+  async atualizarLocalId(
+    id: string,
+    localId: string | null,
+  ): Promise<Evento | null> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      return null;
+    }
+    await ref.update({
+      localId,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    return this.buscarPorId(id);
+  }
+
+  async reservarPushDoDia(id: string, ymd: string): Promise<boolean> {
+    return reservarYmd(COLECAO, id, ymd);
   }
 }

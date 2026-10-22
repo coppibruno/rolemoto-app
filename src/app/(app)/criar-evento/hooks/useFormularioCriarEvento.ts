@@ -37,6 +37,7 @@ export const useFormularioCriarEvento = () => {
   const [linkIngresso, setLinkIngresso] = useState("");
   const [atracoes, setAtracoes] = useState<AtracaoEvento[]>([]);
   const [informacoes, setInformacoes] = useState("");
+  const [pontoOficialId, setPontoOficialId] = useState<string | null>(null);
   const [erros, setErros] = useState<ErrosCriarEvento>({});
   const [publicando, setPublicando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
@@ -117,6 +118,7 @@ export const useFormularioCriarEvento = () => {
         atracoes,
         fotoCapaUrl,
         informacoes: informacoes.trim(),
+        localId: pontoOficialId,
       });
       setSucesso(true);
       redirectRef.current = window.setTimeout(() => {
@@ -156,6 +158,8 @@ export const useFormularioCriarEvento = () => {
     informacoes,
     setInformacoes,
     foto,
+    pontoOficialId,
+    setPontoOficialId,
     erros,
     publicando,
     sucesso,

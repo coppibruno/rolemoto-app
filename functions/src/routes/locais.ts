@@ -5,8 +5,9 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {filtrarLocaisFeed} from "../lib/feed-filtros";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
-import {log} from "../lib/log";
+import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
+import {buscarPontoProximo} from "../lib/ponto-proximo";
 import {
   ERRO_LOCALIZACAO_FORA_DO_SUL,
   pontoEstaNoSul,
@@ -17,9 +18,11 @@ import {
   usuarioLocalFeedbackRepository,
   usuarioRepository,
 } from "../repositories";
+import {detalheStoriesLocal} from "../lib/story-local";
 import {avaliacaoLocalRouter} from "./avaliacao-local";
 import {checkinLocalRouter} from "./checkin-local";
 import {favoritoLocalRouter} from "./favorito-local";
+import {storiesLocalRouter} from "./stories-local";
 import type {
   CategoriaLocal,
   DiaSemana,
@@ -37,6 +40,7 @@ import {
  * REST de locais oficiais (pontos permanentes).
  *
  * GET    /locais
+ * GET    /locais/proximo
  * GET    /locais/:id
  * POST   /locais   (admin do documento users)
  * GET|POST /locais/:id/avaliacoes
@@ -51,6 +55,7 @@ locaisRouter.use(rateLimitAutenticado);
 locaisRouter.use(avaliacaoLocalRouter);
 locaisRouter.use(checkinLocalRouter);
 locaisRouter.use(favoritoLocalRouter);
+locaisRouter.use(storiesLocalRouter);
 
 const idFeedbackLocal = (usuarioId: string, localId: string): string =>
   `${usuarioId}_${localId}`;
@@ -298,6 +303,36 @@ locaisRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+const numeroQuery = (valor: unknown): number => {
+  const bruto = Array.isArray(valor) ? valor[0] : valor;
+  return typeof bruto === "string" || typeof bruto === "number" ?
+    Number(bruto) :
+    Number.NaN;
+};
+
+locaisRouter.get("/proximo", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    const resultado = await buscarPontoProximo(uid, {
+      lat: numeroQuery(req.query.lat),
+      lng: numeroQuery(req.query.lng),
+      accuracy: numeroQuery(req.query.accuracy),
+    });
+    if (!resultado.ok) {
+      res.status(400).json({erro: resultado.erro});
+      return;
+    }
+    res.json({ponto: resultado.ponto});
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
 locaisRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     const uid = req.usuario?.uid;
@@ -312,16 +347,22 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const [feedback, favorito, agregado] = await Promise.all([
+    const [feedback, favorito, agregado, stories] = await Promise.all([
       usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(uid, local.id),
       usuarioLocalFavoritoRepository.buscarPorUsuarioELocal(uid, local.id),
       usuarioRepository.buscarAgregadoCheckin(uid),
+      detalheStoriesLocal(local.id).catch((error) => {
+        log.warn("Local", "Stories do detalhe indisponíveis", erroDe(error));
+        return {storiesAtivas: 0, eventoAoVivo: null};
+      }),
     ]);
     res.json({
       ...local,
       avaliado: feedback !== null,
       favorito: favorito !== null,
       checkinProprio: Boolean(agregado?.locaisVisitadosIds.includes(local.id)),
+      storiesAtivas: stories.storiesAtivas,
+      eventoAoVivo: stories.eventoAoVivo,
     });
   } catch (error) {
     responderErro(res, error);

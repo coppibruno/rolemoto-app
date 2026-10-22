@@ -11,6 +11,7 @@ import type {
 import {DIAS_SEMANA} from "../../types/local";
 import type {LocalRepository} from "../interfaces/local.repository";
 import {toIso} from "./mapper";
+import {reservarYmd} from "./reservar-ymd";
 
 const COLECAO = "locais";
 const CHUNK = 100;
@@ -148,5 +149,9 @@ export class FirestoreLocalRepository implements LocalRepository {
       }
     }
     return encontrados;
+  }
+
+  async reservarPushDoDia(id: string, ymd: string): Promise<boolean> {
+    return reservarYmd(COLECAO, id, ymd);
   }
 }

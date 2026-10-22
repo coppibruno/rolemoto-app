@@ -5,7 +5,7 @@ export type IntervaloQuando = {
   dataFimIso?: string;
 };
 
-const ymdSaoPaulo = (data: Date): string =>
+export const ymdSaoPaulo = (data: Date): string =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: TZ,
     year: "numeric",

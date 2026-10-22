@@ -85,6 +85,21 @@ implements UsuarioLocalFavoritoRepository {
     return itens.map((item) => item.localId);
   }
 
+  async listarUsuarioIdsPorLocal(
+    localId: string,
+    limite: number,
+  ): Promise<string[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("localId", "==", localId)
+      .orderBy("createdAt", "desc")
+      .limit(limite)
+      .get();
+    return snap.docs
+      .map((doc) => String(doc.get("usuarioId") ?? ""))
+      .filter(Boolean);
+  }
+
   async contarPorUsuario(usuarioId: string): Promise<number> {
     const snap = await firestore
       .collection(COLECAO)

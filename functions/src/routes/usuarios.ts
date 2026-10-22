@@ -6,6 +6,12 @@ import {apelidoExibicao} from "../lib/apelido";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
+import {
+  apagarStoryPerfil,
+  contarStoriesUsuario,
+  listarStoriesUsuario,
+  marcarVistoPerfil,
+} from "../lib/story-local";
 import {roleTelemetriaRepository, usuarioRepository} from "../repositories";
 import type {PerfilPublico, Usuario} from "../types/usuario";
 
@@ -13,6 +19,7 @@ import type {PerfilPublico, Usuario} from "../types/usuario";
  * Perfil público de qualquer piloto autenticado.
  *
  * GET /usuarios/:uid
+ * GET /usuarios/:uid/stories
  * GET /usuarios/:uid/historico
  * GET /usuarios/:uid/telemetria
  */
@@ -75,6 +82,78 @@ usuariosRouter.get("/:uid/historico", async (req: Request, res: Response) => {
     }
 
     res.json(await carregarHistoricoPublico(uid));
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+const storyIdDoBody = (body: unknown): string => {
+  if (!body || typeof body !== "object") {
+    return "";
+  }
+  const valor = (body as Record<string, unknown>).storyId;
+  return typeof valor === "string" ? valor.trim() : "";
+};
+
+usuariosRouter.get("/:uid/stories", async (req: Request, res: Response) => {
+  try {
+    if (!req.usuario?.uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const uid = lerUid(req);
+    const perfil = await usuarioRepository.buscarPorId(uid);
+    if (!perfil) {
+      res.status(404).json({erro: "Perfil não encontrado"});
+      return;
+    }
+    if (req.query.resumo === "1") {
+      res.json({storiesAtivas: await contarStoriesUsuario(uid)});
+      return;
+    }
+    res.json(await listarStoriesUsuario(uid));
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+usuariosRouter.post("/:uid/stories/visto", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const storyId = storyIdDoBody(req.body);
+    if (!storyId) {
+      res.status(404).json({erro: "Story não encontrada"});
+      return;
+    }
+    const resultado = await marcarVistoPerfil(uid, lerUid(req), storyId);
+    if (!resultado.ok) {
+      res.status(resultado.status).json({erro: resultado.erro});
+      return;
+    }
+    res.status(204).send();
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+usuariosRouter.delete("/:uid/stories/:storyId", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid || uid !== lerUid(req)) {
+      res.status(403).json({erro: "só o autor apaga"});
+      return;
+    }
+    const storyId = typeof req.params.storyId === "string" ? req.params.storyId : "";
+    const resultado = await apagarStoryPerfil(uid, storyId);
+    if (!resultado.ok) {
+      res.status(resultado.status).json({erro: resultado.erro});
+      return;
+    }
+    res.status(204).send();
   } catch (error) {
     responderErro(res, error);
   }

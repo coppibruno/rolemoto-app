@@ -31,9 +31,14 @@
  * - /eventos/:id/avaliacoes → GET, POST
  * - /eventos/:id/avaliacao → GET, PATCH
  * - /locais  → GET, POST
+ * - /locais/proximo → GET
  * - /locais/:id/avaliacoes → GET, POST
  * - /locais/:id/avaliacao → GET, PATCH
  * - /locais/:id/favorito → POST, DELETE
+ * - /locais/:id/stories → GET, POST, DELETE
+ * - /eventos/:id/stories → GET, POST, DELETE
+ * - /stories/ao-vivo → GET
+ * - /interno/stories/expirar → POST (Scheduler, sem Bearer)
  * - /feed/contagens → GET
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
@@ -59,6 +64,8 @@ import {eventosRouter} from "./routes/eventos";
 import {locaisRouter} from "./routes/locais";
 import {feedRouter} from "./routes/feed";
 import {telemetriaRouter} from "./routes/telemetria";
+import {storiesAoVivoRouter} from "./routes/stories-ao-vivo";
+import {internoRouter} from "./routes/stories-expirar";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -103,10 +110,15 @@ app.get("/", (_req: Request, res: Response) => {
       "/eventos/:id/avaliacoes",
       "/eventos/:id/avaliacao",
       "/locais",
+      "/locais/proximo",
       "/locais/:id",
       "/locais/:id/avaliacoes",
       "/locais/:id/avaliacao",
       "/locais/:id/favorito",
+      "/locais/:id/stories",
+      "/eventos/:id/stories",
+      "/stories/ao-vivo",
+      "/interno/stories/expirar",
       "/feed/contagens",
     ],
   });
@@ -126,5 +138,7 @@ app.use("/eventos", eventosRouter);
 app.use("/locais", locaisRouter);
 app.use("/feed", feedRouter);
 app.use("/telemetria", telemetriaRouter);
+app.use("/stories", storiesAoVivoRouter);
+app.use("/interno", internoRouter);
 
 export const api = onRequest({cors: corsOrigins()}, app);

@@ -1,0 +1,152 @@
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  background: #050505;
+  color: #fff;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.topo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 0;
+}
+
+.barras {
+  display: flex;
+  gap: 4px;
+}
+
+.trilho {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+}
+
+.preenchimento {
+  display: block;
+  height: 100%;
+  background: #fff;
+}
+
+.cabeca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fechar,
+.apagar,
+.confirmar,
+.cancelar {
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.fechar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-left: -8px;
+  border-radius: 999px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+  background: #222;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.apelido {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.mencao {
+  font-size: 13px;
+  line-height: 16px;
+  color: #3ddc84;
+}
+
+.tempo {
+  font-size: 12px;
+  line-height: 16px;
+  opacity: 0.75;
+}
+
+.apagar {
+  min-height: 48px;
+  padding: 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.confirma {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmar,
+.cancelar {
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.confirmar {
+  background: #c62828;
+}
+
+.palco {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+}
+
+.foto {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.vazio {
+  margin: auto;
+  opacity: 0.8;
+}

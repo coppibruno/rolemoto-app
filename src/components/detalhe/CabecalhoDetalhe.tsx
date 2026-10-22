@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "./cabecalho-detalhe.module.css";
 
 type Props = {
@@ -38,20 +38,14 @@ export const CabecalhoDetalhe = ({ titulo, onCompartilhar, feedback }: Props) =>
           >
             <span className="material-symbols-outlined">share</span>
           </button>
-          <Link href="/perfil" className={styles.avatar} aria-label="Perfil">
-            {fotoUrl ? (
-              <img
-                src={fotoUrl}
-                alt={nome ? `Foto de ${nome}` : "Foto de perfil"}
-                className={styles.avatarImg}
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <span className="material-symbols-outlined" aria-hidden>
-                person
-              </span>
-            )}
-          </Link>
+          {usuario ? (
+            <AvatarStories
+              uid={usuario.uid}
+              fotoUrl={fotoUrl}
+              nome={nome}
+              tamanho="header"
+            />
+          ) : null}
         </div>
       </div>
       {feedback ? (

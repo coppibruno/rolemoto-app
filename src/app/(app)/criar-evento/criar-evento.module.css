@@ -232,8 +232,17 @@
   color: color-mix(in srgb, var(--on-surface-variant) 60%, transparent);
 }
 
+.hintStory {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--on-surface-variant);
+}
+
 .input,
-.textarea {
+.textarea,
+.select {
   width: 100%;
   min-height: 52px;
   padding: 12px 16px;
@@ -263,7 +272,8 @@
 }
 
 .input:focus,
-.textarea:focus {
+.textarea:focus,
+.select:focus {
   background: var(--surface-container-high);
 }
 

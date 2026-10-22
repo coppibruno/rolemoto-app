@@ -1,0 +1,72 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.foto,
+.vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  object-fit: cover;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+  outline: 2px solid color-mix(in srgb, var(--primary-container) 60%, transparent);
+  outline-offset: 2px;
+}
+
+.header {
+  width: 32px;
+  height: 32px;
+}
+
+.cartao {
+  width: 72px;
+  height: 72px;
+}
+
+.verde {
+  outline-color: #3ddc84;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: 6px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.opcao {
+  min-height: 44px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.opcao:hover {
+  background: color-mix(in srgb, var(--on-surface) 8%, transparent);
+}

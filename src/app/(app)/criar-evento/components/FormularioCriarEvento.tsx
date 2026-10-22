@@ -7,6 +7,7 @@ import { CampoDataHorarios } from "./CampoDataHorarios";
 import { CampoInformacoes } from "./CampoInformacoes";
 import { CampoLinkIngresso } from "./CampoLinkIngresso";
 import { CampoLocalEvento } from "./CampoLocalEvento";
+import { CampoPontoOficial } from "./CampoPontoOficial";
 import { CampoNomeEvento } from "./CampoNomeEvento";
 import { FotoFlyer } from "./FotoFlyer";
 import { ListaAtracoes } from "./ListaAtracoes";
@@ -31,6 +32,14 @@ export const FormularioCriarEvento = () => {
           valor={form.tipo}
           onChange={form.setTipo}
           erro={form.erros.tipo}
+          desabilitado={form.publicando}
+        />
+        <CampoPontoOficial
+          valor={form.pontoOficialId}
+          onChange={(ponto) => {
+            form.setPontoOficialId(ponto?.id ?? null);
+            if (ponto) form.local.aplicarPontoOficial(ponto);
+          }}
           desabilitado={form.publicando}
         />
         <CampoLocalEvento

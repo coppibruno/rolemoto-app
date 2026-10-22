@@ -14,4 +14,9 @@ export interface EventoRepository {
   listarFuturos(filtros?: FiltroListagemEventos): Promise<Evento[]>;
   buscarPorId(id: string): Promise<Evento | null>;
   buscarPorIds(ids: string[]): Promise<Evento[]>;
+  /** Abertura mais recente primeiro. O filtro “ao vivo” fica na aplicação. */
+  listarPorLocalId(localId: string, limite: number): Promise<Evento[]>;
+  atualizarLocalId(id: string, localId: string | null): Promise<Evento | null>;
+  /** `true` quando esta chamada gravou o dia e deve disparar o push. */
+  reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
 }
