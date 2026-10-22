@@ -22,11 +22,12 @@ export const BotaoPostarStory = ({ alvo, onCriada }: Props) => {
         className={styles.input}
         type="file"
         accept="image/jpeg,image/png"
+        capture="environment"
         onChange={(e) => void aoArquivo(e.target.files?.[0])}
       />
       <button type="button" className={styles.botao} onClick={abrir} disabled={processando}>
         <span className="material-symbols-outlined" aria-hidden>
-          photo_library
+          photo_camera
         </span>
         {rotulo}
       </button>

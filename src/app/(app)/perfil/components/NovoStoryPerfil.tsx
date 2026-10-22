@@ -50,6 +50,7 @@ export const NovoStoryPerfil = () => {
         className={styles.inputStory}
         type="file"
         accept="image/jpeg,image/png"
+        capture="environment"
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) setArquivo(file);
@@ -58,7 +59,7 @@ export const NovoStoryPerfil = () => {
       />
       <button type="button" className={styles.botaoStory} onClick={() => inputRef.current?.click()}>
         <span className="material-symbols-outlined" aria-hidden>
-          photo_library
+          photo_camera
         </span>
         Novo story
       </button>
