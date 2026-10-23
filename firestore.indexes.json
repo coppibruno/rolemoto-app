@@ -130,6 +130,24 @@
       "collectionGroup": "userslocalstory",
       "queryScope": "COLLECTION",
       "fields": [
+        { "fieldPath": "album", "order": "ASCENDING" },
+        { "fieldPath": "localId", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "album", "order": "ASCENDING" },
+        { "fieldPath": "eventoId", "order": "ASCENDING" },
+        { "fieldPath": "expiresAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "userslocalstory",
+      "queryScope": "COLLECTION",
+      "fields": [
         { "fieldPath": "usuarioId", "order": "ASCENDING" },
         { "fieldPath": "localId", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }

@@ -1,6 +1,7 @@
 import { OPCOES_TIPO } from "@/app/(app)/criar-evento/constants";
 import { labelCountdownEvento } from "@/lib/countdown-evento";
 import type { EventoDetalhe } from "@/types/evento";
+import type { StoryPublica } from "@/types/story-local";
 import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
 import { AnelCapaStory } from "@/app/(app)/feed/components/AnelCapaStory";
 import styles from "../evento-detalhe.module.css";
@@ -8,7 +9,7 @@ import styles from "../evento-detalhe.module.css";
 type Props = {
   evento: EventoDetalhe;
   onAbrirStories: () => void;
-  onStoryCriada: (storyId: string) => void;
+  onStoryCriada: (story: StoryPublica) => void;
 };
 
 export const HeroEvento = ({ evento, onAbrirStories, onStoryCriada }: Props) => {
@@ -57,7 +58,8 @@ export const HeroEvento = ({ evento, onAbrirStories, onStoryCriada }: Props) => 
         {evento.podePostarStory ? (
           <BotaoPostarStory
             alvo={{ tipo: "evento", id: evento.id, localId: evento.localId }}
-            onCriada={(story) => onStoryCriada(story.id)}
+            nome={evento.titulo}
+            onCriada={onStoryCriada}
           />
         ) : null}
       </div>

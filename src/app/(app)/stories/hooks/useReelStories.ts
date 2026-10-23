@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type PointerEvent as ReactPoi
 import { useAuth } from "@/hooks/useAuth";
 import type { AlvoPlayer, StoryPublica } from "@/types/story-local";
 import { alvoDaStory } from "@/types/story-local";
+import { recarregarTemStories } from "./useTemStories";
 import { storiesService } from "../services/stories.service";
 
 const DURACAO_MS = 5000;
@@ -12,6 +13,7 @@ type Params = {
   aberto: boolean;
   alvo: AlvoPlayer | null;
   destaqueId?: string | null;
+  inicial?: StoryPublica | null;
   onFechar: () => void;
   onMudou?: () => void;
 };
@@ -20,6 +22,7 @@ export const useReelStories = ({
   aberto,
   alvo,
   destaqueId,
+  inicial,
   onFechar,
   onMudou,
 }: Params) => {
@@ -30,6 +33,8 @@ export const useReelStories = ({
   const [progresso, setProgresso] = useState(0);
   const [pausado, setPausado] = useState(false);
   const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(false);
+  const [tentativa, setTentativa] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
   const [apagando, setApagando] = useState(false);
   const progressoRef = useRef(0);
@@ -38,7 +43,9 @@ export const useReelStories = ({
   const segurouEm = useRef(0);
   const segurando = useRef(false);
   const onFecharRef = useRef(onFechar);
+  const inicialRef = useRef(inicial ?? null);
   onFecharRef.current = onFechar;
+  inicialRef.current = inicial ?? null;
   indiceRef.current = indice;
   storiesRef.current = stories;
 
@@ -61,15 +68,18 @@ export const useReelStories = ({
       return;
     }
     const alvoAtual: AlvoPlayer = { tipo: alvoTipo, id: alvoId };
+    const fotoInicial = inicialRef.current;
     let cancelado = false;
     setCarregando(true);
+    setErro(false);
     setConfirmando(false);
     setPausado(false);
-    setStories([]);
+    setStories(fotoInicial ? [fotoInicial] : []);
     storiesService
       .listar(alvoAtual)
       .then((lista) => {
         if (cancelado) return;
+        setErro(false);
         setStories(lista.stories);
         const achou = destaqueId
           ? lista.stories.findIndex((item) => item.id === destaqueId)
@@ -80,7 +90,10 @@ export const useReelStories = ({
         setProgresso(0);
       })
       .catch(() => {
-        if (!cancelado) setStories([]);
+        if (cancelado) return;
+        const mantida = inicialRef.current;
+        setErro(true);
+        setStories(mantida ? [mantida] : []);
       })
       .finally(() => {
         if (!cancelado) setCarregando(false);
@@ -88,7 +101,7 @@ export const useReelStories = ({
     return () => {
       cancelado = true;
     };
-  }, [aberto, alvoTipo, alvoId, destaqueId]);
+  }, [aberto, alvoTipo, alvoId, destaqueId, tentativa, inicial?.id]);
 
   const avancar = useCallback(() => {
     const proximo = indiceRef.current + 1;
@@ -168,6 +181,7 @@ export const useReelStories = ({
     try {
       await storiesService.apagar(alvoStory, story.id);
       const restantes = stories.filter((item) => item.id !== story.id);
+      void recarregarTemStories(story.autor.uid);
       onMudou?.();
       setConfirmando(false);
       if (restantes.length === 0) {
@@ -187,6 +201,8 @@ export const useReelStories = ({
     indice,
     progresso,
     carregando,
+    erro,
+    tentarDeNovo: () => setTentativa((atual) => atual + 1),
     confirmando,
     setConfirmando,
     apagando,

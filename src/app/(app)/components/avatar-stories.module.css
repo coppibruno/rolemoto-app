@@ -56,7 +56,7 @@
 }
 
 .opcao {
-  min-height: 44px;
+  min-height: var(--touch-min);
   padding: 0 12px;
   border: none;
   border-radius: 0.5rem;
@@ -69,4 +69,24 @@
 
 .opcao:hover {
   background: color-mix(in srgb, var(--on-surface) 8%, transparent);
+}
+
+.input {
+  display: none;
+}
+
+.erro {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: max-content;
+  max-width: 220px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-size: 13px;
+  line-height: 18px;
 }

@@ -6,6 +6,7 @@ import {
 } from "@/app/(app)/feed/constants";
 import { labelStatusAberto } from "@/lib/horario-local";
 import type { LocalDetalhe } from "@/types/local";
+import type { StoryPublica } from "@/types/story-local";
 import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
 import { AnelCapaStory } from "@/app/(app)/feed/components/AnelCapaStory";
 import { CTA_VER_REVIEWS } from "../constants";
@@ -15,7 +16,7 @@ import styles from "../local-detalhe.module.css";
 type Props = {
   local: LocalDetalhe;
   onAbrirStories: () => void;
-  onStoryCriada: (storyId: string) => void;
+  onStoryCriada: (story: StoryPublica) => void;
 };
 
 export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
@@ -61,7 +62,8 @@ export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
       <div className={styles.heroCorpo}>
         <BotaoPostarStory
           alvo={{ tipo: "local", id: local.id }}
-          onCriada={(story) => onStoryCriada(story.id)}
+          nome={local.nome}
+          onCriada={onStoryCriada}
         />
         <span className={styles.badgeCategoria}>
           <span className="material-symbols-outlined" aria-hidden>

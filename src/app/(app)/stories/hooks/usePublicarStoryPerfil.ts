@@ -10,7 +10,7 @@ import {
   uploadFotoStory,
 } from "@/lib/storage";
 import { destinoUpload } from "@/types/story-local";
-import { marcarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
+import { recarregarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
 import { storiesService } from "../services/stories.service";
 import { presencaService } from "@/app/(app)/perfil/services/presenca.service";
 
@@ -152,7 +152,7 @@ export const usePublicarStoryPerfil = () => {
           }
           : {}),
       });
-      marcarTemStories(firebaseUser.uid, true);
+      void recarregarTemStories(firebaseUser.uid);
       return story;
     } catch (e) {
       setErro(mensagem(e));

@@ -11,6 +11,13 @@ export const marcarTemStories = (uid: string, tem: boolean) => {
   ouvintes.get(uid)?.forEach((ouvir) => ouvir(tem));
 };
 
+/** Verde só com a leitura. Falha do resumo não pinta o anel. */
+export const recarregarTemStories = (uid: string) =>
+  storiesService
+    .resumo(uid)
+    .then((dados) => marcarTemStories(uid, dados.storiesAtivas > 0))
+    .catch(() => marcarTemStories(uid, false));
+
 export const useTemStories = (uid: string) => {
   const [tem, setTem] = useState(cache.get(uid) ?? false);
 

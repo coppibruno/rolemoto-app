@@ -46,7 +46,7 @@ export const TelaDetalheEvento = ({ id }: Props) => {
         <HeroEvento
           evento={evento}
           onAbrirStories={() => player.abrir(null)}
-          onStoryCriada={(storyId) => player.abrir(storyId)}
+          onStoryCriada={(story) => player.abrir(story.id, story)}
         />
         <BlocoDataEvento evento={evento} />
         <BlocoIngressoEvento evento={evento} />
@@ -60,6 +60,7 @@ export const TelaDetalheEvento = ({ id }: Props) => {
         aberto={player.aberto}
         alvo={alvoAlbum}
         destaqueId={player.destaqueId}
+        inicial={player.inicial}
         onFechar={player.fechar}
       />
     </div>

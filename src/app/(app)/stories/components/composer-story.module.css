@@ -1,0 +1,168 @@
+.tela {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.topo {
+  position: relative;
+  z-index: 3;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 0;
+}
+
+.fechar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-high) 88%, transparent);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.fechar:disabled,
+.marcar:disabled,
+.selo:disabled,
+.publicar:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.marcar,
+.selo {
+  position: absolute;
+  left: 50%;
+  bottom: calc(22% + env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-high) 92%, transparent);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.rodape {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--gutter-md);
+  padding-bottom: calc(var(--gutter-md) + env(safe-area-inset-bottom, 0px));
+}
+
+.erro {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.publicar {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+  cursor: pointer;
+}
+
+.busca {
+  position: absolute;
+  right: var(--gutter-md);
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  left: var(--gutter-md);
+  z-index: 4;
+  max-height: 46%;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 1rem;
+  background: var(--surface-container-high);
+}
+
+.campo {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-size: 16px;
+}
+
+.campo::placeholder {
+  color: var(--outline);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vazioBusca {
+  margin: 8px 12px 4px;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}

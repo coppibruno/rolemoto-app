@@ -31,7 +31,7 @@ export const TelaDetalheLocal = ({ id }: Props) => {
         <HeroLocal
           local={local}
           onAbrirStories={() => player.abrir(null)}
-          onStoryCriada={(storyId) => player.abrir(storyId)}
+          onStoryCriada={(story) => player.abrir(story.id, story)}
         />
         <BlocoCheckinLocal local={local} />
         <BlocoHorariosLocal local={local} />
@@ -43,6 +43,7 @@ export const TelaDetalheLocal = ({ id }: Props) => {
         aberto={player.aberto}
         alvo={{ tipo: "local", id: local.id }}
         destaqueId={player.destaqueId}
+        inicial={player.inicial}
         onFechar={player.fechar}
       />
     </div>

@@ -85,12 +85,6 @@
   line-height: 20px;
 }
 
-.mencao {
-  font-size: 13px;
-  line-height: 16px;
-  color: #3ddc84;
-}
-
 .tempo {
   font-size: 12px;
   line-height: 16px;
@@ -146,7 +140,55 @@
   object-fit: contain;
 }
 
+.selo {
+  position: absolute;
+  left: 50%;
+  bottom: calc(18% + env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-high) 92%, transparent);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
 .vazio {
   margin: auto;
-  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: var(--gutter-md);
+  text-align: center;
+  opacity: 0.9;
+}
+
+.vazio p {
+  margin: 0;
+}
+
+.tentar {
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
 }

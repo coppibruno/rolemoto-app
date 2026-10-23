@@ -1,27 +1,36 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import type { AlvoPlayer } from "@/types/story-local";
+import { useRouter } from "next/navigation";
+import type { AlvoPlayer, MencaoStory, StoryPublica } from "@/types/story-local";
 import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
+import { PalcoFotoStory } from "./PalcoFotoStory";
 import styles from "./player-stories.module.css";
 
 type Props = {
   aberto: boolean;
   alvo: AlvoPlayer | null;
   destaqueId?: string | null;
+  inicial?: StoryPublica | null;
   onFechar: () => void;
   onMudou?: () => void;
 };
 
-export const PlayerStories = ({ aberto, alvo, destaqueId, onFechar, onMudou }: Props) => {
-  const reel = useReelStories({ aberto, alvo, destaqueId, onFechar, onMudou });
+export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onMudou }: Props) => {
+  const router = useRouter();
+  const reel = useReelStories({ aberto, alvo, destaqueId, inicial, onFechar, onMudou });
   if (!reel.montado || !aberto) return null;
 
   const story = reel.story;
 
+  const abrirMarca = (mencao: MencaoStory) => {
+    onFechar();
+    router.push(mencao.tipo === "local" ? `/locais/${mencao.id}` : `/eventos/${mencao.id}`);
+  };
+
   return createPortal(
-    <div className={styles.player} role="dialog" aria-modal="true" aria-label="Fotos ao vivo">
+    <div className={styles.player} role="dialog" aria-modal="true" aria-label="Fotos">
       <div className={styles.topo}>
         <div className={styles.barras}>
           {reel.stories.map((item, i) => (
@@ -50,9 +59,6 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, onFechar, onMudou }: P
               )}
               <span className={styles.meta}>
                 <span className={styles.apelido}>{story.autor.apelido}</span>
-                {story.mencao ? (
-                  <span className={styles.mencao}>@{story.mencao.nome}</span>
-                ) : null}
                 <span className={styles.tempo}>{tempoRelativoStory(story.createdAt)}</span>
               </span>
               {reel.minha ? (
@@ -78,16 +84,28 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, onFechar, onMudou }: P
         ) : null}
       </div>
       {story ? (
-        <div
-          className={styles.palco}
-          onPointerDown={reel.segurar}
-          onPointerUp={reel.soltar}
-          onPointerCancel={reel.cancelarToque}
-        >
-          <img src={story.fotoUrl} alt="" className={styles.foto} />
-        </div>
+        <PalcoFotoStory
+          story={story}
+          onSegurar={reel.segurar}
+          onSoltar={reel.soltar}
+          onCancelar={reel.cancelarToque}
+          onMarca={abrirMarca}
+        />
       ) : (
-        <p className={styles.vazio}>{reel.carregando ? "Carregando…" : "Nenhuma foto ao vivo"}</p>
+        <div className={styles.vazio}>
+          {reel.carregando ? (
+            <p>Carregando…</p>
+          ) : reel.erro ? (
+            <>
+              <p>Não foi possível abrir as fotos.</p>
+              <button type="button" className={styles.tentar} onClick={reel.tentarDeNovo}>
+                Tentar de novo
+              </button>
+            </>
+          ) : (
+            <p>Nenhuma foto nas últimas 24 h</p>
+          )}
+        </div>
       )}
     </div>,
     document.body,
