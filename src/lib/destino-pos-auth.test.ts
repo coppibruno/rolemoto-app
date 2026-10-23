@@ -4,6 +4,7 @@ import { destinoSeguro } from "./destino-pos-auth";
 describe("destinoSeguro", () => {
   it("preserva detalhe de evento e local", () => {
     expect(destinoSeguro("/eventos/abc123")).toBe("/eventos/abc123");
+    expect(destinoSeguro("/e/abc123")).toBe("/e/abc123");
     expect(destinoSeguro("/locais/xyz789")).toBe("/locais/xyz789");
   });
 

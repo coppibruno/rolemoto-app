@@ -114,4 +114,8 @@ implements RoleTelemetriaRepository {
     });
     return this.buscarPorId(id);
   }
+
+  async excluir(id: string): Promise<void> {
+    await firestore.collection(COLECAO).doc(id).delete();
+  }
 }

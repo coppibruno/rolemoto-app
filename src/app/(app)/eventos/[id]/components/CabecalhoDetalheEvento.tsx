@@ -1,16 +1,16 @@
 "use client";
 
 import { CabecalhoDetalhe } from "@/components/detalhe/CabecalhoDetalhe";
+import type { DadosConviteEvento } from "@/lib/convite-evento";
 import { TITULO_PAGINA } from "../constants";
 import { useCompartilharEvento } from "../hooks/useCompartilharEvento";
 
 type Props = {
-  id: string;
-  titulo: string;
+  convite: DadosConviteEvento;
 };
 
-export const CabecalhoDetalheEvento = ({ id, titulo }: Props) => {
-  const { compartilhar, feedback } = useCompartilharEvento(titulo, id);
+export const CabecalhoDetalheEvento = ({ convite }: Props) => {
+  const { compartilhar, feedback } = useCompartilharEvento(convite);
   return (
     <CabecalhoDetalhe
       titulo={TITULO_PAGINA}

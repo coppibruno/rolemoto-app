@@ -32,6 +32,7 @@ import {
  * GET  /telemetria
  * GET  /telemetria/:id
  * PATCH /telemetria/:id
+ * DELETE /telemetria/:id
  */
 export const telemetriaRouter = Router();
 
@@ -229,6 +230,27 @@ telemetriaRouter.patch("/:id", async (req: Request, res: Response) => {
       body.publica,
     );
     res.json(atualizado);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+telemetriaRouter.delete("/:id", async (req: Request, res: Response) => {
+  try {
+    const uid = uidAutenticado(req, res);
+    if (!uid) {
+      return;
+    }
+
+    const id = param(req, "id");
+    const atual = await roleTelemetriaRepository.buscarPorId(id);
+    if (!atual || atual.usuarioId !== uid) {
+      res.status(404).json({erro: "Telemetria não encontrada"});
+      return;
+    }
+
+    await roleTelemetriaRepository.excluir(id);
+    res.status(204).send();
   } catch (error) {
     responderErro(res, error);
   }

@@ -1,4 +1,5 @@
 import type { AbaHistorico, ItemHistoricoPista } from "@/types/historico-pistas";
+import type { AlvoApagarHistorico } from "../hooks/useApagarHistorico";
 import { CardHistorico } from "./CardHistorico";
 import { CardHistoricoEvento } from "./CardHistoricoEvento";
 import { EstadoVazioHistorico } from "./EstadoVazioHistorico";
@@ -8,9 +9,17 @@ type Props = {
   itens: ItemHistoricoPista[];
   aba: AbaHistorico;
   ariaLabel: string;
+  ocupadoId: string | null;
+  onApagar: (alvo: AlvoApagarHistorico) => void;
 };
 
-export const ListaHistorico = ({ itens, aba, ariaLabel }: Props) => {
+export const ListaHistorico = ({
+  itens,
+  aba,
+  ariaLabel,
+  ocupadoId,
+  onApagar,
+}: Props) => {
   if (itens.length === 0) {
     return <EstadoVazioHistorico aba={aba} />;
   }
@@ -19,9 +28,19 @@ export const ListaHistorico = ({ itens, aba, ariaLabel }: Props) => {
     <div className={styles.lista} aria-label={ariaLabel}>
       {itens.map((item) =>
         item.tipo === "evento" ? (
-          <CardHistoricoEvento key={`${aba}-evento-${item.eventoId}`} item={item} />
+          <CardHistoricoEvento
+            key={`${aba}-evento-${item.eventoId}`}
+            item={item}
+            ocupado={ocupadoId === `evento-${item.eventoId}`}
+            onApagar={onApagar}
+          />
         ) : (
-          <CardHistorico key={`${aba}-role-${item.roleId}`} item={item} />
+          <CardHistorico
+            key={`${aba}-role-${item.roleId}`}
+            item={item}
+            ocupado={ocupadoId === `role-${item.roleId}`}
+            onApagar={onApagar}
+          />
         ),
       )}
     </div>

@@ -5,9 +5,18 @@ import styles from "../convite-role.module.css";
 type Props = {
   confirmados: number;
   destaques: ParticipanteDestaque[];
+  label?: string;
+  countLabel?: (n: number) => string;
+  vazio?: string;
 };
 
-export const GradePilotos = ({ confirmados, destaques }: Props) => {
+export const GradePilotos = ({
+  confirmados,
+  destaques,
+  label = "Pilotos na formação",
+  countLabel = (n) => `${n} confirmados`,
+  vazio = COPY_PRIMEIRO_PILOTO,
+}: Props) => {
   const extra = Math.max(0, confirmados - destaques.length);
   const motos = destaques
     .map((d) => d.moto.trim())
@@ -17,13 +26,13 @@ export const GradePilotos = ({ confirmados, destaques }: Props) => {
   return (
     <section className={styles.grade}>
       <div className={styles.gradeTopo}>
-        <span className={styles.gradeLabel}>Pilotos na formação</span>
+        <span className={styles.gradeLabel}>{label}</span>
         {confirmados > 0 ? (
-          <span className={styles.gradeCount}>{confirmados} confirmados</span>
+          <span className={styles.gradeCount}>{countLabel(confirmados)}</span>
         ) : null}
       </div>
       {confirmados === 0 ? (
-        <p className={styles.vazioPilotos}>{COPY_PRIMEIRO_PILOTO}</p>
+        <p className={styles.vazioPilotos}>{vazio}</p>
       ) : (
         <div className={styles.gradeCorpo}>
           <div className={styles.avatares}>

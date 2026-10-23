@@ -2,6 +2,7 @@ const NEXT_SEGURO = [
   /^\/$/,
   /^\/perfil$/,
   /^\/r\/[A-Za-z0-9_-]+$/,
+  /^\/e\/[A-Za-z0-9_-]+$/,
   /^\/roles\/[A-Za-z0-9_-]+\/participar$/,
   /^\/eventos\/[A-Za-z0-9_-]+$/,
   /^\/locais\/[A-Za-z0-9_-]+$/,

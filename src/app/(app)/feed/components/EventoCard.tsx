@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { EventoFeedItem } from "@/types/evento";
 import { LABELS_ACESSO_EVENTO } from "../constants";
 import { formatarPeriodoEvento } from "../formatar-horario";
+import { BotaoCompartilharEvento } from "./BotaoCompartilharEvento";
 import { BotaoInscreverEvento } from "./BotaoInscreverEvento";
 import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
 import styles from "../feed.module.css";
@@ -33,7 +34,7 @@ export const EventoCard = ({ evento }: Props) => {
       />
       <div className={styles.cardEventoTopo}>
         <div className={styles.cardEventoInfo}>
-          <div className={styles.cardEventoBadges}>
+          <div className={`${styles.cardEventoBadges} ${styles.cardDetalheAcao}`}>
             <span className={styles.badgeQuando}>
               {formatarPeriodoEvento(
                 evento.dataHoraAbertura,
@@ -59,6 +60,16 @@ export const EventoCard = ({ evento }: Props) => {
               notaMedia={evento.notaMedia ?? 0}
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}
               href={`/eventos/${evento.id}/avaliacoes`}
+            />
+            <BotaoCompartilharEvento
+              dados={{
+                id: evento.id,
+                titulo: evento.titulo,
+                dataHoraAbertura: evento.dataHoraAbertura,
+                dataHoraEncerramento: evento.dataHoraEncerramento,
+                localNome: evento.local.nome,
+                localEndereco: evento.local.endereco,
+              }}
             />
           </div>
           <h3 className={styles.cardEventoTitulo}>{evento.titulo}</h3>

@@ -32,7 +32,16 @@ export const TelaDetalheEvento = ({ id }: Props) => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoDetalheEvento id={evento.id} titulo={evento.titulo} />
+      <CabecalhoDetalheEvento
+        convite={{
+          id: evento.id,
+          titulo: evento.titulo,
+          dataHoraAbertura: evento.dataHoraAbertura,
+          dataHoraEncerramento: evento.dataHoraEncerramento,
+          localNome: evento.local.nome,
+          localEndereco: evento.local.endereco,
+        }}
+      />
       <main className={styles.conteudo}>
         <HeroEvento
           evento={evento}

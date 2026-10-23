@@ -86,30 +86,57 @@
   min-width: 0;
 }
 
-.botaoClonar {
+.cardAcoesLaterais {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+}
+
+.botaoClonar,
+.botaoApagar {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: var(--touch-min);
   height: var(--touch-min);
+  border: none;
   border-radius: 0.5rem;
   background: var(--surface-container-high);
   color: var(--primary-container);
   text-decoration: none;
+  cursor: pointer;
 }
 
-.botaoClonar .material-symbols-outlined {
+.botaoClonar .material-symbols-outlined,
+.botaoApagar .material-symbols-outlined {
   font-size: 22px;
 }
 
-.botaoClonar:hover {
+.botaoApagar {
+  color: var(--error);
+}
+
+.botaoClonar:hover,
+.botaoApagar:hover {
   background: var(--surface-container-highest);
 }
 
-.botaoClonar:active {
+.botaoClonar:active,
+.botaoApagar:active {
   background: var(--surface-container-highest);
   transform: scale(0.9);
+}
+
+.botaoApagar:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.toastApagar {
+  font-size: 12px;
+  color: var(--error);
 }
 
 .card {

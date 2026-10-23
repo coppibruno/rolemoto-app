@@ -2,14 +2,18 @@ import Link from "next/link";
 import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
 import { formatarDistancia, formatarDuracao } from "@/lib/telemetria/formatar-telemetria";
 import { formatarDataMeta } from "../formatar-data-historico";
+import type { AlvoApagarHistorico } from "../hooks/useApagarHistorico";
 import { BlocoDataHistorico } from "./BlocoDataHistorico";
+import { BotaoApagarHistorico } from "./BotaoApagarHistorico";
 import styles from "../historico-pistas.module.css";
 
 type Props = {
   item: ItemHistoricoTelemetria;
+  ocupado: boolean;
+  onApagar: (alvo: AlvoApagarHistorico) => void;
 };
 
-export const CardHistoricoTelemetria = ({ item }: Props) => {
+export const CardHistoricoTelemetria = ({ item, ocupado, onApagar }: Props) => {
   return (
     <div className={styles.cardLinha}>
       <Link
@@ -43,6 +47,13 @@ export const CardHistoricoTelemetria = ({ item }: Props) => {
           </div>
         </div>
       </Link>
+      <div className={styles.cardAcoesLaterais}>
+        <BotaoApagarHistorico
+          alvo={{ tipo: "telemetria", id: item.id, titulo: item.titulo }}
+          ocupado={ocupado}
+          onApagar={onApagar}
+        />
+      </div>
     </div>
   );
 };

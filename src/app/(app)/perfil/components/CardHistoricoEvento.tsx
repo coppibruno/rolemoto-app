@@ -6,11 +6,15 @@ import {
   STATUS_DIREITA,
 } from "../constants";
 import { formatarDataMeta } from "../formatar-data-historico";
+import type { AlvoApagarHistorico } from "../hooks/useApagarHistorico";
 import { BlocoDataHistorico } from "./BlocoDataHistorico";
+import { BotaoApagarHistorico } from "./BotaoApagarHistorico";
 import styles from "../historico-pistas.module.css";
 
 type Props = {
   item: ItemHistoricoEvento;
+  ocupado: boolean;
+  onApagar: (alvo: AlvoApagarHistorico) => void;
 };
 
 const classeTitulo: Record<ItemHistoricoEvento["status"], string> = {
@@ -23,7 +27,7 @@ const classeStatus: Record<ItemHistoricoEvento["status"], string> = {
   concluido: styles.statusConcluido,
 };
 
-export const CardHistoricoEvento = ({ item }: Props) => {
+export const CardHistoricoEvento = ({ item, ocupado, onApagar }: Props) => {
   return (
     <div className={styles.cardLinha}>
       <Link
@@ -68,6 +72,13 @@ export const CardHistoricoEvento = ({ item }: Props) => {
           </div>
         </div>
       </Link>
+      <div className={styles.cardAcoesLaterais}>
+        <BotaoApagarHistorico
+          alvo={{ tipo: "evento", id: item.eventoId, titulo: item.titulo }}
+          ocupado={ocupado}
+          onApagar={onApagar}
+        />
+      </div>
     </div>
   );
 };

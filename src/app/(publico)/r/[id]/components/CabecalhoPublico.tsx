@@ -6,7 +6,7 @@ import { COPY_PILL } from "../constants";
 import styles from "../convite-role.module.css";
 
 type Props = {
-  roleId: string;
+  caminhoConvite: string;
   onCompartilhar: () => void;
   feedback: string | null;
   loading?: boolean;
@@ -27,12 +27,12 @@ const Marca = () => (
 );
 
 export const CabecalhoPublico = ({
-  roleId,
+  caminhoConvite,
   onCompartilhar,
   feedback,
   loading = false,
 }: Props) => {
-  const convite = `/r/${roleId}`;
+  const convite = caminhoConvite;
 
   return (
     <header className={styles.cabecalho}>

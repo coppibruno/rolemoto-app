@@ -5,6 +5,7 @@
  * - /auth/resolver → POST (público, sem Bearer)
  * - /auth/recuperar-senha → POST (público, sem Bearer)
  * - /publico/roles/:id → GET (público, sem Bearer)
+ * - /publico/eventos/:id → GET (público, sem Bearer)
  * - /meus-roles → GET
  * - /meus-roles/eventos → GET
  * - /meus-roles/locais → GET
@@ -16,13 +17,14 @@
  * - /telemetria/sessao → POST
  * - /telemetria/sessao/:id → GET, DELETE
  * - /telemetria/sessao/:id/ponto → POST (token de sessão Capgo)
- * - /telemetria/:id → GET, PATCH
+ * - /telemetria/:id → GET, PATCH, DELETE
  * - /feedback/pendente → GET
  * - /aprovacoes → GET, PATCH
  * - /dispositivos → POST, DELETE
  * - /lembretes/enviar → POST (Cloud Tasks, OIDC)
  * - /perfil  → GET, POST, PUT, DELETE
  * - /perfil/historico → GET
+ * - /perfil/historico/ocultar → POST
  * - /usuarios/:uid → GET
  * - /usuarios/:uid/historico → GET
  * - /usuarios/:uid/telemetria → GET
@@ -59,6 +61,7 @@ import {perfilRouter} from "./routes/perfil";
 import {usuariosRouter} from "./routes/usuarios";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
+import {eventosPublicoRouter} from "./routes/eventos-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
 import {eventosRouter} from "./routes/eventos";
 import {locaisRouter} from "./routes/locais";
@@ -81,6 +84,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/auth/resolver",
       "/auth/recuperar-senha",
       "/publico/roles/:id",
+      "/publico/eventos/:id",
       "/meus-roles",
       "/meus-roles/eventos",
       "/meus-roles/locais",
@@ -100,6 +104,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/lembretes/enviar",
       "/perfil",
       "/perfil/historico",
+      "/perfil/historico/ocultar",
       "/usuarios/:uid",
       "/usuarios/:uid/historico",
       "/usuarios/:uid/telemetria",
@@ -126,6 +131,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.use("/auth", authRouter);
 app.use("/publico/roles", rolesPublicoRouter);
+app.use("/publico/eventos", eventosPublicoRouter);
 app.use("/meus-roles", meusRolesRouter);
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);

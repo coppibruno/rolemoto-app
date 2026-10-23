@@ -12,6 +12,3 @@ export const TITULO_INFO = "Informações";
 export const TITULO_LOCAL = "Localização";
 export const TITULO_PRESENCAS = "Presenças";
 export const TITULO_AVALIACOES = "Avaliações";
-
-export const textoShareEvento = (titulo: string): string =>
-  `🏍️ ${titulo} — cola no Rolê Moto`;

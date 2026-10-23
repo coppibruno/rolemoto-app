@@ -11,6 +11,7 @@ import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
 import { ERRO_HISTORICO } from "../constants";
 import { historicoService } from "../services/historico.service";
 import { telemetriaService } from "../../telemetria/services/telemetria.service";
+import type { AlvoApagarHistorico } from "./useApagarHistorico";
 
 const filtrarPorTipo = (
   itens: ItemHistoricoPista[],
@@ -113,6 +114,34 @@ export const useHistoricoPistas = () => {
       ? filtrarPorTipo(bruto, filtroTipo)
       : bruto;
 
+  const removerLocal = useCallback((alvo: AlvoApagarHistorico) => {
+    if (alvo.tipo === "telemetria") {
+      setTelemetrias((lista) => lista.filter((item) => item.id !== alvo.id));
+      return;
+    }
+    setDados((atual) => {
+      if (!atual) return atual;
+      const aguardando = atual.aguardando.filter((item) => item.roleId !== alvo.id);
+      const criados = atual.criados.filter((item) => item.roleId !== alvo.id);
+      const participei = atual.participei.filter((item) =>
+        alvo.tipo === "evento"
+          ? item.tipo !== "evento" || item.eventoId !== alvo.id
+          : item.tipo !== "role" || item.roleId !== alvo.id,
+      );
+      return {
+        ...atual,
+        aguardando,
+        participei,
+        criados,
+        contagens: {
+          aguardando: aguardando.length,
+          participei: participei.length,
+          criados: criados.length,
+        },
+      };
+    });
+  }, []);
+
   return {
     aba,
     setAba: mudarAba,
@@ -125,5 +154,6 @@ export const useHistoricoPistas = () => {
     carregando: carregando || (modoTelemetria && carregandoTelemetria),
     erro,
     recarregar,
+    removerLocal,
   };
 };

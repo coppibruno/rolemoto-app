@@ -200,6 +200,7 @@ const validarUsuarioPrimeiroAcesso = (
  *
  * GET    /perfil
  * GET    /perfil/historico
+ * POST   /perfil/historico/ocultar
  * POST   /perfil
  * PUT    /perfil
  * DELETE /perfil

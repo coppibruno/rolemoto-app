@@ -25,6 +25,9 @@ export const telemetriaService = {
       body: JSON.stringify({ publica }),
     }),
 
+  excluir: (id: string) =>
+    api<void>(`/telemetria/${encodeURIComponent(id)}`, { method: "DELETE" }),
+
   buscar: async (id: string): Promise<RoleTelemetria | null> => {
     try {
       return await api<RoleTelemetria>(`/telemetria/${encodeURIComponent(id)}`);

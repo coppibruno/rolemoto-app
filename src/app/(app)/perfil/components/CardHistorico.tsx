@@ -10,11 +10,15 @@ import {
 } from "../constants";
 import { formatarDataMeta } from "../formatar-data-historico";
 import { BlocoDataHistorico } from "./BlocoDataHistorico";
+import type { AlvoApagarHistorico } from "../hooks/useApagarHistorico";
+import { BotaoApagarHistorico } from "./BotaoApagarHistorico";
 import { BotaoClonarRole } from "./BotaoClonarRole";
 import styles from "../historico-pistas.module.css";
 
 type Props = {
   item: ItemHistoricoRole;
+  ocupado: boolean;
+  onApagar: (alvo: AlvoApagarHistorico) => void;
 };
 
 const classeTitulo: Record<ItemHistoricoRole["status"], string> = {
@@ -31,7 +35,7 @@ const classeStatus: Record<ItemHistoricoRole["status"], string> = {
   lider: styles.statusLider,
 };
 
-export const CardHistorico = ({ item }: Props) => {
+export const CardHistorico = ({ item, ocupado, onApagar }: Props) => {
   const linha1 = item.status === "lider" ? LINHA1_LIDER : item.titulo;
   const linha2 = item.status === "lider" ? item.titulo : item.descricao.trim();
   const classeCard =
@@ -75,9 +79,16 @@ export const CardHistorico = ({ item }: Props) => {
           </div>
         </div>
       </Link>
-      {item.status === "lider" ? (
-        <BotaoClonarRole roleId={item.roleId} titulo={item.titulo} />
-      ) : null}
+      <div className={styles.cardAcoesLaterais}>
+        {item.status === "lider" ? (
+          <BotaoClonarRole roleId={item.roleId} titulo={item.titulo} />
+        ) : null}
+        <BotaoApagarHistorico
+          alvo={{ tipo: "role", id: item.roleId, titulo: item.titulo }}
+          ocupado={ocupado}
+          onApagar={onApagar}
+        />
+      </div>
     </div>
   );
 };

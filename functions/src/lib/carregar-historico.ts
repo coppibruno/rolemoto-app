@@ -6,6 +6,7 @@ import {
 } from "./historico";
 import {
   eventoRepository,
+  historicoOcultoRepository,
   roleRepository,
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
@@ -49,11 +50,28 @@ const carregarItensEvento = async (
 };
 
 const montarMapas = async (uid: string) => {
-  const [pedidos, criados, itensEvento] = await Promise.all([
-    usuarioRoleRepository.listarPorUsuario(uid),
-    roleRepository.listarPorCriador(uid),
-    carregarItensEvento(uid),
-  ]);
+  const [pedidosBrutos, criadosBrutos, itensEventoBrutos, ocultos] =
+    await Promise.all([
+      usuarioRoleRepository.listarPorUsuario(uid),
+      roleRepository.listarPorCriador(uid),
+      carregarItensEvento(uid),
+      historicoOcultoRepository.listarPorUsuario(uid),
+    ]);
+
+  const rolesOcultos = new Set(
+    ocultos.filter((item) => item.tipo === "role").map((item) => item.alvoId),
+  );
+  const eventosOcultos = new Set(
+    ocultos.filter((item) => item.tipo === "evento").map((item) => item.alvoId),
+  );
+
+  const pedidos = pedidosBrutos.filter(
+    (pedido) => !rolesOcultos.has(pedido.roleId),
+  );
+  const criados = criadosBrutos.filter((role) => !rolesOcultos.has(role.id));
+  const itensEvento = itensEventoBrutos.filter(
+    (item) => !eventosOcultos.has(item.eventoId),
+  );
 
   const idsPedidos = [...new Set(pedidos.map((pedido) => pedido.roleId))];
   const rolesPedidos = await roleRepository.buscarPorIds(idsPedidos);

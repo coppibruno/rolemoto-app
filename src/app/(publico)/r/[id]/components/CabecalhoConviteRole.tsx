@@ -34,7 +34,7 @@ export const CabecalhoConviteRole = ({ role }: Props) => {
 
   return (
     <CabecalhoPublico
-      roleId={role.id}
+      caminhoConvite={`/r/${role.id}`}
       onCompartilhar={() => void compartilhar()}
       feedback={feedback}
       loading={loading}

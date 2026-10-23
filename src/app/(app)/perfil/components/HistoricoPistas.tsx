@@ -1,5 +1,6 @@
 "use client";
 
+import { useApagarHistorico } from "../hooks/useApagarHistorico";
 import { useHistoricoPistas } from "../hooks/useHistoricoPistas";
 import { ABAS_HISTORICO } from "../constants";
 import { AbasHistorico } from "./AbasHistorico";
@@ -31,6 +32,7 @@ const SkeletonHistorico = () => (
 
 export const HistoricoPistas = () => {
   const historico = useHistoricoPistas();
+  const apagar = useApagarHistorico(historico.removerLocal);
   const listaAria =
     ABAS_HISTORICO.find((item) => item.id === historico.aba)?.listaAria ?? "";
 
@@ -71,14 +73,25 @@ export const HistoricoPistas = () => {
           />
         ) : null}
         {historico.carregando ? <SkeletonHistorico /> : null}
+        {apagar.feedback ? (
+          <p className={styles.toastApagar} role="status">
+            {apagar.feedback}
+          </p>
+        ) : null}
         {!historico.carregando && !historico.erro && historico.modoTelemetria ? (
-          <ListaHistoricoTelemetria itens={historico.telemetrias} />
+          <ListaHistoricoTelemetria
+            itens={historico.telemetrias}
+            ocupadoId={apagar.ocupadoId}
+            onApagar={(alvo) => void apagar.apagar(alvo)}
+          />
         ) : null}
         {!historico.carregando && !historico.erro && !historico.modoTelemetria ? (
           <ListaHistorico
             itens={historico.itensVisiveis}
             aba={historico.aba}
             ariaLabel={listaAria}
+            ocupadoId={apagar.ocupadoId}
+            onApagar={(alvo) => void apagar.apagar(alvo)}
           />
         ) : null}
       </div>

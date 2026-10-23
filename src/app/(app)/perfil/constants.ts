@@ -114,6 +114,13 @@ export const STATUS_DIREITA: Record<StatusItemHistorico, string> = {
 export const LINHA1_LIDER = "Criado por você";
 
 export const ERRO_HISTORICO = "Não foi possível carregar o histórico";
+export const ERRO_APAGAR_HISTORICO = "Não foi possível remover";
+
+export const confirmaOcultarHistorico = (titulo: string): string =>
+  `Remover “${titulo}” do seu histórico? O rolê/evento continua existindo.`;
+
+export const confirmaApagarTelemetria = (titulo: string): string =>
+  `Apagar o passeio “${titulo}”? Essa ação não pode ser desfeita.`;
 
 export const ariaBadgeAba = (label: string, n: number): string =>
   `${label}, ${n} itens`;
