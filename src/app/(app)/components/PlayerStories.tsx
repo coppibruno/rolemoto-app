@@ -86,6 +86,7 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
       {story ? (
         <PalcoFotoStory
           story={story}
+          onPronta={reel.marcarMidiaPronta}
           onSegurar={reel.segurar}
           onSoltar={reel.soltar}
           onCancelar={reel.cancelarToque}

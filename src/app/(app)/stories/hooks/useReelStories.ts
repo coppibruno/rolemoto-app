@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { AlvoPlayer, StoryPublica } from "@/types/story-local";
 import { alvoDaStory } from "@/types/story-local";
 import { recarregarTemStories } from "./useTemStories";
+import { precarregarFotoStory } from "../cache-foto-story";
 import { mesclarStories } from "../marca-story";
 import { storiesService } from "../services/stories.service";
 
@@ -38,6 +39,7 @@ export const useReelStories = ({
   const [tentativa, setTentativa] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
   const [apagando, setApagando] = useState(false);
+  const [midiaProntaId, setMidiaProntaId] = useState<string | null>(null);
   const progressoRef = useRef(0);
   const indiceRef = useRef(0);
   const storiesRef = useRef(stories);
@@ -118,13 +120,20 @@ export const useReelStories = ({
     setIndice((atual) => Math.max(0, atual - 1));
   }, []);
 
+  const marcarMidiaPronta = useCallback((id: string) => {
+    setMidiaProntaId(id);
+  }, []);
+
+  const story = stories[indice] ?? null;
+  const midiaPronta = story?.id === midiaProntaId;
+
   useEffect(() => {
     progressoRef.current = 0;
     setProgresso(0);
   }, [indice]);
 
   useEffect(() => {
-    if (!aberto || pausado || confirmando || carregando || stories.length === 0) return;
+    if (!aberto || pausado || confirmando || carregando || !midiaPronta || stories.length === 0) return;
     const base = progressoRef.current;
     const inicio = performance.now();
     let frame = 0;
@@ -140,11 +149,17 @@ export const useReelStories = ({
     };
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
-  }, [aberto, pausado, confirmando, carregando, stories.length, indice, avancar]);
-
-  const story = stories[indice] ?? null;
+  }, [aberto, pausado, confirmando, carregando, midiaPronta, stories.length, indice, avancar]);
 
   const storyId = story?.id ?? "";
+
+  useEffect(() => {
+    if (!aberto) return;
+    const atual = stories[indice]?.fotoUrl;
+    const seguinte = stories[indice + 1]?.fotoUrl;
+    if (atual) precarregarFotoStory(atual);
+    if (seguinte) precarregarFotoStory(seguinte);
+  }, [aberto, indice, stories]);
 
   useEffect(() => {
     if (!aberto || !storyId || !story) return;
@@ -213,6 +228,7 @@ export const useReelStories = ({
     setConfirmando,
     apagando,
     story,
+    marcarMidiaPronta,
     minha: Boolean(story && firebaseUser?.uid === story.autor.uid),
     segurar,
     soltar,
