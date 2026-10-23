@@ -55,14 +55,14 @@ npx cap sync ios                  # depois: Xcode → device (macOS)
 
 ### Notificações push
 
-Pedido de vaga (organizador), aceite, lembrete e cancelamento. Recusa não notifica.
+Pedido de vaga (organizador), aceite, lembrete de rolê (24 h e 2 h, só quem está no rolê), evento (24 h para quem tem push, mesmo sem inscrição; 2 h para inscritos), primeira story do evento no dia para quem tem push, story de local sem encontro só para favoritos, e cancelamento. Recusa não notifica. O lembrete de 1 h do rolê saiu.
 
 Dois canais, um produto: **PWA/Chrome** usa Web Push (VAPID + Serwist); **loja/APK** usa FCM nativo (`@capacitor/push-notifications`). Tokens na coleção `dispositivos` com `plataforma` (`web` | `android` | `ios`).
 
 - A chave **VAPID** (`NEXT_PUBLIC_FIREBASE_VAPID_KEY`) sai do Firebase Console → Project settings → Cloud Messaging → Web Push certificates. Sem ela o **web** não registra o token. O APK não usa VAPID.
 - Push web exige **HTTPS** (ou `localhost`). No **iOS**, Web Push só funciona depois de instalar o PWA (Safari → Adicionar à Tela de Início). No Android Chrome, chega mesmo em aba.
 - O service worker da SPEC 012 (`src/app/sw.ts`) trata o push em background **só no web**. No Capacitor o card é nativo (canal Android `rolemoto_push`).
-- O envio FCM acontece nas Cloud Functions (`POST /roles/:id/participacao`, `PATCH /aprovacoes/:id`, lembrete e cancelamento). No emulator o send é **ignorado** (`FUNCTIONS_EMULATOR`) — QA de push exige Functions deployadas.
+- O envio FCM acontece nas Cloud Functions (pedido de vaga, aceite, lembrete 24 h/2 h, story do dia e cancelamento). No emulator o send é **ignorado** (`FUNCTIONS_EMULATOR`) — QA de push exige Functions deployadas.
 - Logout tenta `DELETE /dispositivos` antes do `signOut` (token web ou nativo), para o próximo usuário no mesmo aparelho não receber push alheio.
 - Opcional nas functions: `APP_ORIGIN` (ex. `https://seu-dominio`) para o ícone web e para o `continueUrl` do e-mail de redefinir senha. O card nativo não depende de `APP_ORIGIN`.
 - Nas functions (`functions/.env`, ver `functions/.env.example`): `WEB_API_KEY` — a mesma Web API key do app (`NEXT_PUBLIC_FIREBASE_API_KEY`). Sem ela o `POST /auth/recuperar-senha` não consegue disparar o e-mail nativo do Auth.

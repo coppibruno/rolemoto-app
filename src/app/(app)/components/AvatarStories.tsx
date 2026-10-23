@@ -50,12 +50,15 @@ export const AvatarStories = ({ uid, fotoUrl, nome, tamanho }: Props) => {
         )}
       </button>
       {anel.erro ? (
-        <span className={styles.erro} role="alert">
+        <span className={`${styles.erro} ${tamanho === "header" ? styles.ancoraDireita : ""}`} role="alert">
           {anel.erro}
         </span>
       ) : null}
       {anel.menu ? (
-        <span className={styles.menu} onPointerDown={(evento) => evento.stopPropagation()}>
+        <span
+          className={`${styles.menu} ${tamanho === "header" ? styles.ancoraDireita : ""}`}
+          onPointerDown={(evento) => evento.stopPropagation()}
+        >
           {anel.opcoes.map((opcao) => (
             <button key={opcao.rotulo} type="button" className={styles.opcao} onClick={opcao.aoClicar}>
               {opcao.rotulo}

@@ -24,6 +24,7 @@ import {
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
 } from "../repositories";
+import {agendarAvisoEvento, agendarLembreteEvento} from "../lib/lembretes";
 import {aoVivoPorEvento, detalheStoriesEvento, eventoEstaAoVivo} from "../lib/story-local";
 import {inscricaoEventoRouter} from "./inscricao-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
@@ -516,6 +517,14 @@ eventosRouter.post("/", exigirAdmin, async (req: Request, res: Response) => {
       localId: localId.localId,
       criadorId: uid,
     });
+    await agendarAvisoEvento(
+      {eventoId: criado.id, titulo: criado.titulo},
+      criado.dataHoraAbertura,
+    );
+    await agendarLembreteEvento(
+      {eventoId: criado.id, userId: uid, titulo: criado.titulo},
+      criado.dataHoraAbertura,
+    );
     log.info("Evento", "Evento criado", {eventoId: criado.id, criadorId: uid});
     res.status(201).json(criado);
   } catch (error) {

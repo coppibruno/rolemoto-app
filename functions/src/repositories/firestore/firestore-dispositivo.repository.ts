@@ -1,5 +1,5 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
-import {FieldValue} from "firebase-admin/firestore";
+import {FieldPath, FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
 import type {Dispositivo, PlataformaDispositivo} from "../../types/dispositivo";
 import {ehPlataformaDispositivo} from "../../types/dispositivo";
@@ -81,6 +81,34 @@ export class FirestoreDispositivoRepository implements DispositivoRepository {
     }
     await ref.delete();
     return true;
+  }
+
+  async listarUids(): Promise<string[]> {
+    const uids = new Set<string>();
+    const pagina = 400;
+    let cursor: DocumentSnapshot | undefined;
+    for (let i = 0; i < 50; i += 1) {
+      let consulta = firestore
+        .collection(COLECAO)
+        .orderBy(FieldPath.documentId())
+        .select("uid")
+        .limit(pagina);
+      if (cursor) {
+        consulta = consulta.startAfter(cursor);
+      }
+      const snap = await consulta.get();
+      snap.docs.forEach((doc) => {
+        const uid = String(doc.get("uid") ?? "");
+        if (uid) {
+          uids.add(uid);
+        }
+      });
+      if (snap.size < pagina) {
+        break;
+      }
+      cursor = snap.docs[snap.docs.length - 1];
+    }
+    return [...uids];
   }
 
   async removerPorUid(uid: string): Promise<void> {

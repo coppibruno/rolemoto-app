@@ -44,10 +44,11 @@
 .menu {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  left: 0;
   z-index: 60;
   display: flex;
   flex-direction: column;
+  width: max-content;
   min-width: 180px;
   padding: 6px;
   border-radius: 0.75rem;
@@ -64,6 +65,7 @@
   color: var(--on-surface);
   font-size: 14px;
   text-align: left;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -78,7 +80,7 @@
 .erro {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  left: 0;
   z-index: 60;
   width: max-content;
   max-width: 220px;
@@ -89,4 +91,9 @@
   color: var(--error);
   font-size: 13px;
   line-height: 18px;
+}
+
+.ancoraDireita {
+  right: 0;
+  left: auto;
 }

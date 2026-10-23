@@ -499,7 +499,12 @@ rolesRouter.put("/:id", async (req: Request, res: Response) => {
         100,
       );
       const userIds = aceitos.map((p) => p.usuarioId);
-      await cancelarLembretesDoRole(id, userIds, existente.criadorId);
+      await cancelarLembretesDoRole(
+        id,
+        userIds,
+        existente.criadorId,
+        existente.dataHoraSaida,
+      );
       await reagendarLembretesDoRole(
         id,
         atualizado.titulo,
@@ -547,7 +552,12 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
       100,
     );
     const userIds = aceitos.map((p) => p.usuarioId);
-    await cancelarLembretesDoRole(id, userIds, existente.criadorId);
+    await cancelarLembretesDoRole(
+      id,
+      userIds,
+      existente.criadorId,
+      existente.dataHoraSaida,
+    );
 
     // Confirmados (aceito === true), sem filtrar `notificar` — o rolê some.
     const aNotificar = aceitos

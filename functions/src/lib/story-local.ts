@@ -7,6 +7,7 @@ import {erroDe, log} from "./log";
 import {notificarStory} from "./notificacoes";
 import {ymdSaoPaulo} from "./quando";
 import {
+  dispositivoRepository,
   eventoRepository,
   localRepository,
   storyLocalRepository,
@@ -32,6 +33,7 @@ const TETO_FOTOS = 5;
 const TETO_LISTA = 50;
 const TETO_ANEIS = 20;
 const TETO_PUSH = 100;
+const LOTE_AVISO_EVENTO = 20;
 const JANELA_MS = 24 * 60 * 60 * 1000;
 const LOTE_RECENTES = 200;
 
@@ -347,6 +349,11 @@ const dispararPushLocal = async (
   autorUid: string,
   apelido: string,
 ): Promise<void> => {
+  const vestindo = await eventoQueVeste(local.id);
+  if (vestindo) {
+    await dispararPushEvento(vestindo, autorUid, apelido, local);
+    return;
+  }
   const reservou = await localRepository.reservarPushDoDia(
     local.id,
     ymdSaoPaulo(new Date()),
@@ -354,34 +361,28 @@ const dispararPushLocal = async (
   if (!reservou) {
     return;
   }
-  const vestindo = await eventoQueVeste(local.id);
   const favoritos = await usuarioLocalFavoritoRepository
     .listarUsuarioIdsPorLocal(local.id, TETO_PUSH);
-  const inscritos = vestindo ?
-    (await usuarioEventoRepository.listarPorEvento(vestindo.id))
-      .map((item) => item.usuarioId) :
-    [];
   const nome = cortar(local.nome);
-  const titulo = vestindo ? cortar(vestindo.titulo) : "";
-  const title = vestindo ?
-    `O ${titulo} está rolando` :
-    `${nome} está ao vivo`;
-  const body = vestindo ?
-    `${apelido} postou uma foto no ${nome}` :
-    `${apelido} postou uma foto`;
   await notificarStory(
-    unirDestinatarios(favoritos, inscritos, autorUid),
-    title,
-    body,
+    unirDestinatarios(favoritos, [], autorUid),
+    `${nome} está ao vivo`,
+    `${apelido} postou uma foto`,
     `/locais/${local.id}?stories=1`,
-    {localId: local.id, eventoId: vestindo?.id ?? ""},
+    {localId: local.id, eventoId: ""},
   );
 };
+
+const urlStoryEvento = (evento: Evento): string =>
+  evento.localId ?
+    `/locais/${evento.localId}?stories=1` :
+    `/eventos/${evento.id}?stories=1`;
 
 const dispararPushEvento = async (
   evento: Evento,
   autorUid: string,
   apelido: string,
+  localConhecido?: Local,
 ): Promise<void> => {
   const reservou = await eventoRepository.reservarPushDoDia(
     evento.id,
@@ -390,15 +391,22 @@ const dispararPushEvento = async (
   if (!reservou) {
     return;
   }
-  const inscritos = (await usuarioEventoRepository.listarPorEvento(evento.id))
-    .map((item) => item.usuarioId);
+  const uids = (await dispositivoRepository.listarUids())
+    .filter((id) => id !== autorUid);
   const titulo = cortar(evento.titulo);
+  const local = localConhecido ?? (
+    evento.localId ? await localRepository.buscarPorId(evento.localId) : null
+  );
+  const body = local ?
+    `${apelido} postou uma foto no ${cortar(local.nome)}` :
+    `${apelido} postou uma foto`;
   await notificarStory(
-    unirDestinatarios([], inscritos, autorUid),
+    uids,
     `O ${titulo} está rolando`,
-    `${apelido} postou uma foto`,
-    `/eventos/${evento.id}?stories=1`,
-    {localId: "", eventoId: evento.id},
+    body,
+    urlStoryEvento(evento),
+    {localId: evento.localId ?? "", eventoId: evento.id},
+    LOTE_AVISO_EVENTO,
   );
 };
 

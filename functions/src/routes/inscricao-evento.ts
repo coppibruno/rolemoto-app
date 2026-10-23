@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
 import {log} from "../lib/log";
+import {agendarLembreteEvento, cancelarLembreteEvento} from "../lib/lembretes";
 import {param} from "../lib/params";
 import {
   eventoRepository,
@@ -94,6 +95,10 @@ inscricaoEventoRouter.post(
         eventoId,
         criadorId: evento.criadorId,
       });
+      await agendarLembreteEvento(
+        {eventoId, userId: uid, titulo: evento.titulo},
+        evento.dataHoraAbertura,
+      );
       log.info("InscricaoEvento", "Inscrição criada", {
         eventoId,
         usuarioId: uid,
@@ -116,7 +121,11 @@ inscricaoEventoRouter.delete(
       }
 
       const eventoId = param(req, "id");
+      const evento = await eventoRepository.buscarPorId(eventoId);
       await usuarioEventoRepository.remover(idInscricao(uid, eventoId));
+      if (evento && evento.criadorId !== uid) {
+        await cancelarLembreteEvento(eventoId, uid, evento.dataHoraAbertura);
+      }
       log.info("InscricaoEvento", "Inscrição removida", {
         eventoId,
         usuarioId: uid,

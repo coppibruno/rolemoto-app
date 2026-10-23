@@ -12,6 +12,8 @@ export interface DispositivoRepository {
   ): Promise<Dispositivo>;
   buscarPorToken(token: string): Promise<Dispositivo | null>;
   listarPorUid(uid: string): Promise<Dispositivo[]>;
+  /** Uids com pelo menos um token. Quem não aceitou o push não entra. */
+  listarUids(): Promise<string[]>;
   removerPorToken(token: string): Promise<boolean>;
   removerPorUid(uid: string): Promise<void>;
 }

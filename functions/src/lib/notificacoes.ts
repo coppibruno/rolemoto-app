@@ -4,11 +4,17 @@ import { dispositivoRepository } from "../repositories";
 import { origemApp } from "./origem";
 import { erroDe, log } from "./log";
 import type { PlataformaDispositivo } from "../types/dispositivo";
+import type {
+  AlvoLembrete,
+  AntecedenciaLembrete,
+  PayloadLembrete,
+} from "../types/lembrete";
 
 export type TipoPush =
   | "pedido_vaga"
   | "aceite_vaga"
   | "lembrete_role"
+  | "lembrete_evento"
   | "cancelamento_role"
   | "story_local";
 
@@ -25,8 +31,22 @@ type PayloadPush = {
 const COPY = {
   pedido_vaga: "Um motociclista solicitou vaga para um rolê",
   aceite_vaga: "O organizador aceitou você no rolê",
-  lembrete_role: "Seu rolê começa em 1 hora! 🏍️",
 } as const;
+
+/** Título do lembrete. 24 h = “amanhã”; 2 h diz as horas. Sem o aviso de 1 h. */
+export const tituloLembrete = (
+  alvo: AlvoLembrete,
+  antecedencia: AntecedenciaLembrete,
+): string => {
+  if (alvo === "evento") {
+    return antecedencia === "24h" ?
+      "Tem evento amanhã" :
+      "Seu evento começa em 2 horas";
+  }
+  return antecedencia === "24h" ?
+    "Seu rolê é amanhã" :
+    "Seu rolê começa em 2 horas";
+};
 
 const CANAL_NATIVO = "rolemoto_push";
 
@@ -303,18 +323,20 @@ export const notificarAceite = async (
 };
 
 export const notificarLembrete = async (
-  userId: string,
-  roleId: string,
+  payload: PayloadLembrete,
   titulo: string,
 ): Promise<ResultadoPush> => {
-  return enviar(userId, {
-    tipo: "lembrete_role",
-    title: COPY.lembrete_role,
+  const evento = payload.alvo === "evento";
+  return enviar(payload.userId, {
+    tipo: evento ? "lembrete_evento" : "lembrete_role",
+    title: tituloLembrete(payload.alvo, payload.antecedencia),
     body: titulo,
-    url: `/roles/${roleId}/participar`,
-    roleId,
+    url: evento ?
+      `/eventos/${payload.alvoId}` :
+      `/roles/${payload.alvoId}/participar`,
+    roleId: evento ? "" : payload.alvoId,
     localId: "",
-    eventoId: "",
+    eventoId: evento ? payload.alvoId : "",
   });
 };
 
@@ -336,6 +358,24 @@ export const notificarCancelamentoRole = async (
 };
 
 const LOTE_PUSH = 8;
+const LOTE_PUSH_LARGO = 20;
+
+const emLote = async (
+  uids: string[],
+  tamanho: number,
+  enviarUm: (uid: string) => Promise<void>,
+): Promise<void> => {
+  for (let i = 0; i < uids.length; i += tamanho) {
+    const lote = uids.slice(i, i + tamanho);
+    await Promise.all(lote.map(async (uid) => {
+      try {
+        await enviarUm(uid);
+      } catch (error) {
+        log.warn("Push", "Falha em um destinatário", {uid, ...erroDe(error)});
+      }
+    }));
+  }
+};
 
 /** Um envio por uid. Falha de um não aborta os outros nem o POST da story. */
 export const notificarStory = async (
@@ -344,23 +384,28 @@ export const notificarStory = async (
   body: string,
   url: string,
   refs: {localId: string; eventoId: string},
+  lote = LOTE_PUSH,
 ): Promise<void> => {
-  for (let i = 0; i < uids.length; i += LOTE_PUSH) {
-    const lote = uids.slice(i, i + LOTE_PUSH);
-    await Promise.all(lote.map(async (uid) => {
-      try {
-        await enviar(uid, {
-          tipo: "story_local",
-          title,
-          body,
-          url,
-          roleId: "",
-          localId: refs.localId,
-          eventoId: refs.eventoId,
-        });
-      } catch (error) {
-        log.warn("Push", "Falha ao notificar story", {uid, ...erroDe(error)});
-      }
-    }));
-  }
+  await emLote(uids, lote, async (uid) => {
+    await enviar(uid, {
+      tipo: "story_local",
+      title,
+      body,
+      url,
+      roleId: "",
+      localId: refs.localId,
+      eventoId: refs.eventoId,
+    });
+  });
+};
+
+/** Mesmo texto para cada uid. Usado no aviso de 24 h do evento. */
+export const notificarLembretes = async (
+  uids: string[],
+  base: PayloadLembrete,
+  titulo: string,
+): Promise<void> => {
+  await emLote(uids, LOTE_PUSH_LARGO, async (userId) => {
+    await notificarLembrete({...base, userId, audiencia: "pessoa"}, titulo);
+  });
 };

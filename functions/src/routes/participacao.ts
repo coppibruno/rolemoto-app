@@ -172,8 +172,9 @@ participacaoRouter.delete(
       }
 
       const roleId = param(req, "id");
+      const role = await roleRepository.buscarPorId(roleId);
       await usuarioRoleRepository.remover(idPedido(uid, roleId));
-      await cancelarLembrete(roleId, uid);
+      await cancelarLembrete(roleId, uid, role?.dataHoraSaida ?? "");
       log.info("Participacao", "Solicitação removida", {roleId, usuarioId: uid});
       res.status(204).send();
     } catch (error) {
