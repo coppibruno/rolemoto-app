@@ -6,6 +6,8 @@ import { useComposerStory } from "@/app/(app)/stories/hooks/useComposerStory";
 import type { MencaoOpcao } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
 import { estiloMarca } from "../marca-story";
 import { BuscaMarcaStory } from "./BuscaMarcaStory";
+import { BuscaLocalizacaoStory } from "./BuscaLocalizacaoStory";
+import { SeloLocalizacaoStory } from "./SeloLocalizacaoStory";
 import { SeloMarcaStory } from "./SeloMarcaStory";
 import styles from "./composer-story.module.css";
 
@@ -23,12 +25,15 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
   return createPortal(
     <div ref={composer.stageRef} className={styles.tela} role="dialog" aria-modal="true" aria-label="Nova foto">
       <img src={composer.preview} alt="" className={styles.foto} />
-      {composer.buscaAberta && !composer.escolhida ? (
+      {composer.buscaAberta && !composer.escolhida || composer.buscaLocal ? (
         <button
           type="button"
           className={styles.fundo}
           aria-label="Fechar busca"
-          onClick={() => composer.setBuscaAberta(false)}
+          onClick={() => {
+            composer.setBuscaAberta(false);
+            if (composer.buscaLocal) composer.abrirLocalizacao();
+          }}
         />
       ) : null}
       <div className={styles.topo}>
@@ -59,12 +64,41 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
           type="button"
           className={styles.marcar}
           style={estiloMarca(null)}
-          onClick={() => composer.setBuscaAberta((aberta) => !aberta)}
+          onClick={composer.abrirBusca}
           disabled={composer.enviando}
         >
           Marcar lugar
         </button>
       )}
+      {composer.localizacao ? (
+        <SeloLocalizacaoStory
+          nome={composer.localizacao.nome}
+          travado={composer.enviando}
+          onTirar={composer.tirarLocalizacao}
+        />
+      ) : (
+        <button
+          type="button"
+          className={styles.localizar}
+          onClick={composer.abrirLocalizacao}
+          disabled={composer.enviando}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            location_on
+          </span>
+          Localização
+        </button>
+      )}
+      {composer.buscaLocal ? (
+        <BuscaLocalizacaoStory
+          termo={composer.termoLocal}
+          onTermo={composer.setTermoLocal}
+          lugarEncontro={composer.lugarEncontro}
+          lista={composer.listaLocal}
+          semResultado={composer.semLocal}
+          onEscolher={composer.escolherLocalizacao}
+        />
+      ) : null}
       {composer.buscaAberta && !composer.escolhida ? (
         <BuscaMarcaStory
           termo={composer.termo}

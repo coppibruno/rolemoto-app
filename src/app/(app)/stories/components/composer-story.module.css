@@ -44,6 +44,7 @@
 
 .fechar:disabled,
 .marcar:disabled,
+.localizar:disabled,
 .tirar:disabled,
 .publicar:disabled {
   opacity: 0.7;
@@ -116,6 +117,55 @@
 
 .tirar .material-symbols-outlined {
   font-size: 20px;
+}
+
+.localizar,
+.localizacao {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 32px);
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-high) 92%, transparent);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.localizar {
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.localizar:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.localizar .material-symbols-outlined,
+.localizacao .material-symbols-outlined {
+  color: var(--tertiary);
+  font-size: 22px;
+}
+
+.localizacao {
+  padding: 0 0 0 14px;
+}
+
+.localizacaoNome {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rodape {

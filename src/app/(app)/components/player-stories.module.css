@@ -163,6 +163,36 @@
   cursor: pointer;
 }
 
+.localizacao {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 32px);
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-high) 92%, transparent);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.localizacao .material-symbols-outlined {
+  color: var(--tertiary);
+  font-size: 22px;
+}
+
 .vazio {
   margin: auto;
   display: flex;

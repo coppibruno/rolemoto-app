@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
 import { ComposerStory } from "@/app/(app)/stories/components/ComposerStory";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useAnelStories } from "@/app/(app)/stories/hooks/useAnelStories";
@@ -12,7 +13,24 @@ type Props = {
   tamanho: "header" | "cartao";
 };
 
-export const AvatarStories = ({ uid, fotoUrl, nome, tamanho }: Props) => {
+const AvatarFoto = ({ fotoUrl, tamanho }: Pick<Props, "fotoUrl" | "tamanho">) => (
+  <span className={styles.wrap}>
+    {fotoUrl ? (
+      <img
+        src={fotoUrl}
+        alt=""
+        className={`${styles.foto} ${styles[tamanho]}`}
+        referrerPolicy="no-referrer"
+      />
+    ) : (
+      <span className={`${styles.vazio} ${styles[tamanho]}`} aria-hidden>
+        <span className="material-symbols-outlined">person</span>
+      </span>
+    )}
+  </span>
+);
+
+const AvatarProprio = ({ uid, fotoUrl, nome, tamanho }: Props) => {
   const anel = useAnelStories(uid, nome);
 
   return (
@@ -78,4 +96,12 @@ export const AvatarStories = ({ uid, fotoUrl, nome, tamanho }: Props) => {
       />
     </span>
   );
+};
+
+export const AvatarStories = (props: Props) => {
+  const { usuario } = useAuth();
+  if (usuario?.uid !== props.uid) {
+    return <AvatarFoto fotoUrl={props.fotoUrl} tamanho={props.tamanho} />;
+  }
+  return <AvatarProprio {...props} />;
 };

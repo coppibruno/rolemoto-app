@@ -22,7 +22,9 @@ import type {
   AnelStory,
   EventoAoVivoResumo,
   ListaStories,
+  LocalizacaoStory,
   MencaoStory,
+  PessoaStory,
   StoryLocal,
   StoryPublica,
   StoryVisto,
@@ -32,12 +34,14 @@ import type {Usuario} from "../types/usuario";
 const TETO_FOTOS = 5;
 const TETO_LISTA = 50;
 const TETO_ANEIS = 20;
+const TETO_PESSOAS = 30;
 const TETO_PUSH = 100;
 const LOTE_AVISO_EVENTO = 20;
 const JANELA_MS = 24 * 60 * 60 * 1000;
 const LOTE_RECENTES = 200;
 
 const ERRO_FOTO = "foto inválida";
+const ERRO_LOCALIZACAO = "localização inválida";
 const ERRO_RAIO = "Chegue mais perto para postar a foto";
 const ERRO_TETO_PONTO = "Você já postou 5 fotos neste ponto hoje";
 const ERRO_TETO_ENCONTRO = "Você já postou 5 fotos neste encontro hoje";
@@ -77,6 +81,9 @@ const idVistoLocal = (uid: string, localId: string): string =>
 const idVistoEvento = (uid: string, eventoId: string): string =>
   `${uid}_evento_${eventoId}`;
 
+const idVistoPessoa = (uid: string, autorUid: string): string =>
+  `${uid}_pessoa_${autorUid}`;
+
 const cortar = (texto: string): string =>
   texto.length <= 60 ? texto : texto.slice(0, 60);
 
@@ -99,6 +106,67 @@ const paraPublica = (
     fotoUrl: usuario?.fotoUrl ?? "",
   },
   mencao: null,
+  localizacao: localizacaoPublica(story),
+});
+
+const localizacaoPublica = (story: StoryLocal): LocalizacaoStory | null => {
+  if (
+    !story.localizacaoNome ||
+    story.localizacaoLat == null ||
+    story.localizacaoLng == null
+  ) {
+    return null;
+  }
+  return {
+    nome: story.localizacaoNome,
+    lat: story.localizacaoLat,
+    lng: story.localizacaoLng,
+  };
+};
+
+const vazioLocalizacao = (valor: unknown): boolean =>
+  valor === undefined || valor === null || valor === "";
+
+const localizacaoDoBody = (
+  body: unknown,
+): {ok: true; localizacao: LocalizacaoStory | null} | {ok: false} => {
+  if (!body || typeof body !== "object") {
+    return {ok: true, localizacao: null};
+  }
+  const bruto = body as Record<string, unknown>;
+  if (
+    vazioLocalizacao(bruto.localizacaoNome) &&
+    vazioLocalizacao(bruto.localizacaoLat) &&
+    vazioLocalizacao(bruto.localizacaoLng)
+  ) {
+    return {ok: true, localizacao: null};
+  }
+  const nome = typeof bruto.localizacaoNome === "string" ?
+    bruto.localizacaoNome.trim() :
+    "";
+  const lat = bruto.localizacaoLat;
+  const lng = bruto.localizacaoLng;
+  if (
+    !nome ||
+    nome.length > 80 ||
+    typeof lat !== "number" ||
+    typeof lng !== "number" ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng) ||
+    lat < -90 ||
+    lat > 90 ||
+    lng < -180 ||
+    lng > 180
+  ) {
+    return {ok: false};
+  }
+  return {ok: true, localizacao: {nome, lat, lng}};
+};
+
+const camposLocalizacao = (localizacao: LocalizacaoStory | null) => ({
+  localizacaoNome: localizacao?.nome ?? null,
+  localizacaoLat: localizacao?.lat ?? null,
+  localizacaoLng: localizacao?.lng ?? null,
 });
 
 const resumo = (evento: Evento | null): EventoAoVivoResumo | null =>
@@ -271,6 +339,10 @@ export const publicarStoryPerfil = async (
   if (!foto.ok) {
     return {ok: false, status: 400, erro: ERRO_FOTO};
   }
+  const lugar = localizacaoDoBody(body);
+  if (!lugar.ok) {
+    return {ok: false, status: 400, erro: ERRO_LOCALIZACAO};
+  }
   const desde = new Date(Date.now() - JANELA_MS);
   const recentes = (await storyLocalRepository.listarPorUsuario(uid, 50))
     .filter((story) =>
@@ -289,14 +361,26 @@ export const publicarStoryPerfil = async (
     storagePath: foto.storagePath,
     marcaX: null,
     marcaY: null,
+    ...camposLocalizacao(lugar.localizacao),
   });
   const usuario = await usuarioRepository.buscarPorId(uid);
   return {ok: true, story: paraPublica(criada, usuario)};
 };
 
 const ativasDoUsuario = async (uid: string): Promise<StoryLocal[]> => {
-  const stories = await storyLocalRepository.listarPorUsuario(uid, 50);
-  return porCriacao(stories.filter((story) => !expirada(story)));
+  const agora = new Date();
+  const [porUsuario, recentes] = await Promise.all([
+    storyLocalRepository.listarPorUsuario(uid, 50),
+    storyLocalRepository.listarRecentesNaoExpiradas(agora, LOTE_RECENTES),
+  ]);
+  const mapa = new Map<string, StoryLocal>();
+  for (const story of [...porUsuario, ...recentes]) {
+    if (story.usuarioId !== uid || expirada(story, agora.getTime())) {
+      continue;
+    }
+    mapa.set(story.id, story);
+  }
+  return porCriacao([...mapa.values()]);
 };
 
 export const contarStoriesUsuario = async (uid: string): Promise<number> =>
@@ -306,30 +390,8 @@ export const listarStoriesUsuario = async (
   uid: string,
 ): Promise<{stories: StoryPublica[]; storiesAtivas: number}> => {
   const proprias = await ativasDoUsuario(uid);
-  const vistas = new Set(proprias.map((story) => story.id));
-  const extras: StoryLocal[] = [];
-  const albuns = new Map<string, {album: "local" | "evento"; id: string}>();
-  for (const story of proprias) {
-    if (story.album === "local" && story.localId) {
-      albuns.set(`local:${story.localId}`, {album: "local", id: story.localId});
-    } else if (story.album === "evento" && story.eventoId) {
-      albuns.set(`evento:${story.eventoId}`, {album: "evento", id: story.eventoId});
-    }
-  }
-  for (const alvo of albuns.values()) {
-    const lista = alvo.album === "local" ?
-      await storyLocalRepository.listarAtivasLocal(alvo.id, new Date(), TETO_LISTA) :
-      await storyLocalRepository.listarAtivasEvento(alvo.id, new Date(), TETO_LISTA);
-    for (const story of lista) {
-      if (story.usuarioId === uid || vistas.has(story.id)) {
-        continue;
-      }
-      vistas.add(story.id);
-      extras.push(story);
-    }
-  }
   return {
-    stories: await publicarLista(porCriacao([...proprias, ...extras])),
+    stories: await publicarLista(proprias),
     storiesAtivas: proprias.length,
   };
 };
@@ -348,13 +410,13 @@ export const marcarVistoPerfil = async (
   storyId: string,
 ): Promise<{ok: true} | Falha> => {
   const story = await storyLocalRepository.buscarPorId(storyId);
-  if (!story || story.album !== "perfil" || story.usuarioId !== autorUid || expirada(story)) {
+  if (!story || story.usuarioId !== autorUid || expirada(story)) {
     return {ok: false, status: 404, erro: ERRO_STORY};
   }
   await storyLocalRepository.registrarVisto({
-    id: `${uid}_perfil_${autorUid}`,
+    id: idVistoPessoa(uid, autorUid),
     usuarioId: uid,
-    album: "perfil",
+    album: "pessoa",
     localId: null,
     eventoId: null,
     vistoAte: story.createdAt,
@@ -468,6 +530,7 @@ const gravarLocal = async (
   fotoUrl: string,
   storagePath: string,
   posicao: {marcaX: number; marcaY: number} | null,
+  localizacao: LocalizacaoStory | null,
 ): Promise<StoryPublica> => {
   const criada = await storyLocalRepository.criar({
     usuarioId: uid,
@@ -478,6 +541,7 @@ const gravarLocal = async (
     storagePath,
     marcaX: posicao?.marcaX ?? null,
     marcaY: posicao?.marcaY ?? null,
+    ...camposLocalizacao(localizacao),
   });
   return comPush(criada, uid, (apelido) => dispararPushLocal(local, uid, apelido));
 };
@@ -487,6 +551,10 @@ export const publicarStoryLocal = async (
   local: Local,
   body: unknown,
 ): Promise<{ok: true; story: StoryPublica} | Falha> => {
+  const lugar = localizacaoDoBody(body);
+  if (!lugar.ok) {
+    return {ok: false, status: 400, erro: ERRO_LOCALIZACAO};
+  }
   const gps = validarBodyCheckin(body);
   if (!gps.ok) {
     return {ok: false, status: 400, erro: gps.erro};
@@ -519,6 +587,7 @@ export const publicarStoryLocal = async (
     fotoUrl,
     foto.storagePath,
     posicaoDoBody(body),
+    lugar.localizacao,
   );
   return {ok: true, story};
 };
@@ -528,6 +597,10 @@ export const publicarStoryEvento = async (
   evento: Evento,
   body: unknown,
 ): Promise<{ok: true; story: StoryPublica} | Falha> => {
+  const lugar = localizacaoDoBody(body);
+  if (!lugar.ok) {
+    return {ok: false, status: 400, erro: ERRO_LOCALIZACAO};
+  }
   if (!eventoEstaAoVivo(evento)) {
     return {ok: false, status: 400, erro: ERRO_JANELA};
   }
@@ -569,6 +642,7 @@ export const publicarStoryEvento = async (
       fotoUrl,
       foto.storagePath,
       posicaoDoBody(body),
+      lugar.localizacao,
     );
     return {ok: true, story};
   }
@@ -603,6 +677,7 @@ export const publicarStoryEvento = async (
     storagePath: foto.storagePath,
     marcaX: posicao?.marcaX ?? null,
     marcaY: posicao?.marcaY ?? null,
+    ...camposLocalizacao(lugar.localizacao),
   });
   const story = await comPush(
     criada,
@@ -1042,6 +1117,104 @@ export const listarAneisAoVivo = async (
   geo: GeoAneis | null,
 ): Promise<AnelStory[]> =>
   aba === "locais" ? aneisLocais(uid, geo) : aneisEventos(uid, geo);
+
+const recenteDaPessoa = (stories: StoryLocal[]): string =>
+  stories.reduce((maior, story) =>
+    story.createdAt > maior ? story.createdAt : maior, "");
+
+export const listarPessoasStory = async (uid: string): Promise<PessoaStory[]> => {
+  const agora = new Date();
+  const recentes = await storyLocalRepository.listarRecentesNaoExpiradas(
+    agora,
+    LOTE_RECENTES,
+  );
+  const porAutor = new Map<string, StoryLocal[]>();
+  for (const story of recentes) {
+    if (expirada(story, agora.getTime())) {
+      continue;
+    }
+    const lista = porAutor.get(story.usuarioId) ?? [];
+    lista.push(story);
+    porAutor.set(story.usuarioId, lista);
+  }
+  if (!porAutor.has(uid)) {
+    const proprias = await ativasDoUsuario(uid);
+    if (proprias.length > 0) {
+      porAutor.set(uid, proprias);
+    }
+  }
+  const autores = [...porAutor.keys()];
+  const [usuarios, vistos] = await Promise.all([
+    usuarioRepository.buscarPorIds(autores),
+    storyLocalRepository.buscarVistos(
+      autores
+        .filter((autor) => autor !== uid)
+        .map((autor) => idVistoPessoa(uid, autor)),
+    ),
+  ]);
+  const porUsuario = new Map(usuarios.map((usuario) => [usuario.uid, usuario]));
+  const porVisto = new Map(vistos.map((visto) => [visto.id, visto]));
+  const montadas = autores.map((autor) => {
+    const stories = porAutor.get(autor) ?? [];
+    const usuario = porUsuario.get(autor) ?? null;
+    const propria = autor === uid;
+    const visto = porVisto.get(idVistoPessoa(uid, autor));
+    return {
+      uid: autor,
+      apelido: apelidoExibicao(usuario),
+      fotoUrl: usuario?.fotoUrl ?? "",
+      contagem: stories.length,
+      naoVisto: propria ?
+        false :
+        temNaoVisto(stories, uid, visto?.vistoAte ?? null),
+      propria,
+      recenteEm: recenteDaPessoa(stories),
+    };
+  });
+  montadas.sort((a, b) => {
+    if (a.propria !== b.propria) {
+      return a.propria ? -1 : 1;
+    }
+    if (a.naoVisto !== b.naoVisto) {
+      return a.naoVisto ? -1 : 1;
+    }
+    return b.recenteEm.localeCompare(a.recenteEm) || a.uid.localeCompare(b.uid);
+  });
+  const outras = montadas
+    .filter((pessoa) => !pessoa.propria)
+    .slice(0, TETO_PESSOAS - 1)
+    .map((pessoa) => ({
+      uid: pessoa.uid,
+      apelido: pessoa.apelido,
+      fotoUrl: pessoa.fotoUrl,
+      contagem: pessoa.contagem,
+      naoVisto: pessoa.naoVisto,
+      propria: pessoa.propria,
+    }));
+  const eu = montadas.find((pessoa) => pessoa.propria);
+  if (eu) {
+    return [{
+      uid: eu.uid,
+      apelido: eu.apelido,
+      fotoUrl: eu.fotoUrl,
+      contagem: eu.contagem,
+      naoVisto: eu.naoVisto,
+      propria: eu.propria,
+    }, ...outras];
+  }
+  const usuario = await usuarioRepository.buscarPorId(uid);
+  return [
+    {
+      uid,
+      apelido: apelidoExibicao(usuario),
+      fotoUrl: usuario?.fotoUrl ?? "",
+      contagem: 0,
+      naoVisto: false,
+      propria: true,
+    },
+    ...outras,
+  ];
+};
 
 export const expirarStoriesLote = async (): Promise<number> => {
   const stories = await storyLocalRepository.listarExpiradas(new Date(), 200);

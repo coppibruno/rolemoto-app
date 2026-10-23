@@ -148,10 +148,14 @@ export const useReelStories = ({
 
   useEffect(() => {
     if (!aberto || !storyId || !story) return;
+    if (alvoTipo === "usuario" && alvoId) {
+      storiesService.visto({ tipo: "usuario", id: alvoId }, storyId).catch(() => undefined);
+      return;
+    }
     const alvoStory = alvoDaStory(story);
     if (!alvoStory) return;
     storiesService.visto(alvoStory, storyId).catch(() => undefined);
-  }, [aberto, storyId, story]);
+  }, [aberto, storyId, story, alvoTipo, alvoId]);
 
   const segurar = () => {
     if (confirmando) return;

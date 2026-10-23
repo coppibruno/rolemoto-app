@@ -15,8 +15,8 @@ type Props = {
 
 const marcaDoAlvo = (alvo: AlvoPostagem, nome: string): MencaoOpcao =>
   alvo.tipo === "local"
-    ? { tipo: "local", id: alvo.id, nome, localId: alvo.id }
-    : { tipo: "evento", id: alvo.id, nome, localId: alvo.localId };
+    ? { tipo: "local", id: alvo.id, nome, localId: alvo.id, ponto: null }
+    : { tipo: "evento", id: alvo.id, nome, localId: alvo.localId, ponto: null };
 
 export const BotaoPostarStory = ({ alvo, nome, onCriada }: Props) => {
   const [arquivo, setArquivo] = useState<File | null>(null);

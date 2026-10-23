@@ -1,5 +1,6 @@
 "use client";
 
+import { CarrosselStories } from "@/app/(app)/stories/components/CarrosselStories";
 import { useAbaFeed } from "../hooks/useAbaFeed";
 import { useContagensFeed } from "../hooks/useContagensFeed";
 import { useFeedbackPendente } from "../hooks/useFeedbackPendente";
@@ -117,6 +118,8 @@ export const TelaFeed = () => {
         ) : (
           <div id="filtros-feed" className={styles.filtrosAncora} />
         )}
+
+        {aba === "roles" ? <CarrosselStories /> : null}
 
         {aba === "roles" ? (
           <ListaRoles

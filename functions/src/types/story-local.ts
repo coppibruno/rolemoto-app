@@ -1,5 +1,13 @@
 export type AlbumStory = "local" | "evento" | "perfil";
 
+export type AlbumVisto = AlbumStory | "pessoa";
+
+export interface LocalizacaoStory {
+  nome: string;
+  lat: number;
+  lng: number;
+}
+
 export interface MencaoStory {
   tipo: "local" | "evento";
   id: string;
@@ -22,6 +30,9 @@ export interface StoryLocal {
   storagePath: string;
   marcaX: number | null;
   marcaY: number | null;
+  localizacaoNome: string | null;
+  localizacaoLat: number | null;
+  localizacaoLng: number | null;
   createdAt: string;
   expiresAt: string;
 }
@@ -40,12 +51,13 @@ export interface StoryPublica {
   marcaY: number | null;
   autor: AutorStory;
   mencao: MencaoStory | null;
+  localizacao: LocalizacaoStory | null;
 }
 
 export interface StoryVisto {
   id: string;
   usuarioId: string;
-  album: AlbumStory;
+  album: AlbumVisto;
   localId: string | null;
   eventoId: string | null;
   vistoAte: string;
@@ -65,6 +77,15 @@ export interface ListaStories {
   eventoId: string | null;
   eventoAoVivo: EventoAoVivoResumo | null;
   stories: StoryPublica[];
+}
+
+export interface PessoaStory {
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
+  contagem: number;
+  naoVisto: boolean;
+  propria: boolean;
 }
 
 export interface AnelStory {

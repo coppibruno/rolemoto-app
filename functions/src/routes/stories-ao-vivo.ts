@@ -2,6 +2,7 @@ import {Router, Request, Response} from "express";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {
   listarAneisAoVivo,
+  listarPessoasStory,
   publicarStoryEvento,
   publicarStoryLocal,
   publicarStoryPerfil,
@@ -53,6 +54,19 @@ storiesAoVivoRouter.get("/ao-vivo", async (req: Request, res: Response) => {
 
     const aneis = await listarAneisAoVivo(uid, aba, geo);
     res.json({aneis});
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+storiesAoVivoRouter.get("/pessoas", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    res.json({pessoas: await listarPessoasStory(uid)});
   } catch (error) {
     responderErro(res, error);
   }

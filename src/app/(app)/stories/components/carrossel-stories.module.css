@@ -1,0 +1,126 @@
+.faixa {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  margin: 0;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.faixa::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  position: relative;
+  flex: 0 0 auto;
+  width: 76px;
+}
+
+.bolha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 76px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.moldura {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--on-surface-variant) 45%, transparent);
+  background: var(--surface-container-highest);
+}
+
+.nova {
+  border-color: var(--primary);
+}
+
+.foto,
+.vazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  background: var(--surface-container-high);
+  color: var(--on-surface-variant);
+}
+
+.nome {
+  max-width: 76px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.adicionar {
+  position: absolute;
+  top: 36px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.adicionarIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 2px solid var(--surface);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.adicionarIcone .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.aviso {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+.tentar {
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-container);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.erroFoto {
+  margin: 4px 0 0;
+  color: var(--error);
+  font-size: 14px;
+}

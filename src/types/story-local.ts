@@ -1,5 +1,20 @@
 export type AlbumStory = "local" | "evento" | "perfil";
 
+export type LocalizacaoStory = {
+  nome: string;
+  lat: number;
+  lng: number;
+};
+
+export type PessoaStory = {
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
+  contagem: number;
+  naoVisto: boolean;
+  propria: boolean;
+};
+
 export type MencaoStory = {
   tipo: "local" | "evento";
   id: string;
@@ -24,6 +39,7 @@ export type StoryPublica = {
   marcaY: number | null;
   autor: AutorStory;
   mencao: MencaoStory | null;
+  localizacao: LocalizacaoStory | null;
 };
 
 export type EventoAoVivoResumo = {

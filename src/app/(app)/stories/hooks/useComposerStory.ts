@@ -7,6 +7,7 @@ import {
   useMencoesStory,
   usePublicarStoryPerfil,
   type MencaoOpcao,
+  type PontoMencao,
 } from "./usePublicarStoryPerfil";
 
 type Params = {
@@ -17,9 +18,12 @@ type Params = {
 
 export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params) => {
   const [escolhida, setEscolhida] = useState<MencaoOpcao | null>(marcaInicial);
+  const [localizacao, setLocalizacao] = useState<PontoMencao | null>(null);
   const [posicao, setPosicao] = useState<PosicaoMarca>(POSICAO_MARCA_PADRAO);
   const [buscaAberta, setBuscaAberta] = useState(false);
+  const [buscaLocal, setBuscaLocal] = useState(false);
   const [termo, setTermo] = useState("");
+  const [termoLocal, setTermoLocal] = useState("");
   const [preview, setPreview] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const posicaoRef = useRef(posicao);
@@ -55,8 +59,27 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     setEscolhida(marca);
     setPosicao(POSICAO_MARCA_PADRAO);
     setBuscaAberta(false);
+    setBuscaLocal(false);
     setTermo("");
   };
+
+  const abrirBusca = () => {
+    setBuscaLocal(false);
+    setBuscaAberta((aberta) => !aberta);
+  };
+
+  const abrirLocalizacao = () => {
+    setBuscaAberta(false);
+    setBuscaLocal((aberta) => !aberta);
+  };
+
+  const escolherLocalizacao = (ponto: PontoMencao) => {
+    setLocalizacao(ponto);
+    setBuscaLocal(false);
+    setTermoLocal("");
+  };
+
+  const tirarLocalizacao = () => setLocalizacao(null);
 
   const tirarMarca = () => {
     setEscolhida(null);
@@ -98,8 +121,29 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     if (arraste.current?.id === evento.pointerId) arraste.current = null;
   };
 
+  const consultaLocal = termoLocal.trim().toLocaleLowerCase();
+  const locais = useMemo(
+    () => opcoes.filter((item) => item.tipo === "local" && item.ponto),
+    [opcoes],
+  );
+  const listaLocal = useMemo(
+    () => locais
+      .filter((item) => !consultaLocal || item.nome.toLocaleLowerCase().includes(consultaLocal))
+      .slice(0, 8),
+    [consultaLocal, locais],
+  );
+  const lugarEncontro = useMemo(() => {
+    if (escolhida?.tipo !== "evento") return null;
+    if (escolhida.ponto) return escolhida.ponto;
+    return opcoes.find((item) => item.tipo === "evento" && item.id === escolhida.id)?.ponto ?? null;
+  }, [escolhida, opcoes]);
+  const lugarVisivel = lugarEncontro &&
+    (!consultaLocal || lugarEncontro.nome.toLocaleLowerCase().includes(consultaLocal))
+    ? lugarEncontro
+    : null;
+
   const enviar = async () => {
-    const story = await publicar(arquivo, escolhida, escolhida ? posicao : null);
+    const story = await publicar(arquivo, escolhida, escolhida ? posicao : null, localizacao);
     if (story) onPublicada(story);
   };
 
@@ -107,15 +151,25 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     preview,
     stageRef,
     escolhida,
+    localizacao,
     posicao,
     buscaAberta,
     setBuscaAberta,
+    buscaLocal,
     termo,
     setTermo,
+    termoLocal,
+    setTermoLocal,
     lista,
+    listaLocal,
+    lugarEncontro: lugarVisivel,
     perto: pertoVisivel ? perto : null,
     escolher,
+    abrirBusca,
+    abrirLocalizacao,
+    escolherLocalizacao,
     tirarMarca,
+    tirarLocalizacao,
     aoSegurarMarca,
     aoMoverMarca,
     aoSoltarMarca,
@@ -123,5 +177,6 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     enviando,
     erro,
     semResultado: buscaAberta && !pertoVisivel && lista.length === 0 && termo.trim().length > 0,
+    semLocal: buscaLocal && listaLocal.length === 0 && termoLocal.trim().length > 0 && !lugarVisivel,
   };
 };

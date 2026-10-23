@@ -6,6 +6,7 @@ import type {
   AnelStory,
   ListaStories,
   StoryPublica,
+  PessoaStory,
 } from "@/types/story-local";
 
 const caminho = (alvo: { tipo: AlvoPlayer["tipo"]; id: string }): string => {
@@ -63,11 +64,16 @@ export const storiesService = {
     accuracy?: number;
     marcaX?: number;
     marcaY?: number;
+    localizacaoNome?: string;
+    localizacaoLat?: number;
+    localizacaoLng?: number;
   }) =>
     api<StoryPublica>("/stories", {
       method: "POST",
       body: JSON.stringify(body),
     }),
+
+  pessoas: () => api<{ pessoas: PessoaStory[] }>("/stories/pessoas"),
 
   aoVivo: (aba: "locais" | "eventos", ponto: PontoFeed | null, raioKm: RaioKm) => {
     const qs = new URLSearchParams({ aba });

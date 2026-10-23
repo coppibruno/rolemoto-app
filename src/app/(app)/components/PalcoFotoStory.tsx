@@ -2,6 +2,7 @@
 
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { MencaoStory, StoryPublica } from "@/types/story-local";
+import { urlAbrirMaps } from "@/lib/maps";
 import { estiloMarca } from "@/app/(app)/stories/marca-story";
 import styles from "./player-stories.module.css";
 
@@ -40,6 +41,28 @@ export const PalcoFotoStory = ({ story, onSegurar, onSoltar, onCancelar, onMarca
         >
           @{mencao.nome}
         </button>
+      ) : null}
+      {story.localizacao ? (
+        <a
+          className={styles.localizacao}
+          href={urlAbrirMaps({
+            lat: story.localizacao.lat,
+            lng: story.localizacao.lng,
+            nome: story.localizacao.nome,
+            endereco: "",
+          })}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Abrir ${story.localizacao.nome} no Maps`}
+          onPointerDown={(evento) => evento.stopPropagation()}
+          onPointerUp={(evento) => evento.stopPropagation()}
+          onClick={(evento) => evento.stopPropagation()}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            location_on
+          </span>
+          {story.localizacao.nome}
+        </a>
       ) : null}
     </div>
   );

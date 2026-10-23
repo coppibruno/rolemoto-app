@@ -3,6 +3,7 @@ import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
 import type {
   AlbumStory,
+  AlbumVisto,
   StoryLocal,
   StoryLocalCreate,
   StoryVisto,
@@ -37,6 +38,20 @@ const percentual = (valor: unknown): number | null => {
   return valor;
 };
 
+const coordenada = (valor: unknown): number | null => {
+  if (typeof valor !== "number" || !Number.isFinite(valor)) {
+    return null;
+  }
+  return valor;
+};
+
+const albumVisto = (valor: unknown): AlbumVisto => {
+  if (valor === "evento" || valor === "perfil" || valor === "pessoa") {
+    return valor;
+  }
+  return "local";
+};
+
 const toStory = (snap: DocumentSnapshot): StoryLocal => {
   const data = snap.data() ?? {};
   const album: AlbumStory = data.album === "evento" ?
@@ -52,6 +67,9 @@ const toStory = (snap: DocumentSnapshot): StoryLocal => {
     storagePath: String(data.storagePath ?? ""),
     marcaX: percentual(data.marcaX),
     marcaY: percentual(data.marcaY),
+    localizacaoNome: textoOuNull(data.localizacaoNome),
+    localizacaoLat: coordenada(data.localizacaoLat),
+    localizacaoLng: coordenada(data.localizacaoLng),
     createdAt: toIso(data.createdAt),
     expiresAt: toIso(data.expiresAt),
   };
@@ -59,13 +77,10 @@ const toStory = (snap: DocumentSnapshot): StoryLocal => {
 
 const toVisto = (snap: DocumentSnapshot): StoryVisto => {
   const data = snap.data() ?? {};
-  const album: AlbumStory = data.album === "evento" ?
-    "evento" :
-    data.album === "perfil" ? "perfil" : "local";
   return {
     id: snap.id,
     usuarioId: String(data.usuarioId ?? ""),
-    album,
+    album: albumVisto(data.album),
     localId: textoOuNull(data.localId),
     eventoId: textoOuNull(data.eventoId),
     vistoAte: toIso(data.vistoAte),
@@ -86,6 +101,9 @@ export class FirestoreStoryLocalRepository implements StoryLocalRepository {
       storagePath: dados.storagePath,
       marcaX: dados.marcaX,
       marcaY: dados.marcaY,
+      localizacaoNome: dados.localizacaoNome,
+      localizacaoLat: dados.localizacaoLat,
+      localizacaoLng: dados.localizacaoLng,
       createdAt: agora,
       expiresAt,
     });

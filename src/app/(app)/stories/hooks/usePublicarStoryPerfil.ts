@@ -15,11 +15,31 @@ import { recarregarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
 import { storiesService } from "../services/stories.service";
 import { presencaService } from "@/app/(app)/perfil/services/presenca.service";
 
+export type PontoMencao = {
+  nome: string;
+  lat: number;
+  lng: number;
+};
+
 export type MencaoOpcao = {
   tipo: "local" | "evento";
   id: string;
   nome: string;
   localId: string | null;
+  ponto: PontoMencao | null;
+};
+
+const pontoMencao = (
+  nome: string,
+  endereco: string,
+  lat: unknown,
+  lng: unknown,
+): PontoMencao | null => {
+  if (typeof lat !== "number" || typeof lng !== "number") return null;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const rotulo = nome.trim() || endereco.trim();
+  if (!rotulo) return null;
+  return { nome: rotulo, lat, lng };
 };
 
 const COPY_GPS = "Precisamos da localização na hora para marcar esse lugar.";
@@ -52,8 +72,13 @@ export const useMencoesStory = (aberto: boolean) => {
     if (!aberto) return;
     let cancelado = false;
     Promise.all([
-      api<Array<{ id: string; nome: string }>>("/locais"),
-      api<Array<{ id: string; titulo: string; localId: string | null }>>("/eventos"),
+      api<Array<{ id: string; nome: string; endereco?: string; lat: number; lng: number }>>("/locais"),
+      api<Array<{
+        id: string;
+        titulo: string;
+        localId: string | null;
+        local: { nome: string; endereco: string; lat: number; lng: number };
+      }>>("/eventos"),
     ])
       .then(([locais, eventos]) => {
         if (cancelado) return;
@@ -63,12 +88,19 @@ export const useMencoesStory = (aberto: boolean) => {
             id: local.id,
             nome: local.nome,
             localId: local.id,
+            ponto: pontoMencao(local.nome, local.endereco ?? "", local.lat, local.lng),
           })),
           ...eventos.map((evento) => ({
             tipo: "evento" as const,
             id: evento.id,
             nome: evento.titulo,
             localId: evento.localId,
+            ponto: pontoMencao(
+              evento.local?.nome ?? "",
+              evento.local?.endereco ?? "",
+              evento.local?.lat,
+              evento.local?.lng,
+            ),
           })),
         ]);
       })
@@ -82,12 +114,13 @@ export const useMencoesStory = (aberto: boolean) => {
           const ponto = dados.ponto;
           setPerto(
             ponto.tipo === "local"
-              ? { tipo: "local", id: ponto.id, nome: ponto.nome, localId: ponto.id }
+              ? { tipo: "local", id: ponto.id, nome: ponto.nome, localId: ponto.id, ponto: null }
               : {
                 tipo: "evento",
                 id: ponto.id,
                 nome: ponto.nome,
                 localId: ponto.localId,
+                ponto: null,
               },
           );
         })
@@ -111,6 +144,7 @@ export const usePublicarStoryPerfil = () => {
     file: File,
     mencao: MencaoOpcao | null,
     posicao: PosicaoMarca | null,
+    localizacao: PontoMencao | null,
   ) => {
     if (!firebaseUser) {
       setErro("Sessão expirada. Entre de novo para postar.");
@@ -157,6 +191,13 @@ export const usePublicarStoryPerfil = () => {
           }
           : {}),
         ...(mencao && posicao ? { marcaX: posicao.x, marcaY: posicao.y } : {}),
+        ...(localizacao
+          ? {
+            localizacaoNome: localizacao.nome,
+            localizacaoLat: localizacao.lat,
+            localizacaoLng: localizacao.lng,
+          }
+          : {}),
       });
       void recarregarTemStories(firebaseUser.uid);
       return story;

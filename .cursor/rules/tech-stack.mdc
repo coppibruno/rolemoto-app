@@ -183,25 +183,30 @@ Qualquer autenticado cria via `POST /locais/:id/checkin` `{ lat, lng, accuracy }
 {
   id: string,                  // autoId
   usuarioId: string,
-  album: 'local' | 'evento',   // local exige localId; evento exige eventoId e localId null
+  album: 'local' | 'evento' | 'perfil',
   localId: string | null,
   eventoId: string | null,
   fotoUrl: string,
   storagePath: string,
+  marcaX: number | null,
+  marcaY: number | null,
+  localizacaoNome: string | null,
+  localizacaoLat: number | null,
+  localizacaoLng: number | null,
   createdAt: timestamp,
   expiresAt: timestamp         // createdAt + 24 h
 }
 ```
 
-Qualquer autenticado no raio (400 m, precisão ≤ 80 m) posta em `POST /locais/:id/stories` ou, com o encontro ao vivo, em `POST /eventos/:id/stories`. Também pode postar no próprio perfil em `POST /stories` e marcar um local ou evento com @nome: a foto entra no álbum daquele lugar e, ao abrir o status da pessoa, aparecem as fotos que os outros marcaram no mesmo ponto. Sem marca, o álbum é `perfil` e só aparece no status dela. Evento com `localId` grava no álbum do local. Lat/lng do piloto não são persistidos. `GET /stories/ao-vivo?aba=locais|eventos` monta a faixa. Push `story_local` só na primeira foto do dia (`storyPushYmd`, America/Sao_Paulo).
+Qualquer autenticado no raio (400 m, precisão ≤ 80 m) posta em `POST /locais/:id/stories` ou, com o encontro ao vivo, em `POST /eventos/:id/stories`. Também pode postar no próprio perfil em `POST /stories` e marcar um local ou evento com @nome: a foto entra no álbum daquele lugar. Sem marca, o álbum é `perfil`. A aba Rolês lista as pessoas com story em `GET /stories/pessoas` (bolinha + nome). Abrir a bolinha mostra só as fotos daquela pessoa. No perfil, só as próprias, e o autor apaga. A foto pode levar `localizacaoNome` + lat/lng: o selo abre o Maps, além da marca do evento ou do local. Evento com `localId` grava no álbum do local. Lat/lng do piloto não são persistidos. `GET /stories/ao-vivo?aba=locais|eventos` monta a faixa do ponto. Push `story_local` só na primeira foto do dia (`storyPushYmd`, America/Sao_Paulo).
 
 ### Coleção `userslocalstoryvisto`
 
 ```
 {
-  id: string,                  // `{usuarioId}_local_{localId}` ou `{usuarioId}_evento_{eventoId}`
+  id: string,                  // `{usuarioId}_local_{localId}`, `{usuarioId}_evento_{eventoId}` ou `{usuarioId}_pessoa_{autorUid}`
   usuarioId: string,
-  album: 'local' | 'evento',
+  album: 'local' | 'evento' | 'perfil' | 'pessoa',
   localId: string | null,
   eventoId: string | null,
   vistoAte: timestamp,
