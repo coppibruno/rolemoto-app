@@ -20,6 +20,8 @@ export interface StoryLocal {
   eventoId: string | null;
   fotoUrl: string;
   storagePath: string;
+  marcaX: number | null;
+  marcaY: number | null;
   createdAt: string;
   expiresAt: string;
 }
@@ -34,6 +36,8 @@ export interface StoryPublica {
   fotoUrl: string;
   createdAt: string;
   expiresAt: string;
+  marcaX: number | null;
+  marcaY: number | null;
   autor: AutorStory;
   mencao: MencaoStory | null;
 }

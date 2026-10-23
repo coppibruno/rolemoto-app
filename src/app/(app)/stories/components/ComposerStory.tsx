@@ -4,7 +4,9 @@ import { createPortal } from "react-dom";
 import type { StoryPublica } from "@/types/story-local";
 import { useComposerStory } from "@/app/(app)/stories/hooks/useComposerStory";
 import type { MencaoOpcao } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
+import { estiloMarca } from "../marca-story";
 import { BuscaMarcaStory } from "./BuscaMarcaStory";
+import { SeloMarcaStory } from "./SeloMarcaStory";
 import styles from "./composer-story.module.css";
 
 type Props = {
@@ -19,7 +21,7 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
   if (!composer.preview) return null;
 
   return createPortal(
-    <div className={styles.tela} role="dialog" aria-modal="true" aria-label="Nova foto">
+    <div ref={composer.stageRef} className={styles.tela} role="dialog" aria-modal="true" aria-label="Nova foto">
       <img src={composer.preview} alt="" className={styles.foto} />
       {composer.buscaAberta && !composer.escolhida ? (
         <button
@@ -43,18 +45,20 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
         </button>
       </div>
       {composer.escolhida ? (
-        <button
-          type="button"
-          className={styles.selo}
-          onClick={composer.tirarMarca}
-          disabled={composer.enviando}
-        >
-          @{composer.escolhida.nome}
-        </button>
+        <SeloMarcaStory
+          nome={composer.escolhida.nome}
+          posicao={composer.posicao}
+          travado={composer.enviando}
+          onSegurar={composer.aoSegurarMarca}
+          onMover={composer.aoMoverMarca}
+          onSoltar={composer.aoSoltarMarca}
+          onTirar={composer.tirarMarca}
+        />
       ) : (
         <button
           type="button"
           className={styles.marcar}
+          style={estiloMarca(null)}
           onClick={() => composer.setBuscaAberta((aberta) => !aberta)}
           disabled={composer.enviando}
         >

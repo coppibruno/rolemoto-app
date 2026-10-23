@@ -91,6 +91,8 @@ const paraPublica = (
   fotoUrl: story.fotoUrl,
   createdAt: story.createdAt,
   expiresAt: story.expiresAt,
+  marcaX: story.marcaX,
+  marcaY: story.marcaY,
   autor: {
     uid: story.usuarioId,
     apelido: apelidoExibicao(usuario),
@@ -160,6 +162,36 @@ const fotoDoBody = (body: unknown): unknown => {
   return (body as Record<string, unknown>).fotoUrl;
 };
 
+const limitarEixo = (valor: number, min: number, max: number): number =>
+  Math.round(Math.min(max, Math.max(min, valor)) * 10) / 10;
+
+/** Mesmo intervalo do composer: a marca não entra no topo nem no botão de publicar. */
+const posicaoDoBody = (
+  body: unknown,
+): {marcaX: number; marcaY: number} | null => {
+  if (!body || typeof body !== "object") {
+    return null;
+  }
+  const bruto = body as Record<string, unknown>;
+  const x = bruto.marcaX;
+  const y = bruto.marcaY;
+  if (typeof x !== "number" || typeof y !== "number") {
+    return null;
+  }
+  if (!Number.isFinite(x) || !Number.isFinite(y)) {
+    return null;
+  }
+  return {
+    marcaX: limitarEixo(x, 12, 88),
+    marcaY: limitarEixo(y, 20, 76),
+  };
+};
+
+const porCriacao = (stories: StoryLocal[]): StoryLocal[] =>
+  [...stories].sort((a, b) =>
+    a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+  );
+
 export const apagarObjetoStory = async (storagePath: string): Promise<void> => {
   if (!storagePath) {
     return;
@@ -223,6 +255,14 @@ const comMencao = (
     return {...story, mencao: mapa.get(chave) ?? null};
   });
 
+const publicarLista = async (stories: StoryLocal[]): Promise<StoryPublica[]> => {
+  const [publicas, mapa] = await Promise.all([
+    hidratar(stories),
+    nomesMencao(stories),
+  ]);
+  return comMencao(publicas, mapa);
+};
+
 export const publicarStoryPerfil = async (
   uid: string,
   body: unknown,
@@ -247,6 +287,8 @@ export const publicarStoryPerfil = async (
     eventoId: null,
     fotoUrl,
     storagePath: foto.storagePath,
+    marcaX: null,
+    marcaY: null,
   });
   const usuario = await usuarioRepository.buscarPorId(uid);
   return {ok: true, story: paraPublica(criada, usuario)};
@@ -254,9 +296,7 @@ export const publicarStoryPerfil = async (
 
 const ativasDoUsuario = async (uid: string): Promise<StoryLocal[]> => {
   const stories = await storyLocalRepository.listarPorUsuario(uid, 50);
-  return stories
-    .filter((story) => !expirada(story))
-    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  return porCriacao(stories.filter((story) => !expirada(story)));
 };
 
 export const contarStoriesUsuario = async (uid: string): Promise<number> =>
@@ -288,11 +328,8 @@ export const listarStoriesUsuario = async (
       extras.push(story);
     }
   }
-  const juntas = [...proprias, ...extras];
-  const mapa = await nomesMencao(juntas);
-  const publicas = await hidratar(juntas);
   return {
-    stories: comMencao(publicas, mapa),
+    stories: await publicarLista(porCriacao([...proprias, ...extras])),
     storiesAtivas: proprias.length,
   };
 };
@@ -430,6 +467,7 @@ const gravarLocal = async (
   eventoId: string | null,
   fotoUrl: string,
   storagePath: string,
+  posicao: {marcaX: number; marcaY: number} | null,
 ): Promise<StoryPublica> => {
   const criada = await storyLocalRepository.criar({
     usuarioId: uid,
@@ -438,6 +476,8 @@ const gravarLocal = async (
     eventoId,
     fotoUrl,
     storagePath,
+    marcaX: posicao?.marcaX ?? null,
+    marcaY: posicao?.marcaY ?? null,
   });
   return comPush(criada, uid, (apelido) => dispararPushLocal(local, uid, apelido));
 };
@@ -478,6 +518,7 @@ export const publicarStoryLocal = async (
     vestindo?.id ?? null,
     fotoUrl,
     foto.storagePath,
+    posicaoDoBody(body),
   );
   return {ok: true, story};
 };
@@ -527,6 +568,7 @@ export const publicarStoryEvento = async (
       evento.id,
       fotoUrl,
       foto.storagePath,
+      posicaoDoBody(body),
     );
     return {ok: true, story};
   }
@@ -551,6 +593,7 @@ export const publicarStoryEvento = async (
     return {ok: false, status: 429, erro: ERRO_TETO_ENCONTRO};
   }
   const fotoUrl = (fotoDoBody(body) as string).trim();
+  const posicao = posicaoDoBody(body);
   const criada = await storyLocalRepository.criar({
     usuarioId: uid,
     album: "evento",
@@ -558,6 +601,8 @@ export const publicarStoryEvento = async (
     eventoId: evento.id,
     fotoUrl,
     storagePath: foto.storagePath,
+    marcaX: posicao?.marcaX ?? null,
+    marcaY: posicao?.marcaY ?? null,
   });
   const story = await comPush(
     criada,
@@ -581,7 +626,7 @@ export const listarStoriesLocal = async (
     localId,
     eventoId: vestindo?.id ?? null,
     eventoAoVivo: resumo(vestindo),
-    stories: await hidratar(stories),
+    stories: await publicarLista(stories),
   };
 };
 
@@ -601,7 +646,7 @@ export const listarStoriesEvento = async (
     localId: null,
     eventoId: evento.id,
     eventoAoVivo: eventoEstaAoVivo(evento) ? resumo(evento) : null,
-    stories: await hidratar(stories),
+    stories: await publicarLista(stories),
   };
 };
 

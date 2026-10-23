@@ -61,6 +61,8 @@ export const storiesService = {
     lat?: number;
     lng?: number;
     accuracy?: number;
+    marcaX?: number;
+    marcaY?: number;
   }) =>
     api<StoryPublica>("/stories", {
       method: "POST",

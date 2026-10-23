@@ -10,6 +10,7 @@ import {
   uploadFotoStory,
 } from "@/lib/storage";
 import { destinoUpload } from "@/types/story-local";
+import type { PosicaoMarca } from "../marca-story";
 import { recarregarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
 import { storiesService } from "../services/stories.service";
 import { presencaService } from "@/app/(app)/perfil/services/presenca.service";
@@ -106,7 +107,11 @@ export const usePublicarStoryPerfil = () => {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const publicar = useCallback(async (file: File, mencao: MencaoOpcao | null) => {
+  const publicar = useCallback(async (
+    file: File,
+    mencao: MencaoOpcao | null,
+    posicao: PosicaoMarca | null,
+  ) => {
     if (!firebaseUser) {
       setErro("Sessão expirada. Entre de novo para postar.");
       return null;
@@ -151,6 +156,7 @@ export const usePublicarStoryPerfil = () => {
             accuracy: gps.coords.accuracy,
           }
           : {}),
+        ...(mencao && posicao ? { marcaX: posicao.x, marcaY: posicao.y } : {}),
       });
       void recarregarTemStories(firebaseUser.uid);
       return story;

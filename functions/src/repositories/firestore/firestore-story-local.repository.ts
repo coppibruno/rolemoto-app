@@ -23,7 +23,19 @@ const textoOuNull = (valor: unknown): string | null => {
 };
 
 const porCriacao = (itens: StoryLocal[]): StoryLocal[] =>
-  [...itens].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  [...itens].sort((a, b) =>
+    a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
+  );
+
+const percentual = (valor: unknown): number | null => {
+  if (typeof valor !== "number" || !Number.isFinite(valor)) {
+    return null;
+  }
+  if (valor < 0 || valor > 100) {
+    return null;
+  }
+  return valor;
+};
 
 const toStory = (snap: DocumentSnapshot): StoryLocal => {
   const data = snap.data() ?? {};
@@ -38,6 +50,8 @@ const toStory = (snap: DocumentSnapshot): StoryLocal => {
     eventoId: textoOuNull(data.eventoId),
     fotoUrl: String(data.fotoUrl ?? ""),
     storagePath: String(data.storagePath ?? ""),
+    marcaX: percentual(data.marcaX),
+    marcaY: percentual(data.marcaY),
     createdAt: toIso(data.createdAt),
     expiresAt: toIso(data.expiresAt),
   };
@@ -70,6 +84,8 @@ export class FirestoreStoryLocalRepository implements StoryLocalRepository {
       eventoId: dados.eventoId,
       fotoUrl: dados.fotoUrl,
       storagePath: dados.storagePath,
+      marcaX: dados.marcaX,
+      marcaY: dados.marcaY,
       createdAt: agora,
       expiresAt,
     });

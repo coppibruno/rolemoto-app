@@ -2,6 +2,7 @@
 
 import type { PointerEvent as ReactPointerEvent } from "react";
 import type { MencaoStory, StoryPublica } from "@/types/story-local";
+import { estiloMarca } from "@/app/(app)/stories/marca-story";
 import styles from "./player-stories.module.css";
 
 type Props = {
@@ -27,6 +28,11 @@ export const PalcoFotoStory = ({ story, onSegurar, onSoltar, onCancelar, onMarca
         <button
           type="button"
           className={styles.selo}
+          style={estiloMarca(
+            story.marcaX != null && story.marcaY != null
+              ? { x: story.marcaX, y: story.marcaY }
+              : null,
+          )}
           aria-label={`Abrir ${mencao.nome}`}
           onPointerDown={(evento) => evento.stopPropagation()}
           onPointerUp={(evento) => evento.stopPropagation()}

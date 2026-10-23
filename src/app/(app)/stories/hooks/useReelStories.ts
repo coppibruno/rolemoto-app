@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { AlvoPlayer, StoryPublica } from "@/types/story-local";
 import { alvoDaStory } from "@/types/story-local";
 import { recarregarTemStories } from "./useTemStories";
+import { mesclarStories } from "../marca-story";
 import { storiesService } from "../services/stories.service";
 
 const DURACAO_MS = 5000;
@@ -80,9 +81,10 @@ export const useReelStories = ({
       .then((lista) => {
         if (cancelado) return;
         setErro(false);
-        setStories(lista.stories);
+        const ordenada = mesclarStories(lista.stories, fotoInicial);
+        setStories(ordenada);
         const achou = destaqueId
-          ? lista.stories.findIndex((item) => item.id === destaqueId)
+          ? ordenada.findIndex((item) => item.id === destaqueId)
           : 0;
         const proximo = achou >= 0 ? achou : 0;
         setIndice(proximo);

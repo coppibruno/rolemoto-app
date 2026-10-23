@@ -20,6 +20,8 @@ export type StoryPublica = {
   fotoUrl: string;
   createdAt: string;
   expiresAt: string;
+  marcaX: number | null;
+  marcaY: number | null;
   autor: AutorStory;
   mencao: MencaoStory | null;
 };
