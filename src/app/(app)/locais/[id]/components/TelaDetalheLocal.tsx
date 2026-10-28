@@ -26,7 +26,16 @@ export const TelaDetalheLocal = ({ id }: Props) => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoDetalheLocal id={local.id} nome={local.nome} />
+      <CabecalhoDetalheLocal
+        convite={{
+          id: local.id,
+          nome: local.nome,
+          endereco: local.endereco,
+          categoria: local.categoria,
+          aberto24h: local.aberto24h,
+          horarios: local.horarios,
+        }}
+      />
       <main className={styles.conteudo}>
         <HeroLocal
           local={local}

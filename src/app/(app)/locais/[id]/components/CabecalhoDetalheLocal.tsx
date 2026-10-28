@@ -1,16 +1,16 @@
 "use client";
 
 import { CabecalhoDetalhe } from "@/components/detalhe/CabecalhoDetalhe";
+import type { DadosConviteLocal } from "@/lib/convite-local";
 import { TITULO_PAGINA } from "../constants";
 import { useCompartilharLocal } from "../hooks/useCompartilharLocal";
 
 type Props = {
-  id: string;
-  nome: string;
+  convite: DadosConviteLocal;
 };
 
-export const CabecalhoDetalheLocal = ({ id, nome }: Props) => {
-  const { compartilhar, feedback } = useCompartilharLocal(nome, id);
+export const CabecalhoDetalheLocal = ({ convite }: Props) => {
+  const { compartilhar, feedback } = useCompartilharLocal(convite);
   return (
     <CabecalhoDetalhe
       titulo={TITULO_PAGINA}

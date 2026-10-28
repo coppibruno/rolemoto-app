@@ -9,6 +9,7 @@ import {
   LABELS_CATEGORIA_LOCAL,
 } from "../constants";
 import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
+import { BotaoCompartilharLocal } from "./BotaoCompartilharLocal";
 import { BotaoFavoritarLocal } from "./BotaoFavoritarLocal";
 import styles from "../feed.module.css";
 
@@ -58,7 +59,7 @@ export const LocalCard = ({ local }: Props) => {
       />
       <div className={styles.cardLocalTopo}>
         <div className={styles.cardLocalInfo}>
-          <div className={styles.cardLocalBadges}>
+          <div className={`${styles.cardLocalBadges} ${styles.cardDetalheAcao}`}>
             {horario ? (
               <span className={styles.badge24h}>
                 {local.aberto24h ? (
@@ -81,6 +82,16 @@ export const LocalCard = ({ local }: Props) => {
               localId={local.id}
               nome={local.nome}
               favoritoInicial={Boolean(local.favorito)}
+            />
+            <BotaoCompartilharLocal
+              dados={{
+                id: local.id,
+                nome: local.nome,
+                endereco: local.endereco,
+                categoria: local.categoria,
+                aberto24h: local.aberto24h,
+                horarios: local.horarios,
+              }}
             />
           </div>
           <h3 className={styles.cardLocalTitulo}>{local.nome}</h3>

@@ -1,5 +1,6 @@
 import { formatarPeriodoEvento } from "@/app/(app)/feed/formatar-horario";
 import { tituloLocal } from "@/lib/localizacao";
+import { origemConvite } from "./origem-convite";
 
 export type DadosConviteEvento = {
   id: string;
@@ -10,10 +11,8 @@ export type DadosConviteEvento = {
   localEndereco: string;
 };
 
-export const urlConviteEvento = (id: string): string => {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
-  return `${origin}/e/${id}`;
-};
+export const urlConviteEvento = (id: string): string =>
+  `${origemConvite()}/e/${id}`;
 
 export const textoConviteEvento = (dados: DadosConviteEvento): string => {
   const url = urlConviteEvento(dados.id);

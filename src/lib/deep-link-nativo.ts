@@ -3,6 +3,7 @@ import { Capacitor } from "@capacitor/core";
 
 // getLaunchUrl devolve a mesma URL a cada reload do WebView; sem isso vira loop.
 const CHAVE_LAUNCH_TRATADA = "rolemoto.deepLink.launchTratada";
+const HOSTS_APP = new Set(["www.rolemoto.com.br", "rolemoto.com.br"]);
 
 let iniciado = false;
 
@@ -16,7 +17,9 @@ export const caminhoRelativo = (url: unknown): string => {
   }
   try {
     const parsed = new URL(trimmed, window.location.origin);
-    if (parsed.origin === window.location.origin) {
+    const mesmoApp =
+      parsed.origin === window.location.origin || HOSTS_APP.has(parsed.hostname);
+    if (mesmoApp) {
       return `${parsed.pathname}${parsed.search}${parsed.hash}`;
     }
   } catch {

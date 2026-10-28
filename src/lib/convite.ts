@@ -1,5 +1,6 @@
 import { formatarFaixaHero } from "@/app/(app)/feed/formatar-horario";
 import { tituloLocal } from "@/lib/localizacao";
+import { origemConvite } from "./origem-convite";
 
 export type DadosConvite = {
   id: string;
@@ -9,10 +10,7 @@ export type DadosConvite = {
   localSaidaNome?: string;
 };
 
-export const urlConvite = (id: string): string => {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
-  return `${origin}/r/${id}`;
-};
+export const urlConvite = (id: string): string => `${origemConvite()}/r/${id}`;
 
 export const textoConvite = (dados: DadosConvite): string => {
   const url = urlConvite(dados.id);

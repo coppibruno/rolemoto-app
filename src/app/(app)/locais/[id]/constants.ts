@@ -23,6 +23,3 @@ export const CHECKIN_ERRO = "Não foi possível marcar presença. Tente de novo.
 export const CHECKIN_AVALIAR = "Quer avaliar este ponto?";
 export const RAIO_CHECKIN_M = 400;
 export const PRECISAO_MAX_CHECKIN_M = 80;
-
-export const textoShareLocal = (nome: string): string =>
-  `📍 ${nome} — ponto no Rolê Moto`;

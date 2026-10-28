@@ -6,6 +6,7 @@
  * - /auth/recuperar-senha → POST (público, sem Bearer)
  * - /publico/roles/:id → GET (público, sem Bearer)
  * - /publico/eventos/:id → GET (público, sem Bearer)
+ * - /publico/locais/:id → GET (público, sem Bearer)
  * - /meus-roles → GET
  * - /meus-roles/eventos → GET
  * - /meus-roles/locais → GET
@@ -62,6 +63,7 @@ import {usuariosRouter} from "./routes/usuarios";
 import {feedbackRouter} from "./routes/feedback";
 import {rolesPublicoRouter} from "./routes/roles-publico";
 import {eventosPublicoRouter} from "./routes/eventos-publico";
+import {locaisPublicoRouter} from "./routes/locais-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
 import {eventosRouter} from "./routes/eventos";
 import {locaisRouter} from "./routes/locais";
@@ -85,6 +87,7 @@ app.get("/", (_req: Request, res: Response) => {
       "/auth/recuperar-senha",
       "/publico/roles/:id",
       "/publico/eventos/:id",
+      "/publico/locais/:id",
       "/meus-roles",
       "/meus-roles/eventos",
       "/meus-roles/locais",
@@ -132,6 +135,7 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/auth", authRouter);
 app.use("/publico/roles", rolesPublicoRouter);
 app.use("/publico/eventos", eventosPublicoRouter);
+app.use("/publico/locais", locaisPublicoRouter);
 app.use("/meus-roles", meusRolesRouter);
 app.use("/roles", rolesRouter);
 app.use("/aprovacoes", aprovacoesRouter);
