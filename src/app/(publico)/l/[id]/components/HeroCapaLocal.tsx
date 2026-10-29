@@ -2,13 +2,19 @@ import {
   ICONES_CATEGORIA_LOCAL,
   LABELS_CATEGORIA_LOCAL,
 } from "@/app/(app)/feed/constants";
+import { CreditoFoto } from "@/components/CreditoFoto";
 import type { LocalPublico } from "@/types/local-publico";
 import styles from "../../../r/[id]/convite-role.module.css";
 
 type Props = {
   local: Pick<
     LocalPublico,
-    "nome" | "fotoFachadaUrl" | "categoria" | "notaMedia" | "totalAvaliacoes"
+    | "nome"
+    | "fotoFachadaUrl"
+    | "fotoAtribuicao"
+    | "categoria"
+    | "notaMedia"
+    | "totalAvaliacoes"
   >;
 };
 
@@ -32,6 +38,7 @@ export const HeroCapaLocal = ({ local }: Props) => {
         </div>
       )}
       <div className={styles.heroScrim} />
+      <CreditoFoto texto={local.fotoAtribuicao} />
       <div className={styles.heroBadges}>
         <span className={`${styles.badge} ${styles.badgeKm}`}>
           {LABELS_CATEGORIA_LOCAL[local.categoria]}

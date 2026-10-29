@@ -1,7 +1,8 @@
-import {timingSafeEqual} from "crypto";
 import {Router, Request, Response} from "express";
+import {cronSecretConfere} from "../lib/cron-secret";
 import {expirarStoriesLote} from "../lib/story-local";
 import {responderErro} from "../middleware/errors";
+import {responderBuscaSugestoes} from "./sugestoes-locais";
 
 /**
  * Limpeza diária. Cloud Scheduler 04:00 America/Sao_Paulo:
@@ -13,21 +14,8 @@ import {responderErro} from "../middleware/errors";
  */
 export const internoRouter = Router();
 
-const segredoConfere = (recebido: string | undefined): boolean => {
-  const esperado = process.env.STORIES_CRON_SECRET ?? "";
-  if (!esperado || !recebido) {
-    return false;
-  }
-  const informado = Buffer.from(recebido);
-  const guardado = Buffer.from(esperado);
-  if (informado.length !== guardado.length) {
-    return false;
-  }
-  return timingSafeEqual(informado, guardado);
-};
-
 internoRouter.post("/stories/expirar", async (req: Request, res: Response) => {
-  if (!segredoConfere(req.get("x-cron-secret"))) {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
     res.status(404).json({erro: "Não encontrado"});
     return;
   }
@@ -37,4 +25,12 @@ internoRouter.post("/stories/expirar", async (req: Request, res: Response) => {
   } catch (error) {
     responderErro(res, error);
   }
+});
+
+internoRouter.post("/sugestoes-locais/buscar", async (req: Request, res: Response) => {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
+    res.status(404).json({erro: "Não encontrado"});
+    return;
+  }
+  await responderBuscaSugestoes(res);
 });

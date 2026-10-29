@@ -35,6 +35,10 @@ export interface Local {
   horarios: HorarioDiaLocal[];
   linkMaps: string;
   fotoFachadaUrl: string;
+  /** Crédito da foto quando ela veio da Places. Vazio no cadastro manual. */
+  fotoAtribuicao: string;
+  /** `null` no cadastro manual e em documentos antigos. */
+  googlePlaceId: string | null;
   criadorId: string;
   notaMedia: number;
   totalAvaliacoes: number;
@@ -52,9 +56,15 @@ export type LocalPublicacao = Omit<
   | "notaMedia"
   | "totalAvaliacoes"
   | "recomendacoesComboio"
+  | "googlePlaceId"
+  | "fotoAtribuicao"
 >;
 
-export type LocalCreate = LocalPublicacao & {criadorId: string};
+export type LocalCreate = LocalPublicacao & {
+  criadorId: string;
+  googlePlaceId?: string | null;
+  fotoAtribuicao?: string;
+};
 
 export type LocalFeedItem = Local & {
   distanciaKm: number;

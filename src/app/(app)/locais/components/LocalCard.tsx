@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CreditoFoto } from "@/components/CreditoFoto";
 import type { Local } from "@/types/local";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
 import { OPCOES_CATEGORIA, OPCOES_FACILIDADES } from "../constants";
@@ -48,6 +49,7 @@ export const LocalCard = ({ local }: Props) => {
             </span>
           </div>
         )}
+        <CreditoFoto texto={local.fotoAtribuicao} />
       </div>
       <div className={styles.cardCorpo}>
         <span className={styles.chipCategoria}>{labelCategoria(local.categoria)}</span>

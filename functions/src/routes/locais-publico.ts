@@ -32,6 +32,7 @@ locaisPublicoRouter.get("/:id", async (req: Request, res: Response) => {
       aberto24h: local.aberto24h,
       horarios: local.horarios,
       fotoFachadaUrl: local.fotoFachadaUrl,
+      fotoAtribuicao: local.fotoAtribuicao,
       notaMedia: local.notaMedia,
       totalAvaliacoes: local.totalAvaliacoes,
       recomendacoesComboio: local.recomendacoesComboio,

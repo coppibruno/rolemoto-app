@@ -62,6 +62,10 @@ import {
   FirestoreHistoricoOcultoRepository,
 } from "./firestore/firestore-historico-oculto.repository";
 import type {HistoricoOcultoRepository} from "./interfaces/historico-oculto.repository";
+import type {SugestaoLocalRepository} from "./interfaces/sugestao-local.repository";
+import {
+  FirestoreSugestaoLocalRepository,
+} from "./firestore/firestore-sugestao-local.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -109,3 +113,6 @@ export const storyLocalRepository: StoryLocalRepository =
 
 export const historicoOcultoRepository: HistoricoOcultoRepository =
   new FirestoreHistoricoOcultoRepository();
+
+export const sugestaoLocalRepository: SugestaoLocalRepository =
+  new FirestoreSugestaoLocalRepository();

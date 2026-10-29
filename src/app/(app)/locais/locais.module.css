@@ -63,6 +63,33 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acoesCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.linkSugestoes {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding: 0 8px;
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.linkSugestoes:hover {
+  color: var(--primary);
 }
 
 .lista {

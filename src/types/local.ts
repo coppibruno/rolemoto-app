@@ -37,6 +37,8 @@ export interface Local {
   horarios: HorarioDiaLocal[];
   linkMaps: string;
   fotoFachadaUrl: string;
+  fotoAtribuicao?: string;
+  googlePlaceId?: string | null;
   criadorId: string;
   notaMedia: number;
   totalAvaliacoes: number;

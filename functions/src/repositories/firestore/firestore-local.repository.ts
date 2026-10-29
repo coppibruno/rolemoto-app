@@ -64,7 +64,29 @@ const toHorarios = (data: Record<string, unknown>): HorarioDiaLocal[] => {
   }));
 };
 
-const toLocal = (snap: DocumentSnapshot): Local => {
+export const camposNovoLocal = (dados: LocalCreate) => ({
+  nome: dados.nome,
+  endereco: dados.endereco,
+  lat: dados.lat,
+  lng: dados.lng,
+  categoria: dados.categoria,
+  facilidades: dados.facilidades,
+  aberto24h: dados.aberto24h,
+  horarios: dados.horarios,
+  linkMaps: dados.linkMaps,
+  fotoFachadaUrl: dados.fotoFachadaUrl,
+  fotoAtribuicao: dados.fotoAtribuicao ?? "",
+  criadorId: dados.criadorId,
+  googlePlaceId: dados.googlePlaceId ?? null,
+  notaMedia: 0,
+  totalAvaliacoes: 0,
+  recomendacoesComboio: 0,
+  somaNotas: 0,
+  createdAt: FieldValue.serverTimestamp(),
+  updatedAt: FieldValue.serverTimestamp(),
+});
+
+export const toLocal = (snap: DocumentSnapshot): Local => {
   const data = snap.data() ?? {};
   const facilidadesBrutas = Array.isArray(data.facilidades) ?
     data.facilidades :
@@ -82,6 +104,11 @@ const toLocal = (snap: DocumentSnapshot): Local => {
     horarios: toHorarios(data),
     linkMaps: String(data.linkMaps ?? ""),
     fotoFachadaUrl: String(data.fotoFachadaUrl ?? ""),
+    fotoAtribuicao: String(data.fotoAtribuicao ?? ""),
+    googlePlaceId:
+      typeof data.googlePlaceId === "string" && data.googlePlaceId ?
+        data.googlePlaceId :
+        null,
     criadorId: String(data.criadorId ?? ""),
     notaMedia: totalAvaliacoes > 0 ? Number(data.notaMedia ?? 0) : 0,
     totalAvaliacoes,
@@ -93,25 +120,7 @@ const toLocal = (snap: DocumentSnapshot): Local => {
 
 export class FirestoreLocalRepository implements LocalRepository {
   async criar(dados: LocalCreate): Promise<Local> {
-    const ref = await firestore.collection(COLECAO).add({
-      nome: dados.nome,
-      endereco: dados.endereco,
-      lat: dados.lat,
-      lng: dados.lng,
-      categoria: dados.categoria,
-      facilidades: dados.facilidades,
-      aberto24h: dados.aberto24h,
-      horarios: dados.horarios,
-      linkMaps: dados.linkMaps,
-      fotoFachadaUrl: dados.fotoFachadaUrl,
-      criadorId: dados.criadorId,
-      notaMedia: 0,
-      totalAvaliacoes: 0,
-      recomendacoesComboio: 0,
-      somaNotas: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    const ref = await firestore.collection(COLECAO).add(camposNovoLocal(dados));
     const criado = await this.buscarPorId(ref.id);
     return criado as Local;
   }

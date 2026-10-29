@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CreditoFoto } from "@/components/CreditoFoto";
 import { SeloMediaAvaliacoes } from "@/app/(app)/feed/components/SeloMediaAvaliacoes";
 import {
   ICONES_CATEGORIA_LOCAL,
@@ -35,6 +36,7 @@ export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
           </span>
         )}
         <div className={styles.heroGradiente} />
+        <CreditoFoto texto={local.fotoAtribuicao} />
         {local.storiesAtivas > 0 ? (
           <div className={styles.anelHero}>
             <AnelCapaStory

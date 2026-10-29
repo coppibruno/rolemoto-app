@@ -7,7 +7,7 @@ const raiz = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "functions/src/**/*.test.ts"],
   },
   resolve: {
     alias: {

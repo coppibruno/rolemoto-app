@@ -12,7 +12,8 @@ export const useItemMenuAtivo = () => {
         pathname === "/" ||
         Boolean(pathname?.startsWith("/roles")) ||
         Boolean(pathname?.startsWith("/eventos")) ||
-        Boolean(pathname?.startsWith("/locais"))
+        Boolean(pathname?.startsWith("/locais")) ||
+        Boolean(pathname?.startsWith("/sugestoes-locais"))
       );
     }
     if (href === "/criar-role") {

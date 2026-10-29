@@ -10,6 +10,7 @@ export type LocalPublico = {
   aberto24h: boolean;
   horarios: HorarioDiaLocal[];
   fotoFachadaUrl: string;
+  fotoAtribuicao: string;
   notaMedia: number;
   totalAvaliacoes: number;
   recomendacoesComboio: number;

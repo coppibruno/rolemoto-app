@@ -137,6 +137,8 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
   ],
   linkMaps: string,
   fotoFachadaUrl: string,
+  fotoAtribuicao: string, // "" no cadastro manual; autor da foto quando veio da Places
+  googlePlaceId: string | null, // null no cadastro manual e em docs antigos
   criadorId: string,
   notaMedia: number,
   totalAvaliacoes: number,
@@ -147,6 +149,8 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
   updatedAt: timestamp
 }
 ```
+
+Sugestões da Places API ficam em `sugestoesLocal` até o admin homologar (`POST /sugestoes-locais/:id/aprovar`), que grava aqui com `googlePlaceId`. A fachada da sugestão é a foto da Places salva no Storage; a homologação copia `fotoFachadaUrl` e `fotoAtribuicao`.
 
 Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`) e avalia (`POST|GET /locais/:id/avaliacoes`, `GET /locais/:id/avaliacao`). Favorita via `POST|DELETE /locais/:id/favorito`. `GET /locais` inclui `favorito: boolean`. `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
 

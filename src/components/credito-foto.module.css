@@ -1,0 +1,17 @@
+.credito {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 20px 12px 8px;
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--surface) 88%, transparent),
+    transparent
+  );
+  color: var(--on-surface);
+  font-size: 11px;
+  line-height: 1.3;
+}
