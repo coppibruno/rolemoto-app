@@ -28,6 +28,7 @@ export type LugarCandidato = {
 export type CandidatoComSemente = LugarCandidato & {
   semente: SementeLocal;
   faceta: FacetaBusca | null;
+  destinoMoto?: boolean;
 };
 
 export type LocalParaDedupe = {
@@ -100,6 +101,7 @@ export const escolherSugestoes = (entrada: {
       dentroDoSul: pontoEstaNoSul(candidato.lat, candidato.lng),
       sementeNome: candidato.semente.nome,
       faceta: candidato.faceta,
+      destinoMoto: candidato.destinoMoto === true,
     });
     if (!pontuacao.entra) {
       continue;

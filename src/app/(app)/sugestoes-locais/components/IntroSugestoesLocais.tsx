@@ -40,7 +40,8 @@ export const IntroSugestoesLocais = ({
         {buscando ? "Buscando…" : "Buscar agora"}
       </button>
       <p className={styles.dica}>
-        A rodada usa quatro rotas. Pontos de moto e oficinas entram em toda busca.
+        A rodada usa quatro rotas. Ponto turístico procura a serra. Mirante procura o
+        mirante.
       </p>
       {resumo ? (
         <p className={styles.resumo} role="status">

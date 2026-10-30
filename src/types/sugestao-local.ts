@@ -1,6 +1,7 @@
 import type { CategoriaLocal, HorarioDiaLocal } from "./local";
 
 export const FACETAS_BUSCA = [
+  "turismo",
   "restaurante",
   "padaria",
   "cafe",
@@ -10,7 +11,13 @@ export const FACETAS_BUSCA = [
 
 export type FacetaBusca = (typeof FACETAS_BUSCA)[number];
 
+/** Ponto turístico (serra) ligado. Mirante começa desligado. */
+export const FACETAS_PADRAO: FacetaBusca[] = FACETAS_BUSCA.filter(
+  (faceta) => faceta !== "mirante",
+);
+
 export const ROTULO_FACETA: Record<FacetaBusca, string> = {
+  turismo: "Ponto turístico",
   restaurante: "Restaurante",
   padaria: "Padaria",
   cafe: "Café",

@@ -34,7 +34,7 @@ O piloto não vê a fila. Nada entra no feed sem aprovação.
 ### 2.1 O que entra
 
 - Lista fechada de sementes (rota ou mirante) com centro e raio, só em SC, PR e RS.
-- Consultas por semente: ponto de encontro de motos e oficina de motos em toda rodada. Restaurante, padaria, café, mirante e natureza entram se o filtro da tela (ou o cron, com os cinco ligados) pedir.
+- Consultas por semente: ponto de encontro de motos e oficina de motos em toda rodada. Ponto turístico busca o nome da serra/rota. Mirante busca `mirante`. São filtros distintos: a serra não entra como mirante e o mirante não entra como ponto turístico. Restaurante, padaria, café e natureza entram no padrão. Mirante começa desligado.
 - Nota a partir do nome, do tipo do Google, do resumo, de trechos de avaliação e da distância até a semente.
 - Coleção `sugestoesLocal`. O id do documento é o `placeId` do Google.
 - `POST /interno/sugestoes-locais/buscar` no mesmo padrão de `POST /interno/stories/expirar` (header `X-Cron-Secret`).
@@ -60,6 +60,7 @@ O piloto não vê a fila. Nada entra no feed sem aprovação.
 | Fonte | Places API (New), Text Search, `languageCode=pt-BR`, `regionCode=BR` |
 | Onde busca | Círculo da semente. O bbox da SPEC 032 só descarta o que cair fora de SC/PR/RS |
 | Chave | `PLACES_API_KEY` só na function. O client nunca chama o Google |
+| IA | `GEMINI_API_KEY` opcional na function. Só classifica ponto turístico. Sem ela, a serra só entra se o nome for a rota. Com ela, o Gemini aceita a serra/canyon/morro e recusa mirante. O modelo é `gemini-3.5-flash-lite`. `GEMINI_MODEL` troca esse nome, exceto 3.5, 3.7 e 3.8 Flash, que caem no Lite |
 | Foto | A function baixa a primeira foto, grava em `locais/fachadas/sugestoes/{placeId}.jpg` e usa a URL do Storage em `fotoFachadaUrl`. Sem foto, o campo fica `""` e a homologação segue. O crédito (`fotoAtribuicao`) aparece na fila e no local |
 | Segredo do cron | Reusa `STORIES_CRON_SECRET` e o header `X-Cron-Secret`. Sem o header, 404 |
 | Ritmo | Segunda, 06:00 `America/Sao_Paulo`. Quatro sementes por rodada, em rotação, para o custo não crescer com a lista |
@@ -107,13 +108,16 @@ E, se o filtro estiver ligado:
 
 | Filtro | Consulta |
 |--------|----------|
+| Ponto turístico | nome da semente (`Serra do Rio do Rastro, SC`) |
 | Restaurante | `restaurante` |
 | Padaria | `padaria` |
 | Café | `café` |
 | Mirante | `mirante` |
 | Natureza | `cachoeira` |
 
-`POST /sugestoes-locais/buscar` recebe `{ facetas: ["restaurante", "padaria", "cafe", "mirante", "natureza"] }`. Sem o campo, os cinco ficam ligados (é o caso do cron). Lista vazia busca só moto e oficina. Valor desconhecido responde `400`.
+`POST /sugestoes-locais/buscar` recebe `{ facetas: ["turismo", "restaurante", "padaria", "cafe", "mirante", "natureza"] }`. Sem o campo, o padrão liga ponto turístico, restaurante, padaria, café e natureza (é o caso do cron). Mirante começa desligado. Lista vazia busca só moto e oficina. Valor desconhecido responde `400`.
+
+Ponto turístico entra se o nome for a rota (Serra do Rio do Rastro) ou se a IA marcar o lugar como a própria serra/canyon/morro. Mirante da serra não entra neste filtro. Mirante entra só com o filtro mirante ligado, pelo nome (mirante, belvedere). A IA não classifica mirante. Sem `GEMINI_API_KEY`, ponto turístico só entra pelo nome da rota. A IA chama `gemini-3.5-flash-lite` uma vez. Falha dessa chamada não aborta a rodada.
 
 `includedType` não entra. O tipo volta na resposta e só soma ponto. Filtrar tipo na consulta esconde moto point cadastrado como café.
 
@@ -121,8 +125,10 @@ E, se o filtro estiver ligado:
 
 | Sinal | Pontos |
 |-------|--------|
-| Nome com termo forte: moto point, motopoint, point de moto, mirante, oficina de moto, serra | +50 |
-| Veio da consulta de um filtro ligado e o nome não tem termo forte | +50 (`busca de café`, `busca de padaria`…) |
+| Nome com termo forte: moto point, motopoint, point de moto, oficina de moto | +50 |
+| Nome casa com a rota da semente | +50 (`casa com Serra do Rio do Rastro`) |
+| IA marcou destino de moto | +50 (`ponto turístico de moto`) |
+| Veio de restaurante, padaria, café, mirante ou natureza, e o nome não tem termo forte | +50 (`busca de café`, `busca de mirante`…) |
 | Resumo ou avaliação com termo de estrada: moto, motociclista, motoqueiro, comboio, custom, trail, harley, estrada, curva | +30 |
 | Tipo compatível: `tourist_attraction`, `viewpoint`, `park`, `cafe`, `restaurant`, `bar`, `motorcycle_dealer` | +15 |
 | Até 5 km da semente que achou o lugar | +10 |
@@ -132,6 +138,8 @@ Descarta antes da nota:
 - Fora do raio da semente ou fora de `pontoEstaNoSul`.
 - Nome ou tipo com termo de cidade: shopping, supermercado, escola, hospital, aeroporto, hotel, pousada.
 - `gas_station` sem termo forte no nome.
+- Filtro ponto turístico: nome de mirante, acesso ou fenda.
+- Filtro mirante: a própria serra, ou nome que não é mirante.
 - Nota abaixo de 50.
 
 Categoria sugerida, pelo primeiro sinal que casar:
@@ -139,19 +147,19 @@ Categoria sugerida, pelo primeiro sinal que casar:
 | Sinal | Categoria |
 |-------|-----------|
 | Filtro restaurante, padaria ou café | `restaurante_estrada` |
-| Filtro natureza | `mirante` |
-| mirante, vista, canyon, serra | `mirante` |
-| moto point, point, encontro | `bar_moto_point` |
+| Filtro natureza ou mirante | `mirante` |
 | oficina, mecânica de moto | `oficina` |
+| moto point, point, encontro | `bar_moto_point` |
 | restaurante, café, lanchonete | `restaurante_estrada` |
-| posto, com termo forte no nome | `posto` |
+| posto | `posto` |
+| nome da rota, IA, ou mirante, vista, canyon, serra | `mirante` |
 | nenhum dos acima, mas a nota passou | `bar_moto_point` |
 
 A tela mostra a categoria como sugestão. O admin troca no SL4.
 
 ### 3.4 O que a fila mostra para justificar
 
-Cada pendente guarda `motivos: string[]` com no máximo três frases curtas, por exemplo "nome tem mirante", "avaliação cita comboio", "4,2 km da Serra do Rio do Rastro". Sem isso o admin não tem como confiar na nota.
+Cada pendente guarda `motivos: string[]` com no máximo três frases curtas, por exemplo "casa com Serra do Rio do Rastro", "ponto turístico de moto", "4,2 km da Serra do Rio do Rastro". Sem isso o admin não tem como confiar na nota.
 
 ---
 
@@ -159,7 +167,7 @@ Cada pendente guarda `motivos: string[]` com no máximo três frases curtas, por
 
 | ID | Área | Critério de aceite |
 |----|------|--------------------|
-| **SL1** | Nota | Teste puro: mirante a 4 km da semente entra; posto de bairro sai; restaurante sem palavra de moto sai; restaurante com "comboio" na avaliação e a 3 km entra; ponto fora do raio sai |
+| **SL1** | Nota | Teste puro: serra no ponto turístico entra; mirante no ponto turístico sai; mirante no filtro mirante entra; serra no filtro mirante sai; destino que a IA marcou entra; posto de bairro sai; restaurante sem palavra de moto sai; restaurante com "comboio" na avaliação e a 3 km entra; ponto fora do raio sai |
 | **SL2** | Busca | Com a chave configurada, a rota interna grava no máximo 8 pendentes, não repete `placeId` e não sugere local já publicado. Sem o header, 404. Sem a chave, 503 e nada gravado |
 | **SL3** | Aprovação | Admin aprova e o documento aparece em `locais` com `googlePlaceId`. Admin recusa e a próxima busca ignora o `placeId`. Piloto recebe 403 |
 | **SL4** | Tela | Em `/sugestoes-locais` o admin vê nome, mapa, distância, motivos e categoria. Aprovar publica e tira da lista. Recusar tira da lista. Piloto cai em `/` |

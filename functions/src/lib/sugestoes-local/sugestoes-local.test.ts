@@ -3,7 +3,12 @@ import {
   escolherSugestoes,
   type CandidatoComSemente,
 } from "./escolher-sugestoes-local";
-import {consultasDaRodada} from "./facetas-busca";
+import {
+  lerAceitos,
+  modeloDaClassificacao,
+  selecionarParaIa,
+} from "./classificar-destino-moto";
+import {consultasDaRodada, consultasDaSemente} from "./facetas-busca";
 import {pontuarSugestaoLocal} from "./pontuar-sugestao-local";
 import {SEMENTES_LOCAIS, fatiaSementes} from "./sementes";
 
@@ -47,15 +52,73 @@ const candidato = (
 });
 
 describe("pontuarSugestaoLocal", () => {
-  it("aceita mirante a 4 km da semente", () => {
-    const resultado = entrada({nome: "Mirante da Serra", distanciaKm: 4});
+  it("aceita a serra no ponto turístico quando o nome é a rota", () => {
+    const resultado = entrada({
+      nome: "Serra do Rio do Rastro",
+      distanciaKm: 4,
+      faceta: "turismo",
+    });
     expect(resultado.entra).toBe(true);
     if (!resultado.entra) {
       return;
     }
     expect(resultado.nota).toBeGreaterThanOrEqual(50);
     expect(resultado.categoriaSugerida).toBe("mirante");
-    expect(resultado.motivos.some((motivo) => motivo.includes("mirante"))).toBe(true);
+    expect(resultado.motivos).toContain("casa com Serra do Rio do Rastro");
+  });
+
+  it("recusa mirante no ponto turístico mesmo quando cita a rota", () => {
+    const resultado = entrada({
+      nome: "Mirante do Rio do Rastro",
+      distanciaKm: 2,
+      faceta: "turismo",
+      destinoMoto: true,
+    });
+    expect(resultado.entra).toBe(false);
+  });
+
+  it("aceita mirante só no filtro mirante", () => {
+    const resultado = entrada({
+      nome: "Mirante da Serra Dona Francisca",
+      distanciaKm: 3,
+      faceta: "mirante",
+      sementeNome: "Serra Dona Francisca",
+    });
+    expect(resultado.entra).toBe(true);
+    if (!resultado.entra) {
+      return;
+    }
+    expect(resultado.categoriaSugerida).toBe("mirante");
+    expect(resultado.motivos).toContain("busca de mirante");
+  });
+
+  it("recusa a serra no filtro mirante", () => {
+    const resultado = entrada({
+      nome: "Serra do Rio do Rastro",
+      distanciaKm: 4,
+      faceta: "mirante",
+    });
+    expect(resultado.entra).toBe(false);
+  });
+
+  it("recusa mirante genérico fora do filtro mirante", () => {
+    const resultado = entrada({nome: "Mirante da Serra", distanciaKm: 4});
+    expect(resultado.entra).toBe(false);
+  });
+
+  it("aceita destino de moto que a IA marcou no ponto turístico", () => {
+    const resultado = entrada({
+      nome: "Pedra Furada",
+      distanciaKm: 4,
+      faceta: "turismo",
+      destinoMoto: true,
+    });
+    expect(resultado.entra).toBe(true);
+    if (!resultado.entra) {
+      return;
+    }
+    expect(resultado.motivos).toContain("ponto turístico de moto");
+    expect(resultado.categoriaSugerida).toBe("mirante");
   });
 
   it("recusa posto de bairro", () => {
@@ -137,7 +200,7 @@ describe("pontuarSugestaoLocal", () => {
 describe("escolherSugestoes", () => {
   it("grava no máximo 8 e fica com os mais perto", () => {
     const candidatos = Array.from({length: 10}, (_, indice) =>
-      candidato(indice, `Mirante ${indice}`, `lugar${indice}`),
+      candidato(indice, `Moto Point ${indice}`, `lugar${indice}`),
     );
     const escolhidos = escolherSugestoes({
       candidatos,
@@ -150,9 +213,9 @@ describe("escolherSugestoes", () => {
   });
 
   it("ignora placeId já sugerido e local já publicado", () => {
-    const perto = candidato(1, "Mirante da Serra", "lugarpublicado");
-    const outro = candidato(2, "Mirante Novo", "lugarnovo");
-    const repetido = candidato(3, "Mirante Repetido", "lugarvisto");
+    const perto = candidato(1, "Moto Point da Serra", "lugarpublicado");
+    const outro = candidato(2, "Moto Point Novo", "lugarnovo");
+    const repetido = candidato(3, "Moto Point Repetido", "lugarvisto");
     const escolhidos = escolherSugestoes({
       candidatos: [perto, outro, repetido],
       sugestoesIds: new Set(["lugarvisto"]),
@@ -169,16 +232,16 @@ describe("escolherSugestoes", () => {
   });
 
   it("ignora nome parecido a menos de 150 m", () => {
-    const perto = candidato(0, "Mirante da Serra", "lugarperto");
+    const perto = candidato(0, "Moto Point da Serra", "lugarperto");
     perto.lat = semente.lat + 0.001;
-    const longe = candidato(4, "Mirante do Canyon", "lugarlonge");
+    const longe = candidato(4, "Moto Point do Canyon", "lugarlonge");
     const escolhidos = escolherSugestoes({
       candidatos: [perto, longe],
       sugestoesIds: new Set(),
       locais: [
         {
           googlePlaceId: null,
-          nome: "Mirante da Serra",
+          nome: "Moto Point da Serra",
           lat: semente.lat,
           lng: semente.lng,
         },
@@ -197,6 +260,76 @@ describe("consultasDaRodada", () => {
       "padaria",
       "café",
     ]);
+  });
+
+  it("ponto turístico busca a serra; mirante busca a palavra mirante", () => {
+    const turismo = consultasDaSemente(["turismo"], "Serra do Rio do Rastro", "SC");
+    expect(turismo.map((item) => item.texto)).toEqual([
+      "ponto de encontro de motos",
+      "oficina de motos",
+      "Serra do Rio do Rastro, SC",
+    ]);
+    expect(turismo[2]?.tipo).toBeUndefined();
+    const mirante = consultasDaSemente(["mirante"], "Serra do Rio do Rastro", "SC");
+    expect(mirante.map((item) => item.texto)).toContain("mirante");
+    expect(mirante.map((item) => item.texto)).not.toContain("Serra do Rio do Rastro, SC");
+  });
+});
+
+describe("classificar destino de moto", () => {
+  it("manda para a IA só ponto turístico que ainda não é a serra nem mirante", () => {
+    const selecionados = selecionarParaIa([
+      {
+        placeId: "rota",
+        nome: "Serra do Rio do Rastro",
+        resumo: "",
+        sementeNome: "Serra do Rio do Rastro",
+        faceta: "turismo",
+      },
+      {
+        placeId: "mirante",
+        nome: "Mirante da Serra Dona Francisca",
+        resumo: "",
+        sementeNome: "Serra Dona Francisca",
+        faceta: "turismo",
+      },
+      {
+        placeId: "filtro-mirante",
+        nome: "Mirante da Serra",
+        resumo: "",
+        sementeNome: "Serra do Rio do Rastro",
+        faceta: "mirante",
+      },
+      {
+        placeId: "duvida",
+        nome: "Pedra Furada",
+        resumo: "",
+        sementeNome: "Serra do Corvo Branco",
+        faceta: "turismo",
+      },
+    ]);
+    expect(selecionados.map((item) => item.placeId)).toEqual(["duvida"]);
+  });
+
+  it("usa o Flash-Lite e ignora modelo saturado", () => {
+    expect(modeloDaClassificacao(undefined)).toBe("gemini-3.5-flash-lite");
+    expect(modeloDaClassificacao("gemini-3.8-flash")).toBe(
+      "gemini-3.5-flash-lite",
+    );
+    expect(modeloDaClassificacao("gemini-3.5-flash")).toBe(
+      "gemini-3.5-flash-lite",
+    );
+    expect(modeloDaClassificacao("gemini-3.7-flash")).toBe(
+      "gemini-3.5-flash-lite",
+    );
+  });
+
+  it("só aceita ids que foram enviados", () => {
+    const aceitos = lerAceitos(
+      "{\"aceitos\":[\"abc\", \"inventado\"]}",
+      new Set(["abc"]),
+    );
+    expect([...aceitos]).toEqual(["abc"]);
   });
 });
 

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/api";
-import { FACETAS_BUSCA, type FacetaBusca, type SugestaoLocal } from "@/types/sugestao-local";
+import { FACETAS_PADRAO, type FacetaBusca, type SugestaoLocal } from "@/types/sugestao-local";
 import { sugestoesLocaisService } from "../services/sugestoes-locais.service";
 
 export const useListaSugestoesLocais = () => {
@@ -12,7 +12,7 @@ export const useListaSugestoesLocais = () => {
   const [buscando, setBuscando] = useState(false);
   const [erroBusca, setErroBusca] = useState<string | null>(null);
   const [resumoBusca, setResumoBusca] = useState<string | null>(null);
-  const [facetas, setFacetas] = useState<FacetaBusca[]>([...FACETAS_BUSCA]);
+  const [facetas, setFacetas] = useState<FacetaBusca[]>([...FACETAS_PADRAO]);
   const [ticket, setTicket] = useState(0);
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);

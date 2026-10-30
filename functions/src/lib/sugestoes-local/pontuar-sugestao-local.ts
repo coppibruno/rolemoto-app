@@ -1,5 +1,6 @@
 import type {CategoriaLocal} from "../../types/local";
 import {rotuloFaceta, type FacetaBusca} from "./facetas-busca";
+import {casaComRota, ehMirante} from "./nome-parecido";
 
 export const NOTA_MINIMA = 50;
 const PERTO_KM = 5;
@@ -10,9 +11,10 @@ const TERMOS_FORTES = [
   "point de moto",
   "oficina de motos",
   "oficina de moto",
-  "mirante",
-  "serra",
 ] as const;
+
+/** Ponto turístico não passa só por ter vindo da consulta: tem que ser a serra. */
+const FACETAS_SEM_PASSE = new Set<FacetaBusca>(["turismo"]);
 
 const TERMOS_ESTRADA = [
   "motociclista",
@@ -68,6 +70,7 @@ export type EntradaPontuacao = {
   dentroDoSul: boolean;
   sementeNome: string;
   faceta?: FacetaBusca | null;
+  destinoMoto?: boolean;
 };
 
 export type PontuacaoAceita = {
@@ -131,29 +134,36 @@ const termoEstrada = (
   return null;
 };
 
-const sugerirCategoria = (nome: string, faceta: FacetaBusca | null): CategoriaLocal => {
+const sugerirCategoria = (
+  nome: string,
+  faceta: FacetaBusca | null,
+  destinoOuRota: boolean,
+): CategoriaLocal => {
   if (faceta === "restaurante" || faceta === "padaria" || faceta === "cafe") {
     return "restaurante_estrada";
   }
-  if (faceta === "natureza") {
+  if (faceta === "natureza" || faceta === "mirante") {
     return "mirante";
   }
-  if (["mirante", "vista", "canyon", "serra"].some((termo) => contemTermo(nome, termo))) {
-    return "mirante";
+  if (["oficina", "mecanica de moto"].some((termo) => contemTermo(nome, termo))) {
+    return "oficina";
   }
   if (
     ["moto point", "motopoint", "point", "encontro"].some((termo) => contemTermo(nome, termo))
   ) {
     return "bar_moto_point";
   }
-  if (["oficina", "mecanica de moto"].some((termo) => contemTermo(nome, termo))) {
-    return "oficina";
-  }
   if (["restaurante", "cafe", "lanchonete"].some((termo) => contemTermo(nome, termo))) {
     return "restaurante_estrada";
   }
   if (contemTermo(nome, "posto")) {
     return "posto";
+  }
+  if (
+    destinoOuRota ||
+    ["mirante", "vista", "canyon", "serra"].some((termo) => contemTermo(nome, termo))
+  ) {
+    return "mirante";
   }
   return "bar_moto_point";
 };
@@ -175,13 +185,32 @@ export const pontuarSugestaoLocal = (
     return {entra: false};
   }
 
+  const faceta = entrada.faceta ?? null;
+  const vista = ehMirante(entrada.nome);
+  const rota = casaComRota(entrada.nome, entrada.sementeNome);
+  const destinoMoto = entrada.destinoMoto === true;
+  if (faceta === "turismo" && vista) {
+    return {entra: false};
+  }
+  if (faceta === "turismo" && !rota && !destinoMoto && !forte) {
+    return {entra: false};
+  }
+  if (faceta === "mirante" && (rota || !vista)) {
+    return {entra: false};
+  }
+
   let nota = 0;
   const motivos: string[] = [];
-  const faceta = entrada.faceta ?? null;
   if (forte) {
     nota += 50;
     motivos.push(`nome tem ${forte}`);
-  } else if (faceta) {
+  } else if (rota) {
+    nota += 50;
+    motivos.push(`casa com ${entrada.sementeNome}`);
+  } else if (destinoMoto) {
+    nota += 50;
+    motivos.push("ponto turístico de moto");
+  } else if (faceta && !FACETAS_SEM_PASSE.has(faceta)) {
     nota += 50;
     motivos.push(`busca de ${rotuloFaceta(faceta)}`);
   }
@@ -204,7 +233,7 @@ export const pontuarSugestaoLocal = (
   return {
     entra: true,
     nota,
-    categoriaSugerida: sugerirCategoria(entrada.nome, faceta),
+    categoriaSugerida: sugerirCategoria(entrada.nome, faceta, rota || destinoMoto),
     motivos: motivos.slice(0, 3),
   };
 };

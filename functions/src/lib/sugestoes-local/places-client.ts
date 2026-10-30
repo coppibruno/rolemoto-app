@@ -97,7 +97,24 @@ export const buscarLugaresPlaces = async (
   chave: string,
   consulta: string,
   semente: SementeLocal,
+  tipo?: string,
 ): Promise<LugarCandidato[]> => {
+  const pedido: Record<string, unknown> = {
+    textQuery: consulta,
+    languageCode: "pt-BR",
+    regionCode: "BR",
+    pageSize: 10,
+    locationBias: {
+      circle: {
+        center: {latitude: semente.lat, longitude: semente.lng},
+        radius: semente.raioKm * 1000,
+      },
+    },
+  };
+  if (tipo) {
+    pedido.includedType = tipo;
+    pedido.strictTypeFiltering = true;
+  }
   let resposta: Response;
   try {
     resposta = await fetch("https://places.googleapis.com/v1/places:searchText", {
@@ -107,18 +124,7 @@ export const buscarLugaresPlaces = async (
         "X-Goog-Api-Key": chave,
         "X-Goog-FieldMask": FIELD_MASK,
       },
-      body: JSON.stringify({
-        textQuery: consulta,
-        languageCode: "pt-BR",
-        regionCode: "BR",
-        pageSize: 10,
-        locationBias: {
-          circle: {
-            center: {latitude: semente.lat, longitude: semente.lng},
-            radius: semente.raioKm * 1000,
-          },
-        },
-      }),
+      body: JSON.stringify(pedido),
       signal: AbortSignal.timeout(20000),
     });
   } catch {

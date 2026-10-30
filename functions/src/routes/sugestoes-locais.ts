@@ -8,7 +8,7 @@ import {param} from "../lib/params";
 import {validarPublicacaoLocal} from "../lib/validar-local";
 import {executarBuscaSugestoes} from "../lib/sugestoes-local/buscar-sugestoes-local";
 import {
-  FACETAS_BUSCA,
+  FACETAS_PADRAO,
   facetasDoPedido,
   type FacetaBusca,
 } from "../lib/sugestoes-local/facetas-busca";
@@ -56,7 +56,7 @@ const statusQuery = (valor: unknown): StatusSugestaoLocal | null => {
 
 export const responderBuscaSugestoes = async (
   res: Response,
-  facetas: readonly FacetaBusca[] = FACETAS_BUSCA,
+  facetas: readonly FacetaBusca[] = FACETAS_PADRAO,
 ): Promise<void> => {
   try {
     const resultado = await executarBuscaSugestoes(facetas);
