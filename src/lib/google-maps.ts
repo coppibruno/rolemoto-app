@@ -101,8 +101,11 @@ const SVG_PIN = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 40">
   <circle cx="14" cy="12.5" r="4.2" fill="#fff"/>
 </svg>`;
 
-export const chaveGoogleMaps = (): string =>
-  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ?? "";
+// Acesso direto: o Next só grava NEXT_PUBLIC_* no JS de produção assim.
+// Com `?.` a chave existe no `next dev` e some no build da Vercel.
+const CHAVE_GOOGLE_MAPS = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+export const chaveGoogleMaps = (): string => CHAVE_GOOGLE_MAPS?.trim() ?? "";
 
 const lerNamespace = (): GoogleMapsNs | null => {
   const maps = (window as JanelaMapa).google?.maps;
