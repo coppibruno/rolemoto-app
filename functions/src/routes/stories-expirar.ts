@@ -3,6 +3,7 @@ import {cronSecretConfere} from "../lib/cron-secret";
 import {expirarStoriesLote} from "../lib/story-local";
 import {responderErro} from "../middleware/errors";
 import {responderBuscaSugestoes} from "./sugestoes-locais";
+import {responderBuscaEventos} from "./sugestoes-eventos";
 
 /**
  * Limpeza diária. Cloud Scheduler 04:00 America/Sao_Paulo:
@@ -33,4 +34,12 @@ internoRouter.post("/sugestoes-locais/buscar", async (req: Request, res: Respons
     return;
   }
   await responderBuscaSugestoes(res);
+});
+
+internoRouter.post("/sugestoes-eventos/buscar", async (req: Request, res: Response) => {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
+    res.status(404).json({erro: "Não encontrado"});
+    return;
+  }
+  await responderBuscaEventos(res);
 });

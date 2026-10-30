@@ -13,7 +13,8 @@ export const useItemMenuAtivo = () => {
         Boolean(pathname?.startsWith("/roles")) ||
         Boolean(pathname?.startsWith("/eventos")) ||
         Boolean(pathname?.startsWith("/locais")) ||
-        Boolean(pathname?.startsWith("/sugestoes-locais"))
+        Boolean(pathname?.startsWith("/sugestoes-locais")) ||
+        Boolean(pathname?.startsWith("/sugestoes-eventos"))
       );
     }
     if (href === "/criar-role") {

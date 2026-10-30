@@ -1549,6 +1549,24 @@
   }
 }
 
+.linkSugestoesEventos {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: var(--touch-min);
+  margin-top: 8px;
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.linkSugestoesEventos:hover {
+  color: var(--primary);
+}
+
 .chipAoVivo {
   position: relative;
   z-index: 2;

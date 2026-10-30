@@ -1,6 +1,7 @@
 "use client";
 
 import { CarrosselStories } from "@/app/(app)/stories/components/CarrosselStories";
+import { useAuth } from "@/hooks/useAuth";
 import { useAbaFeed } from "../hooks/useAbaFeed";
 import { useContagensFeed } from "../hooks/useContagensFeed";
 import { useFeedbackPendente } from "../hooks/useFeedbackPendente";
@@ -11,6 +12,7 @@ import { useListaRoles } from "../hooks/useListaRoles";
 import { useLocalizacaoFeed } from "../hooks/useLocalizacaoFeed";
 import { useResumoAprovacoes } from "../hooks/useResumoAprovacoes";
 import { AbasFeed } from "./AbasFeed";
+import { LinkSugestoesEventos } from "./LinkSugestoesEventos";
 import { BannerCockpitLider } from "./BannerCockpitLider";
 import { BarraBuscaRaio } from "./BarraBuscaRaio";
 import { CabecalhoFeed } from "./CabecalhoFeed";
@@ -25,6 +27,7 @@ import { SeletorLocalizacao } from "./SeletorLocalizacao";
 import styles from "../feed.module.css";
 
 export const TelaFeed = () => {
+  const { usuario } = useAuth();
   const localizacao = useLocalizacaoFeed();
   const filtros = useFiltrosFeed();
   const { aba, setAba } = useAbaFeed();
@@ -130,6 +133,8 @@ export const TelaFeed = () => {
             onTentarDeNovo={listaRoles.recarregar}
           />
         ) : null}
+
+        {aba === "eventos" && usuario?.admin ? <LinkSugestoesEventos /> : null}
 
         {aba === "eventos" ? (
           <ListaEventos
