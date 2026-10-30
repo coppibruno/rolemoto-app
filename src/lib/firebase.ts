@@ -15,6 +15,7 @@
  * - NEXT_PUBLIC_FIREBASE_VAPID_KEY (Web Push; getToken no client)
  * - NEXT_PUBLIC_FUNCTIONS_URL (opcional; default aponta ao emulator em dev)
  * - NEXT_PUBLIC_STORAGE_EMULATOR_HOST (opcional; ex. 127.0.0.1:9199)
+ * - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY (opcional; mapa da criação. Sem ela, Leaflet)
  *
  * @see .env.example para referência das variáveis
  */
