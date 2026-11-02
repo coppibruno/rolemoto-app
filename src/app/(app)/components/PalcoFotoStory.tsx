@@ -9,8 +9,9 @@ import {
 } from "react";
 import type { MencaoStory, StoryPublica } from "@/types/story-local";
 import { urlAbrirMaps } from "@/lib/maps";
-import { fotoStoryPronta, registrarFotoStory } from "@/app/(app)/stories/cache-foto-story";
+import { registrarFotoStory } from "@/app/(app)/stories/cache-foto-story";
 import { estiloMarca } from "@/app/(app)/stories/marca-story";
+import { EsqueletoFotoStory } from "./EsqueletoFotoStory";
 import styles from "./player-stories.module.css";
 
 type Props = {
@@ -22,17 +23,6 @@ type Props = {
   onMarca: (mencao: MencaoStory) => void;
 };
 
-const revelarFoto = (img: HTMLImageElement, url: string, aoPronta: () => void) => {
-  if (img.naturalWidth === 0) return;
-  void img
-    .decode()
-    .then(() => {
-      registrarFotoStory(url);
-      aoPronta();
-    })
-    .catch(aoPronta);
-};
-
 export const PalcoFotoStory = ({
   story,
   onPronta,
@@ -42,48 +32,30 @@ export const PalcoFotoStory = ({
   onMarca,
 }: Props) => {
   const mencao = story.mencao;
-  const ofuscadaRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [prontaId, setProntaId] = useState<string | null>(null);
   const [falhouId, setFalhouId] = useState<string | null>(null);
-  const revelando = prontaId === story.id;
-  const naMemoria = fotoStoryPronta(story.fotoUrl) && !revelando;
-  const pronta = naMemoria || revelando;
+  const pronta = prontaId === story.id;
   const falhou = falhouId === story.id;
-  const classeFoto = naMemoria
-    ? `${styles.foto} ${styles.fotoPronta}`
-    : revelando
-      ? `${styles.foto} ${styles.fotoRevelar}`
-      : `${styles.foto} ${styles.fotoOfuscada}`;
 
-  useLayoutEffect(() => {
-    const id = story.id;
-    const url = story.fotoUrl;
-    if (falhouId === id) {
-      onPronta(id);
-      return;
-    }
-    if (fotoStoryPronta(url) || prontaId === id) {
-      onPronta(id);
-      return;
-    }
-    const img = ofuscadaRef.current;
-    if (!img?.complete || img.naturalWidth === 0) return;
-    let ativo = true;
-    revelarFoto(img, url, () => {
-      if (ativo) setProntaId(id);
-    });
-    return () => {
-      ativo = false;
-    };
-  }, [falhouId, onPronta, prontaId, story.id, story.fotoUrl]);
-
-  const aoCarregar = (evento: SyntheticEvent<HTMLImageElement>) => {
-    const id = story.id;
-    revelarFoto(evento.currentTarget, story.fotoUrl, () => setProntaId(id));
+  const marcarPronta = (id: string, url: string) => {
+    registrarFotoStory(url);
+    setProntaId(id);
   };
 
-  const aoFalhar = () => {
-    setFalhouId(story.id);
+  useLayoutEffect(() => {
+    const img = imgRef.current;
+    if (!img?.complete || img.naturalWidth === 0) return;
+    marcarPronta(story.id, story.fotoUrl);
+  }, [story.id, story.fotoUrl]);
+
+  useLayoutEffect(() => {
+    if (pronta || falhou) onPronta(story.id);
+  }, [falhou, onPronta, pronta, story.id]);
+
+  const aoCarregar = (evento: SyntheticEvent<HTMLImageElement>) => {
+    if (evento.currentTarget.naturalWidth === 0) return;
+    marcarPronta(story.id, story.fotoUrl);
   };
 
   return (
@@ -93,19 +65,24 @@ export const PalcoFotoStory = ({
       onPointerUp={onSoltar}
       onPointerCancel={onCancelar}
     >
-      {falhou ? null : (
+      {falhou ? (
+        <p className={styles.estado}>Não foi possível carregar a foto.</p>
+      ) : (
         <img
           key={story.id}
-          ref={ofuscadaRef}
+          ref={imgRef}
           src={story.fotoUrl}
           alt=""
           draggable={false}
-          className={classeFoto}
+          decoding="async"
+          fetchPriority="high"
+          className={pronta ? `${styles.foto} ${styles.fotoPronta}` : styles.foto}
           onLoad={aoCarregar}
-          onError={aoFalhar}
+          onError={() => setFalhouId(story.id)}
         />
       )}
-      {mencao ? (
+      {!pronta && !falhou ? <EsqueletoFotoStory /> : null}
+      {pronta && mencao ? (
         <button
           type="button"
           className={styles.selo}
@@ -122,7 +99,7 @@ export const PalcoFotoStory = ({
           @{mencao.nome}
         </button>
       ) : null}
-      {story.localizacao ? (
+      {pronta && story.localizacao ? (
         <a
           className={styles.localizacao}
           href={urlAbrirMaps({

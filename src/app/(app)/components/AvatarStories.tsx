@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/useAuth";
 import { ComposerStory } from "@/app/(app)/stories/components/ComposerStory";
+import { EntradaFotoStory } from "@/app/(app)/stories/components/EntradaFotoStory";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useAnelStories } from "@/app/(app)/stories/hooks/useAnelStories";
 import styles from "./avatar-stories.module.css";
@@ -35,17 +36,7 @@ const AvatarProprio = ({ uid, fotoUrl, nome, tamanho }: Props) => {
 
   return (
     <span className={styles.wrap}>
-      <input
-        ref={anel.inputRef}
-        className={styles.input}
-        type="file"
-        accept="image/jpeg,image/png"
-        capture="environment"
-        onChange={(evento) => {
-          anel.aoArquivo(evento.target.files?.[0]);
-          evento.target.value = "";
-        }}
-      />
+      <EntradaFotoStory captura={anel.captura} />
       <button
         type="button"
         className={styles.botao}

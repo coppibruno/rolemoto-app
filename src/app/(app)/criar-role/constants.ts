@@ -20,7 +20,8 @@ export const HORA_PADRAO = "07:30";
 export const PLACEHOLDER_TITULO = "Ex: Café com Curvas na Serra Negra";
 export const PLACEHOLDER_PARTIDA = "Posto Shell Rodovia km 22";
 export const PLACEHOLDER_DESTINO = "Ex: Mirante Alto da Serra";
-export const HINT_MAPA_VAZIO = "Toque no mapa, busque o endereço ou use o GPS";
+export const HINT_MAPA_VAZIO =
+  "Toque num local do mapa, busque o endereço ou use o GPS";
 export const HINT_MAPA_AJUSTE = "Arraste o alfinete para ajustar o ponto";
 export const PLACEHOLDER_NOME_PARTIDA = "Ex.: Posto Shell km 24";
 export const PLACEHOLDER_NOME_DESTINO = "Ex.: Mirante da Serra";

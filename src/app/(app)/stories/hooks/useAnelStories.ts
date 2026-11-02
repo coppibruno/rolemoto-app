@@ -83,9 +83,8 @@ export const useAnelStories = (uid: string, nome: string) => {
     arquivo,
     descartar: () => setArquivo(null),
     publicada,
-    inputRef: captura.inputRef,
+    captura,
     erro: captura.erro,
-    aoArquivo: captura.aoArquivo,
     rotulo,
   };
 };

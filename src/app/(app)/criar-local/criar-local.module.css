@@ -629,73 +629,88 @@
   color: var(--outline);
 }
 
-.previewFachada {
-  position: relative;
-  width: 100%;
-  height: 144px;
-  border-radius: 0.75rem;
-  overflow: hidden;
+.gradeFotos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
-.previewImg {
+.slotFoto {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--surface-container-highest);
+}
+
+.slotFotoImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.previewOverlay {
+.seloCapa {
   position: absolute;
-  inset: 0;
+  left: 6px;
+  bottom: 6px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.botaoRemoverMini {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-container-lowest) 80%, transparent);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.botaoRemoverMini .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.slotAnexar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  padding: 12px;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--surface-container-lowest) 90%, transparent),
-    color-mix(in srgb, var(--surface-container-lowest) 40%, transparent),
-    transparent
-  );
-}
-
-.botaoAlterarFoto {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 9999px;
-  background: color-mix(in srgb, var(--surface) 90%, transparent);
-  color: var(--primary);
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 1;
+  border: 1.5px dashed var(--outline-variant);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface-variant);
   font-family: "Barlow Condensed", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
 }
 
-.botaoRemoverFoto {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--touch-min);
-  height: var(--touch-min);
-  border: none;
-  border-radius: 9999px;
-  background: var(--error-container);
-  color: var(--on-error-container);
-  cursor: pointer;
+.slotAnexar .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--primary-container);
 }
 
-.botaoRemoverFoto:disabled,
-.botaoAlterarFoto:disabled {
+.slotAnexar:disabled,
+.botaoRemoverMini:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }

@@ -15,6 +15,42 @@ import {reservarYmd} from "./reservar-ymd";
 
 const COLECAO = "locais";
 const CHUNK = 100;
+const LIMITE_FOTOS_LOCAL = 5;
+
+const listaDeTextos = (valor: unknown): string[] => {
+  if (!Array.isArray(valor)) {
+    return [];
+  }
+  const saida: string[] = [];
+  for (const item of valor) {
+    if (typeof item !== "string") {
+      continue;
+    }
+    const texto = item.trim();
+    if (!texto || saida.includes(texto)) {
+      continue;
+    }
+    saida.push(texto);
+    if (saida.length === LIMITE_FOTOS_LOCAL) {
+      break;
+    }
+  }
+  return saida;
+};
+
+/** Galeria persistida, ou a capa antiga quando o documento ainda não tem a lista. */
+const fotosDoDocumento = (data: {
+  fotosUrls?: unknown;
+  fotoFachadaUrl?: unknown;
+}): {fotoFachadaUrl: string; fotosUrls: string[]} => {
+  const lista = listaDeTextos(data.fotosUrls);
+  const capa = String(data.fotoFachadaUrl ?? "").trim();
+  const fotosUrls = lista.length > 0 ? lista : (capa ? [capa] : []);
+  return {
+    fotoFachadaUrl: fotosUrls[0] ?? "",
+    fotosUrls,
+  };
+};
 
 const emChunks = <T>(itens: T[]): T[][] => {
   const saida: T[][] = [];
@@ -75,6 +111,7 @@ export const camposNovoLocal = (dados: LocalCreate) => ({
   horarios: dados.horarios,
   linkMaps: dados.linkMaps,
   fotoFachadaUrl: dados.fotoFachadaUrl,
+  fotosUrls: dados.fotosUrls,
   fotoAtribuicao: dados.fotoAtribuicao ?? "",
   criadorId: dados.criadorId,
   googlePlaceId: dados.googlePlaceId ?? null,
@@ -103,7 +140,7 @@ export const toLocal = (snap: DocumentSnapshot): Local => {
     aberto24h: Boolean(data.aberto24h),
     horarios: toHorarios(data),
     linkMaps: String(data.linkMaps ?? ""),
-    fotoFachadaUrl: String(data.fotoFachadaUrl ?? ""),
+    ...fotosDoDocumento(data),
     fotoAtribuicao: String(data.fotoAtribuicao ?? ""),
     googlePlaceId:
       typeof data.googlePlaceId === "string" && data.googlePlaceId ?

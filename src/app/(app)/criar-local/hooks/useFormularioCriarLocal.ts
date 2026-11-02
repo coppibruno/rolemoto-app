@@ -15,7 +15,7 @@ import { locaisService } from "../../locais/services/locais.service";
 import { LINK_MAPS_MAX, NOME_MAX, REDIRECT_SUCESSO_MS } from "../constants";
 import { horariosPadraoEspecifico } from "../horarios-padrao";
 import { useCampoEnderecoLocal } from "./useCampoEnderecoLocal";
-import { useFotoFachada } from "./useFotoFachada";
+import { useFotosFachada } from "./useFotosFachada";
 import { validarCriarLocal } from "./validar-criar-local";
 
 const montarHorarios = (dias: HorarioDiaForm[]): HorarioDiaLocal[] =>
@@ -32,7 +32,7 @@ export const useFormularioCriarLocal = () => {
   const router = useRouter();
   const { firebaseUser } = useAuth();
   const endereco = useCampoEnderecoLocal();
-  const foto = useFotoFachada();
+  const foto = useFotosFachada();
 
   const [nome, setNome] = useState("");
   const [categoria, setCategoria] = useState<CategoriaLocal | null>(null);
@@ -80,7 +80,7 @@ export const useFormularioCriarLocal = () => {
         categoria,
         aberto24h,
         horarios,
-        fotoErro: foto.erro,
+        fotoErro: foto.fotos.length > 0 ? undefined : foto.erro,
       });
       setErros(errosAtuais);
       if (Object.keys(errosAtuais).length > 0) {
@@ -98,9 +98,7 @@ export const useFormularioCriarLocal = () => {
         return;
       }
 
-      const fotoFachadaUrl = foto.arquivo
-        ? await foto.enviar(firebaseUser.uid)
-        : "";
+      const fotosUrls = await foto.enviar(firebaseUser.uid);
 
       const linkMaps = urlAbrirMaps({
         lat: ponto.lat,
@@ -119,7 +117,8 @@ export const useFormularioCriarLocal = () => {
         aberto24h,
         horarios: aberto24h ? [] : montarHorarios(horarios),
         linkMaps,
-        fotoFachadaUrl,
+        fotoFachadaUrl: fotosUrls[0] ?? "",
+        fotosUrls,
       });
 
       setSucesso(true);

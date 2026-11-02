@@ -5,6 +5,7 @@ import type { AlvoPostagem, StoryPublica } from "@/types/story-local";
 import type { MencaoOpcao } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
 import { useCapturaFoto } from "@/app/(app)/stories/hooks/useCapturaFoto";
 import { ComposerStory } from "@/app/(app)/stories/components/ComposerStory";
+import { EntradaFotoStory } from "@/app/(app)/stories/components/EntradaFotoStory";
 import styles from "./botao-postar-story.module.css";
 
 type Props = {
@@ -24,17 +25,7 @@ export const BotaoPostarStory = ({ alvo, nome, onCriada }: Props) => {
 
   return (
     <div>
-      <input
-        ref={captura.inputRef}
-        className={styles.input}
-        type="file"
-        accept="image/jpeg,image/png"
-        capture="environment"
-        onChange={(evento) => {
-          captura.aoArquivo(evento.target.files?.[0]);
-          evento.target.value = "";
-        }}
-      />
+      <EntradaFotoStory captura={captura} />
       <button type="button" className={styles.botao} onClick={captura.abrir}>
         <span className="material-symbols-outlined" aria-hidden>
           photo_camera

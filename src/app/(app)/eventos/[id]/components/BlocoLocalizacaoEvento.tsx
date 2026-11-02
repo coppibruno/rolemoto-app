@@ -1,5 +1,5 @@
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
-import { MapaEstatico } from "@/components/maps/MapaEstatico";
+import { MapaLeitura } from "@/components/maps/MapaLeitura";
 import type { Localizacao } from "@/types/role";
 import { TITULO_LOCAL } from "../constants";
 import styles from "../evento-detalhe.module.css";
@@ -29,7 +29,7 @@ export const BlocoLocalizacaoEvento = ({ local }: Props) => {
         </div>
       </div>
       <div className={styles.mapa}>
-        <MapaEstatico
+        <MapaLeitura
           marcadores={[{ lat: local.lat, lng: local.lng, cor: "#ff6b00" }]}
           aria-label={`Mapa de ${nome}`}
         />

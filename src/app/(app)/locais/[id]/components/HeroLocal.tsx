@@ -6,12 +6,14 @@ import {
   LABELS_CATEGORIA_LOCAL,
 } from "@/app/(app)/feed/constants";
 import { labelStatusAberto } from "@/lib/horario-local";
+import { fotosDoLocal } from "@/lib/fotos-local";
 import type { LocalDetalhe } from "@/types/local";
 import type { StoryPublica } from "@/types/story-local";
 import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
 import { AnelCapaStory } from "@/app/(app)/feed/components/AnelCapaStory";
 import { CTA_VER_REVIEWS } from "../constants";
 import { BotaoFavoritoHero } from "./BotaoFavoritoHero";
+import { CarrosselFotosLocal } from "./CarrosselFotosLocal";
 import styles from "../local-detalhe.module.css";
 
 type Props = {
@@ -24,12 +26,17 @@ export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
   const status = labelStatusAberto(local);
   const aberto = status !== "Fechado";
   const nomeStory = local.eventoAoVivo?.titulo ?? local.nome;
+  const fotos = fotosDoLocal(local);
 
   return (
     <section className={styles.hero}>
-      <div className={local.fotoFachadaUrl ? styles.heroCapa : styles.heroCapaVazia}>
-        {local.fotoFachadaUrl ? (
-          <img src={local.fotoFachadaUrl} alt="" className={styles.heroCapaImg} />
+      <div className={fotos.length > 0 ? styles.heroCapa : styles.heroCapaVazia}>
+        {fotos.length > 0 ? (
+          <CarrosselFotosLocal
+            fotos={fotos}
+            nome={local.nome}
+            elevarBolinhas={Boolean(local.fotoAtribuicao?.trim())}
+          />
         ) : (
           <span className="material-symbols-outlined" aria-hidden>
             {ICONES_CATEGORIA_LOCAL[local.categoria]}

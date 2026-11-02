@@ -34,6 +34,107 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+  user-select: none;
+}
+
+.carrossel {
+  position: absolute;
+  inset: 0;
+}
+
+.trilho {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.trilho::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.seta {
+  display: none;
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-container-lowest) 72%, transparent);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.setaEsq {
+  left: 8px;
+}
+
+.setaDir {
+  right: 8px;
+}
+
+.seta:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .seta {
+    display: flex;
+  }
+}
+
+.bolinhas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.bolinhasAltas {
+  bottom: 36px;
+}
+
+.bolinha {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 3px, transparent 3.5px);
+  cursor: pointer;
+}
+
+.bolinhaAtiva {
+  background: radial-gradient(circle, #fff 4px, transparent 4.5px);
+}
+
+.trilho:focus-visible,
+.seta:focus-visible,
+.bolinha:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
 }
 
 .heroCapaVazia {
@@ -50,6 +151,7 @@
 .heroGradiente {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   background: linear-gradient(
     to top,
     var(--surface-container) 0%,

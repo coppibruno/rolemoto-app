@@ -43,14 +43,17 @@ export const TelaAvaliarExperiencia = ({ tipo, alvoId }: Props) => {
 
   const publicar = async () => {
     if (!form.payloadBase || !avaliar.uid) return;
-    const editando = form.modoEdicao;
-    const urls = await fotos.uploadTodas(avaliar.uid, tipo, alvoId);
-    await avaliar.enviar({
-      ...form.payloadBase,
-      fotosUrls: urls,
-    });
-    if (!editando) {
-      fotos.limpar();
+    try {
+      const urls = await fotos.uploadTodas(avaliar.uid, tipo, alvoId);
+      const salvo = await avaliar.enviar({
+        ...form.payloadBase,
+        fotosUrls: urls,
+      });
+      if (!salvo) return;
+      fotos.definirRemotas(urls);
+      fotos.descartarPendentes();
+    } catch {
+      /* erro da foto fica em fotos.erroFoto */
     }
   };
 

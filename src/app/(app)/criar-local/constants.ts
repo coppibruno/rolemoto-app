@@ -16,7 +16,8 @@ export const HORA_FECHAMENTO_PADRAO = "18:00";
 
 export const PLACEHOLDER_NOME = "Ex: Posto Shell Rodoanel Sul - Km 42";
 export const PLACEHOLDER_ENDERECO = "Ex: Rod. Mário Covas, Km 42 - Pista Externa";
-export const HINT_MAPA_VAZIO = "Toque no mapa, busque o endereço ou use o GPS";
+export const HINT_MAPA_VAZIO =
+  "Toque num local do mapa, busque o endereço ou use o GPS";
 export const HINT_MAPA_AJUSTE = "Arraste o alfinete para ajustar o ponto";
 
 export const TITULO_PAGINA = "Criar Local";

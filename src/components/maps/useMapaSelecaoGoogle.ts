@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   carregarGoogleMaps,
   chaveGoogleMaps,
-  ESTILO_MAPA_ESCURO,
-  iconePin,
+  ESTILO_MAPA_SELECAO,
   observarFalhaAuthGoogle,
   type GoogleMap,
   type GoogleMapsNs,
@@ -92,7 +91,7 @@ export const useMapaSelecaoGoogle = ({
         const map = new maps.Map(el, {
           center: centro,
           zoom: temPonto ? ZOOM_LOCAL : ZOOM_SUL_REGIAO,
-          styles: ESTILO_MAPA_ESCURO,
+          styles: ESTILO_MAPA_SELECAO,
           backgroundColor: "#1a1c20",
           mapTypeControl: false,
           streetViewControl: false,
@@ -170,7 +169,6 @@ export const useMapaSelecaoGoogle = ({
         map,
         position: posicao,
         draggable: !travadoRef.current,
-        icon: iconePin(maps),
       });
       markerRef.current = marker;
       const criado = marker;

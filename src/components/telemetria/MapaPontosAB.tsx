@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { MapaEstatico } from "@/components/maps/MapaEstatico";
+import { MapaLeitura } from "@/components/maps/MapaLeitura";
 import { urlRotaMaps } from "@/lib/maps";
 import { formatarDistancia, labelPontoTelemetria } from "@/lib/telemetria/formatar-telemetria";
 import { decodificarPolyline } from "@/lib/telemetria/tracado";
@@ -53,7 +53,7 @@ export const MapaPontosAB = ({
         </a>
       </div>
       <div className={styles.mapaCanvas}>
-        <MapaEstatico
+        <MapaLeitura
           marcadores={[
             {
               lat: pontoInicio.lat,

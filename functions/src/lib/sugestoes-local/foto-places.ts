@@ -29,21 +29,34 @@ const atribuicaoDe = (itens: Atribuicao[] | undefined): string => {
   return nomes.join(" · ");
 };
 
-export const fotoDoLugar = (photos: FotoBruta[] | undefined): FotoPlaces => {
-  const recurso = photos?.[0]?.name ?? "";
-  if (!recursoFotoValido(recurso)) {
-    return {recurso: "", atribuicao: ""};
+/** Até 10, na ordem da Places, sem recurso inválido ou repetido. */
+export const listarFotosDoLugar = (photos: FotoBruta[] | undefined): FotoPlaces[] => {
+  const saida: FotoPlaces[] = [];
+  const vistos = new Set<string>();
+  for (const foto of photos ?? []) {
+    const recurso = foto.name ?? "";
+    if (!recursoFotoValido(recurso) || vistos.has(recurso)) {
+      continue;
+    }
+    vistos.add(recurso);
+    saida.push({
+      recurso,
+      atribuicao: atribuicaoDe(foto.authorAttributions) || "Google",
+    });
+    if (saida.length >= 10) {
+      break;
+    }
   }
-  return {
-    recurso,
-    atribuicao: atribuicaoDe(photos?.[0]?.authorAttributions) || "Google",
-  };
+  return saida;
 };
 
-export const buscarFotoDoLugar = async (
+export const fotoDoLugar = (photos: FotoBruta[] | undefined): FotoPlaces =>
+  listarFotosDoLugar(photos)[0] ?? {recurso: "", atribuicao: ""};
+
+const consultarFotos = async (
   chave: string,
   placeId: string,
-): Promise<FotoPlaces | null> => {
+): Promise<FotoBruta[] | null> => {
   if (!PLACE_ID.test(placeId)) {
     return null;
   }
@@ -63,7 +76,29 @@ export const buscarFotoDoLugar = async (
     return null;
   }
   const corpo = (await resposta.json()) as {photos?: FotoBruta[]};
-  return fotoDoLugar(corpo.photos);
+  return corpo.photos ?? [];
+};
+
+export const buscarFotoDoLugar = async (
+  chave: string,
+  placeId: string,
+): Promise<FotoPlaces | null> => {
+  const photos = await consultarFotos(chave, placeId);
+  if (!photos) {
+    return null;
+  }
+  return fotoDoLugar(photos);
+};
+
+export const buscarFotosDoLugar = async (
+  chave: string,
+  placeId: string,
+): Promise<FotoPlaces[] | null> => {
+  const photos = await consultarFotos(chave, placeId);
+  if (!photos) {
+    return null;
+  }
+  return listarFotosDoLugar(photos);
 };
 
 export const baixarFotoPlaces = async (

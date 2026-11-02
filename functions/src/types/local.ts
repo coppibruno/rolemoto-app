@@ -34,7 +34,10 @@ export interface Local {
   aberto24h: boolean;
   horarios: HorarioDiaLocal[];
   linkMaps: string;
+  /** Capa. É a primeira de `fotosUrls` (vazia quando não há foto). */
   fotoFachadaUrl: string;
+  /** Até 5 fotos. Documentos antigos sem o campo são lidos como `[fotoFachadaUrl]`. */
+  fotosUrls: string[];
   /** Crédito da foto quando ela veio da Places. Vazio no cadastro manual. */
   fotoAtribuicao: string;
   /** `null` no cadastro manual e em documentos antigos. */

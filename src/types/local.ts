@@ -36,7 +36,10 @@ export interface Local {
   aberto24h: boolean;
   horarios: HorarioDiaLocal[];
   linkMaps: string;
+  /** Capa dos cards. Primeira entrada de `fotosUrls`. */
   fotoFachadaUrl: string;
+  /** Galeria do detalhe, até 5. A primeira é a capa. */
+  fotosUrls: string[];
   fotoAtribuicao?: string;
   googlePlaceId?: string | null;
   criadorId: string;
@@ -88,7 +91,7 @@ export type CriarLocalForm = {
   facilidades: FacilidadeLocal[];
   aberto24h: boolean;
   horarios: HorarioDiaForm[];
-  photoFile: File | null;
+  fotos: File[];
 };
 
 export type ErrosCriarLocal = {

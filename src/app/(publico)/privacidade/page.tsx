@@ -158,8 +158,10 @@ const PrivacidadePage = () => {
             <strong>Sentry</strong> (monitoramento de erros e desempenho);
           </li>
           <li>
-            <strong>OpenStreetMap</strong> (imagens dos mapas, requisitadas pelo
-            nosso servidor) e <strong>Google Fonts</strong> (fontes do app);
+            <strong>Google Maps</strong> (mapas na criação e na visualização de
+            eventos, locais e telemetria), <strong>OpenStreetMap</strong> (busca de
+            endereço, imagem de compartilhamento da telemetria e mapa reserva) e{" "}
+            <strong>Google Fonts</strong> (fontes do app);
           </li>
           <li>Provedor de hospedagem do site e do app.</li>
         </ul>

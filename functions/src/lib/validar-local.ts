@@ -111,6 +111,9 @@ const parseHorarios = (
   return itens.sort((a, b) => a.dia - b.dia);
 };
 
+const LIMITE_FOTOS_LOCAL = 5;
+const FOTO_URL_MAX = 2048;
+
 const isUrlHttp = (valor: string): boolean => {
   if (valor.length > 500) {
     return false;
@@ -121,6 +124,75 @@ const isUrlHttp = (valor: string): boolean => {
   } catch {
     return false;
   }
+};
+
+const urlFotoValida = (valor: string): boolean => {
+  if (valor.length === 0 || valor.length > FOTO_URL_MAX) {
+    return false;
+  }
+  try {
+    const url = new URL(valor);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
+type FotosLocal = {
+  fotoFachadaUrl: string;
+  fotosUrls: string[];
+};
+
+/**
+ * Sem `fotosUrls`, a capa legada vira a galeria de um item.
+ * Com a lista, a capa passa a ser a primeira URL.
+ */
+const parseFotos = (
+  bruto: Record<string, unknown>,
+): {ok: true; fotos: FotosLocal} | {ok: false; erro: string} => {
+  let capa = "";
+  if (bruto.fotoFachadaUrl !== undefined && bruto.fotoFachadaUrl !== null) {
+    if (typeof bruto.fotoFachadaUrl !== "string") {
+      return {ok: false, erro: "fotoFachadaUrl inválida"};
+    }
+    capa = bruto.fotoFachadaUrl.trim();
+  }
+
+  if (bruto.fotosUrls === undefined || bruto.fotosUrls === null) {
+    return {
+      ok: true,
+      fotos: {
+        fotoFachadaUrl: capa,
+        fotosUrls: capa ? [capa] : [],
+      },
+    };
+  }
+
+  if (!Array.isArray(bruto.fotosUrls)) {
+    return {ok: false, erro: "fotos inválidas"};
+  }
+  if (bruto.fotosUrls.length > LIMITE_FOTOS_LOCAL) {
+    return {ok: false, erro: "no máximo 5 fotos"};
+  }
+
+  const fotosUrls: string[] = [];
+  for (const item of bruto.fotosUrls) {
+    if (typeof item !== "string" || !urlFotoValida(item.trim())) {
+      return {ok: false, erro: "foto inválida"};
+    }
+    const url = item.trim();
+    if (!fotosUrls.includes(url)) {
+      fotosUrls.push(url);
+    }
+  }
+
+  return {
+    ok: true,
+    fotos: {
+      fotoFachadaUrl: fotosUrls[0] ?? "",
+      fotosUrls,
+    },
+  };
 };
 
 export type ResultadoValidacaoLocal =
@@ -180,12 +252,9 @@ export const validarPublicacaoLocal = (body: unknown): ResultadoValidacaoLocal =
     }
   }
 
-  let fotoFachadaUrl = "";
-  if (bruto.fotoFachadaUrl !== undefined && bruto.fotoFachadaUrl !== null) {
-    if (typeof bruto.fotoFachadaUrl !== "string") {
-      return {ok: false, erro: "fotoFachadaUrl inválida"};
-    }
-    fotoFachadaUrl = bruto.fotoFachadaUrl;
+  const fotos = parseFotos(bruto);
+  if (!fotos.ok) {
+    return fotos;
   }
 
   return {
@@ -200,7 +269,8 @@ export const validarPublicacaoLocal = (body: unknown): ResultadoValidacaoLocal =
       aberto24h: bruto.aberto24h,
       horarios,
       linkMaps,
-      fotoFachadaUrl,
+      fotoFachadaUrl: fotos.fotos.fotoFachadaUrl,
+      fotosUrls: fotos.fotos.fotosUrls,
     },
   };
 };

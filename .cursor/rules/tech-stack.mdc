@@ -136,7 +136,8 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
     { dia: 0-6, fechado: boolean, abertura: 'HH:mm' | null, fechamento: 'HH:mm' | null }
   ],
   linkMaps: string,
-  fotoFachadaUrl: string,
+  fotoFachadaUrl: string, // capa: fotosUrls[0], ou "" ; cards, feed e convite usam esta
+  fotosUrls: string[], // 0..5 no cadastro manual; docs antigos sem o campo = [fotoFachadaUrl]
   fotoAtribuicao: string, // "" no cadastro manual; autor da foto quando veio da Places
   googlePlaceId: string | null, // null no cadastro manual e em docs antigos
   criadorId: string,

@@ -70,6 +70,7 @@ export const ERRO_CARREGAR: ErroTelaAvaliar = {
 
 export const ERRO_SALVAR = "Não foi possível publicar a avaliação.";
 export const ERRO_ATUALIZAR = "Não foi possível salvar as alterações.";
+export const ERRO_FOTO_ENVIO = "Não foi possível enviar a foto. Tente de novo.";
 
 type MetaNota = {
   label: string;

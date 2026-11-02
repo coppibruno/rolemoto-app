@@ -155,8 +155,8 @@ export const useAvaliarExperiencia = (
   }, [router]);
 
   const enviar = useCallback(
-    async (dados: AvaliacaoCreate) => {
-      if (enviando) return;
+    async (dados: AvaliacaoCreate): Promise<boolean> => {
+      if (enviando) return false;
       setEnviando(true);
       setErroEnvio(null);
       setToast(null);
@@ -180,6 +180,7 @@ export const useAvaliarExperiencia = (
           setVisao("enviado");
           window.setTimeout(() => setVisao("lista"), DURACAO_ENVIADO_MS);
         }
+        return true;
       } catch (falha) {
         if (falha instanceof ApiError && falha.status === 409) {
           try {
@@ -194,7 +195,7 @@ export const useAvaliarExperiencia = (
             /* lista fica como está */
           }
           setVisao(foco === "lista" ? "lista" : "form");
-          return;
+          return false;
         }
         setErroEnvio(
           falha instanceof ApiError
@@ -203,6 +204,7 @@ export const useAvaliarExperiencia = (
               ? ERRO_ATUALIZAR
               : ERRO_SALVAR,
         );
+        return false;
       } finally {
         setEnviando(false);
       }

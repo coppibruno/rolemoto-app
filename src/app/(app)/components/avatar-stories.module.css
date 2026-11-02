@@ -73,10 +73,6 @@
   background: color-mix(in srgb, var(--on-surface) 8%, transparent);
 }
 
-.input {
-  display: none;
-}
-
 .erro {
   position: absolute;
   top: calc(100% + 8px);

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { PontoFeed, RaioKm } from "@/app/(app)/feed/types";
 import type { AnelStory } from "@/types/story-local";
+import { precarregarFotoStory } from "../cache-foto-story";
 import { storiesService } from "../services/stories.service";
 
 type Params = {
@@ -30,6 +31,10 @@ export const useFaixaStories = ({ aba, ponto, raioKm }: Params) => {
       cancelado = true;
     };
   }, [aba, ponto?.lat, ponto?.lng, raioKm, ticket]);
+
+  useEffect(() => {
+    aneis.forEach((anel) => precarregarFotoStory(anel.fotoUrl));
+  }, [aneis]);
 
   return { aneis, recarregar };
 };

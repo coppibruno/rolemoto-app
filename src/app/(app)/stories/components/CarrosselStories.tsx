@@ -1,6 +1,7 @@
 "use client";
 
 import { ComposerStory } from "@/app/(app)/stories/components/ComposerStory";
+import { EntradaFotoStory } from "@/app/(app)/stories/components/EntradaFotoStory";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useCarrosselStories } from "@/app/(app)/stories/hooks/useCarrosselStories";
 import { nomeBolhaStory, rotuloBolhaStory } from "@/app/(app)/stories/pessoas-story";
@@ -69,17 +70,7 @@ export const CarrosselStories = () => {
         </p>
       ) : null}
       {carrossel.erroFoto ? <p className={styles.erroFoto} role="alert">{carrossel.erroFoto}</p> : null}
-      <input
-        ref={carrossel.inputRef}
-        hidden
-        type="file"
-        accept="image/jpeg,image/png"
-        capture="environment"
-        onChange={(evento) => {
-          carrossel.aoArquivo(evento.target.files?.[0]);
-          evento.target.value = "";
-        }}
-      />
+      <EntradaFotoStory captura={carrossel.captura} />
       {carrossel.arquivo ? (
         <ComposerStory
           arquivo={carrossel.arquivo}

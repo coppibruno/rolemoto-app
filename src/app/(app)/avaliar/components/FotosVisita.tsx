@@ -1,5 +1,6 @@
 "use client";
 
+import { lerArquivosDoInput } from "../fotos-visita";
 import type { FotoPendente } from "../hooks/useFotosVisita";
 import {
   CTA_ANEXAR,
@@ -15,7 +16,7 @@ type Props = {
   podeAnexar: boolean;
   erroFoto: string | null;
   inputRef: React.RefObject<HTMLInputElement | null>;
-  onAnexar: (lista: FileList | null) => void;
+  onAnexar: (arquivos: readonly File[]) => void;
   onRemover: (id: string) => void;
   onRemoverRemota?: (url: string) => void;
   onAbrirSeletor: () => void;
@@ -101,8 +102,9 @@ export const FotosVisita = ({
         multiple
         className={styles.inputFile}
         onChange={(e) => {
-          onAnexar(e.target.files);
+          const selecionados = lerArquivosDoInput(e.target.files);
           e.target.value = "";
+          onAnexar(selecionados);
         }}
       />
       {erroFoto ? (

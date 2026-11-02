@@ -84,11 +84,14 @@ export const useReelStories = ({
         if (cancelado) return;
         setErro(false);
         const ordenada = mesclarStories(lista.stories, fotoInicial);
-        setStories(ordenada);
         const achou = destaqueId
           ? ordenada.findIndex((item) => item.id === destaqueId)
           : 0;
         const proximo = achou >= 0 ? achou : 0;
+        for (let i = proximo; i <= Math.min(ordenada.length - 1, proximo + 2); i += 1) {
+          precarregarFotoStory(ordenada[i].fotoUrl);
+        }
+        setStories(ordenada);
         setIndice(proximo);
         progressoRef.current = 0;
         setProgresso(0);
@@ -155,10 +158,12 @@ export const useReelStories = ({
 
   useEffect(() => {
     if (!aberto) return;
-    const atual = stories[indice]?.fotoUrl;
-    const seguinte = stories[indice + 1]?.fotoUrl;
-    if (atual) precarregarFotoStory(atual);
-    if (seguinte) precarregarFotoStory(seguinte);
+    const de = Math.max(0, indice - 1);
+    const ate = Math.min(stories.length - 1, indice + 2);
+    for (let i = de; i <= ate; i += 1) {
+      const url = stories[i]?.fotoUrl;
+      if (url) precarregarFotoStory(url);
+    }
   }, [aberto, indice, stories]);
 
   useEffect(() => {
@@ -228,6 +233,7 @@ export const useReelStories = ({
     setConfirmando,
     apagando,
     story,
+    midiaPronta,
     marcarMidiaPronta,
     minha: Boolean(story && firebaseUser?.uid === story.autor.uid),
     segurar,

@@ -1,14 +1,13 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import {
-  ERRO_FOTO_GRANDE,
-  MAX_FOTO_BYTES,
-  TIPOS_FOTO_ACEITOS,
-  uploadFotoAvaliacao,
-} from "@/lib/storage";
+import { uploadFotoAvaliacao } from "@/lib/storage";
 import type { TipoAlvoAvaliacao } from "@/types/avaliacao-experiencia";
-import { LIMITE_FOTOS } from "../constants";
+import { ERRO_FOTO_ENVIO, LIMITE_FOTOS } from "../constants";
+import {
+  contentTypeFotoAvaliacao,
+  selecionarArquivosFoto,
+} from "../fotos-visita";
 
 export type FotoPendente = {
   id: string;
@@ -34,35 +33,35 @@ export const useFotosVisita = () => {
   }, []);
 
   const anexar = useCallback(
-    (lista: FileList | null) => {
-      if (!lista || lista.length === 0) return;
-      setErroFoto(null);
+    (arquivos: readonly File[]) => {
+      if (arquivos.length === 0) return;
+
+      const vagas = LIMITE_FOTOS - urlsRemotas.length - fotos.length;
+      const { aceitos, erro } = selecionarArquivosFoto(arquivos, vagas);
+      setErroFoto(erro);
+      if (aceitos.length === 0) return;
+
+      const proximas: FotoPendente[] = aceitos.map((file) => ({
+        id: crypto.randomUUID(),
+        file,
+        previewUrl: URL.createObjectURL(file),
+      }));
 
       setFotos((atual) => {
-        const vagas = LIMITE_FOTOS - urlsRemotas.length - atual.length;
-        if (vagas <= 0) return atual;
-
-        const proximas: FotoPendente[] = [];
-        for (const file of Array.from(lista)) {
-          if (proximas.length >= vagas) break;
-          if (!TIPOS_FOTO_ACEITOS.includes(file.type)) {
-            setErroFoto("Use JPG ou PNG.");
-            continue;
-          }
-          if (file.size > MAX_FOTO_BYTES) {
-            setErroFoto(ERRO_FOTO_GRANDE);
-            continue;
-          }
-          proximas.push({
-            id: crypto.randomUUID(),
-            file,
-            previewUrl: URL.createObjectURL(file),
-          });
+        const cabem = LIMITE_FOTOS - urlsRemotas.length - atual.length;
+        if (cabem <= 0) {
+          proximas.forEach((foto) => liberarPreview(foto.previewUrl));
+          return atual;
         }
-        return [...atual, ...proximas];
+        if (proximas.length > cabem) {
+          proximas
+            .slice(cabem)
+            .forEach((foto) => liberarPreview(foto.previewUrl));
+        }
+        return [...atual, ...proximas.slice(0, cabem)];
       });
     },
-    [urlsRemotas.length],
+    [fotos.length, liberarPreview, urlsRemotas.length],
   );
 
   const remover = useCallback(
@@ -95,10 +94,19 @@ export const useFotosVisita = () => {
       try {
         const urls: string[] = [...urlsRemotas];
         for (const foto of fotos) {
-          const url = await uploadFotoAvaliacao(uid, tipo, alvoId, foto.file);
+          const url = await uploadFotoAvaliacao(
+            uid,
+            tipo,
+            alvoId,
+            foto.file,
+            contentTypeFotoAvaliacao(foto.file),
+          );
           urls.push(url);
         }
         return urls.slice(0, LIMITE_FOTOS);
+      } catch (falha) {
+        setErroFoto(ERRO_FOTO_ENVIO);
+        throw falha;
       } finally {
         setEnviandoFotos(false);
       }
@@ -114,6 +122,13 @@ export const useFotosVisita = () => {
     setUrlsRemotas([]);
   }, [liberarPreview]);
 
+  const descartarPendentes = useCallback(() => {
+    setFotos((atual) => {
+      for (const foto of atual) liberarPreview(foto.previewUrl);
+      return [];
+    });
+  }, [liberarPreview]);
+
   return {
     fotos,
     urlsRemotas,
@@ -127,6 +142,7 @@ export const useFotosVisita = () => {
     abrirSeletor,
     uploadTodas,
     limpar,
+    descartarPendentes,
     podeAnexar: totalFotos < LIMITE_FOTOS,
   };
 };

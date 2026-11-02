@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { AlvoPlayer, MencaoStory, StoryPublica } from "@/types/story-local";
 import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
+import { EsqueletoFotoStory } from "./EsqueletoFotoStory";
 import { PalcoFotoStory } from "./PalcoFotoStory";
 import styles from "./player-stories.module.css";
 
@@ -30,11 +31,24 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
   };
 
   return createPortal(
-    <div className={styles.player} role="dialog" aria-modal="true" aria-label="Fotos">
+    <div
+      className={styles.player}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Fotos"
+      aria-busy={Boolean(story) && !reel.midiaPronta}
+    >
       <div className={styles.topo}>
         <div className={styles.barras}>
           {reel.stories.map((item, i) => (
-            <span key={item.id} className={styles.trilho}>
+            <span
+              key={item.id}
+              className={
+                i === reel.indice && !reel.midiaPronta
+                  ? `${styles.trilho} ${styles.trilhoAguarda}`
+                  : styles.trilho
+              }
+            >
               <span
                 className={styles.preenchimento}
                 style={{
@@ -93,18 +107,18 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
           onMarca={abrirMarca}
         />
       ) : (
-        <div className={styles.vazio}>
+        <div className={styles.palco}>
           {reel.carregando ? (
-            <p>Carregando…</p>
+            <EsqueletoFotoStory />
           ) : reel.erro ? (
-            <>
+            <div className={styles.vazio}>
               <p>Não foi possível abrir as fotos.</p>
               <button type="button" className={styles.tentar} onClick={reel.tentarDeNovo}>
                 Tentar de novo
               </button>
-            </>
+            </div>
           ) : (
-            <p>Nenhuma foto nas últimas 24 h</p>
+            <p className={styles.estado}>Nenhuma foto nas últimas 24 h</p>
           )}
         </div>
       )}

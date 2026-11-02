@@ -35,7 +35,6 @@ const TETO_FOTOS = 5;
 const TETO_LISTA = 50;
 const TETO_ANEIS = 20;
 const TETO_PESSOAS = 30;
-const TETO_PUSH = 100;
 const LOTE_AVISO_EVENTO = 20;
 const JANELA_MS = 24 * 60 * 60 * 1000;
 const LOTE_RECENTES = 200;
@@ -424,52 +423,17 @@ export const marcarVistoPerfil = async (
   return {ok: true};
 };
 
-const unirDestinatarios = (
-  favoritos: string[],
-  inscritos: string[],
-  autorUid: string,
-): string[] => {
-  const uids: string[] = [];
-  const vistos = new Set<string>();
-  const incluir = (id: string) => {
-    if (!id || id === autorUid || vistos.has(id) || uids.length >= TETO_PUSH) {
-      return;
-    }
-    vistos.add(id);
-    uids.push(id);
-  };
-  favoritos.forEach(incluir);
-  inscritos.forEach(incluir);
-  return uids;
-};
-
+/** Foto no ponto só avisa se um encontro está ao vivo ali. Sem encontro, sem push. */
 const dispararPushLocal = async (
   local: Local,
   autorUid: string,
   apelido: string,
 ): Promise<void> => {
   const vestindo = await eventoQueVeste(local.id);
-  if (vestindo) {
-    await dispararPushEvento(vestindo, autorUid, apelido, local);
+  if (!vestindo) {
     return;
   }
-  const reservou = await localRepository.reservarPushDoDia(
-    local.id,
-    ymdSaoPaulo(new Date()),
-  );
-  if (!reservou) {
-    return;
-  }
-  const favoritos = await usuarioLocalFavoritoRepository
-    .listarUsuarioIdsPorLocal(local.id, TETO_PUSH);
-  const nome = cortar(local.nome);
-  await notificarStory(
-    unirDestinatarios(favoritos, [], autorUid),
-    `${nome} está ao vivo`,
-    `${apelido} postou uma foto`,
-    `/locais/${local.id}?stories=1`,
-    {localId: local.id, eventoId: ""},
-  );
+  await dispararPushEvento(vestindo, autorUid, apelido, local);
 };
 
 const urlStoryEvento = (evento: Evento): string =>

@@ -16,7 +16,7 @@ export type MarcadorMapa = PontoLatLng & {
   rotulo?: string;
 };
 
-type Props = {
+export type PropsMapaEstatico = {
   marcadores: MarcadorMapa[];
   /** Se omitido, calcula zoom para caber todos os marcadores. */
   zoom?: number;
@@ -119,7 +119,7 @@ export const MapaEstatico = ({
   ligarMarcadores = false,
   trajeto = SEM_TRAJETO,
   "aria-label": ariaLabel = "Mapa",
-}: Props) => {
+}: PropsMapaEstatico) => {
   const [host, setHost] = useState<HTMLDivElement | null>(null);
   const [tamanho, setTamanho] = useState({ w: 0, h: 0 });
 

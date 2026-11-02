@@ -5,7 +5,7 @@ import { BotaoCancelar } from "./BotaoCancelar";
 import { BotaoSalvarLocal } from "./BotaoSalvarLocal";
 import { CampoEnderecoLocal } from "./CampoEnderecoLocal";
 import { CampoNomeLocal } from "./CampoNomeLocal";
-import { FotoFachada } from "./FotoFachada";
+import { FotosFachada } from "./FotosFachada";
 import { ListaFacilidades } from "./ListaFacilidades";
 import { SeletorCategoriaLocal } from "./SeletorCategoriaLocal";
 import { SeletorHorarioLocal } from "./SeletorHorarioLocal";
@@ -48,13 +48,14 @@ export const FormularioCriarLocal = () => {
         erro={form.erros.horario}
         desabilitado={desabilitado}
       />
-      <FotoFachada
-        previewUrl={form.foto.previewUrl}
+      <FotosFachada
+        fotos={form.foto.fotos}
+        podeAnexar={form.foto.podeAnexar}
         erro={form.foto.erro ?? form.erros.foto}
         desabilitado={desabilitado}
         inputRef={form.foto.inputRef}
         onAbrirSeletor={form.foto.abrirSeletor}
-        onSelecionar={form.foto.aoSelecionarArquivo}
+        onAdicionar={form.foto.adicionar}
         onRemover={form.foto.remover}
       />
       {form.erroGeral ? (
