@@ -1,0 +1,113 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--surface-container-lowest);
+  overscroll-behavior: none;
+}
+
+.dialogo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.fechar,
+.seta {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-container-high) 88%, transparent);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.fechar {
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: 12px;
+}
+
+.seta {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.setaEsq {
+  left: 8px;
+}
+
+.setaDir {
+  right: 8px;
+}
+
+.seta:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.fechar:focus-visible,
+.seta:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.trilho {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.trilho::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding:
+    calc(72px + env(safe-area-inset-top, 0px))
+    16px
+    calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+.foto {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.contador {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 2;
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--on-surface);
+}

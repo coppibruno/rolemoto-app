@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { VisualizadorFotos } from "@/components/fotos/VisualizadorFotos";
 import type { AvaliacaoExperiencia } from "@/types/avaliacao-experiencia";
 import { SELO_SEU_RELATO } from "../constants";
 import styles from "../avaliar.module.css";
@@ -11,6 +13,7 @@ type Props = {
 
 export const CardAvaliacao = ({ avaliacao, eMinha }: Props) => {
   const { autor } = avaliacao;
+  const [fotoAberta, setFotoAberta] = useState<number | null>(null);
 
   return (
     <article className={styles.cardAvaliacao}>
@@ -40,10 +43,26 @@ export const CardAvaliacao = ({ avaliacao, eMinha }: Props) => {
       ) : null}
       {avaliacao.fotosUrls.length > 0 ? (
         <div className={styles.fotosAvaliacao}>
-          {avaliacao.fotosUrls.map((url) => (
-            <img key={url} src={url} alt="" className={styles.fotoAvaliacao} />
+          {avaliacao.fotosUrls.map((url, indice) => (
+            <button
+              key={url}
+              type="button"
+              className={styles.fotoAvaliacao}
+              aria-label={`Abrir foto ${indice + 1} de ${avaliacao.fotosUrls.length}`}
+              onClick={() => setFotoAberta(indice)}
+            >
+              <img src={url} alt="" />
+            </button>
           ))}
         </div>
+      ) : null}
+      {fotoAberta != null ? (
+        <VisualizadorFotos
+          fotos={avaliacao.fotosUrls}
+          indiceInicial={fotoAberta}
+          rotulo={`Fotos de ${autor.nome}`}
+          onFechar={() => setFotoAberta(null)}
+        />
       ) : null}
       {avaliacao.recomendaComboio ? (
         <span className={styles.badgeRecomenda}>

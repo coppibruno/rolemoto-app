@@ -29,6 +29,24 @@
   background: var(--surface-container-highest);
 }
 
+.botaoCapa {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.botaoCapa:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: -2px;
+}
+
 .heroCapaImg {
   width: 100%;
   height: 100%;
@@ -50,6 +68,8 @@
 .heroGradiente {
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background: linear-gradient(
     to top,
     var(--surface-container-low) 0%,
@@ -60,6 +80,7 @@
 
 .heroBadges {
   position: absolute;
+  z-index: 2;
   top: 16px;
   left: 16px;
   right: 16px;

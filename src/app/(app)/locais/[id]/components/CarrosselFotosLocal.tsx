@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef, useState, type MouseEvent } from "react";
+import { VisualizadorFotos } from "@/components/fotos/VisualizadorFotos";
 import { useCarrosselFotos } from "../hooks/useCarrosselFotos";
 import styles from "../local-detalhe.module.css";
 
@@ -12,6 +14,18 @@ type Props = {
 export const CarrosselFotosLocal = ({ fotos, nome, elevarBolinhas }: Props) => {
   const { trilhoRef, indice, aoRolar, irPara } = useCarrosselFotos(fotos.length);
   const varias = fotos.length > 1;
+  const [aberta, setAberta] = useState<number | null>(null);
+  const origem = useRef<{ x: number; y: number } | null>(null);
+
+  const abrirSeToque = (evento: MouseEvent<HTMLButtonElement>, i: number) => {
+    if (evento.detail === 0) {
+      setAberta(i);
+      return;
+    }
+    const inicio = origem.current;
+    if (inicio && Math.hypot(evento.clientX - inicio.x, evento.clientY - inicio.y) > 10) return;
+    setAberta(i);
+  };
 
   const aoTecla = (tecla: string) => {
     if (tecla === "ArrowRight") irPara(indice + 1);
@@ -39,12 +53,22 @@ export const CarrosselFotosLocal = ({ fotos, nome, elevarBolinhas }: Props) => {
       >
         {fotos.map((url, i) => (
           <div className={styles.slide} key={`${i}-${url}`}>
-            <img
-              src={url}
-              alt={`${nome}, foto ${i + 1} de ${fotos.length}`}
-              className={styles.heroCapaImg}
-              draggable={false}
-            />
+            <button
+              type="button"
+              className={styles.abrirSlide}
+              aria-label={`Abrir foto ${i + 1} de ${fotos.length} de ${nome}`}
+              onPointerDown={(evento) => {
+                origem.current = { x: evento.clientX, y: evento.clientY };
+              }}
+              onClick={(evento) => abrirSeToque(evento, i)}
+            >
+              <img
+                src={url}
+                alt=""
+                className={styles.heroCapaImg}
+                draggable={false}
+              />
+            </button>
           </div>
         ))}
       </div>
@@ -90,6 +114,14 @@ export const CarrosselFotosLocal = ({ fotos, nome, elevarBolinhas }: Props) => {
             ))}
           </div>
         </>
+      ) : null}
+      {aberta != null ? (
+        <VisualizadorFotos
+          fotos={fotos}
+          indiceInicial={aberta}
+          rotulo={`Fotos de ${nome}`}
+          onFechar={() => setAberta(null)}
+        />
       ) : null}
     </div>
   );

@@ -746,10 +746,25 @@
 
 .fotoAvaliacao {
   aspect-ratio: 1;
-  border-radius: 0.5rem;
-  object-fit: cover;
   width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0.5rem;
+  overflow: hidden;
   background: var(--surface-container);
+  cursor: zoom-in;
+}
+
+.fotoAvaliacao img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fotoAvaliacao:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
 }
 
 .badgeRecomenda {

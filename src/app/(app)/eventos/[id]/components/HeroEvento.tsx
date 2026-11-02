@@ -1,5 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import { OPCOES_TIPO } from "@/app/(app)/criar-evento/constants";
 import { labelCountdownEvento } from "@/lib/countdown-evento";
+import { VisualizadorFotos } from "@/components/fotos/VisualizadorFotos";
 import type { EventoDetalhe } from "@/types/evento";
 import type { StoryPublica } from "@/types/story-local";
 import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
@@ -21,12 +25,20 @@ export const HeroEvento = ({ evento, onAbrirStories, onStoryCriada }: Props) => 
   const alvoAlbum = evento.localId
     ? { tipo: "local" as const, id: evento.localId }
     : { tipo: "evento" as const, id: evento.id };
+  const [fotoAberta, setFotoAberta] = useState(false);
 
   return (
     <section className={styles.hero}>
       <div className={evento.fotoCapaUrl ? styles.heroCapa : styles.heroCapaVazia}>
         {evento.fotoCapaUrl ? (
-          <img src={evento.fotoCapaUrl} alt="" className={styles.heroCapaImg} />
+          <button
+            type="button"
+            className={styles.botaoCapa}
+            aria-label={`Ver foto de ${evento.titulo} inteira`}
+            onClick={() => setFotoAberta(true)}
+          >
+            <img src={evento.fotoCapaUrl} alt="" className={styles.heroCapaImg} />
+          </button>
         ) : (
           <span className="material-symbols-outlined" aria-hidden>
             local_activity
@@ -63,6 +75,14 @@ export const HeroEvento = ({ evento, onAbrirStories, onStoryCriada }: Props) => 
           />
         ) : null}
       </div>
+      {fotoAberta && evento.fotoCapaUrl ? (
+        <VisualizadorFotos
+          fotos={[evento.fotoCapaUrl]}
+          indiceInicial={0}
+          rotulo={`Foto de ${evento.titulo}`}
+          onFechar={() => setFotoAberta(false)}
+        />
+      ) : null}
     </section>
   );
 };
