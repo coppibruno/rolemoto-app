@@ -1,9 +1,43 @@
+import type { CorSelo } from "@/types/story-local";
+
+export type { CorSelo };
+
 export type PosicaoMarca = {
   x: number;
   y: number;
 };
 
+export type EstiloSelo = {
+  background: string;
+  color: string;
+};
+
+export const CORES_SELO: readonly CorSelo[] = ["neutro", "branco", "laranja", "ciano"];
+
 export const POSICAO_MARCA_PADRAO: PosicaoMarca = { x: 50, y: 68 };
+
+export const POSICAO_LOCAL_PADRAO: PosicaoMarca = { x: 50, y: 54 };
+
+export const proximaCor = (atual: CorSelo): CorSelo => {
+  const indice = CORES_SELO.indexOf(atual);
+  return CORES_SELO[indice + 1] ?? CORES_SELO[0];
+};
+
+export const estiloSelo = (cor: CorSelo): EstiloSelo => {
+  if (cor === "branco") {
+    return { background: "var(--inverse-surface)", color: "var(--inverse-on-surface)" };
+  }
+  if (cor === "laranja") {
+    return { background: "var(--primary-container)", color: "var(--on-primary-container)" };
+  }
+  if (cor === "ciano") {
+    return { background: "var(--tertiary)", color: "var(--on-tertiary)" };
+  }
+  return {
+    background: "color-mix(in srgb, var(--surface-container-high) 92%, transparent)",
+    color: "var(--on-surface)",
+  };
+};
 
 const MIN_X = 12;
 const MAX_X = 88;

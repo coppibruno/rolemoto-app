@@ -1,9 +1,14 @@
 export type AlbumStory = "local" | "evento" | "perfil";
 
+export type CorSelo = "neutro" | "branco" | "laranja" | "ciano";
+
 export type LocalizacaoStory = {
   nome: string;
   lat: number;
   lng: number;
+  x: number | null;
+  y: number | null;
+  cor: CorSelo;
 };
 
 export type PessoaStory = {
@@ -37,6 +42,7 @@ export type StoryPublica = {
   expiresAt: string;
   marcaX: number | null;
   marcaY: number | null;
+  marcaCor: CorSelo;
   autor: AutorStory;
   mencao: MencaoStory | null;
   localizacao: LocalizacaoStory | null;

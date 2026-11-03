@@ -2,10 +2,15 @@ export type AlbumStory = "local" | "evento" | "perfil";
 
 export type AlbumVisto = AlbumStory | "pessoa";
 
+export type CorSelo = "neutro" | "branco" | "laranja" | "ciano";
+
 export interface LocalizacaoStory {
   nome: string;
   lat: number;
   lng: number;
+  x: number | null;
+  y: number | null;
+  cor: CorSelo;
 }
 
 export interface MencaoStory {
@@ -30,9 +35,13 @@ export interface StoryLocal {
   storagePath: string;
   marcaX: number | null;
   marcaY: number | null;
+  marcaCor: CorSelo | null;
   localizacaoNome: string | null;
   localizacaoLat: number | null;
   localizacaoLng: number | null;
+  localizacaoX: number | null;
+  localizacaoY: number | null;
+  localizacaoCor: CorSelo | null;
   createdAt: string;
   expiresAt: string;
 }
@@ -49,6 +58,7 @@ export interface StoryPublica {
   expiresAt: string;
   marcaX: number | null;
   marcaY: number | null;
+  marcaCor: CorSelo;
   autor: AutorStory;
   mencao: MencaoStory | null;
   localizacao: LocalizacaoStory | null;

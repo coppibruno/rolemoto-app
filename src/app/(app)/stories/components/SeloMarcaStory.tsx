@@ -1,12 +1,13 @@
 "use client";
 
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { estiloMarca, type PosicaoMarca } from "../marca-story";
+import { estiloMarca, estiloSelo, type CorSelo, type PosicaoMarca } from "../marca-story";
 import styles from "./composer-story.module.css";
 
 type Props = {
   nome: string;
   posicao: PosicaoMarca;
+  cor: CorSelo;
   travado: boolean;
   onSegurar: (evento: ReactPointerEvent<HTMLElement>) => void;
   onMover: (evento: ReactPointerEvent<HTMLElement>) => void;
@@ -17,6 +18,7 @@ type Props = {
 export const SeloMarcaStory = ({
   nome,
   posicao,
+  cor,
   travado,
   onSegurar,
   onMover,
@@ -25,9 +27,9 @@ export const SeloMarcaStory = ({
 }: Props) => (
   <div
     className={styles.selo}
-    style={estiloMarca(posicao)}
+    style={{ ...estiloMarca(posicao), ...estiloSelo(cor) }}
     role="group"
-    aria-label={`Marca @${nome}. Arraste para posicionar.`}
+    aria-label={`Marca @${nome}. Arraste para posicionar. Toque para mudar a cor.`}
     draggable={false}
     onDragStart={(evento) => evento.preventDefault()}
     onPointerDown={onSegurar}
@@ -35,9 +37,7 @@ export const SeloMarcaStory = ({
     onPointerUp={onSoltar}
     onPointerCancel={onSoltar}
   >
-    <button type="button" className={styles.seloNome} aria-label={`Arrastar marca @${nome}`}>
-      @{nome}
-    </button>
+    <span className={styles.seloNome}>@{nome}</span>
     <button
       type="button"
       className={styles.tirar}

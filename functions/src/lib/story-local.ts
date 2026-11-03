@@ -20,6 +20,7 @@ import type {Local} from "../types/local";
 import type {
   AlbumStory,
   AnelStory,
+  CorSelo,
   EventoAoVivoResumo,
   ListaStories,
   LocalizacaoStory,
@@ -99,6 +100,7 @@ const paraPublica = (
   expiresAt: story.expiresAt,
   marcaX: story.marcaX,
   marcaY: story.marcaY,
+  marcaCor: story.marcaCor ?? "neutro",
   autor: {
     uid: story.usuarioId,
     apelido: apelidoExibicao(usuario),
@@ -116,10 +118,16 @@ const localizacaoPublica = (story: StoryLocal): LocalizacaoStory | null => {
   ) {
     return null;
   }
+  const x = story.localizacaoX;
+  const y = story.localizacaoY;
+  const temPosicao = x != null && y != null;
   return {
     nome: story.localizacaoNome,
     lat: story.localizacaoLat,
     lng: story.localizacaoLng,
+    x: temPosicao ? x : null,
+    y: temPosicao ? y : null,
+    cor: story.localizacaoCor ?? "neutro",
   };
 };
 
@@ -159,13 +167,53 @@ const localizacaoDoBody = (
   ) {
     return {ok: false};
   }
-  return {ok: true, localizacao: {nome, lat, lng}};
+  return {
+    ok: true,
+    localizacao: {
+      nome,
+      lat,
+      lng,
+      ...posicaoDoPar(bruto, "localizacaoX", "localizacaoY"),
+      cor: corDoValor(bruto.localizacaoCor),
+    },
+  };
 };
+
+const corDoValor = (valor: unknown): CorSelo => {
+  if (
+    valor === "neutro" ||
+    valor === "branco" ||
+    valor === "laranja" ||
+    valor === "ciano"
+  ) {
+    return valor;
+  }
+  return "neutro";
+};
+
+const corMarcaDoBody = (body: unknown): CorSelo => {
+  if (!body || typeof body !== "object") {
+    return "neutro";
+  }
+  return corDoValor((body as Record<string, unknown>).marcaCor);
+};
+
+const camposMarca = (
+  posicao: {marcaX: number; marcaY: number} | null,
+  cor: CorSelo | null,
+) => ({
+  marcaX: posicao?.marcaX ?? null,
+  marcaY: posicao?.marcaY ?? null,
+  marcaCor: cor,
+});
 
 const camposLocalizacao = (localizacao: LocalizacaoStory | null) => ({
   localizacaoNome: localizacao?.nome ?? null,
   localizacaoLat: localizacao?.lat ?? null,
   localizacaoLng: localizacao?.lng ?? null,
+  localizacaoX: localizacao?.x ?? null,
+  localizacaoY: localizacao?.y ?? null,
+  localizacaoCor: localizacao?.cor ?? null,
 });
 
 const resumo = (evento: Evento | null): EventoAoVivoResumo | null =>
@@ -231,6 +279,27 @@ const fotoDoBody = (body: unknown): unknown => {
 
 const limitarEixo = (valor: number, min: number, max: number): number =>
   Math.round(Math.min(max, Math.max(min, valor)) * 10) / 10;
+
+const posicaoDoPar = (
+  bruto: Record<string, unknown>,
+  chaveX: string,
+  chaveY: string,
+): {x: number | null; y: number | null} => {
+  const x = bruto[chaveX];
+  const y = bruto[chaveY];
+  if (
+    typeof x !== "number" ||
+    typeof y !== "number" ||
+    !Number.isFinite(x) ||
+    !Number.isFinite(y)
+  ) {
+    return {x: null, y: null};
+  }
+  return {
+    x: limitarEixo(x, 12, 88),
+    y: limitarEixo(y, 20, 76),
+  };
+};
 
 /** Mesmo intervalo do composer: a marca não entra no topo nem no botão de publicar. */
 const posicaoDoBody = (
@@ -358,8 +427,7 @@ export const publicarStoryPerfil = async (
     eventoId: null,
     fotoUrl,
     storagePath: foto.storagePath,
-    marcaX: null,
-    marcaY: null,
+    ...camposMarca(null, null),
     ...camposLocalizacao(lugar.localizacao),
   });
   const usuario = await usuarioRepository.buscarPorId(uid);
@@ -494,6 +562,7 @@ const gravarLocal = async (
   fotoUrl: string,
   storagePath: string,
   posicao: {marcaX: number; marcaY: number} | null,
+  cor: CorSelo,
   localizacao: LocalizacaoStory | null,
 ): Promise<StoryPublica> => {
   const criada = await storyLocalRepository.criar({
@@ -503,8 +572,7 @@ const gravarLocal = async (
     eventoId,
     fotoUrl,
     storagePath,
-    marcaX: posicao?.marcaX ?? null,
-    marcaY: posicao?.marcaY ?? null,
+    ...camposMarca(posicao, cor),
     ...camposLocalizacao(localizacao),
   });
   return comPush(criada, uid, (apelido) => dispararPushLocal(local, uid, apelido));
@@ -551,6 +619,7 @@ export const publicarStoryLocal = async (
     fotoUrl,
     foto.storagePath,
     posicaoDoBody(body),
+    corMarcaDoBody(body),
     lugar.localizacao,
   );
   return {ok: true, story};
@@ -606,6 +675,7 @@ export const publicarStoryEvento = async (
       fotoUrl,
       foto.storagePath,
       posicaoDoBody(body),
+      corMarcaDoBody(body),
       lugar.localizacao,
     );
     return {ok: true, story};
@@ -639,8 +709,7 @@ export const publicarStoryEvento = async (
     eventoId: evento.id,
     fotoUrl,
     storagePath: foto.storagePath,
-    marcaX: posicao?.marcaX ?? null,
-    marcaY: posicao?.marcaY ?? null,
+    ...camposMarca(posicao, corMarcaDoBody(body)),
     ...camposLocalizacao(lugar.localizacao),
   });
   const story = await comPush(

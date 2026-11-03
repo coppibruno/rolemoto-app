@@ -10,7 +10,7 @@ import {
   uploadFotoStory,
 } from "@/lib/storage";
 import { destinoUpload } from "@/types/story-local";
-import type { PosicaoMarca } from "../marca-story";
+import type { PosicaoMarca, CorSelo } from "../marca-story";
 import { recarregarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
 import { storiesService } from "../services/stories.service";
 import { presencaService } from "@/app/(app)/perfil/services/presenca.service";
@@ -135,17 +135,22 @@ export const useMencoesStory = (aberto: boolean) => {
   return { opcoes, perto };
 };
 
+export type SelosStory = {
+  mencao: MencaoOpcao | null;
+  posicao: PosicaoMarca | null;
+  corMarca: CorSelo | null;
+  localizacao: PontoMencao | null;
+  posicaoLocal: PosicaoMarca | null;
+  corLocal: CorSelo | null;
+};
+
 export const usePublicarStoryPerfil = () => {
   const { firebaseUser } = useAuth();
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
-  const publicar = useCallback(async (
-    file: File,
-    mencao: MencaoOpcao | null,
-    posicao: PosicaoMarca | null,
-    localizacao: PontoMencao | null,
-  ) => {
+  const publicar = useCallback(async (file: File, selos: SelosStory) => {
+    const { mencao, posicao, corMarca, localizacao, posicaoLocal, corLocal } = selos;
     if (!firebaseUser) {
       setErro("Sessão expirada. Entre de novo para postar.");
       return null;
@@ -191,11 +196,16 @@ export const usePublicarStoryPerfil = () => {
           }
           : {}),
         ...(mencao && posicao ? { marcaX: posicao.x, marcaY: posicao.y } : {}),
+        ...(mencao ? { marcaCor: corMarca ?? "neutro" } : {}),
         ...(localizacao
           ? {
             localizacaoNome: localizacao.nome,
             localizacaoLat: localizacao.lat,
             localizacaoLng: localizacao.lng,
+            ...(posicaoLocal
+              ? { localizacaoX: posicaoLocal.x, localizacaoY: posicaoLocal.y }
+              : {}),
+            localizacaoCor: corLocal ?? "neutro",
           }
           : {}),
       });

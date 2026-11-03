@@ -4,6 +4,7 @@ import {firestore} from "../../lib/firebase-admin";
 import type {
   AlbumStory,
   AlbumVisto,
+  CorSelo,
   StoryLocal,
   StoryLocalCreate,
   StoryVisto,
@@ -38,6 +39,15 @@ const percentual = (valor: unknown): number | null => {
   return valor;
 };
 
+const COR_SELO = new Set<string>(["neutro", "branco", "laranja", "ciano"]);
+
+const corOuNull = (valor: unknown): CorSelo | null => {
+  if (typeof valor !== "string" || !COR_SELO.has(valor)) {
+    return null;
+  }
+  return valor as CorSelo;
+};
+
 const coordenada = (valor: unknown): number | null => {
   if (typeof valor !== "number" || !Number.isFinite(valor)) {
     return null;
@@ -67,9 +77,13 @@ const toStory = (snap: DocumentSnapshot): StoryLocal => {
     storagePath: String(data.storagePath ?? ""),
     marcaX: percentual(data.marcaX),
     marcaY: percentual(data.marcaY),
+    marcaCor: corOuNull(data.marcaCor),
     localizacaoNome: textoOuNull(data.localizacaoNome),
     localizacaoLat: coordenada(data.localizacaoLat),
     localizacaoLng: coordenada(data.localizacaoLng),
+    localizacaoX: percentual(data.localizacaoX),
+    localizacaoY: percentual(data.localizacaoY),
+    localizacaoCor: corOuNull(data.localizacaoCor),
     createdAt: toIso(data.createdAt),
     expiresAt: toIso(data.expiresAt),
   };
@@ -101,9 +115,13 @@ export class FirestoreStoryLocalRepository implements StoryLocalRepository {
       storagePath: dados.storagePath,
       marcaX: dados.marcaX,
       marcaY: dados.marcaY,
+      marcaCor: dados.marcaCor,
       localizacaoNome: dados.localizacaoNome,
       localizacaoLat: dados.localizacaoLat,
       localizacaoLng: dados.localizacaoLng,
+      localizacaoX: dados.localizacaoX,
+      localizacaoY: dados.localizacaoY,
+      localizacaoCor: dados.localizacaoCor,
       createdAt: agora,
       expiresAt,
     });

@@ -64,9 +64,13 @@ export const storiesService = {
     accuracy?: number;
     marcaX?: number;
     marcaY?: number;
+    marcaCor?: "neutro" | "branco" | "laranja" | "ciano";
     localizacaoNome?: string;
     localizacaoLat?: number;
     localizacaoLng?: number;
+    localizacaoX?: number;
+    localizacaoY?: number;
+    localizacaoCor?: "neutro" | "branco" | "laranja" | "ciano";
   }) =>
     api<StoryPublica>("/stories", {
       method: "POST",

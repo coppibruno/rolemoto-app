@@ -13,6 +13,21 @@
   height: 100%;
   object-fit: contain;
   background: var(--surface-container-lowest);
+  pointer-events: none;
+}
+
+.video::-webkit-media-controls,
+.video::-webkit-media-controls-enclosure,
+.video::-webkit-media-controls-panel,
+.video::-webkit-media-controls-start-playback-button,
+.video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  opacity: 0 !important;
+  -webkit-appearance: none !important;
+}
+
+.videoAguarda {
+  opacity: 0;
 }
 
 .frente {
@@ -20,7 +35,8 @@
 }
 
 .aviso,
-.erro {
+.erro,
+.nota {
   position: absolute;
   left: 50%;
   z-index: 2;
@@ -41,8 +57,12 @@
   transform: translate(-50%, -50%);
 }
 
-.erro {
+.erro,
+.nota {
   bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+}
+
+.erro {
   color: var(--error);
 }
 

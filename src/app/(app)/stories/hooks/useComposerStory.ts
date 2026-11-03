@@ -2,7 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import type { StoryPublica } from "@/types/story-local";
-import { POSICAO_MARCA_PADRAO, limitarPosicao, type PosicaoMarca } from "../marca-story";
+import {
+  POSICAO_LOCAL_PADRAO,
+  POSICAO_MARCA_PADRAO,
+  limitarPosicao,
+  proximaCor,
+  type CorSelo,
+  type PosicaoMarca,
+} from "../marca-story";
 import {
   useMencoesStory,
   usePublicarStoryPerfil,
@@ -20,6 +27,10 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
   const [escolhida, setEscolhida] = useState<MencaoOpcao | null>(marcaInicial);
   const [localizacao, setLocalizacao] = useState<PontoMencao | null>(null);
   const [posicao, setPosicao] = useState<PosicaoMarca>(POSICAO_MARCA_PADRAO);
+  const [posicaoLocal, setPosicaoLocal] = useState<PosicaoMarca>(POSICAO_LOCAL_PADRAO);
+  const [corMarca, setCorMarca] = useState<CorSelo>("neutro");
+  const [corLocal, setCorLocal] = useState<CorSelo>("neutro");
+  const [paletaAberta, setPaletaAberta] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [buscaLocal, setBuscaLocal] = useState(false);
   const [termo, setTermo] = useState("");
@@ -27,14 +38,18 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
   const [preview, setPreview] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const posicaoRef = useRef(posicao);
+  const posicaoLocalRef = useRef(posicaoLocal);
   const arraste = useRef<{
     id: number;
     x: number;
     y: number;
     origemX: number;
     origemY: number;
+    moveu: boolean;
+    alvo: "marca" | "local";
   } | null>(null);
   posicaoRef.current = posicao;
+  posicaoLocalRef.current = posicaoLocal;
   const { opcoes, perto } = useMencoesStory(true);
   const { publicar, enviando, erro } = usePublicarStoryPerfil();
 
@@ -55,49 +70,74 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
       .slice(0, pertoVisivel ? 7 : 8);
   }, [consulta, opcoes, perto, pertoVisivel]);
 
+  const fecharPaineis = () => {
+    setPaletaAberta(false);
+    setBuscaAberta(false);
+    setBuscaLocal(false);
+  };
+
   const escolher = (marca: MencaoOpcao) => {
     setEscolhida(marca);
     setPosicao(POSICAO_MARCA_PADRAO);
-    setBuscaAberta(false);
-    setBuscaLocal(false);
+    setCorMarca("neutro");
+    fecharPaineis();
     setTermo("");
   };
 
-  const abrirBusca = () => {
+  const abrirPaleta = () => {
+    setBuscaAberta(false);
     setBuscaLocal(false);
-    setBuscaAberta((aberta) => !aberta);
+    setPaletaAberta((aberta) => !aberta);
+  };
+
+  const abrirBusca = () => {
+    if (escolhida) return;
+    setPaletaAberta(false);
+    setBuscaLocal(false);
+    setBuscaAberta(true);
   };
 
   const abrirLocalizacao = () => {
+    if (localizacao) return;
+    setPaletaAberta(false);
     setBuscaAberta(false);
-    setBuscaLocal((aberta) => !aberta);
+    setBuscaLocal(true);
   };
 
   const escolherLocalizacao = (ponto: PontoMencao) => {
     setLocalizacao(ponto);
-    setBuscaLocal(false);
+    setPosicaoLocal(POSICAO_LOCAL_PADRAO);
+    setCorLocal("neutro");
+    fecharPaineis();
     setTermoLocal("");
   };
 
-  const tirarLocalizacao = () => setLocalizacao(null);
+  const tirarLocalizacao = () => {
+    setLocalizacao(null);
+    setPosicaoLocal(POSICAO_LOCAL_PADRAO);
+    setCorLocal("neutro");
+  };
 
   const tirarMarca = () => {
     setEscolhida(null);
     setPosicao(POSICAO_MARCA_PADRAO);
+    setCorMarca("neutro");
   };
 
-  const aoSegurarMarca = (evento: ReactPointerEvent<HTMLElement>) => {
+  const aoSegurar = (alvo: "marca" | "local") => (evento: ReactPointerEvent<HTMLElement>) => {
     if (enviando || (evento.target as HTMLElement).closest("[data-tirar-marca]")) return;
     const stage = stageRef.current;
     if (!stage) return;
     evento.preventDefault();
-    const atual = posicaoRef.current;
+    const atual = alvo === "marca" ? posicaoRef.current : posicaoLocalRef.current;
     arraste.current = {
       id: evento.pointerId,
       x: evento.clientX,
       y: evento.clientY,
       origemX: atual.x,
       origemY: atual.y,
+      moveu: false,
+      alvo,
     };
     try {
       evento.currentTarget.setPointerCapture(evento.pointerId);
@@ -106,19 +146,30 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     }
   };
 
-  const aoMoverMarca = (evento: ReactPointerEvent<HTMLElement>) => {
+  const aoMover = (evento: ReactPointerEvent<HTMLElement>) => {
     const atual = arraste.current;
     const stage = stageRef.current?.getBoundingClientRect();
     if (!atual || atual.id !== evento.pointerId || !stage || stage.width === 0 || stage.height === 0) {
       return;
     }
-    const dx = ((evento.clientX - atual.x) / stage.width) * 100;
-    const dy = ((evento.clientY - atual.y) / stage.height) * 100;
-    setPosicao(limitarPosicao(atual.origemX + dx, atual.origemY + dy));
+    const dxPx = evento.clientX - atual.x;
+    const dyPx = evento.clientY - atual.y;
+    if (!atual.moveu && Math.hypot(dxPx, dyPx) < 8) return;
+    atual.moveu = true;
+    const dx = (dxPx / stage.width) * 100;
+    const dy = (dyPx / stage.height) * 100;
+    const proxima = limitarPosicao(atual.origemX + dx, atual.origemY + dy);
+    if (atual.alvo === "marca") setPosicao(proxima);
+    else setPosicaoLocal(proxima);
   };
 
-  const aoSoltarMarca = (evento: ReactPointerEvent<HTMLElement>) => {
-    if (arraste.current?.id === evento.pointerId) arraste.current = null;
+  const aoSoltar = (evento: ReactPointerEvent<HTMLElement>) => {
+    const atual = arraste.current;
+    if (!atual || atual.id !== evento.pointerId) return;
+    arraste.current = null;
+    if (atual.moveu || enviando) return;
+    if (atual.alvo === "marca") setCorMarca((cor) => proximaCor(cor));
+    else setCorLocal((cor) => proximaCor(cor));
   };
 
   const consultaLocal = termoLocal.trim().toLocaleLowerCase();
@@ -143,7 +194,14 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     : null;
 
   const enviar = async () => {
-    const story = await publicar(arquivo, escolhida, escolhida ? posicao : null, localizacao);
+    const story = await publicar(arquivo, {
+      mencao: escolhida,
+      posicao: escolhida ? posicao : null,
+      corMarca: escolhida ? corMarca : null,
+      localizacao,
+      posicaoLocal: localizacao ? posicaoLocal : null,
+      corLocal: localizacao ? corLocal : null,
+    });
     if (story) onPublicada(story);
   };
 
@@ -153,8 +211,11 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     escolhida,
     localizacao,
     posicao,
+    posicaoLocal,
+    corMarca,
+    corLocal,
+    paletaAberta,
     buscaAberta,
-    setBuscaAberta,
     buscaLocal,
     termo,
     setTermo,
@@ -165,14 +226,16 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     lugarEncontro: lugarVisivel,
     perto: pertoVisivel ? perto : null,
     escolher,
+    abrirPaleta,
+    fecharPaineis,
     abrirBusca,
     abrirLocalizacao,
     escolherLocalizacao,
     tirarMarca,
     tirarLocalizacao,
-    aoSegurarMarca,
-    aoMoverMarca,
-    aoSoltarMarca,
+    aoSegurar,
+    aoMover,
+    aoSoltar,
     enviar,
     enviando,
     erro,

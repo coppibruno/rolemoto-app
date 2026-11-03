@@ -32,6 +32,13 @@ export const CameraStory = ({
       : !camera.pronto && !camera.falhou
         ? "Abrindo câmera…"
         : null;
+  const classeVideo = [
+    styles.video,
+    camera.pronto && camera.frente ? styles.frente : "",
+    camera.pronto ? "" : styles.videoAguarda,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   useEffect(() => {
     const anterior = document.body.style.overflow;
@@ -54,10 +61,11 @@ export const CameraStory = ({
     <div className={styles.tela} role="dialog" aria-modal="true" aria-label="Câmera">
       <video
         ref={camera.videoRef}
-        className={camera.frente ? `${styles.video} ${styles.frente}` : styles.video}
+        className={classeVideo}
         playsInline
         muted
-        autoPlay
+        controls={false}
+        disablePictureInPicture
         aria-hidden
       />
       {camera.falhou ? (
@@ -74,6 +82,7 @@ export const CameraStory = ({
       {mensagem && !camera.falhou ? (
         <p className={erroCaptura ? styles.erro : styles.aviso}>{mensagem}</p>
       ) : null}
+      {camera.aviso && camera.pronto ? <p className={styles.nota}>{camera.aviso}</p> : null}
       <div className={styles.topo}>
         <button type="button" className={styles.icone} onClick={onFechar} aria-label="Fechar câmera">
           <span className="material-symbols-outlined" aria-hidden>
@@ -107,7 +116,7 @@ export const CameraStory = ({
           className={styles.icone}
           onClick={camera.virar}
           aria-label="Virar câmera"
-          disabled={preparando}
+          disabled={preparando || !camera.pronto || camera.falhou}
         >
           <span className="material-symbols-outlined" aria-hidden>
             cameraswitch

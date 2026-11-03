@@ -195,9 +195,13 @@ Qualquer autenticado cria via `POST /locais/:id/checkin` `{ lat, lng, accuracy }
   storagePath: string,
   marcaX: number | null,
   marcaY: number | null,
+  marcaCor: 'neutro' | 'branco' | 'laranja' | 'ciano' | null, // null em story sem @ 
   localizacaoNome: string | null,
   localizacaoLat: number | null,
   localizacaoLng: number | null,
+  localizacaoX: number | null, // null = selo antigo, fixo embaixo
+  localizacaoY: number | null,
+  localizacaoCor: 'neutro' | 'branco' | 'laranja' | 'ciano' | null,
   createdAt: timestamp,
   expiresAt: timestamp         // createdAt + 24 h
 }

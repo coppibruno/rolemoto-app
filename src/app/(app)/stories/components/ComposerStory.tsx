@@ -4,9 +4,9 @@ import { createPortal } from "react-dom";
 import type { StoryPublica } from "@/types/story-local";
 import { useComposerStory } from "@/app/(app)/stories/hooks/useComposerStory";
 import type { MencaoOpcao } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
-import { estiloMarca } from "../marca-story";
 import { BuscaMarcaStory } from "./BuscaMarcaStory";
 import { BuscaLocalizacaoStory } from "./BuscaLocalizacaoStory";
+import { PaletaMarcaStory } from "./PaletaMarcaStory";
 import { SeloLocalizacaoStory } from "./SeloLocalizacaoStory";
 import { SeloMarcaStory } from "./SeloMarcaStory";
 import styles from "./composer-story.module.css";
@@ -21,20 +21,13 @@ type Props = {
 export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPublicada }: Props) => {
   const composer = useComposerStory({ arquivo, marcaInicial, onPublicada });
   if (!composer.preview) return null;
+  const painelAberto = composer.paletaAberta || composer.buscaAberta || composer.buscaLocal;
 
   return createPortal(
     <div ref={composer.stageRef} className={styles.tela} role="dialog" aria-modal="true" aria-label="Nova foto">
       <img src={composer.preview} alt="" className={styles.foto} />
-      {composer.buscaAberta && !composer.escolhida || composer.buscaLocal ? (
-        <button
-          type="button"
-          className={styles.fundo}
-          aria-label="Fechar busca"
-          onClick={() => {
-            composer.setBuscaAberta(false);
-            if (composer.buscaLocal) composer.abrirLocalizacao();
-          }}
-        />
+      {painelAberto ? (
+        <button type="button" className={styles.fundo} aria-label="Fechar" onClick={composer.fecharPaineis} />
       ) : null}
       <div className={styles.topo}>
         <button
@@ -48,47 +41,51 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
             close
           </span>
         </button>
+        <button
+          type="button"
+          className={composer.paletaAberta ? `${styles.fechar} ${styles.fecharAtivo}` : styles.fechar}
+          aria-label="Marcações"
+          aria-expanded={composer.paletaAberta}
+          onClick={composer.abrirPaleta}
+          disabled={composer.enviando}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            mood
+          </span>
+        </button>
       </div>
       {composer.escolhida ? (
         <SeloMarcaStory
           nome={composer.escolhida.nome}
           posicao={composer.posicao}
+          cor={composer.corMarca}
           travado={composer.enviando}
-          onSegurar={composer.aoSegurarMarca}
-          onMover={composer.aoMoverMarca}
-          onSoltar={composer.aoSoltarMarca}
+          onSegurar={composer.aoSegurar("marca")}
+          onMover={composer.aoMover}
+          onSoltar={composer.aoSoltar}
           onTirar={composer.tirarMarca}
         />
-      ) : (
-        <button
-          type="button"
-          className={styles.marcar}
-          style={estiloMarca(null)}
-          onClick={composer.abrirBusca}
-          disabled={composer.enviando}
-        >
-          Marcar lugar
-        </button>
-      )}
+      ) : null}
       {composer.localizacao ? (
         <SeloLocalizacaoStory
           nome={composer.localizacao.nome}
+          posicao={composer.posicaoLocal}
+          cor={composer.corLocal}
           travado={composer.enviando}
+          onSegurar={composer.aoSegurar("local")}
+          onMover={composer.aoMover}
+          onSoltar={composer.aoSoltar}
           onTirar={composer.tirarLocalizacao}
         />
-      ) : (
-        <button
-          type="button"
-          className={styles.localizar}
-          onClick={composer.abrirLocalizacao}
-          disabled={composer.enviando}
-        >
-          <span className="material-symbols-outlined" aria-hidden>
-            location_on
-          </span>
-          Localização
-        </button>
-      )}
+      ) : null}
+      {composer.paletaAberta ? (
+        <PaletaMarcaStory
+          temMarca={Boolean(composer.escolhida)}
+          temLocal={Boolean(composer.localizacao)}
+          onMarca={composer.abrirBusca}
+          onLocal={composer.abrirLocalizacao}
+        />
+      ) : null}
       {composer.buscaLocal ? (
         <BuscaLocalizacaoStory
           termo={composer.termoLocal}

@@ -7,10 +7,10 @@ import {
   type PointerEvent as ReactPointerEvent,
   type SyntheticEvent,
 } from "react";
-import type { MencaoStory, StoryPublica } from "@/types/story-local";
+import type { CorSelo, MencaoStory, StoryPublica } from "@/types/story-local";
 import { urlAbrirMaps } from "@/lib/maps";
 import { registrarFotoStory } from "@/app/(app)/stories/cache-foto-story";
-import { estiloMarca } from "@/app/(app)/stories/marca-story";
+import { estiloMarca, estiloSelo } from "@/app/(app)/stories/marca-story";
 import { EsqueletoFotoStory } from "./EsqueletoFotoStory";
 import styles from "./player-stories.module.css";
 
@@ -32,6 +32,12 @@ export const PalcoFotoStory = ({
   onMarca,
 }: Props) => {
   const mencao = story.mencao;
+  const lugar = story.localizacao;
+  const corMarca: CorSelo = story.marcaCor ?? "neutro";
+  const corLugar: CorSelo = lugar?.cor ?? "neutro";
+  const posicaoLugar = lugar && lugar.x != null && lugar.y != null
+    ? { x: lugar.x, y: lugar.y }
+    : null;
   const imgRef = useRef<HTMLImageElement>(null);
   const [prontaId, setProntaId] = useState<string | null>(null);
   const [falhouId, setFalhouId] = useState<string | null>(null);
@@ -86,11 +92,14 @@ export const PalcoFotoStory = ({
         <button
           type="button"
           className={styles.selo}
-          style={estiloMarca(
-            story.marcaX != null && story.marcaY != null
-              ? { x: story.marcaX, y: story.marcaY }
-              : null,
-          )}
+          style={{
+            ...estiloMarca(
+              story.marcaX != null && story.marcaY != null
+                ? { x: story.marcaX, y: story.marcaY }
+                : null,
+            ),
+            ...estiloSelo(corMarca),
+          }}
           aria-label={`Abrir ${mencao.nome}`}
           onPointerDown={(evento) => evento.stopPropagation()}
           onPointerUp={(evento) => evento.stopPropagation()}
@@ -99,26 +108,38 @@ export const PalcoFotoStory = ({
           @{mencao.nome}
         </button>
       ) : null}
-      {pronta && story.localizacao ? (
+      {pronta && lugar ? (
         <a
-          className={styles.localizacao}
+          className={posicaoLugar ? styles.localizacaoLivre : styles.localizacao}
+          style={
+            posicaoLugar
+              ? { ...estiloMarca(posicaoLugar), ...estiloSelo(corLugar) }
+              : estiloSelo(corLugar)
+          }
           href={urlAbrirMaps({
-            lat: story.localizacao.lat,
-            lng: story.localizacao.lng,
-            nome: story.localizacao.nome,
+            lat: lugar.lat,
+            lng: lugar.lng,
+            nome: lugar.nome,
             endereco: "",
           })}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Abrir ${story.localizacao.nome} no Maps`}
+          aria-label={`Abrir ${lugar.nome} no Maps`}
           onPointerDown={(evento) => evento.stopPropagation()}
           onPointerUp={(evento) => evento.stopPropagation()}
           onClick={(evento) => evento.stopPropagation()}
         >
-          <span className="material-symbols-outlined" aria-hidden>
+          <span
+            className={
+              corLugar === "neutro"
+                ? `material-symbols-outlined ${styles.pin}`
+                : "material-symbols-outlined"
+            }
+            aria-hidden
+          >
             location_on
           </span>
-          {story.localizacao.nome}
+          {lugar.nome}
         </a>
       ) : null}
     </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { limitarPosicao, mesclarStories, ordenarStories } from "./marca-story";
+import { limitarPosicao, mesclarStories, ordenarStories, proximaCor } from "./marca-story";
 
 const foto = (id: string, createdAt: string) => ({ id, createdAt });
 
@@ -7,6 +7,11 @@ describe("marca do story", () => {
   it("mantém a marca dentro da foto", () => {
     expect(limitarPosicao(-10, 200)).toEqual({ x: 12, y: 76 });
     expect(limitarPosicao(40.26, 55.24)).toEqual({ x: 40.3, y: 55.2 });
+  });
+
+  it("troca a cor do selo em ciclo", () => {
+    expect(proximaCor("neutro")).toBe("branco");
+    expect(proximaCor("ciano")).toBe("neutro");
   });
 
   it("ordena pela hora, com ou sem marca", () => {
