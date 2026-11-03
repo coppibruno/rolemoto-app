@@ -22,10 +22,18 @@ export const CardMeuEvento = ({ item }: Props) => {
     item.inscritosTotal === 1 ? "piloto" : "pilotos"
   }`;
   const badgeConfirmado = item.status === "confirmado" || item.avaliado;
-  const badgeLabel = badgeConfirmado ? "Presença confirmada" : "Concluído";
-  const badgeClass = badgeConfirmado
-    ? styles.badgeStatusTertiary
-    : styles.badgeStatusSecondary;
+  const badgeLabel =
+    item.status === "cancelado"
+      ? "Cancelado"
+      : badgeConfirmado
+        ? "Presença confirmada"
+        : "Concluído";
+  const badgeClass =
+    item.status === "cancelado"
+      ? styles.badgeStatusCancelado
+      : badgeConfirmado
+        ? styles.badgeStatusTertiary
+        : styles.badgeStatusSecondary;
 
   return (
     <article className={styles.cardGaragem}>
@@ -53,7 +61,7 @@ export const CardMeuEvento = ({ item }: Props) => {
         </div>
       </div>
 
-      {item.status === "confirmado" ? (
+      {item.status === "confirmado" || item.status === "cancelado" ? (
         <Link href={hrefDetalheEvento(item.eventoId)} className={styles.linkVerEvento}>
           Ver evento
           <span className="material-symbols-outlined" aria-hidden>

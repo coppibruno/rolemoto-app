@@ -109,6 +109,14 @@
       ]
     },
     {
+      "collectionGroup": "eventos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "serieId", "order": "ASCENDING" },
+        { "fieldPath": "dataHoraAbertura", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "userslocalstory",
       "queryScope": "COLLECTION",
       "fields": [

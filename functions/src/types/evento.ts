@@ -32,12 +32,26 @@ export interface Evento {
   fotoCapaUrl: string;
   informacoes: string;
   criadorId: string;
+  /** Série semanal. Docs antigos sem o campo são `null`. */
+  serieId: string | null;
+  /** `yyyy-mm-dd` da abertura em São Paulo. `null` no avulso. */
+  ocorrenciaYmd: string | null;
+  /** A regra da série não pisa numa data ajustada à mão. */
+  ocorrenciaAjustada: boolean;
+  /** Data pulada com inscrição ou avaliação. Docs antigos são `false`. */
+  cancelada: boolean;
   notaMedia: number;
   totalAvaliacoes: number;
   recomendacoesComboio: number;
   createdAt: string;
   updatedAt: string;
 }
+
+export type RecorrenciaEvento = {
+  serieId: string;
+  diaSemana: number;
+  rotulo: string;
+};
 
 export type EventoPublicacao = Omit<
   Evento,
@@ -59,6 +73,7 @@ export type EventoFeedItem = Evento & {
   participantes: ParticipantesBloco;
   /** Há story ativa no álbum que o encontro abre. */
   aoVivo: boolean;
+  recorrencia: RecorrenciaEvento | null;
 };
 
 export type EventoDetalhe = Evento & {
@@ -68,6 +83,7 @@ export type EventoDetalhe = Evento & {
   participantes: ParticipantesBloco;
   storiesAtivas: number;
   podePostarStory: boolean;
+  recorrencia: RecorrenciaEvento | null;
 };
 
 export const TIPOS_EVENTO: TipoEvento[] = [

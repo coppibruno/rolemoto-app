@@ -42,6 +42,8 @@
  * - /eventos/:id/stories → GET, POST, DELETE
  * - /stories/ao-vivo → GET
  * - /interno/stories/expirar → POST (Scheduler, sem Bearer)
+ * - /interno/series-evento/gerar → POST (Scheduler, sem Bearer)
+ * - /series-evento → GET, POST, PUT, pausar, retomar, encerrar, excecoes
  * - /interno/sugestoes-locais/buscar → POST (Scheduler, sem Bearer)
  * - /interno/sugestoes-eventos/buscar → POST (Scheduler, sem Bearer)
  * - /sugestoes-locais → GET, POST /buscar, POST /:id/aprovar|recusar
@@ -71,6 +73,7 @@ import {eventosPublicoRouter} from "./routes/eventos-publico";
 import {locaisPublicoRouter} from "./routes/locais-publico";
 import {meusRolesRouter} from "./routes/meus-roles";
 import {eventosRouter} from "./routes/eventos";
+import {seriesEventoRouter} from "./routes/series-evento";
 import {locaisRouter} from "./routes/locais";
 import {feedRouter} from "./routes/feed";
 import {telemetriaRouter} from "./routes/telemetria";
@@ -135,6 +138,8 @@ app.get("/", (_req: Request, res: Response) => {
       "/eventos/:id/stories",
       "/stories/ao-vivo",
       "/interno/stories/expirar",
+      "/interno/series-evento/gerar",
+      "/series-evento",
       "/interno/sugestoes-locais/buscar",
       "/interno/sugestoes-eventos/buscar",
       "/sugestoes-locais",
@@ -158,6 +163,7 @@ app.use("/perfil", perfilRouter);
 app.use("/usuarios", usuariosRouter);
 app.use("/feedback", feedbackRouter);
 app.use("/eventos", eventosRouter);
+app.use("/series-evento", seriesEventoRouter);
 app.use("/locais", locaisRouter);
 app.use("/feed", feedRouter);
 app.use("/telemetria", telemetriaRouter);

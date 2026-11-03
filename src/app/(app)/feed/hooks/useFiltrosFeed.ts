@@ -8,7 +8,62 @@ import {
   RAIO_PADRAO,
   RITMO_PADRAO,
 } from "../constants";
-import type { FiltroQuando, FiltroRitmo, RaioKm } from "../types";
+import type { AbaFeed, FiltroQuando, FiltroRitmo, RaioKm } from "../types";
+
+export type EstadoFeedRetorno = {
+  aba: AbaFeed;
+  raioKm: RaioKm;
+  quando: FiltroQuando | null;
+  ritmo: FiltroRitmo;
+  busca: string;
+};
+
+const quandoValido = (valor: unknown): valor is FiltroQuando | null => {
+  if (valor == null) return true;
+  if (
+    valor === "hoje" ||
+    valor === "amanha" ||
+    valor === "fim_de_semana" ||
+    valor === "proximos_roles"
+  ) {
+    return true;
+  }
+  if (typeof valor !== "object") return false;
+  const data = valor as { tipo?: unknown; iso?: unknown };
+  return data.tipo === "data" && typeof data.iso === "string";
+};
+
+export const lerEstadoFeed = (valor: unknown): EstadoFeedRetorno | null => {
+  if (!valor || typeof valor !== "object") return null;
+  const bruto = valor as Partial<EstadoFeedRetorno>;
+  if (bruto.aba !== "roles" && bruto.aba !== "eventos" && bruto.aba !== "locais") {
+    return null;
+  }
+  if (
+    bruto.raioKm !== 25 &&
+    bruto.raioKm !== 50 &&
+    bruto.raioKm !== 100 &&
+    bruto.raioKm !== null
+  ) {
+    return null;
+  }
+  if (
+    bruto.ritmo !== "todas" &&
+    bruto.ritmo !== "tranquila" &&
+    bruto.ritmo !== "moderada" &&
+    bruto.ritmo !== "agressiva"
+  ) {
+    return null;
+  }
+  if (typeof bruto.busca !== "string" || !quandoValido(bruto.quando)) return null;
+  return {
+    aba: bruto.aba,
+    raioKm: bruto.raioKm,
+    quando: bruto.quando,
+    ritmo: bruto.ritmo,
+    busca: bruto.busca,
+  };
+};
 
 export const useFiltrosFeed = () => {
   const [raioKm, setRaioKm] = useState<RaioKm>(RAIO_PADRAO);
@@ -42,6 +97,19 @@ export const useFiltrosFeed = () => {
     );
   };
 
+  const restaurar = (salvo: {
+    raioKm: RaioKm;
+    quando: FiltroQuando | null;
+    ritmo: FiltroRitmo;
+    busca: string;
+  }) => {
+    setRaioKm(salvo.raioKm);
+    setQuando(salvo.quando);
+    setRitmo(salvo.ritmo);
+    setBusca(salvo.busca);
+    setBuscaDebounced(salvo.busca);
+  };
+
   return {
     raioKm,
     setRaioKm,
@@ -55,5 +123,6 @@ export const useFiltrosFeed = () => {
     busca,
     setBusca,
     buscaDebounced,
+    restaurar,
   };
 };

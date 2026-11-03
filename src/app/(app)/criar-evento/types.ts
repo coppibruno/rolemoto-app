@@ -15,6 +15,8 @@ export type ErrosCriarEvento = {
   horaAbertura?: string;
   dataEncerramento?: string;
   horaEncerramento?: string;
+  diaSemana?: string;
+  aPartirDe?: string;
   acesso?: string;
   linkIngresso?: string;
   foto?: string;

@@ -103,6 +103,10 @@ const camposEvento = (dados: AprovarSugestaoEvento) => ({
   fotoCapaUrl: dados.fotoCapaUrl,
   informacoes: dados.informacoes,
   criadorId: dados.criadorId,
+  serieId: null,
+  ocorrenciaYmd: null,
+  ocorrenciaAjustada: false,
+  cancelada: false,
   notaMedia: 0,
   totalAvaliacoes: 0,
   recomendacoesComboio: 0,
@@ -203,6 +207,13 @@ export class FirestoreSugestaoEventoRepository implements SugestaoEventoReposito
       fotoCapaUrl: String(data.fotoCapaUrl ?? ""),
       informacoes: String(data.informacoes ?? ""),
       criadorId: String(data.criadorId ?? ""),
+      serieId: typeof data.serieId === "string" && data.serieId ? data.serieId : null,
+      ocorrenciaYmd:
+        typeof data.ocorrenciaYmd === "string" && data.ocorrenciaYmd ?
+          data.ocorrenciaYmd :
+          null,
+      ocorrenciaAjustada: data.ocorrenciaAjustada === true,
+      cancelada: data.cancelada === true,
       notaMedia: 0,
       totalAvaliacoes: 0,
       recomendacoesComboio: 0,

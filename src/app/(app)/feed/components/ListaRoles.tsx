@@ -41,9 +41,9 @@ export const ListaRoles = ({
         </div>
       ) : null}
 
-      {carregando ? <EstadoCarregando /> : null}
+      {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
       {mostrarVazio ? <EstadoVazio aba="roles" /> : null}
-      {!carregando && !erro
+      {!erro
         ? itens.map((role) => <RoleCard key={role.id} role={role} />)
         : null}
     </section>

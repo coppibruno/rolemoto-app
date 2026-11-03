@@ -10,6 +10,7 @@ export const useDetalheEvento = (id: string) => {
   const [evento, setEvento] = useState<EventoDetalhe | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [versao, setVersao] = useState(0);
 
   useEffect(() => {
     let cancelado = false;
@@ -33,7 +34,7 @@ export const useDetalheEvento = (id: string) => {
     return () => {
       cancelado = true;
     };
-  }, [id]);
+  }, [id, versao]);
 
-  return { evento, carregando, erro };
+  return { evento, carregando, erro, recarregar: () => setVersao((atual) => atual + 1) };
 };

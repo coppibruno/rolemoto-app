@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { STORAGE_PONTO } from "../constants";
 import { geocodeService } from "../services/geocode.service";
 import type { PontoFeed, StatusLocalizacao } from "../types";
@@ -82,14 +82,15 @@ export const useLocalizacaoFeed = () => {
     setSeletorAberto(false);
   }, [usarGps]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const salvo = lerPontoSalvo();
-    if (salvo) {
-      aplicarPonto(salvo);
-      return;
-    }
+    if (salvo) aplicarPonto(salvo);
+  }, [aplicarPonto]);
+
+  useEffect(() => {
+    if (lerPontoSalvo()) return;
     void usarGps();
-  }, [aplicarPonto, usarGps]);
+  }, [usarGps]);
 
   return {
     ponto,

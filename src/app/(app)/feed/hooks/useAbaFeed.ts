@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { ABA_PADRAO, STORAGE_ABA } from "../constants";
 import type { AbaFeed } from "../types";
 
@@ -21,7 +21,7 @@ const lerAbaSalva = (): AbaFeed => {
 export const useAbaFeed = () => {
   const [aba, setAbaState] = useState<AbaFeed>(ABA_PADRAO);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setAbaState(lerAbaSalva());
   }, []);
 

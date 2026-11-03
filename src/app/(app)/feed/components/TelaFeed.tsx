@@ -2,10 +2,11 @@
 
 import { CarrosselStories } from "@/app/(app)/stories/components/CarrosselStories";
 import { useAuth } from "@/hooks/useAuth";
+import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import { useAbaFeed } from "../hooks/useAbaFeed";
 import { useContagensFeed } from "../hooks/useContagensFeed";
 import { useFeedbackPendente } from "../hooks/useFeedbackPendente";
-import { useFiltrosFeed } from "../hooks/useFiltrosFeed";
+import { lerEstadoFeed, useFiltrosFeed } from "../hooks/useFiltrosFeed";
 import { useListaEventos } from "../hooks/useListaEventos";
 import { useListaLocais } from "../hooks/useListaLocais";
 import { useListaRoles } from "../hooks/useListaRoles";
@@ -31,6 +32,22 @@ export const TelaFeed = () => {
   const localizacao = useLocalizacaoFeed();
   const filtros = useFiltrosFeed();
   const { aba, setAba } = useAbaFeed();
+  const retornoPronto = useEstadoRetorno(
+    "feed",
+    {
+      aba,
+      raioKm: filtros.raioKm,
+      quando: filtros.quando,
+      ritmo: filtros.ritmo,
+      busca: filtros.busca,
+    },
+    (salvo) => {
+      const valido = lerEstadoFeed(salvo);
+      if (!valido) return;
+      setAba(valido.aba);
+      filtros.restaurar(valido);
+    },
+  );
   const resumoAprovacoes = useResumoAprovacoes();
   const feedbackPendente = useFeedbackPendente();
 
@@ -46,20 +63,20 @@ export const TelaFeed = () => {
 
   const listaRoles = useListaRoles({
     ...filtrosBase,
-    ativo: aba === "roles",
+    ativo: retornoPronto && aba === "roles",
   });
   const listaEventos = useListaEventos({
     ponto: localizacao.ponto,
     raioKm: filtros.raioKm,
     quando: filtros.quando,
     busca: filtros.buscaDebounced,
-    ativo: aba === "eventos",
+    ativo: retornoPronto && aba === "eventos",
   });
   const listaLocais = useListaLocais({
     ponto: localizacao.ponto,
     raioKm: filtros.raioKm,
     busca: filtros.buscaDebounced,
-    ativo: aba === "locais",
+    ativo: retornoPronto && aba === "locais",
   });
 
   const semPonto = !localizacao.ponto;

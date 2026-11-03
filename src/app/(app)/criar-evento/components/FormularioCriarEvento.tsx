@@ -1,9 +1,12 @@
 "use client";
 
+import type { SerieEvento } from "@/types/serie-evento";
+import { pluralDiaSemana } from "@/lib/rotulo-dia-semana";
 import { CTA_PUBLICAR, CTA_PUBLICANDO } from "../constants";
 import { useFormularioCriarEvento } from "../hooks/useFormularioCriarEvento";
 import { BannerRaio } from "./BannerRaio";
 import { CampoDataHorarios } from "./CampoDataHorarios";
+import { CamposEncontroSemanal } from "./CamposEncontroSemanal";
 import { CampoInformacoes } from "./CampoInformacoes";
 import { CampoLinkIngresso } from "./CampoLinkIngresso";
 import { CampoLocalEvento } from "./CampoLocalEvento";
@@ -16,8 +19,17 @@ import { SeletorTipoEvento } from "./SeletorTipoEvento";
 import { ToastSucesso } from "./ToastSucesso";
 import styles from "../criar-evento.module.css";
 
-export const FormularioCriarEvento = () => {
-  const form = useFormularioCriarEvento();
+type Props = {
+  serieInicial?: SerieEvento;
+};
+
+export const FormularioCriarEvento = ({ serieInicial }: Props) => {
+  const form = useFormularioCriarEvento(serieInicial);
+  const cta = form.editando
+    ? "Salvar encontro"
+    : form.todaSemana
+      ? "Publicar encontro"
+      : CTA_PUBLICAR;
 
   return (
     <>
@@ -47,6 +59,43 @@ export const FormularioCriarEvento = () => {
           erro={form.erros.local}
           desabilitado={form.publicando}
         />
+        <div className={styles.campo}>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.todaSemana}
+            className={`${styles.interruptor} ${form.todaSemana ? styles.interruptorAtivo : ""}`}
+            onClick={() => form.setTodaSemana((atual) => !atual)}
+            disabled={form.publicando || form.editando}
+          >
+            <span className={styles.interruptorTrilho} aria-hidden>
+              <span className={styles.interruptorBolinha} />
+            </span>
+            Toda semana
+          </button>
+        </div>
+        {form.todaSemana ? (
+          <CamposEncontroSemanal
+            diaSemana={form.diaSemana}
+            horaAbertura={form.horaAbertura}
+            horaEncerramento={form.horaEncerramento}
+            aPartirDe={form.aPartirDe}
+            onDia={form.setDiaSemana}
+            onAbertura={form.setHoraAbertura}
+            onEncerramento={form.setHoraEncerramento}
+            onAPartirDe={form.setAPartirDe}
+            erroDia={form.erros.diaSemana}
+            erroAbertura={form.erros.horaAbertura}
+            erroEncerramento={form.erros.horaEncerramento}
+            erroAPartirDe={form.erros.aPartirDe}
+            desabilitado={form.publicando}
+            apoio={
+              form.editando && form.diaSemana !== null
+                ? `Vale para as próximas ${pluralDiaSemana(form.diaSemana)} em que ninguém se inscreveu.`
+                : undefined
+            }
+          />
+        ) : (
         <CampoDataHorarios
           dataEvento={form.dataEvento}
           horaAbertura={form.horaAbertura}
@@ -62,6 +111,7 @@ export const FormularioCriarEvento = () => {
           erroEncerramento={form.erros.horaEncerramento}
           desabilitado={form.publicando}
         />
+        )}
         <SeletorAcesso
           valor={form.acesso}
           onChange={form.setAcesso}
@@ -115,7 +165,7 @@ export const FormularioCriarEvento = () => {
           ) : (
             <span className="material-symbols-outlined">publish</span>
           )}
-          {form.publicando ? CTA_PUBLICANDO : CTA_PUBLICAR}
+          {form.publicando ? CTA_PUBLICANDO : cta}
         </button>
       </form>
       <ToastSucesso visivel={form.sucesso} />

@@ -4,6 +4,7 @@ import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { useDetalheEvento } from "../hooks/useDetalheEvento";
 import { BlocoAtracoesEvento } from "./BlocoAtracoesEvento";
+import { BlocoAdminSerie } from "./BlocoAdminSerie";
 import { BlocoAvaliacaoEvento } from "./BlocoAvaliacaoEvento";
 import { BlocoDataEvento } from "./BlocoDataEvento";
 import { BlocoInformacoesEvento } from "./BlocoInformacoesEvento";
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export const TelaDetalheEvento = ({ id }: Props) => {
-  const { evento, carregando, erro } = useDetalheEvento(id);
+  const { evento, carregando, erro, recarregar } = useDetalheEvento(id);
   const player = usePlayerDetalhe(Boolean(evento));
 
   if (carregando) return <EstadoCarregandoEvento />;
@@ -55,6 +56,7 @@ export const TelaDetalheEvento = ({ id }: Props) => {
         <BlocoLocalizacaoEvento local={evento.local} />
         <BlocoPresencasEvento evento={evento} />
         <BlocoAvaliacaoEvento evento={evento} />
+        <BlocoAdminSerie evento={evento} onSalvo={recarregar} />
       </main>
       <PlayerStories
         aberto={player.aberto}

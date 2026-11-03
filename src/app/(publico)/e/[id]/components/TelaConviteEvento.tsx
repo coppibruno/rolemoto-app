@@ -7,6 +7,7 @@ import {
   COPY_GRADE_LABEL,
   COPY_PRIMEIRO_PILOTO,
 } from "../constants";
+import { FaixaDataCancelada } from "@/components/evento/FaixaDataCancelada";
 import { CabecalhoConviteEvento } from "./CabecalhoConviteEvento";
 import { FichaEvento } from "./FichaEvento";
 import { HeroCapaEvento } from "./HeroCapaEvento";
@@ -32,6 +33,7 @@ export const TelaConviteEvento = ({ evento }: Props) => {
       <BannerInstalarApp variante="fluxo" />
       <HeroCapaEvento evento={evento} />
       <div className={styles.corpo}>
+        {evento.cancelada ? <FaixaDataCancelada /> : null}
         <TituloConviteEvento
           titulo={evento.titulo}
           informacoes={evento.informacoes}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
 import type {
   MeuLocalGaragemItem,
   RecorteLocaisGaragem,
@@ -23,6 +24,17 @@ export const useMeusLocaisGaragem = (
     setTicket((n) => n + 1);
   }, []);
 
+  const chave = ativo ? `garagem:locais:${recorte}` : null;
+
+  useHidratarCache<MeuLocalGaragemItem[]>(
+    chave,
+    (valor) => {
+      setItens(valor);
+      setCarregando(false);
+    },
+    () => setItens((atual) => (atual.length === 0 ? atual : [])),
+  );
+
   useEffect(() => {
     if (!ativo) return;
     if (recorteCarregado.current === recorte && ticket === 0) return;
@@ -37,6 +49,7 @@ export const useMeusLocaisGaragem = (
         if (cancelado) return;
         setItens(resposta.itens);
         recorteCarregado.current = recorte;
+        guardarCache(`garagem:locais:${recorte}`, resposta.itens);
       })
       .catch(() => {
         if (cancelado) return;

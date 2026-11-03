@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
 import type { EventoFeedItem } from "@/types/evento";
 import { filtrosParaEventos, eventosService } from "../services/eventos.service";
 import type { FiltroQuando, PontoFeed, RaioKm } from "../types";
@@ -32,6 +33,17 @@ export const useListaEventos = ({
       ? `data:${quando.iso}`
       : String(quando ?? "");
 
+  const chave =
+    ativo && ponto
+      ? `feed:eventos:${ponto.lat}:${ponto.lng}:${String(raioKm)}:${quandoKey}:${busca}`
+      : null;
+
+  useHidratarCache<EventoFeedItem[]>(
+    chave,
+    setItens,
+    () => setItens((atual) => (atual.length === 0 ? atual : [])),
+  );
+
   useEffect(() => {
     if (!ativo) return;
 
@@ -50,7 +62,9 @@ export const useListaEventos = ({
     eventosService
       .listar(params)
       .then((dados) => {
-        if (!cancelado) setItens(dados);
+        if (cancelado) return;
+        setItens(dados);
+        if (chave) guardarCache(chave, dados);
       })
       .catch(() => {
         if (!cancelado) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
 import type { LocalFeedItem } from "@/types/local";
 import { filtrosParaLocais, locaisService } from "../services/locais.service";
 import type { PontoFeed, RaioKm } from "../types";
@@ -20,6 +21,17 @@ export const useListaLocais = ({ ponto, raioKm, busca, ativo }: Params) => {
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
+  const chave =
+    ativo && ponto
+      ? `feed:locais:${ponto.lat}:${ponto.lng}:${String(raioKm)}:${busca}`
+      : null;
+
+  useHidratarCache<LocalFeedItem[]>(
+    chave,
+    setItens,
+    () => setItens((atual) => (atual.length === 0 ? atual : [])),
+  );
+
   useEffect(() => {
     if (!ativo) return;
 
@@ -38,7 +50,9 @@ export const useListaLocais = ({ ponto, raioKm, busca, ativo }: Params) => {
     locaisService
       .listar(params)
       .then((dados) => {
-        if (!cancelado) setItens(dados);
+        if (cancelado) return;
+        setItens(dados);
+        if (chave) guardarCache(chave, dados);
       })
       .catch(() => {
         if (!cancelado) {

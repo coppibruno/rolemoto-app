@@ -8,9 +8,9 @@ import {
   TIPOS_FOTO_ACEITOS,
 } from "../constants";
 
-export const useFotoFlyer = () => {
+export const useFotoFlyer = (urlInicial = "") => {
   const [arquivo, setArquivo] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState(urlInicial);
   const [erro, setErro] = useState<string | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,9 +51,12 @@ export const useFotoFlyer = () => {
     if (inputRef.current) inputRef.current.value = "";
   };
 
-  const enviar = (uid: string) => {
+  const enviar = (uid: string, urlAtual = "") => {
     if (arquivo) {
       return uploadFotoCapaEvento(uid, arquivo);
+    }
+    if (urlAtual) {
+      return Promise.resolve(urlAtual);
     }
     return Promise.reject(new Error("Inclua o flyer ou a foto de capa"));
   };

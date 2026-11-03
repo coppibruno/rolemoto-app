@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { EventoPublico } from "@/types/evento-publico";
 import { urlLoginComNext } from "@/lib/destino-pos-auth";
 import { BotaoParticiparConvite } from "@/app/(publico)/r/[id]/components/BotaoParticiparConvite";
+import { FaixaDataCancelada } from "@/components/evento/FaixaDataCancelada";
 import { COPY_CTA, COPY_ENCERRADO, COPY_MICROCOPY } from "../constants";
 import { useCtaConviteEvento } from "../hooks/useCtaConviteEvento";
 import styles from "../../../r/[id]/convite-role.module.css";
@@ -19,7 +20,9 @@ export const RodapeConversaoEvento = ({ evento }: Props) => {
   return (
     <footer className={styles.rodape}>
       <div className={styles.rodapeInner}>
-        {cta.encerrado ? (
+        {evento.cancelada ? (
+          <FaixaDataCancelada />
+        ) : cta.encerrado ? (
           <button type="button" className={styles.cta} disabled aria-disabled="true">
             <span className={styles.ctaLabel}>{COPY_CTA}</span>
             <span className={styles.ctaSub}>{COPY_ENCERRADO}</span>
@@ -32,7 +35,7 @@ export const RodapeConversaoEvento = ({ evento }: Props) => {
             onClick={cta.acionar}
           />
         )}
-        {!cta.mostrarLinksAuth ? null : (
+        {!cta.mostrarLinksAuth || evento.cancelada ? null : (
           <div className={styles.linksAuth}>
             <Link href={urlLoginComNext(convite)}>
               Já tem conta? <span className={styles.linkDestaque}>Entrar</span>

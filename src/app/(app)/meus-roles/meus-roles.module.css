@@ -1126,7 +1126,8 @@
 }
 
 .badgeStatusTertiary,
-.badgeStatusSecondary {
+.badgeStatusSecondary,
+.badgeStatusCancelado {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -1150,6 +1151,11 @@
 .badgeStatusSecondary {
   background: color-mix(in srgb, var(--secondary-container) 20%, transparent);
   color: var(--secondary);
+}
+
+.badgeStatusCancelado {
+  background: color-mix(in srgb, var(--error-container) 35%, transparent);
+  color: var(--error);
 }
 
 .cardEventoTexto {

@@ -41,6 +41,9 @@ export const EventoCard = ({ evento }: Props) => {
                 evento.dataHoraEncerramento,
               )}
             </span>
+            {evento.recorrencia ? (
+              <span className={styles.badgeQuando}>{evento.recorrencia.rotulo}</span>
+            ) : null}
             <span className={styles.badgeAcesso}>
               {LABELS_ACESSO_EVENTO[evento.acesso]}
             </span>

@@ -63,6 +63,9 @@ type Pin = {lat: number; lng: number};
 type AnelInterno = AnelStory & {recenteEm: string};
 
 export const eventoEstaAoVivo = (evento: Evento, agora = new Date()): boolean => {
+  if (evento.cancelada) {
+    return false;
+  }
   const ms = agora.getTime();
   const abertura = Date.parse(evento.dataHoraAbertura);
   const fim = Date.parse(evento.dataHoraEncerramento ?? evento.dataHoraAbertura);

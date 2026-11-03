@@ -15,6 +15,7 @@ export type EventoPublico = {
   localNome: string;
   localEndereco: string;
   informacoes: string;
+  cancelada: boolean;
   criador: CriadorPublico;
   participantes: {
     confirmados: number;

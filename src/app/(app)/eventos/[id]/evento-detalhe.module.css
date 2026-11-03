@@ -222,6 +222,12 @@
   line-height: 20px;
 }
 
+.badgesLinha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .badgeAcesso {
   align-self: flex-start;
   padding: 4px 10px;
@@ -310,6 +316,35 @@
   background: var(--primary-container);
   color: var(--surface-container-lowest);
   box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
+  border: none;
+  cursor: pointer;
+}
+
+.inputAjuste {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 8px 12px;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+}
+
+.inputAjuste:focus {
+  outline: 2px solid var(--primary-container);
+}
+
+.inputAjuste[type="date"],
+.inputAjuste[type="time"] {
+  color-scheme: dark;
+}
+
+.textoErro {
+  margin: 0;
+  color: var(--error);
+  font-size: 14px;
 }
 
 .linkAvaliacao {

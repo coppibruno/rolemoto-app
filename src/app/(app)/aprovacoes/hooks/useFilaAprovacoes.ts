@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
+import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import type {
   DecisaoPiloto,
   FilaAprovacoes,
@@ -40,10 +42,37 @@ export const useFilaAprovacoes = () => {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [ticket, setTicket] = useState(0);
+  const sincronizouUrl = useRef(false);
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
+  const chaveLista = `aprovacoes:${status}`;
+
+  useEstadoRetorno(
+    "aprovacoes",
+    { status, roleId },
+    (salvo) => {
+      if (statusQuery != null || roleQuery != null) return;
+      if (salvo.status !== "pendente" && salvo.status !== "aceito") return;
+      setStatus(salvo.status);
+      setRoleId(typeof salvo.roleId === "string" ? salvo.roleId : null);
+    },
+  );
+
+  useHidratarCache<FilaAprovacoes>(
+    chaveLista,
+    (valor) => {
+      setFila(valor);
+      setCarregando(false);
+    },
+    () => setFila(null),
+  );
+
   useEffect(() => {
+    if (!sincronizouUrl.current) {
+      sincronizouUrl.current = true;
+      if (statusQuery == null && roleQuery == null) return;
+    }
     setStatus(statusInicial(statusQuery));
     setRoleId(roleQuery);
   }, [statusQuery, roleQuery]);
@@ -56,7 +85,9 @@ export const useFilaAprovacoes = () => {
     aprovacoesService
       .listar(status)
       .then((dados) => {
-        if (!cancelado) setFila(dados);
+        if (cancelado) return;
+        setFila(dados);
+        guardarCache(chaveLista, dados);
       })
       .catch(() => {
         if (!cancelado) {

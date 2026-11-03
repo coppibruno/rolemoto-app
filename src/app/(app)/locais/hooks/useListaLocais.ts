@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
 import type { Local } from "@/types/local";
 import { locaisService } from "../services/locais.service";
+
+const CHAVE = "catalogo:locais";
 
 export const useListaLocais = () => {
   const [itens, setItens] = useState<Local[]>([]);
@@ -12,6 +15,15 @@ export const useListaLocais = () => {
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
+  useHidratarCache<Local[]>(
+    CHAVE,
+    (valor) => {
+      setItens(valor);
+      setCarregando(false);
+    },
+    () => setItens((atual) => (atual.length === 0 ? atual : [])),
+  );
+
   useEffect(() => {
     let cancelado = false;
     setCarregando(true);
@@ -20,7 +32,9 @@ export const useListaLocais = () => {
     locaisService
       .listar()
       .then((dados) => {
-        if (!cancelado) setItens(dados);
+        if (cancelado) return;
+        setItens(dados);
+        guardarCache(CHAVE, dados);
       })
       .catch(() => {
         if (!cancelado) {

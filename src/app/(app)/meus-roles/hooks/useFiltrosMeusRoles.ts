@@ -41,6 +41,12 @@ export const useFiltrosMeusRoles = (itens: MeuRoleItem[]) => {
     setPapel("todos");
   };
 
+  const restaurar = (salvo: FiltrosMeusRoles) => {
+    setAba(salvo.aba);
+    setRitmo(salvo.ritmo);
+    setPapel(salvo.papel);
+  };
+
   const itensVisiveis = useMemo(() => {
     const filtrados = itens.filter((item) => {
       if (!porAba(item, aba)) return false;
@@ -60,6 +66,7 @@ export const useFiltrosMeusRoles = (itens: MeuRoleItem[]) => {
     selecionarAba,
     setRitmo,
     setPapel,
+    restaurar,
     limparTune,
     itensVisiveis,
   };

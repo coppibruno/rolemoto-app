@@ -1,4 +1,5 @@
 import { BotaoInscreverEvento } from "@/app/(app)/feed/components/BotaoInscreverEvento";
+import { FaixaDataCancelada } from "@/components/evento/FaixaDataCancelada";
 import { BlocoParticipantes } from "@/components/participantes/BlocoParticipantes";
 import type { EventoDetalhe } from "@/types/evento";
 import { TITULO_PRESENCAS } from "../constants";
@@ -29,12 +30,16 @@ export const BlocoPresencasEvento = ({ evento }: Props) => {
           participantes={evento.participantes}
         />
       ) : null}
-      <BotaoInscreverEvento
-        id={evento.id}
-        acesso={evento.acesso}
-        linkIngresso={evento.linkIngresso}
-        inscrito={evento.inscrito}
-      />
+      {evento.cancelada ? (
+        <FaixaDataCancelada />
+      ) : (
+        <BotaoInscreverEvento
+          id={evento.id}
+          acesso={evento.acesso}
+          linkIngresso={evento.linkIngresso}
+          inscrito={evento.inscrito}
+        />
+      )}
     </section>
   );
 };

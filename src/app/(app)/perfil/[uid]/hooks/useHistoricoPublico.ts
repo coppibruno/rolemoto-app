@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
+import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import { ApiError } from "@/lib/api";
 import type {
   AbaHistoricoPublico,
@@ -39,6 +41,37 @@ export const useHistoricoPublico = (uid: string) => {
     setFiltroTipo("todos");
   };
 
+  useEstadoRetorno(
+    `perfil-publico:${uid}`,
+    { aba, filtroTipo },
+    (salvo) => {
+      if (salvo.aba !== "concluidos" && salvo.aba !== "comoLider") return;
+      if (
+        salvo.filtroTipo !== "todos" &&
+        salvo.filtroTipo !== "roles" &&
+        salvo.filtroTipo !== "eventos" &&
+        salvo.filtroTipo !== "telemetria"
+      ) {
+        return;
+      }
+      setAbaState(salvo.aba);
+      setFiltroTipo(salvo.filtroTipo);
+    },
+  );
+
+  useHidratarCache<HistoricoPublico>(
+    uid ? `perfil-publico:${uid}:historico` : null,
+    (valor) => {
+      setHistorico(valor);
+      setCarregando(false);
+    },
+  );
+
+  useHidratarCache<ItemHistoricoTelemetria[]>(
+    uid ? `perfil-publico:${uid}:telemetria` : null,
+    setTelemetrias,
+  );
+
   useEffect(() => {
     let cancelado = false;
 
@@ -55,6 +88,7 @@ export const useHistoricoPublico = (uid: string) => {
         const dados = await perfilPublicoService.historico(uid);
         if (cancelado) return;
         setHistorico(dados);
+        guardarCache(`perfil-publico:${uid}:historico`, dados);
       } catch (e) {
         if (cancelado) return;
         const mensagem =
@@ -81,6 +115,7 @@ export const useHistoricoPublico = (uid: string) => {
       .then((lista) => {
         if (cancelado) return;
         setTelemetrias(lista);
+        guardarCache(`perfil-publico:${uid}:telemetria`, lista);
       })
       .catch((e) => {
         if (cancelado) return;

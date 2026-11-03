@@ -21,10 +21,10 @@ const obterGps = (): Promise<GeolocationPosition> =>
     });
   });
 
-export const useCampoLocalEvento = () => {
-  const [endereco, setEndereco] = useState("");
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
+export const useCampoLocalEvento = (inicial?: LocalizacaoForm) => {
+  const [endereco, setEndereco] = useState(inicial?.endereco ?? "");
+  const [lat, setLat] = useState<number | null>(inicial?.lat ?? null);
+  const [lng, setLng] = useState<number | null>(inicial?.lng ?? null);
   const [sugestoes, setSugestoes] = useState<SugestaoEndereco[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [resolvendoEndereco, setResolvendoEndereco] = useState(false);
@@ -32,14 +32,14 @@ export const useCampoLocalEvento = () => {
   const [erroGps, setErroGps] = useState<string | undefined>();
   const [listaAberta, setListaAberta] = useState(false);
   const [vooId, setVooId] = useState(0);
-  const [nome, setNome] = useState("");
+  const [nome, setNome] = useState(inicial?.nome ?? "");
   const escolhendoRef = useRef(false);
   const reversoTimerRef = useRef<number | null>(null);
   const reversoSeqRef = useRef(0);
-  const enderecoRef = useRef("");
-  const latRef = useRef<number | null>(null);
-  const lngRef = useRef<number | null>(null);
-  const nomeRef = useRef("");
+  const enderecoRef = useRef(inicial?.endereco ?? "");
+  const latRef = useRef<number | null>(inicial?.lat ?? null);
+  const lngRef = useRef<number | null>(inicial?.lng ?? null);
+  const nomeRef = useRef(inicial?.nome ?? "");
   const pendenteMapaRef = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {

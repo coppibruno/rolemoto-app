@@ -70,6 +70,10 @@ import type {SugestaoEventoRepository} from "./interfaces/sugestao-evento.reposi
 import {
   FirestoreSugestaoEventoRepository,
 } from "./firestore/firestore-sugestao-evento.repository";
+import type {SerieEventoRepository} from "./interfaces/serie-evento.repository";
+import {
+  FirestoreSerieEventoRepository,
+} from "./firestore/firestore-serie-evento.repository";
 import type {MapasGoogleRepository} from "./interfaces/mapas-google.repository";
 import {
   FirestoreMapasGoogleRepository,
@@ -130,3 +134,6 @@ export const sugestaoEventoRepository: SugestaoEventoRepository =
 
 export const mapasGoogleRepository: MapasGoogleRepository =
   new FirestoreMapasGoogleRepository();
+
+export const serieEventoRepository: SerieEventoRepository =
+  new FirestoreSerieEventoRepository();

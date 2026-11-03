@@ -30,6 +30,10 @@ export interface Evento {
   fotoCapaUrl: string;
   informacoes: string;
   criadorId: string;
+  serieId: string | null;
+  ocorrenciaYmd: string | null;
+  ocorrenciaAjustada: boolean;
+  cancelada: boolean;
   notaMedia: number;
   totalAvaliacoes: number;
   recomendacoesComboio: number;
@@ -46,7 +50,17 @@ export type EventoPublicacao = Omit<
   | "notaMedia"
   | "totalAvaliacoes"
   | "recomendacoesComboio"
+  | "serieId"
+  | "ocorrenciaYmd"
+  | "ocorrenciaAjustada"
+  | "cancelada"
 >;
+
+export type RecorrenciaEvento = {
+  serieId: string;
+  diaSemana: number;
+  rotulo: string;
+};
 
 export type EventoFeedItem = Evento & {
   distanciaKm: number;
@@ -54,6 +68,7 @@ export type EventoFeedItem = Evento & {
   avaliado: boolean;
   participantes: ParticipantesBloco;
   aoVivo: boolean;
+  recorrencia: RecorrenciaEvento | null;
 };
 
 export type EventoDetalhe = Evento & {
@@ -63,4 +78,5 @@ export type EventoDetalhe = Evento & {
   participantes: ParticipantesBloco;
   storiesAtivas: number;
   podePostarStory: boolean;
+  recorrencia: RecorrenciaEvento | null;
 };

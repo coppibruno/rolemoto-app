@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import type {
+  AbaMeusRoles,
+  AbaTipoGaragem,
   ContagensMeusRoles,
   ContagensTipoGaragem,
+  PapelMeuRole,
+  PillAvaliacaoGaragem,
   RecorteLocaisGaragem,
   TelemetriaMeusRoles,
 } from "@/types/meus-roles";
+import type { RitmoRole } from "@/types/role";
 import { useMeusRoles } from "../hooks/useMeusRoles";
 import { useFiltrosMeusRoles } from "../hooks/useFiltrosMeusRoles";
 import { useAcaoParticipacaoGaragem } from "../hooks/useAcaoParticipacaoGaragem";
@@ -52,6 +58,56 @@ const CONTAGENS_TIPO_ZERO: ContagensTipoGaragem = {
   locais: 0,
 };
 
+type EstadoGaragem = {
+  abaTipo: AbaTipoGaragem;
+  aba: AbaMeusRoles;
+  ritmo: RitmoRole | "todas";
+  papel: PapelMeuRole | "todos";
+  recorteLocais: RecorteLocaisGaragem;
+  pillEventos: PillAvaliacaoGaragem;
+  pillLocais: PillAvaliacaoGaragem;
+};
+
+const umDe = <T extends string>(valor: unknown, opcoes: readonly T[]): valor is T =>
+  typeof valor === "string" && (opcoes as readonly string[]).includes(valor);
+
+const lerEstadoGaragem = (valor: unknown): EstadoGaragem | null => {
+  if (!valor || typeof valor !== "object") return null;
+  const bruto = valor as Partial<EstadoGaragem>;
+  if (!umDe(bruto.abaTipo, ["roles", "eventos", "locais"] as const)) return null;
+  if (
+    !umDe(bruto.aba, [
+      "proximos",
+      "confirmados",
+      "aguardando",
+      "concluidos",
+      "recusados",
+    ] as const)
+  ) {
+    return null;
+  }
+  if (!umDe(bruto.ritmo, ["tranquila", "moderada", "agressiva", "todas"] as const)) {
+    return null;
+  }
+  if (!umDe(bruto.papel, ["participante", "organizador", "todos"] as const)) return null;
+  if (!umDe(bruto.recorteLocais, ["favoritos", "visitados"] as const)) return null;
+  if (
+    !umDe(bruto.pillEventos, ["todos", "aguardando_avaliacao", "avaliados"] as const) ||
+    !umDe(bruto.pillLocais, ["todos", "aguardando_avaliacao", "avaliados"] as const)
+  ) {
+    return null;
+  }
+  return {
+    abaTipo: bruto.abaTipo,
+    aba: bruto.aba,
+    ritmo: bruto.ritmo,
+    papel: bruto.papel,
+    recorteLocais: bruto.recorteLocais,
+    pillEventos: bruto.pillEventos,
+    pillLocais: bruto.pillLocais,
+  };
+};
+
 export const TelaMeusRoles = () => {
   const { payload, carregando, erro, recarregar } = useMeusRoles();
   const { abaTipo, setAbaTipo } = useAbaTipoGaragem();
@@ -65,6 +121,32 @@ export const TelaMeusRoles = () => {
   const locais = useMeusLocaisGaragem(abaTipo === "locais", recorteLocais);
   const filtroEventos = useFiltroAvaliacaoGaragem(eventos.itens, "eventos");
   const filtroLocais = useFiltroAvaliacaoGaragem(locais.itens, "locais");
+
+  useEstadoRetorno(
+    "garagem",
+    {
+      abaTipo,
+      aba: filtros.filtros.aba,
+      ritmo: filtros.filtros.ritmo,
+      papel: filtros.filtros.papel,
+      recorteLocais,
+      pillEventos: filtroEventos.pill,
+      pillLocais: filtroLocais.pill,
+    },
+    (salvo) => {
+      const valido = lerEstadoGaragem(salvo);
+      if (!valido) return;
+      setAbaTipo(valido.abaTipo);
+      filtros.restaurar({
+        aba: valido.aba,
+        ritmo: valido.ritmo,
+        papel: valido.papel,
+      });
+      setRecorteLocais(valido.recorteLocais);
+      filtroEventos.setPill(valido.pillEventos);
+      filtroLocais.setPill(valido.pillLocais);
+    },
+  );
 
   const processandoId = acao.processandoId ?? cancelarRole.processandoId;
   const erroAcao = acao.erroAcao ?? cancelarRole.erro;
@@ -152,14 +234,14 @@ export const TelaMeusRoles = () => {
               </p>
             ) : null}
             {erro ? <EstadoErroMeusRoles onTentar={recarregar} /> : null}
-            {carregando ? <EstadoCarregandoMeusRoles /> : null}
+            {carregando && !payload ? <EstadoCarregandoMeusRoles /> : null}
             {vazioRoles ? (
               <EstadoVazioMeusRoles
                 aba={filtros.filtros.aba}
                 tuneAtivo={filtros.tuneAtivo}
               />
             ) : null}
-            {!carregando && !erro && filtros.itensVisiveis.length > 0 ? (
+            {!erro && filtros.itensVisiveis.length > 0 ? (
               <ListaMeusRoles
                 itens={filtros.itensVisiveis}
                 processandoId={processandoId}
@@ -175,16 +257,16 @@ export const TelaMeusRoles = () => {
             {eventos.erro ? (
               <EstadoErroMeusRoles onTentar={eventos.recarregar} />
             ) : null}
-            {eventos.carregando ? <EstadoCarregandoMeusRoles /> : null}
+            {eventos.carregando && filtroEventos.itensFiltrados.length === 0 ? (
+              <EstadoCarregandoMeusRoles />
+            ) : null}
             {vazioEventos ? (
               <EstadoVazioGaragem
                 tipo="eventos"
                 pill={filtroEventos.pill}
               />
             ) : null}
-            {!eventos.carregando &&
-            !eventos.erro &&
-            filtroEventos.itensFiltrados.length > 0 ? (
+            {!eventos.erro && filtroEventos.itensFiltrados.length > 0 ? (
               <ListaMeusEventos itens={filtroEventos.itensFiltrados} />
             ) : null}
           </>
@@ -195,7 +277,9 @@ export const TelaMeusRoles = () => {
             {locais.erro ? (
               <EstadoErroMeusRoles onTentar={locais.recarregar} />
             ) : null}
-            {locais.carregando ? <EstadoCarregandoMeusRoles /> : null}
+            {locais.carregando && filtroLocais.itensFiltrados.length === 0 ? (
+              <EstadoCarregandoMeusRoles />
+            ) : null}
             {vazioLocais ? (
               <EstadoVazioGaragem
                 tipo="locais"
@@ -203,9 +287,7 @@ export const TelaMeusRoles = () => {
                 recorteLocais={recorteLocais}
               />
             ) : null}
-            {!locais.carregando &&
-            !locais.erro &&
-            filtroLocais.itensFiltrados.length > 0 ? (
+            {!locais.erro && filtroLocais.itensFiltrados.length > 0 ? (
               <ListaMeusLocais itens={filtroLocais.itensFiltrados} />
             ) : null}
           </>

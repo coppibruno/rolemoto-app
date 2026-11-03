@@ -109,6 +109,7 @@ export const filtrarEventosFeed = (
       avaliado: false,
       participantes: {total: 0, destaques: []},
       aoVivo: false,
+      recorrencia: null,
     });
   }
   itens.sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));

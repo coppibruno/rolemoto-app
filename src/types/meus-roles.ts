@@ -75,7 +75,7 @@ export type MeusRolesPayload = {
   contagens: ContagensMeusRoles;
 };
 
-export type StatusMeuEventoGaragem = "confirmado" | "concluido";
+export type StatusMeuEventoGaragem = "cancelado" | "confirmado" | "concluido";
 
 export type MeuEventoGaragemItem = {
   eventoId: string;

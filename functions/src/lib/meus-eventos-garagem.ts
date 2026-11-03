@@ -9,12 +9,22 @@ import type {
 
 export const TETO_MEUS_EVENTOS_GARAGEM = 80;
 
-const statusDoEvento = (evento: Evento): StatusMeuEventoGaragem =>
-  eventoEncerrouParaAvaliacao(evento) ? "concluido" : "confirmado";
+const statusDoEvento = (evento: Evento): StatusMeuEventoGaragem => {
+  if (evento.cancelada) {
+    return "cancelado";
+  }
+  return eventoEncerrouParaAvaliacao(evento) ? "concluido" : "confirmado";
+};
 
 const ordenarEventosGaragem = (
   itens: MeuEventoGaragemItem[],
 ): MeuEventoGaragemItem[] => {
+  const cancelados = itens
+    .filter((item) => item.status === "cancelado")
+    .sort(
+      (a, b) =>
+        Date.parse(a.dataHoraAbertura) - Date.parse(b.dataHoraAbertura),
+    );
   const confirmados = itens
     .filter((item) => item.status === "confirmado")
     .sort(
@@ -27,7 +37,7 @@ const ordenarEventosGaragem = (
       (a, b) =>
         Date.parse(b.dataHoraAbertura) - Date.parse(a.dataHoraAbertura),
     );
-  return [...confirmados, ...concluidos];
+  return [...cancelados, ...confirmados, ...concluidos];
 };
 
 export const montarItensEventosGaragem = (

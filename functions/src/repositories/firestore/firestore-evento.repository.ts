@@ -1,7 +1,12 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
-import type {AtracaoEvento, Evento, EventoCreate} from "../../types/evento";
+import type {
+  AtracaoEvento,
+  Evento,
+  EventoCreate,
+  EventoPublicacao,
+} from "../../types/evento";
 import type {
   EventoRepository,
   FiltroListagemEventos,
@@ -51,6 +56,13 @@ const toEvento = (snap: DocumentSnapshot): Evento => {
     fotoCapaUrl: String(data.fotoCapaUrl ?? ""),
     informacoes: String(data.informacoes ?? ""),
     criadorId: String(data.criadorId ?? ""),
+    serieId: typeof data.serieId === "string" && data.serieId ? data.serieId : null,
+    ocorrenciaYmd:
+      typeof data.ocorrenciaYmd === "string" && data.ocorrenciaYmd ?
+        data.ocorrenciaYmd :
+        null,
+    ocorrenciaAjustada: data.ocorrenciaAjustada === true,
+    cancelada: data.cancelada === true,
     notaMedia: totalAvaliacoes > 0 ? Number(data.notaMedia ?? 0) : 0,
     totalAvaliacoes,
     recomendacoesComboio: Number(data.recomendacoesComboio ?? 0),
@@ -59,32 +71,124 @@ const toEvento = (snap: DocumentSnapshot): Evento => {
   };
 };
 
+const jaExiste = (error: unknown): boolean => {
+  const code = (error as {code?: number | string}).code;
+  return code === 6 || code === "already-exists" || code === "ALREADY_EXISTS";
+};
+
+const documentoNovo = (dados: EventoCreate) => ({
+  titulo: dados.titulo,
+  tipo: dados.tipo,
+  local: dados.local,
+  localId: dados.localId,
+  dataHoraAbertura: toTimestamp(dados.dataHoraAbertura),
+  dataHoraEncerramento: dados.dataHoraEncerramento ?
+    toTimestamp(dados.dataHoraEncerramento) :
+    null,
+  acesso: dados.acesso,
+  linkIngresso: dados.linkIngresso,
+  atracoes: dados.atracoes,
+  fotoCapaUrl: dados.fotoCapaUrl,
+  informacoes: dados.informacoes,
+  criadorId: dados.criadorId,
+  serieId: dados.serieId,
+  ocorrenciaYmd: dados.ocorrenciaYmd,
+  ocorrenciaAjustada: dados.ocorrenciaAjustada,
+  cancelada: dados.cancelada,
+  notaMedia: 0,
+  totalAvaliacoes: 0,
+  recomendacoesComboio: 0,
+  somaNotas: 0,
+  createdAt: FieldValue.serverTimestamp(),
+  updatedAt: FieldValue.serverTimestamp(),
+});
+
+const camposConteudo = (dados: EventoPublicacao) => ({
+  titulo: dados.titulo,
+  tipo: dados.tipo,
+  local: dados.local,
+  localId: dados.localId,
+  dataHoraAbertura: toTimestamp(dados.dataHoraAbertura),
+  dataHoraEncerramento: dados.dataHoraEncerramento ?
+    toTimestamp(dados.dataHoraEncerramento) :
+    null,
+  acesso: dados.acesso,
+  linkIngresso: dados.linkIngresso,
+  atracoes: dados.atracoes,
+  fotoCapaUrl: dados.fotoCapaUrl,
+  informacoes: dados.informacoes,
+  serieId: dados.serieId,
+  ocorrenciaYmd: dados.ocorrenciaYmd,
+  ocorrenciaAjustada: dados.ocorrenciaAjustada,
+  cancelada: dados.cancelada,
+  updatedAt: FieldValue.serverTimestamp(),
+});
+
 export class FirestoreEventoRepository implements EventoRepository {
   async criar(dados: EventoCreate): Promise<Evento> {
-    const ref = await firestore.collection(COLECAO).add({
-      titulo: dados.titulo,
-      tipo: dados.tipo,
-      local: dados.local,
-      localId: dados.localId,
-      dataHoraAbertura: toTimestamp(dados.dataHoraAbertura),
-      dataHoraEncerramento: dados.dataHoraEncerramento ?
-        toTimestamp(dados.dataHoraEncerramento) :
-        null,
-      acesso: dados.acesso,
-      linkIngresso: dados.linkIngresso,
-      atracoes: dados.atracoes,
-      fotoCapaUrl: dados.fotoCapaUrl,
-      informacoes: dados.informacoes,
-      criadorId: dados.criadorId,
-      notaMedia: 0,
-      totalAvaliacoes: 0,
-      recomendacoesComboio: 0,
-      somaNotas: 0,
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    const ref = await firestore.collection(COLECAO).add(documentoNovo(dados));
     const criado = await this.buscarPorId(ref.id);
     return criado as Evento;
+  }
+
+  async gravarSeAusente(
+    id: string,
+    dados: EventoCreate,
+  ): Promise<{evento: Evento; criado: boolean}> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    try {
+      await ref.create(documentoNovo(dados));
+    } catch (error) {
+      if (!jaExiste(error)) {
+        throw error;
+      }
+      const existente = await this.buscarPorId(id);
+      if (!existente) {
+        throw error;
+      }
+      return {evento: existente, criado: false};
+    }
+    const criado = await this.buscarPorId(id);
+    return {evento: criado as Evento, criado: true};
+  }
+
+  async listarPorSerie(serieId: string): Promise<Evento[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("serieId", "==", serieId)
+      .orderBy("dataHoraAbertura", "asc")
+      .get();
+    return snap.docs.map(toEvento);
+  }
+
+  async atualizarOcorrencia(
+    id: string,
+    dados: EventoPublicacao,
+  ): Promise<Evento | null> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      return null;
+    }
+    await ref.update(camposConteudo(dados));
+    return this.buscarPorId(id);
+  }
+
+  async marcarCancelada(id: string): Promise<Evento | null> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      return null;
+    }
+    await ref.update({
+      cancelada: true,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    return this.buscarPorId(id);
+  }
+
+  async remover(id: string): Promise<void> {
+    await firestore.collection(COLECAO).doc(id).delete();
   }
 
   async listarFuturos(filtros?: FiltroListagemEventos): Promise<Evento[]> {

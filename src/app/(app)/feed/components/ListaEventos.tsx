@@ -48,9 +48,9 @@ export const ListaEventos = ({
         </div>
       ) : null}
 
-      {carregando ? <EstadoCarregando /> : null}
+      {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
       {mostrarVazio ? <EstadoVazio aba="eventos" /> : null}
-      {!carregando && !erro
+      {!erro
         ? itens.map((evento) => <EventoCard key={evento.id} evento={evento} />)
         : null}
     </section>

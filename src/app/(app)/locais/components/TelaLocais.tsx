@@ -12,12 +12,13 @@ export const TelaLocais = () => {
   const { usuario } = useAuth();
   const { itens, carregando, erro, recarregar } = useListaLocais();
   const admin = usuario?.admin === true;
+  const esperando = carregando && itens.length === 0;
 
   return (
     <div className={styles.tela}>
       <CabecalhoLocais admin={admin} />
-      {carregando ? <EstadoCarregandoLocais /> : null}
-      {!carregando && erro ? (
+      {esperando ? <EstadoCarregandoLocais /> : null}
+      {!esperando && erro ? (
         <div className={styles.erro} role="alert">
           <span className="material-symbols-outlined">cloud_off</span>
           <p className={styles.erroTitulo}>{erro}</p>
@@ -26,10 +27,10 @@ export const TelaLocais = () => {
           </button>
         </div>
       ) : null}
-      {!carregando && !erro && itens.length === 0 ? (
+      {!esperando && !erro && itens.length === 0 ? (
         <EstadoVazioLocais admin={admin} />
       ) : null}
-      {!carregando && !erro && itens.length > 0 ? <ListaLocais itens={itens} /> : null}
+      {!erro && itens.length > 0 ? <ListaLocais itens={itens} /> : null}
     </div>
   );
 };

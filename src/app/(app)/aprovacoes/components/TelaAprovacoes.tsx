@@ -47,13 +47,13 @@ export const TelaAprovacoes = () => {
           </div>
         ) : null}
 
-        {fila.carregando ? <EstadoCarregando /> : null}
+        {fila.carregando && fila.itens.length === 0 ? <EstadoCarregando /> : null}
 
         {vazio ? (
           <EstadoVazio status={fila.status} resumo={fila.resumo} />
         ) : null}
 
-        {!fila.carregando && !fila.erro && fila.itens.length > 0 ? (
+        {!fila.erro && fila.itens.length > 0 ? (
           <ListaSolicitacoes
             status={fila.status}
             itens={fila.itens}

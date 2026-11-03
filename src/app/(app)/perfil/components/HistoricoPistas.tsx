@@ -54,7 +54,7 @@ export const HistoricoPistas = () => {
         carregando={historico.carregando}
       />
 
-      {historico.aba === "participei" && !historico.carregando && !historico.erro ? (
+      {historico.aba === "participei" && historico.dados && !historico.erro ? (
         <FiltroTipoHistoricoChips
           valor={historico.filtroTipo}
           onMudar={historico.setFiltroTipo}
@@ -72,20 +72,20 @@ export const HistoricoPistas = () => {
             onTentarDeNovo={historico.recarregar}
           />
         ) : null}
-        {historico.carregando ? <SkeletonHistorico /> : null}
+        {historico.carregando && !historico.dados ? <SkeletonHistorico /> : null}
         {apagar.feedback ? (
           <p className={styles.toastApagar} role="status">
             {apagar.feedback}
           </p>
         ) : null}
-        {!historico.carregando && !historico.erro && historico.modoTelemetria ? (
+        {!historico.erro && (historico.dados || !historico.carregando) && historico.modoTelemetria ? (
           <ListaHistoricoTelemetria
             itens={historico.telemetrias}
             ocupadoId={apagar.ocupadoId}
             onApagar={(alvo) => void apagar.apagar(alvo)}
           />
         ) : null}
-        {!historico.carregando && !historico.erro && !historico.modoTelemetria ? (
+        {!historico.erro && historico.dados && !historico.modoTelemetria ? (
           <ListaHistorico
             itens={historico.itensVisiveis}
             aba={historico.aba}

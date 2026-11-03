@@ -51,9 +51,14 @@ export const BlocoDataEvento = ({ evento }: Props) => {
           {encerramento ? ` · até ${encerramento}` : null}
         </p>
       )}
-      <span className={styles.badgeAcesso}>
-        {LABELS_ACESSO_EVENTO[evento.acesso]}
-      </span>
+      <div className={styles.badgesLinha}>
+        <span className={styles.badgeAcesso}>
+          {LABELS_ACESSO_EVENTO[evento.acesso]}
+        </span>
+        {evento.recorrencia ? (
+          <span className={styles.badgeAcesso}>{evento.recorrencia.rotulo}</span>
+        ) : null}
+      </div>
     </section>
   );
 };

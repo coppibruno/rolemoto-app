@@ -4,13 +4,12 @@ import {exigirAdmin} from "../middleware/exigir-admin";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {filtrarEventosFeed} from "../lib/feed-filtros";
+import {escolherUmaPorSerie} from "../lib/serie-evento";
+import {ajustarOcorrencia, anexarRecorrencia, bodyTemAjuste} from "../lib/serie-evento-operacao";
+import {validarPublicacaoEvento} from "../lib/validar-evento";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
-import {
-  ERRO_LOCALIZACAO_FORA_DO_SUL,
-  pontoEstaNoSul,
-} from "../lib/regiao-sul";
 import {
   blocoParticipantesEvento,
   blocoVazio,
@@ -29,16 +28,6 @@ import {aoVivoPorEvento, detalheStoriesEvento, eventoEstaAoVivo} from "../lib/st
 import {inscricaoEventoRouter} from "./inscricao-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
 import {storiesEventoRouter} from "./stories-evento";
-import type {Localizacao} from "../types/role";
-import {
-  ACESSOS_EVENTO,
-  ATRACOES_EVENTO,
-  TIPOS_EVENTO,
-  type AcessoEvento,
-  type AtracaoEvento,
-  type EventoPublicacao,
-  type TipoEvento,
-} from "../types/evento";
 
 /**
  * REST de eventos (destino fixo).
@@ -96,226 +85,6 @@ const marcarAvaliados = async <T extends {id: string}>(
     ...item,
     avaliado: avaliados.has(item.id),
   }));
-};
-
-const isTipo = (valor: unknown): valor is TipoEvento =>
-  typeof valor === "string" && (TIPOS_EVENTO as string[]).includes(valor);
-
-const isAcesso = (valor: unknown): valor is AcessoEvento =>
-  typeof valor === "string" && (ACESSOS_EVENTO as string[]).includes(valor);
-
-const LINK_INGRESSO_MAX = 2000;
-
-const parseLinkIngresso = (
-  valor: unknown,
-  acesso: AcessoEvento,
-): {ok: true; link: string | null} | {ok: false; erro: string} => {
-  if (acesso !== "ingresso") {
-    return {ok: true, link: null};
-  }
-  if (typeof valor !== "string" || !valor.trim()) {
-    return {ok: false, erro: "linkIngresso é obrigatório"};
-  }
-  const link = valor.trim();
-  if (link.length > LINK_INGRESSO_MAX) {
-    return {ok: false, erro: "linkIngresso inválido"};
-  }
-  try {
-    const url = new URL(link);
-    if (url.protocol !== "http:" && url.protocol !== "https:") {
-      return {ok: false, erro: "linkIngresso inválido"};
-    }
-  } catch {
-    return {ok: false, erro: "linkIngresso inválido"};
-  }
-  return {ok: true, link};
-};
-
-const isCoordLat = (valor: unknown): valor is number =>
-  typeof valor === "number" && Number.isFinite(valor) && valor >= -90 && valor <= 90;
-
-const isCoordLng = (valor: unknown): valor is number =>
-  typeof valor === "number" &&
-  Number.isFinite(valor) &&
-  valor >= -180 &&
-  valor <= 180;
-
-const parseLocal = (valor: unknown): Localizacao | null => {
-  if (!valor || typeof valor !== "object") {
-    return null;
-  }
-  const o = valor as Record<string, unknown>;
-  if (
-    !isCoordLat(o.lat) ||
-    !isCoordLng(o.lng) ||
-    typeof o.endereco !== "string" ||
-    o.endereco.trim().length < 3
-  ) {
-    return null;
-  }
-  if (o.nome !== undefined && o.nome !== null && typeof o.nome !== "string") {
-    return null;
-  }
-  return {
-    lat: o.lat,
-    lng: o.lng,
-    endereco: o.endereco.trim(),
-    nome: typeof o.nome === "string" ? o.nome.trim() : "",
-  };
-};
-
-const parseAtracoes = (valor: unknown): AtracaoEvento[] | null => {
-  if (valor === undefined || valor === null) {
-    return [];
-  }
-  if (!Array.isArray(valor)) {
-    return null;
-  }
-  const vistos = new Set<string>();
-  const itens: AtracaoEvento[] = [];
-  for (const item of valor) {
-    if (typeof item !== "string" || !(ATRACOES_EVENTO as string[]).includes(item)) {
-      return null;
-    }
-    if (vistos.has(item)) {
-      return null;
-    }
-    vistos.add(item);
-    itens.push(item as AtracaoEvento);
-  }
-  return itens;
-};
-
-const parseIsoFuturo = (
-  valor: unknown,
-): {ok: true; iso: string} | {ok: false; motivo: "invalida" | "passado"} => {
-  if (typeof valor !== "string" || !valor.trim()) {
-    return {ok: false, motivo: "invalida"};
-  }
-  const instante = Date.parse(valor);
-  if (Number.isNaN(instante)) {
-    return {ok: false, motivo: "invalida"};
-  }
-  if (instante <= Date.now()) {
-    return {ok: false, motivo: "passado"};
-  }
-  return {ok: true, iso: valor};
-};
-
-const MAX_DURACAO_EVENTO_MS = 7 * 24 * 60 * 60 * 1000;
-
-const parseEncerramento = (
-  valor: unknown,
-  aberturaIso: string,
-): {ok: true; iso: string | null} | {ok: false; erro: string} => {
-  if (valor === undefined || valor === null) {
-    return {ok: true, iso: null};
-  }
-  if (typeof valor !== "string" || !valor.trim()) {
-    return {ok: false, erro: "dataHoraEncerramento inválida"};
-  }
-  const instante = Date.parse(valor);
-  const abertura = Date.parse(aberturaIso);
-  if (Number.isNaN(instante) || instante <= abertura) {
-    return {ok: false, erro: "dataHoraEncerramento inválida"};
-  }
-  if (instante - abertura > MAX_DURACAO_EVENTO_MS) {
-    return {ok: false, erro: "o evento pode durar no máximo 7 dias"};
-  }
-  return {ok: true, iso: valor};
-};
-
-type ResultadoValidacao =
-  | {ok: true; dados: EventoPublicacao}
-  | {ok: false; erro: string};
-
-const validarBody = (body: unknown): ResultadoValidacao => {
-  if (!body || typeof body !== "object") {
-    return {ok: false, erro: "titulo é obrigatório"};
-  }
-  const bruto = body as Record<string, unknown>;
-
-  const titulo = typeof bruto.titulo === "string" ? bruto.titulo.trim() : "";
-  if (titulo.length < 3 || titulo.length > 80) {
-    return {ok: false, erro: "titulo é obrigatório"};
-  }
-
-  if (!isTipo(bruto.tipo)) {
-    return {ok: false, erro: "tipo inválido"};
-  }
-
-  const local = parseLocal(bruto.local);
-  if (!local) {
-    return {ok: false, erro: "local inválido"};
-  }
-  if (!pontoEstaNoSul(local.lat, local.lng)) {
-    return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
-  }
-
-  const abertura = parseIsoFuturo(bruto.dataHoraAbertura);
-  if (!abertura.ok) {
-    return {
-      ok: false,
-      erro:
-        abertura.motivo === "passado" ?
-          "a abertura precisa ser no futuro" :
-          "dataHoraAbertura inválida",
-    };
-  }
-
-  const encerramento = parseEncerramento(
-    bruto.dataHoraEncerramento,
-    abertura.iso,
-  );
-  if (!encerramento.ok) {
-    return {ok: false, erro: encerramento.erro};
-  }
-
-  if (!isAcesso(bruto.acesso)) {
-    return {ok: false, erro: "acesso inválido"};
-  }
-
-  const linkIngresso = parseLinkIngresso(bruto.linkIngresso, bruto.acesso);
-  if (!linkIngresso.ok) {
-    return {ok: false, erro: linkIngresso.erro};
-  }
-
-  const atracoes = parseAtracoes(bruto.atracoes);
-  if (!atracoes) {
-    return {ok: false, erro: "atracoes inválidas"};
-  }
-
-  if (typeof bruto.fotoCapaUrl !== "string" || !bruto.fotoCapaUrl.trim()) {
-    return {ok: false, erro: "fotoCapaUrl é obrigatória"};
-  }
-
-  if (
-    bruto.informacoes !== undefined &&
-    bruto.informacoes !== null &&
-    (typeof bruto.informacoes !== "string" || bruto.informacoes.trim().length > 2000)
-  ) {
-    return {ok: false, erro: "informacoes inválida"};
-  }
-
-  const informacoes =
-    typeof bruto.informacoes === "string" ? bruto.informacoes.trim() : "";
-
-  return {
-    ok: true,
-    dados: {
-      titulo,
-      tipo: bruto.tipo,
-      local,
-      dataHoraAbertura: abertura.iso,
-      dataHoraEncerramento: encerramento.iso,
-      acesso: bruto.acesso,
-      linkIngresso: linkIngresso.link,
-      atracoes,
-      fotoCapaUrl: bruto.fotoCapaUrl.trim(),
-      informacoes,
-      localId: null,
-    },
-  };
 };
 
 const resolverLocalIdPost = async (
@@ -390,19 +159,23 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
     }
 
     if (!query) {
-      const eventos = await eventoRepository.listarFuturos();
+      const eventos = escolherUmaPorSerie(
+        await eventoRepository.listarFuturos(),
+        new Date(),
+      ).sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));
       const [comInscrito, participantesPorEvento] = await Promise.all([
         marcarInscritos(eventos, uid),
         enriquecerParticipantesEventos(eventos.map((e) => e.id)),
       ]);
       const comAvaliado = await marcarAvaliados(comInscrito, uid);
       const comStory = await comAoVivo(comAvaliado);
-      res.json(
+      const comRecorrencia = await anexarRecorrencia(
         comStory.map((item) => ({
           ...item,
           participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
         })),
       );
+      res.json(comRecorrencia);
       return;
     }
 
@@ -411,23 +184,27 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
       dataInicioIso: intervalo.dataInicioIso,
       dataFimIso: intervalo.dataFimIso,
     });
-    const itens = filtrarEventosFeed(
-      listados,
-      {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
-      query.q,
-    );
+    const itens = escolherUmaPorSerie(
+      filtrarEventosFeed(
+        listados,
+        {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
+        query.q,
+      ),
+      new Date(),
+    ).sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));
     const [comInscrito, participantesPorEvento] = await Promise.all([
       marcarInscritos(itens, uid),
       enriquecerParticipantesEventos(itens.map((e) => e.id)),
     ]);
     const comAvaliado = await marcarAvaliados(comInscrito, uid);
     const comStory = await comAoVivo(comAvaliado);
-    res.json(
+    const comRecorrencia = await anexarRecorrencia(
       comStory.map((item) => ({
         ...item,
         participantes: participantesPorEvento.get(item.id) ?? blocoVazio(),
       })),
     );
+    res.json(comRecorrencia);
   } catch (error) {
     responderErro(res, error);
   }
@@ -478,7 +255,7 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       }),
     ]);
 
-    res.json({
+    const [resposta] = await anexarRecorrencia([{
       ...evento,
       inscrito: inscricao !== null,
       inscritos: {total},
@@ -486,7 +263,8 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       participantes,
       storiesAtivas: stories.storiesAtivas,
       podePostarStory: stories.podePostarStory,
-    });
+    }]);
+    res.json(resposta);
   } catch (error) {
     responderErro(res, error);
   }
@@ -500,7 +278,7 @@ eventosRouter.post("/", exigirAdmin, async (req: Request, res: Response) => {
       return;
     }
 
-    const validado = validarBody(req.body);
+    const validado = validarPublicacaoEvento(req.body);
     if (!validado.ok) {
       res.status(400).json({erro: validado.erro});
       return;
@@ -536,6 +314,20 @@ eventosRouter.patch("/:id", exigirAdmin, async (req: Request, res: Response) => 
   try {
     if (!req.usuario?.uid) {
       res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    if (bodyTemAjuste(req.body)) {
+      if (req.body && typeof req.body === "object" && "localId" in req.body) {
+        res.status(400).json({erro: "envie o ajuste da data separado do ponto"});
+        return;
+      }
+      const ajustado = await ajustarOcorrencia(param(req, "id"), req.body);
+      if (!ajustado.ok) {
+        res.status(ajustado.status).json({erro: ajustado.erro});
+        return;
+      }
+      res.json(ajustado.dados);
       return;
     }
 

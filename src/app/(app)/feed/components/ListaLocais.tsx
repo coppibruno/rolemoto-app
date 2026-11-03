@@ -48,9 +48,9 @@ export const ListaLocais = ({
         </div>
       ) : null}
 
-      {carregando ? <EstadoCarregando /> : null}
+      {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
       {mostrarVazio ? <EstadoVazio aba="locais" /> : null}
-      {!carregando && !erro
+      {!erro
         ? itens.map((local) => <LocalCard key={local.id} local={local} />)
         : null}
     </section>

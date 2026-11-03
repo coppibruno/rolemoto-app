@@ -14,7 +14,8 @@ export const BlocoAvaliacaoEvento = ({ evento }: Props) => {
     evento.dataHoraAbertura,
     evento.dataHoraEncerramento,
   );
-  const mostrarAvaliar = evento.inscrito && encerrado && evento.avaliado !== true;
+  const mostrarAvaliar =
+    evento.inscrito && encerrado && evento.avaliado !== true && !evento.cancelada;
   const mostrarVer = evento.avaliado === true;
   const temMedia = (evento.totalAvaliacoes ?? 0) > 0;
   const temComboio = (evento.recomendacoesComboio ?? 0) > 0;

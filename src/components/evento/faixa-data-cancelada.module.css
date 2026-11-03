@@ -1,0 +1,13 @@
+.faixa {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--error-container) 35%, transparent);
+  color: var(--error);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}

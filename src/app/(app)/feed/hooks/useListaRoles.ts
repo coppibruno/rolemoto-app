@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
 import type { RoleFeedItem } from "@/types/role";
 import { filtrosParaParams, rolesService } from "../services/roles.service";
 import type { FiltrosFeed } from "../types";
@@ -20,6 +21,17 @@ export const useListaRoles = (filtros: Params) => {
       ? `data:${filtros.quando.iso}`
       : String(filtros.quando ?? "");
 
+  const chave =
+    filtros.ativo && filtros.ponto
+      ? `feed:roles:${filtros.ponto.lat}:${filtros.ponto.lng}:${String(filtros.raioKm)}:${quandoKey}:${filtros.ritmo}:${filtros.busca}`
+      : null;
+
+  useHidratarCache<RoleFeedItem[]>(
+    chave,
+    setItens,
+    () => setItens((atual) => (atual.length === 0 ? atual : [])),
+  );
+
   useEffect(() => {
     if (!filtros.ativo) return;
 
@@ -38,7 +50,9 @@ export const useListaRoles = (filtros: Params) => {
     rolesService
       .listar(params)
       .then((dados) => {
-        if (!cancelado) setItens(dados);
+        if (cancelado) return;
+        setItens(dados);
+        if (chave) guardarCache(chave, dados);
       })
       .catch(() => {
         if (!cancelado) {

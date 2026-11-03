@@ -125,6 +125,10 @@ avaliacaoEventoRouter.post(
         res.status(403).json({erro: "somente inscritos avaliam"});
         return;
       }
+      if (evento.cancelada) {
+        res.status(400).json({erro: "esta data foi cancelada"});
+        return;
+      }
       if (!eventoEncerrouParaAvaliacao(evento)) {
         res.status(400).json({erro: "este evento ainda não encerrou"});
         return;
@@ -183,6 +187,10 @@ avaliacaoEventoRouter.patch(
       );
       if (!inscricao) {
         res.status(403).json({erro: "somente inscritos avaliam"});
+        return;
+      }
+      if (evento.cancelada) {
+        res.status(400).json({erro: "esta data foi cancelada"});
         return;
       }
       if (!eventoEncerrouParaAvaliacao(evento)) {

@@ -31,6 +31,9 @@ export const CabecalhoCriarEvento = ({ fotoUrl, nome }: Props) => {
             priority
           />
           <h1 className={styles.tituloPagina}>{TITULO_PAGINA}</h1>
+          <Link href="/series-evento" className={styles.linkSerie}>
+            Encontros semanais
+          </Link>
         </div>
 
         <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">

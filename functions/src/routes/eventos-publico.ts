@@ -101,6 +101,7 @@ eventosPublicoRouter.get("/:id", async (req: Request, res: Response) => {
       localNome: evento.local.nome ?? "",
       localEndereco: evento.local.endereco,
       informacoes: evento.informacoes,
+      cancelada: evento.cancelada,
       criador: criadorPublico(evento.criadorId, criadorDoc),
       participantes: {
         confirmados,

@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { guardarCache, useHidratarCache } from "@/hooks/useCacheRetorno";
+import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import type {
   AbaHistorico,
   FiltroTipoHistorico,
@@ -49,13 +51,49 @@ export const useHistoricoPistas = () => {
   const [carregandoTelemetria, setCarregandoTelemetria] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [ticket, setTicket] = useState(0);
+  const manterAba = useRef(false);
 
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
   const mudarAba = useCallback((nova: AbaHistorico) => {
+    manterAba.current = true;
     setAba(nova);
     setFiltroTipo("todos");
   }, []);
+
+  useEstadoRetorno(
+    "perfil-historico",
+    { aba, filtroTipo },
+    (salvo) => {
+      if (salvo.aba !== "aguardando" && salvo.aba !== "participei" && salvo.aba !== "criados") {
+        return;
+      }
+      if (
+        salvo.filtroTipo !== "todos" &&
+        salvo.filtroTipo !== "roles" &&
+        salvo.filtroTipo !== "eventos" &&
+        salvo.filtroTipo !== "telemetria"
+      ) {
+        return;
+      }
+      manterAba.current = true;
+      setAba(salvo.aba);
+      setFiltroTipo(salvo.filtroTipo);
+    },
+  );
+
+  useHidratarCache<HistoricoPistas>(
+    "perfil:historico",
+    (valor) => {
+      setDados(valor);
+      setCarregando(false);
+    },
+  );
+
+  useHidratarCache<ItemHistoricoTelemetria[]>(
+    "perfil:telemetria",
+    setTelemetrias,
+  );
 
   useEffect(() => {
     let cancelado = false;
@@ -67,7 +105,10 @@ export const useHistoricoPistas = () => {
       .then((resposta) => {
         if (cancelado) return;
         setDados(resposta);
-        setAba(resposta.contagens.aguardando > 0 ? "aguardando" : "participei");
+        guardarCache("perfil:historico", resposta);
+        if (!manterAba.current) {
+          setAba(resposta.contagens.aguardando > 0 ? "aguardando" : "participei");
+        }
       })
       .catch(() => {
         if (cancelado) return;
@@ -91,7 +132,9 @@ export const useHistoricoPistas = () => {
       .listarMinhas()
       .then((lista) => {
         if (cancelado) return;
-        setTelemetrias(lista.map(paraCard));
+        const cards = lista.map(paraCard);
+        setTelemetrias(cards);
+        guardarCache("perfil:telemetria", cards);
       })
       .catch(() => {
         if (cancelado) return;

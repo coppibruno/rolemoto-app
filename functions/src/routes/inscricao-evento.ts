@@ -76,6 +76,10 @@ inscricaoEventoRouter.post(
         res.status(404).json({erro: "Evento não encontrado"});
         return;
       }
+      if (evento.cancelada) {
+        res.status(400).json({erro: "esta data foi cancelada"});
+        return;
+      }
       if (!eventoAindaAberto(evento)) {
         res.status(400).json({erro: "este evento já encerrou"});
         return;

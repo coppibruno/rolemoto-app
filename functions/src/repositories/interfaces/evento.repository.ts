@@ -1,4 +1,4 @@
-import type {Evento, EventoCreate} from "../../types/evento";
+import type {Evento, EventoCreate, EventoPublicacao} from "../../types/evento";
 
 export type FiltroListagemEventos = {
   dataInicioIso: string;
@@ -11,6 +11,21 @@ export type FiltroListagemEventos = {
  */
 export interface EventoRepository {
   criar(dados: EventoCreate): Promise<Evento>;
+  /**
+   * Grava `eventos/{id}` só quando o doc não existe.
+   * `criado: false` quando o par série+data já estava no banco.
+   */
+  gravarSeAusente(
+    id: string,
+    dados: EventoCreate,
+  ): Promise<{evento: Evento; criado: boolean}>;
+  listarPorSerie(serieId: string): Promise<Evento[]>;
+  atualizarOcorrencia(
+    id: string,
+    dados: EventoPublicacao,
+  ): Promise<Evento | null>;
+  marcarCancelada(id: string): Promise<Evento | null>;
+  remover(id: string): Promise<void>;
   listarFuturos(filtros?: FiltroListagemEventos): Promise<Evento[]>;
   buscarPorId(id: string): Promise<Evento | null>;
   buscarPorIds(ids: string[]): Promise<Evento[]>;

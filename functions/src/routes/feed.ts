@@ -8,6 +8,7 @@ import {
   filtrarLocaisFeed,
   roleIdsComVinculoUsuario,
 } from "../lib/feed-filtros";
+import {escolherUmaPorSerie} from "../lib/serie-evento";
 import { validarQueryRoles } from "../lib/roles-query";
 import { resolverIntervaloQuando } from "../lib/quando";
 import {
@@ -66,7 +67,10 @@ feedRouter.get("/contagens", async (req: Request, res: Response) => {
     const vinculos = roleIdsComVinculoUsuario(pedidosUsuario);
     const contagens: ContagensFeed = {
       roles: contarRolesFeed(roles, origem, uid, vinculos, query.q),
-      eventos: filtrarEventosFeed(eventos, origem, query.q).length,
+      eventos: escolherUmaPorSerie(
+        filtrarEventosFeed(eventos, origem, query.q),
+        new Date(),
+      ).length,
       locais: filtrarLocaisFeed(locais, origem, query.q).length,
     };
 

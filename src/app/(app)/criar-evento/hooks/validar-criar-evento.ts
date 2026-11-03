@@ -9,6 +9,7 @@ import {
 } from "../constants";
 import {
   MAX_DURACAO_EVENTO_MS,
+  hojeYmdSaoPaulo,
   montarIsoEncerramento,
   montarIsoEvento,
 } from "../montar-iso-evento";
@@ -62,6 +63,12 @@ export const validarCriarEvento = (campos: {
   linkIngresso: string;
   photoFile: File | null;
   informacoes: string;
+  semanal?: {
+    ativo: boolean;
+    diaSemana: number | null;
+    aPartirDe: string;
+  };
+  fotoJaExiste?: boolean;
 }): ErrosCriarEvento => {
   const erros: ErrosCriarEvento = {};
   const titulo = campos.titulo.trim();
@@ -83,7 +90,38 @@ export const validarCriarEvento = (campos: {
   }
 
   let aberturaIso = "";
-  if (!campos.dataEvento.trim() || !dataCalendarioValida(campos.dataEvento)) {
+  if (campos.semanal?.ativo) {
+    if (campos.semanal.diaSemana === null) {
+      erros.diaSemana = "Escolha o dia da semana";
+    }
+    if (!HORA_RE.test(campos.horaAbertura)) {
+      erros.horaAbertura = "Informe o horário de abertura";
+    }
+    if (!HORA_RE.test(campos.horaEncerramento.trim())) {
+      erros.horaEncerramento = "Informe o horário de encerramento";
+    } else if (campos.horaAbertura === campos.horaEncerramento.trim()) {
+      erros.horaEncerramento = "A abertura e o encerramento não podem ser iguais";
+    }
+    const aPartirDe = campos.semanal.aPartirDe.trim();
+    if (aPartirDe) {
+      if (!dataCalendarioValida(aPartirDe)) {
+        erros.aPartirDe = "Informe uma data válida";
+      } else if (aPartirDe < hojeYmdSaoPaulo()) {
+        erros.aPartirDe = "A data não pode estar no passado";
+      } else if (
+        campos.semanal.diaSemana !== null &&
+        new Date(
+          Date.UTC(
+            Number(aPartirDe.slice(0, 4)),
+            Number(aPartirDe.slice(5, 7)) - 1,
+            Number(aPartirDe.slice(8, 10)),
+          ),
+        ).getUTCDay() !== campos.semanal.diaSemana
+      ) {
+        erros.aPartirDe = "A data precisa cair no dia escolhido";
+      }
+    }
+  } else if (!campos.dataEvento.trim() || !dataCalendarioValida(campos.dataEvento)) {
     erros.dataEvento = "Informe a data do evento";
   } else if (!HORA_RE.test(campos.horaAbertura)) {
     erros.horaAbertura = "Informe o horário de abertura";
@@ -96,9 +134,9 @@ export const validarCriarEvento = (campos: {
 
   const horaFim = campos.horaEncerramento.trim();
   const dataFim = campos.dataEncerramento.trim() || campos.dataEvento;
-  if (campos.dataEncerramento.trim() && !horaFim) {
+  if (!campos.semanal?.ativo && campos.dataEncerramento.trim() && !horaFim) {
     erros.horaEncerramento = "Informe o horário de encerramento";
-  } else if (horaFim) {
+  } else if (!campos.semanal?.ativo && horaFim) {
     if (!HORA_RE.test(horaFim)) {
       erros.horaEncerramento = "Informe o horário de encerramento";
     } else if (!dataCalendarioValida(dataFim)) {
@@ -126,7 +164,7 @@ export const validarCriarEvento = (campos: {
     }
   }
 
-  if (!campos.photoFile) {
+  if (!campos.photoFile && !campos.fotoJaExiste) {
     erros.foto = "Inclua o flyer ou a foto de capa";
   }
 

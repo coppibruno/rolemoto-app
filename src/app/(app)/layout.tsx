@@ -1,6 +1,7 @@
 import { MenuInferior } from "@/components/menu-inferior/MenuInferior";
 import { BannerInstalarApp } from "@/components/pwa/BannerInstalarApp";
 import { GuardaApp } from "./components/GuardaApp";
+import { PreservarRetorno } from "./components/PreservarRetorno";
 import { ToastPush } from "./components/ToastPush";
 import { AvisoSessaoTelemetria } from "@/app/(app)/gravar-role/components/AvisoSessaoTelemetria";
 import styles from "./app.module.css";
@@ -9,7 +10,10 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <GuardaApp>
       <div className={styles.shell}>
-        <div className={styles.conteudo}>{children}</div>
+        <div className={styles.conteudo} data-scroll-app>
+          {children}
+        </div>
+        <PreservarRetorno />
         <BannerInstalarApp />
         <AvisoSessaoTelemetria />
         <ToastPush />

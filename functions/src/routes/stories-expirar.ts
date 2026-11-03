@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {cronSecretConfere} from "../lib/cron-secret";
+import {gerarHorizonteAtivas} from "../lib/serie-evento-operacao";
 import {expirarStoriesLote} from "../lib/story-local";
 import {responderErro} from "../middleware/errors";
 import {responderBuscaSugestoes} from "./sugestoes-locais";
@@ -34,6 +35,24 @@ internoRouter.post("/sugestoes-locais/buscar", async (req: Request, res: Respons
     return;
   }
   await responderBuscaSugestoes(res);
+});
+
+/**
+ * Empurra o horizonte das séries ativas. Cloud Scheduler 06:10 America/Sao_Paulo:
+ * POST {FUNCTIONS_BASE_URL}/interno/series-evento/gerar
+ * Header X-Cron-Secret = STORIES_CRON_SECRET
+ */
+internoRouter.post("/series-evento/gerar", async (req: Request, res: Response) => {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
+    res.status(404).json({erro: "Não encontrado"});
+    return;
+  }
+  try {
+    const resultado = await gerarHorizonteAtivas();
+    res.json(resultado);
+  } catch (error) {
+    responderErro(res, error);
+  }
 });
 
 internoRouter.post("/sugestoes-eventos/buscar", async (req: Request, res: Response) => {

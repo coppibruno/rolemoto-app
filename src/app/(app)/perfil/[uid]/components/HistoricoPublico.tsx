@@ -97,7 +97,7 @@ export const HistoricoPublicoSecao = ({
         })}
       </div>
 
-      {aba === "concluidos" && !carregando && !erro ? (
+      {aba === "concluidos" && historico && !erro ? (
         <div
           className={styles.filtroTipo}
           role="radiogroup"
@@ -121,12 +121,12 @@ export const HistoricoPublicoSecao = ({
         </div>
       ) : null}
 
-      {carregando ? (
+      {carregando && !historico ? (
         <div className={styles.lista} aria-busy="true">
           <div className={styles.skeleton} />
           <div className={styles.skeleton} />
         </div>
-      ) : erro ? (
+      ) : erro && !historico ? (
         <div className={styles.estado} role="alert">
           <span className={`material-symbols-outlined ${styles.estadoIcone}`}>
             cloud_off
@@ -134,7 +134,7 @@ export const HistoricoPublicoSecao = ({
           <p className={styles.estadoTitulo}>Falha no histórico</p>
           <p className={styles.estadoCorpo}>{erro}</p>
         </div>
-      ) : listaItens.length === 0 ? (
+      ) : listaItens.length === 0 && !carregando ? (
         <div className={styles.estado}>
           <span className={`material-symbols-outlined ${styles.estadoIcone}`}>
             {vazio.icone}
