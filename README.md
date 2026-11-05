@@ -329,13 +329,21 @@ O `AuthProvider` ainda lê o perfil via `src/lib/firestore.ts` (SDK client). Flu
 
 ---
 
-## Deploy das functions
+## Deploy das functions e dos índices
+
+Índices (`firestore.indexes.json`) e a function `api` sobem no mesmo comando. `--only functions` não publica índice novo: a query composta fica falhando até o índice existir no Firestore.
 
 ```bash
-npx -y firebase-tools@latest deploy --only functions
+firebase deploy --only firestore:indexes,functions
 ```
 
-O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/`.
+O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/` antes do upload. O CLI marca os índices como publicados na hora; no console eles ficam em **Building** por alguns minutos. A busca que depende do índice (seguindo, seguidores, etc.) só passa quando o status vira **Enabled**.
+
+Só a API, quando o `firestore.indexes.json` não mudou:
+
+```bash
+firebase deploy --only functions
+```
 
 ---
 
@@ -349,4 +357,5 @@ O `predeploy` em `firebase.json` roda lint + `tsc` em `functions/`.
 | `npm run storage:cors`                | Aplica `cors.json` no bucket de produção             |
 | `npm run test`                        | Vitest — `calcular-metricas` (telemetria)            |
 | `cd functions && npm run build:watch` | Recompila o backend a cada save                      |
-| `cd functions && npm run deploy`      | Publica as functions                                 |
+| `firebase deploy --only firestore:indexes,functions` | Publica índices e a function `api`        |
+| `cd functions && npm run deploy`      | Publica só as functions (sem índices)                |

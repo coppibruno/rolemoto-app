@@ -1,5 +1,7 @@
 import { TelaPerfilPublico } from "./components/TelaPerfilPublico";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ uid: string }>;
 };

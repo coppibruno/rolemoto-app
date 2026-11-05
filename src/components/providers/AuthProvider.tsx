@@ -45,6 +45,7 @@ import {
 } from "@/lib/auth";
 import { temProviderSenha } from "@/lib/provedor-senha";
 import { perfilService } from "@/app/(app)/perfil/services/perfil.service";
+import { assinarSeguir, lerVersaoSeguir } from "@/lib/seguir-contadores";
 import type { Usuario } from "@/types/user";
 
 export interface AuthContextType {
@@ -62,15 +63,75 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
+const INTERVALO_MINIMO_RETORNO_MS = 2000;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [loading, setLoading] = useState(true);
 
   const carregarPerfil = useCallback(async () => {
+    const versao = lerVersaoSeguir();
     const perfil = await perfilService.buscar();
-    setUsuario(perfil);
+    setUsuario((atual) => {
+      if (atual && lerVersaoSeguir() !== versao) return atual;
+      return perfil;
+    });
   }, []);
+
+  useEffect(() => {
+    return assinarSeguir((mudanca) => {
+      setUsuario((atual) => {
+        if (!atual) return atual;
+        return {
+          ...atual,
+          seguindo: Math.max(0, (atual.seguindo ?? 0) + mudanca.delta),
+        };
+      });
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!firebaseUser) return;
+    let ultimaBusca = 0;
+    const recarregar = () => {
+      if (document.visibilityState !== "visible") return;
+      const agora = Date.now();
+      if (agora - ultimaBusca < INTERVALO_MINIMO_RETORNO_MS) return;
+      ultimaBusca = agora;
+      carregarPerfil().catch((error) => {
+        console.error("Erro ao atualizar perfil:", error);
+      });
+    };
+
+    document.addEventListener("visibilitychange", recarregar);
+    let removerApp: (() => void) | undefined;
+    let ativo = true;
+    void import("@capacitor/app")
+      .then(({ App }) =>
+        App.addListener("appStateChange", ({ isActive }) => {
+          if (isActive) recarregar();
+        }),
+      )
+      .then((handle) => {
+        if (!ativo) {
+          void handle.remove();
+          return;
+        }
+        removerApp = () => {
+          void handle.remove();
+        };
+      })
+      .catch(() => {
+        /* web: plugin ausente */
+      });
+
+    return () => {
+      ativo = false;
+      document.removeEventListener("visibilitychange", recarregar);
+      removerApp?.();
+    };
+  }, [firebaseUser, carregarPerfil]);
 
   useEffect(() => {
     getRedirectResult(auth).catch((error) => {
@@ -123,11 +184,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUsuario(null);
   };
 
-  const recarregarPerfil = async () => {
+  const recarregarPerfil = useCallback(async () => {
     if (firebaseUser) {
       await carregarPerfil();
     }
-  };
+  }, [firebaseUser, carregarPerfil]);
 
   return (
     <AuthContext.Provider

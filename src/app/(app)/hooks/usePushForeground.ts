@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
+import { useAuth } from "@/hooks/useAuth";
 import { ouvirForeground } from "@/lib/fcm";
 import { ouvirForegroundNativo } from "@/lib/fcm-nativo";
 
@@ -9,6 +10,7 @@ const TOAST_MS = 2500;
 
 export const usePushForeground = () => {
   const [titulo, setTitulo] = useState<string | null>(null);
+  const { recarregarPerfil } = useAuth();
 
   useEffect(() => {
     let ativo = true;
@@ -17,6 +19,7 @@ export const usePushForeground = () => {
     const mostrar = (title: string) => {
       if (ativo) {
         setTitulo(title);
+        recarregarPerfil().catch(() => undefined);
       }
     };
 
@@ -40,7 +43,7 @@ export const usePushForeground = () => {
       ativo = false;
       unsubscribe?.();
     };
-  }, []);
+  }, [recarregarPerfil]);
 
   useEffect(() => {
     if (!titulo) {

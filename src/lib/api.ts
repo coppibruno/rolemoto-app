@@ -37,6 +37,7 @@ export const api = async <T = unknown>(
   const headers = await montarHeaders(opcoes?.headers);
   const res = await fetch(`${functionsApiUrl}${caminho}`, {
     ...opcoes,
+    cache: "no-store",
     headers,
   });
 

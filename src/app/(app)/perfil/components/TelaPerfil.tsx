@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CabecalhoPerfil } from "./CabecalhoPerfil";
 import { FormularioPerfil } from "./FormularioPerfil";
@@ -9,9 +9,13 @@ import { VisaoPerfil } from "./VisaoPerfil";
 import styles from "../perfil.module.css";
 
 export const TelaPerfil = () => {
-  const { usuario } = useAuth();
+  const { usuario, recarregarPerfil } = useAuth();
   const [editando, setEditando] = useState(false);
   const [salvo, setSalvo] = useState(false);
+
+  useEffect(() => {
+    void recarregarPerfil();
+  }, [recarregarPerfil]);
 
   const abrirEdicao = useCallback(() => {
     setSalvo(false);

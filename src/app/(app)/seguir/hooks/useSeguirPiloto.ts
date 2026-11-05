@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { publicarSeguir } from "@/lib/seguir-contadores";
 import { seguirService } from "../services/seguir.service";
 
 const TOAST = "Não deu para atualizar";
@@ -33,6 +34,7 @@ export const useSeguirPiloto = (uid: string, seguidoInicial: boolean) => {
     setEnviando(true);
     try {
       await seguirService.seguir(uid);
+      publicarSeguir({ uid, delta: 1 });
     } catch {
       falhar(anterior);
     } finally {
@@ -48,6 +50,7 @@ export const useSeguirPiloto = (uid: string, seguidoInicial: boolean) => {
     setEnviando(true);
     try {
       await seguirService.deixar(uid);
+      publicarSeguir({ uid, delta: -1 });
     } catch {
       falhar(anterior);
     } finally {
