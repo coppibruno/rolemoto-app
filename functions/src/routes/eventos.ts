@@ -26,6 +26,7 @@ import {
 import {agendarAvisoEvento, agendarLembreteEvento} from "../lib/lembretes";
 import {aoVivoPorEvento, detalheStoriesEvento, eventoEstaAoVivo} from "../lib/story-local";
 import {inscricaoEventoRouter} from "./inscricao-evento";
+import {conviteEventoRouter} from "./convite-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
 import {storiesEventoRouter} from "./stories-evento";
 
@@ -37,6 +38,8 @@ import {storiesEventoRouter} from "./stories-evento";
  * GET    /eventos/:id/participantes
  * POST   /eventos   (admin do documento users)
  * GET|POST|DELETE /eventos/:id/inscricao
+ * POST   /eventos/:id/convites/situacao
+ * POST   /eventos/:id/convites
  * GET|POST /eventos/:id/avaliacoes
  * GET    /eventos/:id/avaliacao
  */
@@ -45,6 +48,7 @@ export const eventosRouter = Router();
 eventosRouter.use(autenticar);
 eventosRouter.use(rateLimitAutenticado);
 eventosRouter.use(inscricaoEventoRouter);
+eventosRouter.use(conviteEventoRouter);
 eventosRouter.use(avaliacaoEventoRouter);
 eventosRouter.use(storiesEventoRouter);
 

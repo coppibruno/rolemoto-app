@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { AcessoEvento } from "@/types/evento";
 import { useInscricaoEvento } from "../hooks/useInscricaoEvento";
 import { ModalIngressoEvento } from "./ModalIngressoEvento";
@@ -10,13 +11,29 @@ type Props = {
   acesso: AcessoEvento;
   linkIngresso: string | null;
   inscrito: boolean;
+  podeConvidar: boolean;
 };
+
+const LinkConvidarEvento = ({ id, cheio }: { id: string; cheio?: boolean }) => (
+  <Link
+    href={`/eventos/${id}/convidar`}
+    className={
+      cheio
+        ? `${styles.botaoConvidarEvento} ${styles.botaoConvidarCheio}`
+        : styles.botaoConvidarEvento
+    }
+    aria-label="Convidar amigo para o evento"
+  >
+    Convidar amigo
+  </Link>
+);
 
 export const BotaoInscreverEvento = ({
   id,
   acesso,
   linkIngresso,
   inscrito: inscritoInicial,
+  podeConvidar,
 }: Props) => {
   const {
     inscrito,
@@ -39,54 +56,69 @@ export const BotaoInscreverEvento = ({
   });
 
   const icone = acesso === "ingresso" ? "confirmation_number" : "event_available";
+  const rotulo = enviando
+    ? "Inscrevendo…"
+    : acesso === "ingresso"
+      ? "Comprar ingresso"
+      : "Inscreva-se";
+
+  const botaoInscrever = (
+    <button
+      type="button"
+      className={styles.botaoInscreverEvento}
+      onClick={() => void inscrever()}
+      disabled={enviando}
+      aria-busy={enviando}
+    >
+      <span className="material-symbols-outlined" aria-hidden>
+        {enviando ? "autorenew" : icone}
+      </span>
+      {rotulo}
+    </button>
+  );
 
   return (
     <div className={styles.blocoInscricaoEvento}>
       {!inscrito ? (
-        <button
-          type="button"
-          className={styles.botaoInscreverEvento}
-          onClick={() => void inscrever()}
-          disabled={enviando}
-          aria-busy={enviando}
-        >
-          <span className="material-symbols-outlined" aria-hidden>
-            {enviando ? "autorenew" : icone}
-          </span>
-          {enviando
-            ? "Inscrevendo…"
-            : acesso === "ingresso"
-              ? "Comprar ingresso"
-              : "Inscrever-se"}
-        </button>
+        podeConvidar ? (
+          <div className={styles.linhaAcoesEvento}>
+            {botaoInscrever}
+            <LinkConvidarEvento id={id} />
+          </div>
+        ) : (
+          botaoInscrever
+        )
       ) : (
-        <div className={styles.acoesInscritoEvento}>
-          <span className={styles.chipInscrito} aria-live="polite">
-            <span className="material-symbols-outlined" aria-hidden>
-              check_circle
+        <>
+          <div className={styles.acoesInscritoEvento}>
+            <span className={styles.chipInscrito} aria-live="polite">
+              <span className="material-symbols-outlined" aria-hidden>
+                check_circle
+              </span>
+              {acesso === "ingresso" ? "Inscrito · ingresso por sua conta" : "Inscrito"}
             </span>
-            {acesso === "ingresso" ? "Inscrito · ingresso por sua conta" : "Inscrito"}
-          </span>
-          {acesso === "ingresso" ? (
+            {acesso === "ingresso" ? (
+              <button
+                type="button"
+                className={styles.botaoSecundarioEvento}
+                onClick={abrirModalIngresso}
+                disabled={enviando}
+              >
+                Comprar ingresso
+              </button>
+            ) : null}
             <button
               type="button"
               className={styles.botaoSecundarioEvento}
-              onClick={abrirModalIngresso}
+              onClick={() => void cancelar()}
               disabled={enviando}
+              aria-busy={enviando}
             >
-              Comprar ingresso
+              {enviando ? "Cancelando…" : "Cancelar"}
             </button>
-          ) : null}
-          <button
-            type="button"
-            className={styles.botaoSecundarioEvento}
-            onClick={() => void cancelar()}
-            disabled={enviando}
-            aria-busy={enviando}
-          >
-            {enviando ? "Cancelando…" : "Cancelar"}
-          </button>
-        </div>
+          </div>
+          {podeConvidar ? <LinkConvidarEvento id={id} cheio /> : null}
+        </>
       )}
 
       {erro ? (

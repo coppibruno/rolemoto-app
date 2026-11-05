@@ -177,6 +177,22 @@
         { "fieldPath": "usuarioId", "order": "ASCENDING" },
         { "fieldPath": "encerradoEm", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "usersseguir",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "seguidorId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersseguir",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "seguidoId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

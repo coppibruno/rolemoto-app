@@ -26,11 +26,17 @@
  * - /perfil  → GET, POST, PUT, DELETE
  * - /perfil/historico → GET
  * - /perfil/historico/ocultar → POST
+ * - /usuarios/busca → GET
  * - /usuarios/:uid → GET
  * - /usuarios/:uid/historico → GET
  * - /usuarios/:uid/telemetria → GET
+ * - /usuarios/:uid/seguir → POST, DELETE
+ * - /usuarios/:uid/seguindo → GET
+ * - /usuarios/:uid/seguidores → GET
  * - /eventos → GET, POST
  * - /eventos/:id/inscricao → GET, POST, DELETE
+ * - /eventos/:id/convites/situacao → POST
+ * - /eventos/:id/convites → POST
  * - /eventos/:id/avaliacoes → GET, POST
  * - /eventos/:id/avaliacao → GET, PATCH
  * - /locais  → GET, POST
@@ -126,6 +132,8 @@ app.get("/", (_req: Request, res: Response) => {
       "/eventos/:id",
       "/eventos/:id/participantes",
       "/eventos/:id/inscricao",
+      "/eventos/:id/convites/situacao",
+      "/eventos/:id/convites",
       "/eventos/:id/avaliacoes",
       "/eventos/:id/avaliacao",
       "/locais",

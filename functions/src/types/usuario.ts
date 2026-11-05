@@ -19,6 +19,10 @@ export interface Usuario {
   admin: boolean;
   locaisVisitadosUnicos: number;
   selos: SeloPublico[];
+  /** Pessoas que este uid segue. Doc antigo sem o campo vale 0. */
+  seguindo: number;
+  /** Pessoas que seguem este uid. Doc antigo sem o campo vale 0. */
+  seguidores: number;
   createdAt: string;
 }
 
@@ -34,11 +38,20 @@ export type PerfilPublico = {
   cidade: string;
   garupaFrequente: boolean;
   selos: SeloPublico[];
+  seguindo: number;
+  seguidores: number;
+  seguidoPorMim: boolean;
+  segueVoce: boolean;
 };
 
 export type UsuarioCreate = Omit<
   Usuario,
-  "uid" | "createdAt" | "locaisVisitadosUnicos" | "selos"
+  | "uid"
+  | "createdAt"
+  | "locaisVisitadosUnicos"
+  | "selos"
+  | "seguindo"
+  | "seguidores"
 >;
 
 export type UsuarioUpdate = Partial<Omit<UsuarioCreate, "admin">>;

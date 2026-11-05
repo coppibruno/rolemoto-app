@@ -41,6 +41,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Evento não é rolê: um único local (moto point, track day, café, exposição), sem comboio em estrada
 - Piloto comum **não** cria; **vê** no feed (aba Eventos) e via `GET /eventos`
 - Qualquer autenticado **se inscreve** no evento (`POST /eventos/:id/inscricao`) sem aceite do criador. Evento grátis confirma na hora; evento pago abre o link de ingresso e só inscreve depois de “Já comprei meu ingresso”
+- **Convidar amigo** (SPEC 054): no card da aba Eventos e no detalhe, abre `/eventos/[id]/convidar`. Quem já tem conta recebe o push `convite_evento` e se inscreve no fluxo normal. O share do link continua
 - Evento pode durar vários dias: data/hora de abertura e data/hora de encerramento (máx. 7 dias)
 - Após o evento encerrar, inscritos **avaliam** em `/eventos/:id/avaliar` (nota, relato, fotos, recomendo comboio)
 - Locais oficiais: qualquer autenticado avalia em `/locais/:id/avaliar`
@@ -57,6 +58,7 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Apelido, moto, tipo de moto (`trail` | `speed` | `custom`), ritmo/pilotagem, foto, garupa, cidade (opcional)
 - Histórico de pistas (SPEC 008 + eventos da SPEC 026 + telemetria SPEC 030), Meus Rolês / garagem (SPEC 017 + 028), fila de aprovações (SPEC 007)
 - Perfil público de outro piloto: `/perfil/[uid]` (SPEC 025) — visão comunitária somente leitura; histórico inclui eventos inscritos e filtro Telemetria
+- Seguir na hora (SPEC 053): ícone **Encontrar pilotos** no topo da home abre `/pilotos`; números **seguindo** e **seguidores** no cartão abrem `/perfil/[uid]/seguindo`; push `novo_seguidor` abre o perfil de quem seguiu
 - Qualquer autenticado grava passeio próprio em `/gravar-role` (GPS nativo); dashboard em `/telemetria/[id]` (SPEC 030). Ao salvar, escolhe se o passeio fica só para ele ou visível no perfil; passeios antigos continuam públicos
 ## Modelo de Negócio
 

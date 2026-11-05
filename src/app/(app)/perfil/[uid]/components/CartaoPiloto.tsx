@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { AvatarStories } from "@/app/(app)/components/AvatarStories";
+import { BotaoSeguir } from "@/app/(app)/seguir/components/BotaoSeguir";
 import {
   LABEL_PILOTAGEM,
   LABEL_TIPO_MOTO_BADGE,
@@ -5,7 +8,6 @@ import {
 import type { PerfilPublico } from "@/types/perfil-publico";
 import type { Pilotagem } from "@/types/user";
 import { FaixaSelos } from "./FaixaSelos";
-import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "../perfil-publico.module.css";
 
 type Props = {
@@ -38,6 +40,35 @@ export const CartaoPiloto = ({ perfil }: Props) => {
           </span>
         </div>
       </div>
+
+      <div className={styles.contadores}>
+        <Link
+          href={`/perfil/${perfil.uid}/seguindo?aba=seguindo`}
+          className={styles.contador}
+        >
+          <span className={styles.contadorNumero}>{perfil.seguindo ?? 0}</span>
+          <span className={styles.contadorRotulo}>seguindo</span>
+        </Link>
+        <Link
+          href={`/perfil/${perfil.uid}/seguindo?aba=seguidores`}
+          className={styles.contador}
+        >
+          <span className={styles.contadorNumero}>{perfil.seguidores ?? 0}</span>
+          <span className={styles.contadorRotulo}>seguidores</span>
+        </Link>
+      </div>
+
+      {typeof perfil.seguidoPorMim === "boolean" ? (
+        <div className={styles.blocoSeguir}>
+          {perfil.segueVoce ? <p className={styles.segueVoceCartao}>Segue você</p> : null}
+          <BotaoSeguir
+            uid={perfil.uid}
+            apelido={perfil.apelido}
+            seguido={perfil.seguidoPorMim}
+            largo
+          />
+        </div>
+      ) : null}
 
       <div className={styles.divisor} role="presentation" />
 

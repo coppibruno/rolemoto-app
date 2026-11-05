@@ -10,6 +10,12 @@ import type {AgregadoCheckinUsuario, CheckinsPorCategoria} from "../../types/che
 import type {CategoriaLocal} from "../../types/local";
 import {CATEGORIAS_LOCAL} from "../../types/local";
 import type {
+  CamposBusca,
+  CamposBuscaLidos,
+  PessoaBusca,
+} from "../../types/seguir";
+import {LIMITE_BUSCA_PILOTOS} from "../../types/seguir";
+import type {
   TipoMoto,
   Usuario,
   UsuarioCreate,
@@ -19,6 +25,12 @@ import type {UsuarioRepository} from "../interfaces/usuario.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "users";
+const CAMPOS_PREFIXO: (keyof CamposBusca)[] = [
+  "apelidoBusca",
+  "primeiroNomeBusca",
+  "ultimoNomeBusca",
+  "nomeBusca",
+];
 const CHUNK = 100;
 const TIPOS_MOTO: TipoMoto[] = ["trail", "speed", "custom"];
 const emChunks = <T>(itens: T[]): T[][] => {
@@ -67,6 +79,44 @@ const toAgregado = (data: Record<string, unknown>): AgregadoCheckinUsuario => ({
   selos: normalizarSelos(data.selos),
 });
 
+const contador = (valor: unknown): number => {
+  if (typeof valor !== "number" || !Number.isFinite(valor) || valor <= 0) {
+    return 0;
+  }
+  return Math.floor(valor);
+};
+
+const textoBusca = (data: Record<string, unknown>, chave: keyof CamposBusca): string => {
+  const valor = data[chave];
+  return typeof valor === "string" ? valor : "";
+};
+
+const campoLido = (
+  data: Record<string, unknown>,
+  chave: keyof CamposBusca,
+): string | null => {
+  if (!Object.prototype.hasOwnProperty.call(data, chave)) {
+    return null;
+  }
+  const valor = data[chave];
+  return typeof valor === "string" ? valor : null;
+};
+
+const toPessoaBusca = (snap: DocumentSnapshot): PessoaBusca => {
+  const data = (snap.data() ?? {}) as Record<string, unknown>;
+  return {
+    uid: snap.id,
+    nome: String(data.nome ?? ""),
+    apelido: String(data.apelido ?? ""),
+    fotoUrl: String(data.fotoUrl ?? ""),
+    cidade: String(data.cidade ?? ""),
+    nomeBusca: textoBusca(data, "nomeBusca"),
+    apelidoBusca: textoBusca(data, "apelidoBusca"),
+    primeiroNomeBusca: textoBusca(data, "primeiroNomeBusca"),
+    ultimoNomeBusca: textoBusca(data, "ultimoNomeBusca"),
+  };
+};
+
 const toUsuario = (snap: DocumentSnapshot): Usuario => {
   const data = snap.data() ?? {};
   const agregado = toAgregado(data);
@@ -83,6 +133,8 @@ const toUsuario = (snap: DocumentSnapshot): Usuario => {
     admin: Boolean(data.admin),
     locaisVisitadosUnicos: agregado.locaisVisitadosUnicos,
     selos: agregado.selos,
+    seguindo: contador(data.seguindo),
+    seguidores: contador(data.seguidores),
     createdAt: toIso(data.createdAt),
   };
 };
@@ -150,12 +202,19 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
     );
   }
 
-  async criar(uid: string, dados: UsuarioCreate): Promise<Usuario> {
+  async criar(
+    uid: string,
+    dados: UsuarioCreate,
+    busca: CamposBusca,
+  ): Promise<Usuario> {
     const vazio = agregadoCheckinVazio();
     const ref = firestore.collection(COLECAO).doc(uid);
     await ref.set({
       ...dados,
       ...vazio,
+      ...busca,
+      seguindo: 0,
+      seguidores: 0,
       createdAt: FieldValue.serverTimestamp(),
     });
     const criado = await this.buscarPorId(uid);
@@ -165,13 +224,14 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
   async atualizar(
     uid: string,
     dados: UsuarioUpdate,
+    busca: CamposBusca,
   ): Promise<Usuario | null> {
     const ref = firestore.collection(COLECAO).doc(uid);
     const snap = await ref.get();
     if (!snap.exists) {
       return null;
     }
-    await ref.update({...dados});
+    await ref.update({...dados, ...busca});
     return this.buscarPorId(uid);
   }
 
@@ -183,5 +243,49 @@ export class FirestoreUsuarioRepository implements UsuarioRepository {
     }
     await ref.delete();
     return true;
+  }
+
+  async lerCamposBusca(uid: string): Promise<CamposBuscaLidos | null> {
+    const snap = await firestore.collection(COLECAO).doc(uid).get();
+    if (!snap.exists) {
+      return null;
+    }
+    const data = (snap.data() ?? {}) as Record<string, unknown>;
+    return {
+      nomeBusca: campoLido(data, "nomeBusca"),
+      apelidoBusca: campoLido(data, "apelidoBusca"),
+      primeiroNomeBusca: campoLido(data, "primeiroNomeBusca"),
+      ultimoNomeBusca: campoLido(data, "ultimoNomeBusca"),
+    };
+  }
+
+  async gravarCamposBusca(uid: string, campos: CamposBusca): Promise<void> {
+    await firestore.collection(COLECAO).doc(uid).update({...campos});
+  }
+
+  async buscarPorPrefixo(termo: string): Promise<PessoaBusca[]> {
+    if (!termo) {
+      return [];
+    }
+    const fim = `${termo}\uf8ff`;
+    const listas = await Promise.all(CAMPOS_PREFIXO.map(async (campo) => {
+      const snap = await firestore
+        .collection(COLECAO)
+        .where(campo, ">=", termo)
+        .where(campo, "<=", fim)
+        .limit(LIMITE_BUSCA_PILOTOS)
+        .get();
+      return snap.docs.map(toPessoaBusca);
+    }));
+
+    const porUid = new Map<string, PessoaBusca>();
+    for (const lista of listas) {
+      for (const pessoa of lista) {
+        if (!porUid.has(pessoa.uid)) {
+          porUid.set(pessoa.uid, pessoa);
+        }
+      }
+    }
+    return [...porUid.values()];
   }
 }

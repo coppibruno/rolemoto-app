@@ -78,6 +78,12 @@ import type {MapasGoogleRepository} from "./interfaces/mapas-google.repository";
 import {
   FirestoreMapasGoogleRepository,
 } from "./firestore/firestore-mapas-google.repository";
+import type {SeguirRepository} from "./interfaces/seguir.repository";
+import {FirestoreSeguirRepository} from "./firestore/firestore-seguir.repository";
+import type {ConviteEventoRepository} from "./interfaces/convite-evento.repository";
+import {
+  FirestoreConviteEventoRepository,
+} from "./firestore/firestore-convite-evento.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -137,3 +143,9 @@ export const mapasGoogleRepository: MapasGoogleRepository =
 
 export const serieEventoRepository: SerieEventoRepository =
   new FirestoreSerieEventoRepository();
+
+export const seguirRepository: SeguirRepository =
+  new FirestoreSeguirRepository();
+
+export const conviteEventoRepository: ConviteEventoRepository =
+  new FirestoreConviteEventoRepository();

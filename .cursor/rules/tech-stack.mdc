@@ -41,11 +41,42 @@ alwaysApply: true
   admin: boolean,          // default false; promoção só no Firestore
   locaisVisitadosUnicos: number, // check-in; docs antigos = 0
   selos: { localId, nome, categoria }[], // carimbo por local único (SPEC 044)
+  seguindo: number, // docs antigos = 0; quantas pessoas este uid segue
+  seguidores: number, // docs antigos = 0
+  nomeBusca: string, // interno; não sai na API
+  apelidoBusca: string, // interno
+  primeiroNomeBusca: string, // interno
+  ultimoNomeBusca: string, // interno
   createdAt: timestamp
 }
 ```
 
-Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/historico` → rota front `/perfil/[uid]`.
+Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/historico` → rota front `/perfil/[uid]`. `GET /perfil` e o público trazem `seguindo` e `seguidores`. O público também traz `seguidoPorMim` e `segueVoce`. Os quatro `*Busca` não saem no JSON.
+
+### Coleção `usersseguir` (seguir piloto — um sentido, na hora)
+```
+{
+  id: string, // `{seguidorId}_{seguidoId}`
+  seguidorId: string, // quem apertou Seguir
+  seguidoId: string,
+  createdAt: timestamp
+}
+```
+
+`POST /usuarios/:uid/seguir` cria na hora e soma os contadores na mesma transação. Repetir não soma e não manda outro push. `DELETE` reduz com `max(0, atual - 1)`. Listas `GET /usuarios/:uid/seguindo` e `/seguidores` (30, `createdAt` desc). Busca `GET /usuarios/busca?q=` (prefixo, máx. 20), registrada antes de `/:uid`. Push `novo_seguidor` só no vínculo novo. `DELETE /perfil` apaga os vínculos dos dois lados e corrige o contador de quem ficou.
+
+### Coleção `usersconviteevento` (convite para uma data de evento)
+```
+{
+  id: string, // `{convidanteId}_{convidadoId}_{eventoId}`
+  convidanteId: string, // uid do token
+  convidadoId: string,
+  eventoId: string,
+  createdAt: timestamp
+}
+```
+
+`POST /eventos/:id/convites` grava até 20 de uma vez e manda push `convite_evento` só para o doc novo. Repetir o trio responde em `jaConvidados` e não manda outro push. Quem já tem `usersevento` vai para `jaInscritos` e não ganha doc. `POST /eventos/:id/convites/situacao` só lê (até 30). Evento cancelado ou encerrado recusa os dois. `DELETE /perfil` apaga os docs em que o uid é quem convidou ou quem foi chamado. Sem índice composto.
 
 ### Coleção `roles` (rolês)
 ```

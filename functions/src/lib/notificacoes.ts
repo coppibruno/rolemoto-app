@@ -16,7 +16,9 @@ export type TipoPush =
   | "lembrete_role"
   | "lembrete_evento"
   | "cancelamento_role"
-  | "story_local";
+  | "story_local"
+  | "novo_seguidor"
+  | "convite_evento";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -375,6 +377,45 @@ const emLote = async (
       }
     }));
   }
+};
+
+/** Push na hora em que o vínculo nasce. Falha de FCM não sobe para a rota. */
+export const notificarNovoSeguidor = async (
+  seguidoId: string,
+  seguidorId: string,
+  nome: string,
+): Promise<ResultadoPush> => {
+  const frase = `${nome} começou a te seguir`;
+  return enviar(seguidoId, {
+    tipo: "novo_seguidor",
+    title: frase,
+    body: frase,
+    url: `/perfil/${seguidorId}`,
+    roleId: "",
+    localId: "",
+    eventoId: "",
+  });
+};
+
+/** Um push por destinatário novo. Falha de um não cancela os outros nem o POST. */
+export const notificarConvitesEvento = async (
+  uids: string[],
+  eventoId: string,
+  title: string,
+  body: string,
+): Promise<void> => {
+  const url = `/eventos/${eventoId}`;
+  await emLote(uids, LOTE_PUSH, async (uid) => {
+    await enviar(uid, {
+      tipo: "convite_evento",
+      title,
+      body,
+      url,
+      roleId: "",
+      localId: "",
+      eventoId,
+    });
+  });
 };
 
 /** Um envio por uid. Falha de um não aborta os outros nem o POST da story. */

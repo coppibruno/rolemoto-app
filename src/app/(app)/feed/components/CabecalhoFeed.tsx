@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import styles from "../feed.module.css";
@@ -24,14 +25,25 @@ export const CabecalhoFeed = () => {
           />
         </h1>
 
-        {usuario ? (
-          <AvatarStories
-            uid={usuario.uid}
-            fotoUrl={fotoUrl}
-            nome={nome}
-            tamanho="header"
-          />
-        ) : null}
+        <div className={styles.cabecalhoAcoes}>
+          <Link
+            href="/pilotos"
+            className={styles.encontrarPilotos}
+            aria-label="Encontrar pilotos"
+          >
+            <span className="material-symbols-outlined" aria-hidden>
+              search
+            </span>
+          </Link>
+          {usuario ? (
+            <AvatarStories
+              uid={usuario.uid}
+              fotoUrl={fotoUrl}
+              nome={nome}
+              tamanho="header"
+            />
+          ) : null}
+        </div>
       </div>
     </header>
   );

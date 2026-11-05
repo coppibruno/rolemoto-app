@@ -4,9 +4,15 @@ import {erroDe, log} from "../lib/log";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {camposBusca, camposBuscaIguais} from "../lib/busca-piloto";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
 import {apagarStoriesDoUsuario} from "../lib/story-local";
-import {dispositivoRepository, usuarioRepository} from "../repositories";
+import {
+  conviteEventoRepository,
+  dispositivoRepository,
+  seguirRepository,
+  usuarioRepository,
+} from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
   Pilotagem,
@@ -15,6 +21,15 @@ import type {
   UsuarioEdicao,
   UsuarioPrimeiroAcesso,
 } from "../types/usuario";
+
+const sincronizarCamposBusca = async (perfil: Usuario): Promise<void> => {
+  const proximo = camposBusca(perfil.nome, perfil.apelido);
+  const atual = await usuarioRepository.lerCamposBusca(perfil.uid);
+  if (!atual || camposBuscaIguais(atual, proximo)) {
+    return;
+  }
+  await usuarioRepository.gravarCamposBusca(perfil.uid, proximo);
+};
 
 const paraPerfilCliente = async (usuario: Usuario) => ({
   ...usuario,
@@ -224,6 +239,7 @@ perfilRouter.get("/", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
     }
+    await sincronizarCamposBusca(perfil);
     res.json(await paraPerfilCliente(perfil));
   } catch (error) {
     responderErro(res, error);
@@ -260,7 +276,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       cidade: "",
       garupaFrequente: resultado.dados.garupaFrequente,
       admin: false,
-    });
+    }, camposBusca(resultado.dados.nome, resultado.dados.apelido));
     log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
     res.status(201).json(await paraPerfilCliente(criado));
   } catch (error) {
@@ -282,7 +298,11 @@ perfilRouter.put("/", async (req: Request, res: Response) => {
       return;
     }
 
-    const atualizado = await usuarioRepository.atualizar(uid, resultado.dados);
+    const atualizado = await usuarioRepository.atualizar(
+      uid,
+      resultado.dados,
+      camposBusca(resultado.dados.nome, resultado.dados.apelido),
+    );
     if (!atualizado) {
       res.status(404).json({erro: "Perfil não encontrado"});
       return;
@@ -325,6 +345,24 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await apagarStoriesDoUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover stories", {uid, ...erroDe(error)});
+    }
+
+    try {
+      await seguirRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover vínculos de seguir", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await conviteEventoRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover convites de evento", {
+        uid,
+        ...erroDe(error),
+      });
     }
 
     try {

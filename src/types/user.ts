@@ -17,10 +17,15 @@ export interface Usuario {
   garupaFrequente: boolean;
   admin: boolean;
   selos: SeloPublico[];
+  seguindo: number;
+  seguidores: number;
   createdAt: string;
 }
 
-export type UsuarioForm = Omit<Usuario, "uid" | "createdAt" | "admin" | "selos">;
+export type UsuarioForm = Omit<
+  Usuario,
+  "uid" | "createdAt" | "admin" | "selos" | "seguindo" | "seguidores"
+>;
 
 export type ErrosPrimeiroAcesso = {
   nome?: string;

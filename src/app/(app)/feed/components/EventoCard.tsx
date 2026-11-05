@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { eventoAceitaConvite } from "@/lib/evento-aberto";
 import type { EventoFeedItem } from "@/types/evento";
 import { LABELS_ACESSO_EVENTO } from "../constants";
 import { formatarPeriodoEvento } from "../formatar-horario";
@@ -103,6 +104,7 @@ export const EventoCard = ({ evento }: Props) => {
           acesso={evento.acesso}
           linkIngresso={evento.linkIngresso}
           inscrito={evento.inscrito}
+          podeConvidar={eventoAceitaConvite(evento)}
         />
         {mostrarAvaliar || mostrarVerAvaliacao ? (
           <div className={styles.cardEventoAcoesExtra}>

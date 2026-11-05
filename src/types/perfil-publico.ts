@@ -13,6 +13,11 @@ export type PerfilPublico = {
   cidade: string;
   garupaFrequente: boolean;
   selos: SeloPublico[];
+  seguindo: number;
+  seguidores: number;
+  /** Só no perfil de outra pessoa. Ausente no próprio GET /perfil. */
+  seguidoPorMim?: boolean;
+  segueVoce?: boolean;
 };
 
 export type AbaHistoricoPublico = "concluidos" | "comoLider";
