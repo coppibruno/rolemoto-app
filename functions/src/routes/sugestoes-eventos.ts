@@ -7,9 +7,9 @@ import {erroDe, log} from "../lib/log";
 import {agendarAvisoEvento, agendarLembreteEvento} from "../lib/lembretes";
 import {param} from "../lib/params";
 import {
-  ERRO_LOCALIZACAO_FORA_DO_SUL,
-  pontoEstaNoSul,
-} from "../lib/regiao-sul";
+  resolverLinkAprovacao,
+  resolverLocalAprovacao,
+} from "../lib/sugestoes-evento/aprovar-sugestao-evento";
 import {executarBuscaSugestoesEvento} from "../lib/sugestoes-evento/buscar-sugestoes-evento";
 import {
   MotoClubConsultaError,
@@ -27,6 +27,7 @@ import {
   type AcessoEvento,
   type TipoEvento,
 } from "../types/evento";
+import type {Localizacao} from "../types/role";
 import type {SugestaoEvento} from "../types/sugestao-evento";
 
 /**
@@ -53,6 +54,7 @@ type Publicacao = {
   dataHoraEncerramento: string | null;
   informacoes: string;
   linkIngresso: string | null;
+  local: Localizacao;
 };
 
 const isTipo = (valor: unknown): valor is TipoEvento =>
@@ -60,18 +62,6 @@ const isTipo = (valor: unknown): valor is TipoEvento =>
 
 const isAcesso = (valor: unknown): valor is AcessoEvento =>
   typeof valor === "string" && (ACESSOS_EVENTO as string[]).includes(valor);
-
-const linkValido = (valor: string): boolean => {
-  if (!valor || valor.length > 2000) {
-    return false;
-  }
-  try {
-    const url = new URL(valor);
-    return url.protocol === "https:" || url.protocol === "http:";
-  } catch {
-    return false;
-  }
-};
 
 const validarAprovacao = (
   sugestao: SugestaoEvento,
@@ -90,11 +80,9 @@ const validarAprovacao = (
   if (!isTipo(tipo)) {
     return {ok: false, erro: "tipo inválido"};
   }
-  if (
-    !pontoEstaNoSul(sugestao.local.lat, sugestao.local.lng) ||
-    sugestao.local.endereco.trim().length < 3
-  ) {
-    return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
+  const local = resolverLocalAprovacao(sugestao, bruto);
+  if (!local.ok) {
+    return local;
   }
   const abertura = typeof bruto.dataHoraAbertura === "string" ?
     bruto.dataHoraAbertura :
@@ -131,10 +119,9 @@ const validarAprovacao = (
   if (!isAcesso(acesso)) {
     return {ok: false, erro: "acesso inválido"};
   }
-  const linkBase = sugestao.linkIngresso || sugestao.urlOrigem;
-  const linkIngresso = acesso === "ingresso" ? linkBase : null;
-  if (acesso === "ingresso" && !linkValido(linkIngresso ?? "")) {
-    return {ok: false, erro: "linkIngresso é obrigatório"};
+  const link = resolverLinkAprovacao(sugestao, acesso, bruto);
+  if (!link.ok) {
+    return link;
   }
   if (!sugestao.fotoCapaUrl.trim()) {
     return {ok: false, erro: "fotoCapaUrl é obrigatória"};
@@ -154,7 +141,8 @@ const validarAprovacao = (
       dataHoraAbertura: abertura,
       dataHoraEncerramento: encerramento,
       informacoes,
-      linkIngresso,
+      linkIngresso: link.linkIngresso,
+      local: local.local,
     },
   };
 };
@@ -229,7 +217,6 @@ sugestoesEventosRouter.post("/:id/aprovar", async (req: Request, res: Response) 
     }
     const criado = await sugestaoEventoRepository.aprovar(id, {
       ...validado.dados,
-      local: sugestao.local,
       fotoCapaUrl: sugestao.fotoCapaUrl,
       criadorId: uid,
     });

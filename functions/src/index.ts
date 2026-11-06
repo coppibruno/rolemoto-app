@@ -181,4 +181,7 @@ app.use("/sugestoes-eventos", sugestoesEventosRouter);
 app.use("/interno", internoRouter);
 app.use("/mapas", mapasRouter);
 
-export const api = onRequest({cors: corsOrigins()}, app);
+export const api = onRequest({
+  cors: corsOrigins(),
+  timeoutSeconds: 300,
+}, app);

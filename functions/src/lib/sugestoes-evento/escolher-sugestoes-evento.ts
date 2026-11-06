@@ -26,15 +26,18 @@ export type CandidatoEvento = {
   texto: string;
   fotoUrl: string;
   hora: string;
+  /** Permalink ou outra origem. Sem o campo, a comparação usa a agenda do MotoClub. */
+  urlOrigem?: string;
 };
 
-const urlDo = (slug: string): string => `https://motoclub.run/eventos/${slug}`;
+const urlDo = (candidato: CandidatoEvento): string =>
+  candidato.urlOrigem || `https://motoclub.run/eventos/${candidato.slug}`;
 
 const jaPublicado = (
   candidato: CandidatoEvento,
   evento: EventoParaDedupe,
 ): boolean => {
-  const url = urlDo(candidato.slug);
+  const url = urlDo(candidato);
   if (evento.linkIngresso === url || evento.informacoes.includes(url)) {
     return true;
   }

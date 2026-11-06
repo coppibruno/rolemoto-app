@@ -12,6 +12,7 @@ import {
 import { montarIsoEvento, MAX_DURACAO_EVENTO_MS } from "../../criar-evento/montar-iso-evento";
 import { sugestoesEventosService } from "../services/sugestoes-eventos.service";
 import { partirIsoEvento } from "../lib/partir-iso-evento";
+import { useComplementoInstagram } from "./useComplementoInstagram";
 
 const mensagemDe = (error: unknown): string =>
   error instanceof ApiError ? error.message : "Não foi possível concluir";
@@ -35,6 +36,7 @@ export const useCartaoSugestaoEvento = (
   const [informacoes, setInformacoes] = useState(sugestao.informacoes);
   const [enviando, setEnviando] = useState<"homologar" | "recusar" | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  const complemento = useComplementoInstagram(sugestao, acesso);
 
   const tituloLimpo = titulo.trim();
   const erroTitulo =
@@ -65,7 +67,16 @@ export const useCartaoSugestaoEvento = (
   const erroData = validarDatas();
 
   const homologar = async () => {
-    if (enviando || erroTitulo || erroTexto || erroData || !sugestao.fotoCapaUrl) return;
+    if (
+      enviando ||
+      erroTitulo ||
+      erroTexto ||
+      erroData ||
+      !sugestao.fotoCapaUrl ||
+      !complemento.pode
+    ) {
+      return;
+    }
     setEnviando("homologar");
     setErro(null);
     try {
@@ -76,6 +87,8 @@ export const useCartaoSugestaoEvento = (
         dataHoraAbertura: montarIsoEvento(data, hora),
         dataHoraEncerramento: temFim ? montarIsoEvento(dataFim, horaFim) : null,
         informacoes: informacoes.trim(),
+        ...(complemento.localParaEnvio ? { local: complemento.localParaEnvio } : {}),
+        ...(complemento.linkParaEnvio ? { linkIngresso: complemento.linkParaEnvio } : {}),
       });
       onDecidida(sugestao.id);
     } catch (error) {
@@ -121,7 +134,9 @@ export const useCartaoSugestaoEvento = (
     erroData,
     enviando,
     erro,
-    podeHomologar: !erroTitulo && !erroTexto && !erroData && Boolean(sugestao.fotoCapaUrl),
+    podeHomologar:
+      !erroTitulo && !erroTexto && !erroData && Boolean(sugestao.fotoCapaUrl) && complemento.pode,
+    complemento,
     homologar,
     recusar,
   };

@@ -10,6 +10,7 @@ import type {Localizacao} from "../../types/role";
 import type {
   AprovarSugestaoEvento,
   FonteSugestaoEvento,
+  LocalSugestaoEvento,
   StatusSugestaoEvento,
   SugestaoEvento,
   SugestaoEventoNova,
@@ -45,17 +46,37 @@ const toStatus = (valor: unknown): StatusSugestaoEvento =>
     (valor as StatusSugestaoEvento) :
     "pendente";
 
-const toLocal = (valor: unknown): Localizacao => {
+const toCoord = (valor: unknown): number | null => {
+  if (typeof valor === "number" && Number.isFinite(valor)) {
+    return valor;
+  }
+  return null;
+};
+
+const toLocalSugestao = (valor: unknown): LocalSugestaoEvento => {
   const objeto = valor && typeof valor === "object" ?
     valor as Record<string, unknown> :
     {};
   return {
-    lat: Number(objeto.lat ?? 0),
-    lng: Number(objeto.lng ?? 0),
+    lat: toCoord(objeto.lat),
+    lng: toCoord(objeto.lng),
     endereco: String(objeto.endereco ?? ""),
     nome: String(objeto.nome ?? ""),
   };
 };
+
+const toLocal = (valor: unknown): Localizacao => {
+  const local = toLocalSugestao(valor);
+  return {
+    lat: local.lat ?? 0,
+    lng: local.lng ?? 0,
+    endereco: local.endereco,
+    nome: local.nome,
+  };
+};
+
+const toFonte = (valor: unknown): FonteSugestaoEvento =>
+  valor === "instagram" ? "instagram" : "motoclub";
 
 const toSugestao = (snap: DocumentSnapshot): SugestaoEvento => {
   const data = snap.data() ?? {};
@@ -64,12 +85,12 @@ const toSugestao = (snap: DocumentSnapshot): SugestaoEvento => {
     [];
   return {
     id: snap.id,
-    fonte: "motoclub" satisfies FonteSugestaoEvento,
+    fonte: toFonte(data.fonte),
     slug: String(data.slug ?? ""),
     urlOrigem: String(data.urlOrigem ?? ""),
     titulo: String(data.titulo ?? ""),
     tipoSugerido: toTipo(data.tipoSugerido),
-    local: toLocal(data.local),
+    local: toLocalSugestao(data.local),
     dataHoraAbertura: toIso(data.dataHoraAbertura),
     dataHoraEncerramento: toIsoOrNull(data.dataHoraEncerramento),
     acesso: toAcesso(data.acesso),

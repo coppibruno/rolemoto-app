@@ -28,14 +28,23 @@ import {
   tituloCurto,
 } from "./texto-sugestao-evento";
 import type {SugestaoEventoNova} from "../../types/sugestao-evento";
+import {
+  executarRodadaInstagram,
+  type ResultadoInstagram,
+} from "./buscar-instagram";
+import {InstagramRedeError, MotoClubConsultaError} from "./erros";
 
 export const TETO_GRAVACOES = 8;
 const PAUSA_GEO_MS = 1100;
 
-export type ResultadoBuscaEventos = {
+type ResultadoMotoClub = {
   lidas: number;
   gravadas: number;
   ignoradas: number;
+};
+
+export type ResultadoBuscaEventos = ResultadoMotoClub & {
+  instagram: ResultadoInstagram;
 };
 
 const pausa = (ms: number): Promise<void> =>
@@ -208,7 +217,7 @@ const montar = (
   };
 };
 
-export const executarBuscaSugestoesEvento = async (): Promise<ResultadoBuscaEventos> => {
+const executarRodadaMotoClub = async (): Promise<ResultadoMotoClub> => {
   const html = await buscarAgendaMotoClub();
   const cards = parsearAgendaMotoClub(html);
   const agora = new Date();
@@ -288,6 +297,52 @@ export const executarBuscaSugestoesEvento = async (): Promise<ResultadoBuscaEven
     lidas: cards.length,
     gravadas,
     ignoradas: Math.max(0, cards.length - gravadas),
+  };
+  log.info("SugestaoEvento", "Rodada do MotoClub concluída", resultado);
+  return resultado;
+};
+
+const instagramVazio = (): ResultadoInstagram => ({
+  lidas: 0,
+  gravadas: 0,
+  ignoradas: 0,
+  bloqueada: false,
+});
+
+export const executarBuscaSugestoesEvento = async (): Promise<ResultadoBuscaEventos> => {
+  let moto: ResultadoMotoClub | null = null;
+  let erroMoto = false;
+  try {
+    moto = await executarRodadaMotoClub();
+  } catch (error) {
+    if (!(error instanceof MotoClubConsultaError)) {
+      throw error;
+    }
+    erroMoto = true;
+    log.error("SugestaoEvento", "Agenda falhou", erroDe(error));
+  }
+
+  let instagram = instagramVazio();
+  let erroRede = false;
+  try {
+    instagram = await executarRodadaInstagram();
+  } catch (error) {
+    if (!(error instanceof InstagramRedeError)) {
+      throw error;
+    }
+    erroRede = true;
+    log.error("SugestaoEvento", "Instagram falhou", erroDe(error));
+  }
+
+  if (erroMoto && erroRede) {
+    throw new MotoClubConsultaError();
+  }
+
+  const resultado = {
+    lidas: moto?.lidas ?? 0,
+    gravadas: moto?.gravadas ?? 0,
+    ignoradas: moto?.ignoradas ?? 0,
+    instagram,
   };
   log.info("SugestaoEvento", "Rodada concluída", resultado);
   return resultado;

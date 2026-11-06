@@ -51,6 +51,62 @@ const baixar = async (
   return {bytes, contentType};
 };
 
+const publicar = async (
+  id: string,
+  arquivo: {bytes: Buffer; contentType: string},
+): Promise<string> => {
+  const token = randomUUID();
+  const caminho = `eventos/capas/sugestoes/${id}.jpg`;
+  await adminStorage.bucket(BUCKET).file(caminho).save(arquivo.bytes, {
+    resumable: false,
+    metadata: {
+      contentType: arquivo.contentType,
+      metadata: {firebaseStorageDownloadTokens: token},
+    },
+  });
+  const encoded = encodeURIComponent(caminho);
+  const emulador = process.env.FIREBASE_STORAGE_EMULATOR_HOST?.trim();
+  if (emulador) {
+    const host = emulador
+      .replace(/^https?:\/\//, "")
+      .replace(/^0\.0\.0\.0/, "127.0.0.1");
+    return `http://${host}/v0/b/${BUCKET}/o/${encoded}?alt=media&token=${token}`;
+  }
+  return [
+    "https://firebasestorage.googleapis.com/v0/b/",
+    BUCKET,
+    "/o/",
+    encoded,
+    "?alt=media&token=",
+    token,
+  ].join("");
+};
+
+export const baixarImagemEvento = async (
+  url: string,
+): Promise<{bytes: Buffer; contentType: string} | null> => {
+  if (!url.startsWith("https://")) {
+    return null;
+  }
+  try {
+    return await baixar(url);
+  } catch {
+    return null;
+  }
+};
+
+/** Grava bytes já baixados. Falha devolve string vazia. */
+export const gravarFotoEvento = async (
+  id: string,
+  arquivo: {bytes: Buffer; contentType: string},
+): Promise<string> => {
+  try {
+    return await publicar(id, arquivo);
+  } catch {
+    return "";
+  }
+};
+
 export const salvarFotoEvento = async (
   id: string,
   urlOrigem: string,
@@ -63,31 +119,7 @@ export const salvarFotoEvento = async (
     if (!arquivo) {
       return urlOrigem;
     }
-    const token = randomUUID();
-    const caminho = `eventos/capas/sugestoes/${id}.jpg`;
-    await adminStorage.bucket(BUCKET).file(caminho).save(arquivo.bytes, {
-      resumable: false,
-      metadata: {
-        contentType: arquivo.contentType,
-        metadata: {firebaseStorageDownloadTokens: token},
-      },
-    });
-    const encoded = encodeURIComponent(caminho);
-    const emulador = process.env.FIREBASE_STORAGE_EMULATOR_HOST?.trim();
-    if (emulador) {
-      const host = emulador
-        .replace(/^https?:\/\//, "")
-        .replace(/^0\.0\.0\.0/, "127.0.0.1");
-      return `http://${host}/v0/b/${BUCKET}/o/${encoded}?alt=media&token=${token}`;
-    }
-    return [
-      "https://firebasestorage.googleapis.com/v0/b/",
-      BUCKET,
-      "/o/",
-      encoded,
-      "?alt=media&token=",
-      token,
-    ].join("");
+    return await publicar(id, arquivo);
   } catch {
     return urlOrigem;
   }

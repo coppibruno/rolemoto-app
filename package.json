@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "emulators": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,storage",
+    "emulators": "mkdir -p .emulator-data && npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,storage --import=.emulator-data --export-on-exit=.emulator-data",
     "emulators:all": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,firestore,auth,storage",
     "storage:cors": "gcloud storage buckets update gs://rolemoto-bc47f.firebasestorage.app --cors-file=cors.json --project=rolemoto-bc47f"
   },

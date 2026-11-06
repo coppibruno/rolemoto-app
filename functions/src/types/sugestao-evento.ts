@@ -3,7 +3,15 @@ import type {Localizacao} from "./role";
 
 export type StatusSugestaoEvento = "pendente" | "aprovada" | "recusada";
 
-export type FonteSugestaoEvento = "motoclub";
+export type FonteSugestaoEvento = "motoclub" | "instagram";
+
+/** Pin no Sul, ou lat/lng nulos quando a leitura não achou o ponto. */
+export type LocalSugestaoEvento = {
+  lat: number | null;
+  lng: number | null;
+  endereco: string;
+  nome: string;
+};
 
 export interface SugestaoEvento {
   id: string;
@@ -12,7 +20,7 @@ export interface SugestaoEvento {
   urlOrigem: string;
   titulo: string;
   tipoSugerido: TipoEvento;
-  local: Localizacao;
+  local: LocalSugestaoEvento;
   dataHoraAbertura: string;
   dataHoraEncerramento: string | null;
   acesso: AcessoEvento;

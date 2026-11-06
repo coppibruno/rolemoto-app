@@ -18,3 +18,19 @@ export class SugestaoEventoJaDecididaError extends Error {
     this.name = "SugestaoEventoJaDecididaError";
   }
 }
+
+export class InstagramBloqueadoError extends Error {
+  constructor(
+    mensagem = "Instagram sem permissão de conteúdo público",
+  ) {
+    super(mensagem);
+    this.name = "InstagramBloqueadoError";
+  }
+}
+
+export class InstagramRedeError extends Error {
+  constructor() {
+    super("Falha ao consultar o Instagram");
+    this.name = "InstagramRedeError";
+  }
+}

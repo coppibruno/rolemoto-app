@@ -5,6 +5,7 @@ import { useCartaoSugestaoEvento } from "../hooks/useCartaoSugestaoEvento";
 import { CamposSugestaoEvento } from "./CamposSugestaoEvento";
 import { ChipsAcessoEvento } from "./ChipsAcessoEvento";
 import { ChipsTipoEvento } from "./ChipsTipoEvento";
+import { ComplementoInstagram } from "./ComplementoInstagram";
 import styles from "../sugestoes-eventos.module.css";
 
 type Props = {
@@ -15,8 +16,10 @@ type Props = {
 export const CartaoSugestaoEvento = ({ sugestao, onDecidida }: Props) => {
   const estado = useCartaoSugestaoEvento(sugestao, onDecidida);
   const travado = estado.enviando !== null;
-  const maps =
-    `https://www.google.com/maps/search/?api=1&query=${sugestao.local.lat},${sugestao.local.lng}`;
+  const temPin = sugestao.local.lat != null && sugestao.local.lng != null;
+  const maps = temPin
+    ? `https://www.google.com/maps/search/?api=1&query=${sugestao.local.lat},${sugestao.local.lng}`
+    : "";
 
   return (
     <article className={styles.cartao}>
@@ -45,13 +48,16 @@ export const CartaoSugestaoEvento = ({ sugestao, onDecidida }: Props) => {
       ) : null}
       <ChipsTipoEvento valor={estado.tipo} onChange={estado.setTipo} desabilitado={travado} />
       <ChipsAcessoEvento valor={estado.acesso} onChange={estado.setAcesso} desabilitado={travado} />
+      <ComplementoInstagram idPrefix={sugestao.id} estado={estado} />
       {estado.erroData ? <p className={styles.aviso}>{estado.erroData}</p> : null}
       <a className={styles.linkMaps} href={sugestao.urlOrigem} target="_blank" rel="noopener noreferrer">
-        Abrir na agenda
+        {sugestao.fonte === "instagram" ? "Abrir no Instagram" : "Abrir na agenda"}
       </a>
-      <a className={styles.linkMaps} href={maps} target="_blank" rel="noopener noreferrer">
-        Abrir no Maps
-      </a>
+      {temPin ? (
+        <a className={styles.linkMaps} href={maps} target="_blank" rel="noopener noreferrer">
+          Abrir no Maps
+        </a>
+      ) : null}
       {estado.erro ? (
         <p className={styles.erro} role="alert">
           {estado.erro}

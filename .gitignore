@@ -29,6 +29,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# dados dos emuladores (Storage local)
+/.emulator-data/
+
 # env files
 .env
 .env*.local

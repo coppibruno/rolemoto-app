@@ -24,7 +24,10 @@ export const IntroSugestoesEventos = ({ buscando, resumo, erro, onBuscar }: Prop
       <button type="button" className={styles.buscar} onClick={onBuscar} disabled={buscando}>
         {buscando ? "Buscando…" : "Buscar agora"}
       </button>
-      <p className={styles.dica}>A rodada lê a agenda do MotoClub Brasil. O pin vem do endereço.</p>
+      <p className={styles.dica}>
+        A rodada lê a agenda do MotoClub e hashtags no Instagram. Sem pin no Sul, o card pede o
+        endereço.
+      </p>
       {resumo ? (
         <p className={styles.resumo} role="status">
           {resumo}

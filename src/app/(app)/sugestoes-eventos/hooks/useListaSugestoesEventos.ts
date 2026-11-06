@@ -52,10 +52,11 @@ export const useListaSugestoesEventos = () => {
     setResumoBusca(null);
     try {
       const resultado = await sugestoesEventosService.buscar();
+      const gravadas = resultado.gravadas + (resultado.instagram?.gravadas ?? 0);
+      const base =
+        gravadas > 0 ? `${gravadas} novos eventos` : "Nenhum evento novo nesta rodada";
       setResumoBusca(
-        resultado.gravadas > 0
-          ? `${resultado.gravadas} novos eventos`
-          : "Nenhum evento novo nesta rodada",
+        resultado.instagram?.bloqueada ? `${base}. Instagram sem acesso nesta rodada` : base,
       );
       recarregar();
     } catch (error) {

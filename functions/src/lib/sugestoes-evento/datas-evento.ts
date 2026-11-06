@@ -208,9 +208,9 @@ export const encerramentoValido = (
   return {iso: fimIso, limitado: false};
 };
 
-/** `motoclub_{slug}_{aaaa-mm-dd}` — o slug e a data são separados por `_`. */
+/** `motoclub_{slug}_{aaaa-mm-dd}` ou `ig_{mediaId}`. */
 export const ID_SUGESTAO_EVENTO_RE =
-  /^motoclub_[a-z0-9-]{8,120}_\d{4}-\d{2}-\d{2}$/;
+  /^(?:motoclub_[a-z0-9-]{8,120}_\d{4}-\d{2}-\d{2}|ig_[0-9]{5,32})$/;
 
 export const idSugestaoEvento = (slug: string, inicioIso: string): string => {
   const ymd = new Intl.DateTimeFormat("en-CA", {
