@@ -13,6 +13,7 @@ import {
   type EventoParaDedupe,
 } from "./escolher-sugestoes-evento";
 import {InstagramBloqueadoError} from "./erros";
+import {garantirTokenInstagram} from "./garantir-token-instagram";
 import {geocodificarConsulta, type PontoGeo} from "./geocodificar-sugestao";
 import {HASHTAGS_INSTAGRAM} from "./hashtags-instagram";
 import {
@@ -285,14 +286,20 @@ const gravarMidias = async (
 };
 
 export const executarRodadaInstagram = async (): Promise<ResultadoInstagram> => {
-  const token = (process.env.INSTAGRAM_ACCESS_TOKEN ?? "").trim();
   const chave = (process.env.GEMINI_API_KEY ?? "").trim();
-  if (!token || !chave) {
-    log.info("SugestaoEvento", "Instagram bloqueado", {
-      semToken: !token,
-      semGemini: !chave,
-    });
+  if (!chave) {
+    log.info("SugestaoEvento", "Instagram bloqueado", {semGemini: true});
     return vazio(true);
+  }
+  let token = "";
+  try {
+    token = await garantirTokenInstagram();
+  } catch (error) {
+    if (error instanceof InstagramBloqueadoError) {
+      log.info("SugestaoEvento", "Instagram sem permissão", erroDe(error));
+      return vazio(true);
+    }
+    throw error;
   }
   try {
     const midias = await listarMidiasInstagram(token, HASHTAGS_INSTAGRAM);

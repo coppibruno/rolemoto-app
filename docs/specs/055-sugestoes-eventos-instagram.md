@@ -58,7 +58,7 @@ Uma rodada lê posts públicos de uma lista fechada de hashtags, na API oficial 
 |---------|---------|
 | Fonte | Instagram API com login do Facebook. Host `graph.facebook.com`. Versão fixa no client (`v27.0`, a mesma do painel) |
 | Conta | `@rolemotobr` profissional, ligado à Página. O `user_id` da chamada é o id em `instagram_business_account` |
-| Segredo | `INSTAGRAM_ACCESS_TOKEN` em `functions/.env` e, em produção, secret do Firebase. Token de longa duração (cerca de 60 dias). Permissões do token: `instagram_basic`, `pages_show_list`, `pages_read_engagement`. `business_management` não entra |
+| Segredo | `INSTAGRAM_ACCESS_TOKEN` é a semente (pode ser curta). `INSTAGRAM_APP_ID` e `INSTAGRAM_APP_SECRET` trocam essa semente por um token de usuário de cerca de 60 dias e gravam o vigente em `config/instagram`. Nos últimos 14 dias a rodada pede outro, enquanto o atual ainda vale. Se `fb_exchange_token` não estender, usa `INSTAGRAM_OAUTH_REDIRECT_URI` (o mesmo redirect do app). Token já vencido não renova: a semente troca uma vez. Permissões: `instagram_basic`, `pages_show_list`, `pages_read_engagement`. `business_management` não entra. Token de Página sem prazo não serve: a hashtag exige token de usuário |
 | Trava da Meta | O recurso **Instagram Public Content Access** precisa estar aprovado. Sem ele, a rodada do Instagram registra `bloqueada: true`, grava zero e o MotoClub segue |
 | Janela | `recent_media` só vê 24 horas. O cron diário é o que não perde o dia. **Buscar agora** repete a mesma janela |
 | Cota | Até 30 hashtags distintas em 7 dias, por conta. Repetir as mesmas não gasta de novo. A lista do arquivo é a cota inteira |
@@ -158,7 +158,7 @@ O JSON atual permanece (`lidas`, `gravadas`, `ignoradas`) para o MotoClub. Entra
 }
 ```
 
-`bloqueada: true` quando falta `INSTAGRAM_ACCESS_TOKEN`, falta `GEMINI_API_KEY`, ou a Meta responde sem permissão de conteúdo público. HTTP 200 se o MotoClub concluiu. As duas fontes falhando de rede respondem 502, como a agenda já responde hoje.
+`bloqueada: true` quando falta `INSTAGRAM_ACCESS_TOKEN`, falta `GEMINI_API_KEY`, o token venceu e não dá para renovar, ou a Meta responde sem permissão de conteúdo público. HTTP 200 se o MotoClub concluiu. As duas fontes falhando de rede respondem 502, como a agenda já responde hoje.
 
 ---
 
@@ -185,7 +185,7 @@ Recusar não muda.
 
 ## 5. Fora desta spec
 
-- Renovar o token sozinho. Quando expirar, a rodada volta `bloqueada` e alguém gera outro no painel.
+- Token de Página sem data de validade. A busca de hashtag pede token de usuário, então o prazo de 60 dias continua e a rodada é que renova.
 - Pedido de revisão na Meta. É passo de conta, anterior ao SE2 responder com posts.
 - Marcações em que citam `@rolemotobr`. Outra fonte, se a hashtag não bastar.
 - Story, reel sem legenda útil e conta pessoal.

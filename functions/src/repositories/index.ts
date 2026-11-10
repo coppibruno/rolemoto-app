@@ -84,6 +84,10 @@ import type {ConviteEventoRepository} from "./interfaces/convite-evento.reposito
 import {
   FirestoreConviteEventoRepository,
 } from "./firestore/firestore-convite-evento.repository";
+import type {TokenInstagramRepository} from "./interfaces/token-instagram.repository";
+import {
+  FirestoreTokenInstagramRepository,
+} from "./firestore/firestore-token-instagram.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -149,3 +153,6 @@ export const seguirRepository: SeguirRepository =
 
 export const conviteEventoRepository: ConviteEventoRepository =
   new FirestoreConviteEventoRepository();
+
+export const tokenInstagramRepository: TokenInstagramRepository =
+  new FirestoreTokenInstagramRepository();

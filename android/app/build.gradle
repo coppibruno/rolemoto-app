@@ -18,8 +18,11 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Play exige ofuscação, otimização e redução de DEX >= 25% (fev/2027).
+            // proguard-android.txt traz -dontoptimize e deixa a otimização em zero.
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

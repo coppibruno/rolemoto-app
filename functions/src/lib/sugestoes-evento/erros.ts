@@ -34,3 +34,11 @@ export class InstagramRedeError extends Error {
     this.name = "InstagramRedeError";
   }
 }
+
+/** A Meta recusou a troca do token. A sessão ainda pode valer até o prazo. */
+export class RenovacaoTokenError extends Error {
+  constructor(mensagem: string) {
+    super(mensagem);
+    this.name = "RenovacaoTokenError";
+  }
+}
