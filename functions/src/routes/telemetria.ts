@@ -6,7 +6,9 @@ import {
   rateLimitPontoTelemetria,
 } from "../middleware/rate-limit";
 import {param} from "../lib/params";
+import {concederConquistas} from "../lib/conquistas";
 import {
+  parseAmostrasConquista,
   parseLimiteTelemetria,
   validarBodyRoleTelemetria,
 } from "../lib/role-telemetria";
@@ -165,7 +167,17 @@ telemetriaRouter.post("/", async (req: Request, res: Response) => {
       usuarioId: uid,
       ...validado.dados,
     });
-    res.status(201).json(criado);
+    const conquistas = await concederConquistas(
+      {
+        usuarioId: uid,
+        telemetriaId: criado.id,
+        tracado: validado.dados.tracado,
+        iniciadoEm: validado.dados.iniciadoEm,
+        encerradoEm: validado.dados.encerradoEm,
+      },
+      parseAmostrasConquista((req.body as Record<string, unknown>)?.amostras),
+    );
+    res.status(201).json({...criado, conquistas});
   } catch (error) {
     responderErro(res, error);
   }

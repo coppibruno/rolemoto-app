@@ -66,5 +66,12 @@ service firebase.storage {
         && request.auth.uid == uid
         && imagemValida();
     }
+
+    match /posts/{uid}/{arquivo} {
+      allow read: if autenticado();
+      allow write: if autenticado()
+        && request.auth.uid == uid
+        && imagemValida();
+    }
   }
 }

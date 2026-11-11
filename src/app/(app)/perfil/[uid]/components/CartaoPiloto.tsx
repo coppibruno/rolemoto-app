@@ -7,6 +7,7 @@ import {
 } from "@/components/perfil/constants-tipo-moto";
 import type { PerfilPublico } from "@/types/perfil-publico";
 import type { Pilotagem } from "@/types/user";
+import { FaixaConquistas } from "./FaixaConquistas";
 import { FaixaSelos } from "./FaixaSelos";
 import styles from "../perfil-publico.module.css";
 
@@ -114,6 +115,12 @@ export const CartaoPiloto = ({ perfil }: Props) => {
         <>
           <div className={styles.divisor} role="presentation" />
           <FaixaSelos selos={perfil.selos ?? []} />
+        </>
+      ) : null}
+      {(perfil.conquistas ?? []).length > 0 ? (
+        <>
+          <div className={styles.divisor} role="presentation" />
+          <FaixaConquistas conquistas={perfil.conquistas ?? []} />
         </>
       ) : null}
     </section>

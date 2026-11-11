@@ -1,0 +1,302 @@
+.tela {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.topo {
+  display: grid;
+  grid-template-columns: var(--touch-min) 1fr var(--touch-min);
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
+}
+
+.icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+span.icone {
+  background: transparent;
+}
+
+.titulo {
+  margin: 0;
+  text-align: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.corpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 8px var(--gutter-md) 24px;
+  overflow-y: auto;
+}
+
+.escolha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.opcaoFoto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  aspect-ratio: 1;
+  border: 1.5px dashed var(--outline);
+  border-radius: 1.5rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.opcaoFoto .material-symbols-outlined {
+  font-size: 36px;
+  color: var(--primary-container);
+}
+
+.previa {
+  display: block;
+  width: 100%;
+  max-height: 52vh;
+  object-fit: contain;
+  border-radius: 1rem;
+  background: var(--surface-container-lowest);
+}
+
+.campoLegenda {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rotulo {
+  color: var(--on-surface-variant);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.legenda {
+  width: 100%;
+  min-height: 88px;
+  padding: 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font: inherit;
+  font-size: 16px;
+  resize: vertical;
+}
+
+.legenda::placeholder {
+  color: var(--outline);
+}
+
+.contador {
+  align-self: flex-end;
+  color: var(--outline);
+  font-size: 12px;
+}
+
+.marcar,
+.chip,
+.interruptor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.marcar {
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+
+.chip {
+  padding-left: 12px;
+}
+
+.chip .material-symbols-outlined {
+  color: var(--primary-container);
+}
+
+.chipNome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tirar {
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: none;
+  background: transparent;
+  color: var(--primary-container);
+  font: inherit;
+  cursor: pointer;
+}
+
+.interruptor {
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.interruptorTexto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dica {
+  color: var(--on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.trilho,
+.trilhoLigado {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--surface-container-lowest);
+  transition: background 0.15s ease;
+}
+
+.trilhoLigado {
+  background: var(--primary-container);
+}
+
+.bolinha {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--on-surface);
+  transition: transform 0.15s ease;
+}
+
+.trilhoLigado .bolinha {
+  transform: translateX(18px);
+}
+
+.fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.rodape {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 8px var(--gutter-md) calc(var(--gutter-md) + env(safe-area-inset-bottom, 0px));
+}
+
+.erro {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.publicar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+  cursor: pointer;
+}
+
+.publicar:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.icone:focus-visible,
+.opcaoFoto:focus-visible,
+.legenda:focus-visible,
+.marcar:focus-visible,
+.tirar:focus-visible,
+.interruptor:focus-visible,
+.publicar:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.marcar:disabled,
+.tirar:disabled,
+.interruptor:disabled,
+.opcaoFoto:disabled,
+.icone:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

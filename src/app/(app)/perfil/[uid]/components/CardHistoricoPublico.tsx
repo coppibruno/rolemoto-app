@@ -24,7 +24,7 @@ export const CardHistoricoPublicoRole = ({ item }: PropsRole) => {
     <Link
       href={hrefCardHistoricoPublicoRole(item)}
       className={styles.cardHistorico}
-      aria-label={`Abrir ${item.titulo}`}
+      aria-label={`Ver detalhes de ${item.titulo}`}
     >
       <div className={styles.cardHistoricoTopo}>
         <div>

@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { AbasConteudoPerfil } from "../../components/AbasConteudoPerfil";
+import { GradeFotos } from "../../components/GradeFotos";
 import { useHistoricoPublico } from "../hooks/useHistoricoPublico";
 import { usePerfilPublico } from "../hooks/usePerfilPublico";
 import { CabecalhoVisaoComunitaria } from "./CabecalhoVisaoComunitaria";
@@ -53,17 +55,22 @@ export const TelaPerfilPublico = ({ uid }: Props) => {
     <div className={styles.tela}>
       <CabecalhoVisaoComunitaria uid={perfil.uid} apelido={perfil.apelido} />
       <CartaoPiloto perfil={perfil} />
-      <HistoricoPublicoSecao
-        historico={historico.historico}
-        aba={historico.aba}
-        filtroTipo={historico.filtroTipo}
-        itens={historico.itens}
-        telemetrias={historico.telemetrias}
-        modoTelemetria={historico.modoTelemetria}
-        carregando={historico.carregando}
-        erro={historico.erro}
-        onAba={historico.setAba}
-        onFiltroTipo={historico.setFiltroTipo}
+      <AbasConteudoPerfil
+        fotos={<GradeFotos uid={perfil.uid} propria={false} />}
+        historico={
+          <HistoricoPublicoSecao
+            historico={historico.historico}
+            aba={historico.aba}
+            filtroTipo={historico.filtroTipo}
+            itens={historico.itens}
+            telemetrias={historico.telemetrias}
+            modoTelemetria={historico.modoTelemetria}
+            carregando={historico.carregando}
+            erro={historico.erro}
+            onAba={historico.setAba}
+            onFiltroTipo={historico.setFiltroTipo}
+          />
+        }
       />
     </div>
   );

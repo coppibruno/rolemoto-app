@@ -19,6 +19,7 @@ export const MapaSelecaoGoogle = ({
   className,
   hintVazio = "Toque no mapa ou busque o endereço",
   hintAjuste = "Arraste o alfinete para ajustar o ponto",
+  raioMetros,
 }: PropsMapaSelecaoLocal) => {
   const { containerRef, pronto, falhou } = useMapaSelecaoGoogle({
     lat,
@@ -26,6 +27,7 @@ export const MapaSelecaoGoogle = ({
     vooId,
     onMoverPonto,
     desabilitado,
+    raioMetros,
   });
 
   if (falhou) {
@@ -39,6 +41,7 @@ export const MapaSelecaoGoogle = ({
         className={className}
         hintVazio={hintVazio}
         hintAjuste={hintAjuste}
+        raioMetros={raioMetros}
       />
     );
   }

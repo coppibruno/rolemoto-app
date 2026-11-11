@@ -1,11 +1,11 @@
 import { ApiError } from "@/lib/api";
 import { isErroAuth, isFalhaDeRede } from "@/lib/telemetria/falha-rede";
 import { obterAdapterGps } from "@/lib/telemetria/telemetria-gps.adapter";
-import type { RoleTelemetria } from "@/types/role-telemetria";
+import type { RoleTelemetriaCriada } from "@/types/role-telemetria";
 import { telemetriaService } from "../../telemetria/services/telemetria.service";
 
 export type ResultadoSyncResumo =
-  | { tipo: "ok"; criado: RoleTelemetria }
+  | { tipo: "ok"; criado: RoleTelemetriaCriada }
   | { tipo: "vazio" }
   | { tipo: "rede" }
   | { tipo: "auth" }

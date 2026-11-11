@@ -1,10 +1,11 @@
-import type {DocumentSnapshot} from "firebase-admin/firestore";
+import type {DocumentSnapshot, Query} from "firebase-admin/firestore";
 import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
 import type {
   AlbumStory,
   AlbumVisto,
   CorSelo,
+  ResultadoEncaminhar,
   StoryLocal,
   StoryLocalCreate,
   StoryVisto,
@@ -84,10 +85,38 @@ const toStory = (snap: DocumentSnapshot): StoryLocal => {
     localizacaoX: percentual(data.localizacaoX),
     localizacaoY: percentual(data.localizacaoY),
     localizacaoCor: corOuNull(data.localizacaoCor),
+    postId: textoOuNull(data.postId),
+    marcaTipo: data.marcaTipo === "local" || data.marcaTipo === "evento" ?
+      data.marcaTipo :
+      null,
+    marcaId: textoOuNull(data.marcaId),
     createdAt: toIso(data.createdAt),
     expiresAt: toIso(data.expiresAt),
   };
 };
+
+const paraDoc = (dados: StoryLocalCreate, agora: Timestamp) => ({
+  usuarioId: dados.usuarioId,
+  album: dados.album,
+  localId: dados.localId,
+  eventoId: dados.eventoId,
+  fotoUrl: dados.fotoUrl,
+  storagePath: dados.storagePath,
+  marcaX: dados.marcaX,
+  marcaY: dados.marcaY,
+  marcaCor: dados.marcaCor,
+  localizacaoNome: dados.localizacaoNome,
+  localizacaoLat: dados.localizacaoLat,
+  localizacaoLng: dados.localizacaoLng,
+  localizacaoX: dados.localizacaoX,
+  localizacaoY: dados.localizacaoY,
+  localizacaoCor: dados.localizacaoCor,
+  postId: dados.postId ?? null,
+  marcaTipo: dados.marcaTipo ?? null,
+  marcaId: dados.marcaId ?? null,
+  createdAt: agora,
+  expiresAt: Timestamp.fromMillis(agora.toMillis() + JANELA_MS),
+});
 
 const toVisto = (snap: DocumentSnapshot): StoryVisto => {
   const data = snap.data() ?? {};
@@ -104,29 +133,48 @@ const toVisto = (snap: DocumentSnapshot): StoryVisto => {
 
 export class FirestoreStoryLocalRepository implements StoryLocalRepository {
   async criar(dados: StoryLocalCreate): Promise<StoryLocal> {
-    const agora = Timestamp.now();
-    const expiresAt = Timestamp.fromMillis(agora.toMillis() + JANELA_MS);
-    const ref = await firestore.collection(COLECAO).add({
-      usuarioId: dados.usuarioId,
-      album: dados.album,
-      localId: dados.localId,
-      eventoId: dados.eventoId,
-      fotoUrl: dados.fotoUrl,
-      storagePath: dados.storagePath,
-      marcaX: dados.marcaX,
-      marcaY: dados.marcaY,
-      marcaCor: dados.marcaCor,
-      localizacaoNome: dados.localizacaoNome,
-      localizacaoLat: dados.localizacaoLat,
-      localizacaoLng: dados.localizacaoLng,
-      localizacaoX: dados.localizacaoX,
-      localizacaoY: dados.localizacaoY,
-      localizacaoCor: dados.localizacaoCor,
-      createdAt: agora,
-      expiresAt,
-    });
+    const ref = await firestore.collection(COLECAO).add(paraDoc(dados, Timestamp.now()));
     const criado = await this.buscarPorId(ref.id);
     return criado as StoryLocal;
+  }
+
+  async listarCopiasAtivas(
+    usuarioId: string,
+    postId: string,
+    agora: Date,
+  ): Promise<StoryLocal[]> {
+    const snap = await this.consultaCopias(usuarioId, postId, agora).get();
+    return snap.docs.map(toStory);
+  }
+
+  async encaminharPost(
+    dados: StoryLocalCreate & {postId: string},
+    tetoPerfil: number,
+  ): Promise<ResultadoEncaminhar> {
+    const novoRef = firestore.collection(COLECAO).doc();
+    return firestore.runTransaction(async (tx) => {
+      const agora = Timestamp.now();
+      const copias = await tx.get(
+        this.consultaCopias(dados.usuarioId, dados.postId, agora.toDate()).limit(1),
+      );
+      const existente = copias.docs[0];
+      if (existente) {
+        return {tipo: "existente", storyId: existente.id};
+      }
+      const doUsuario = await tx.get(firestore
+        .collection(COLECAO)
+        .where("usuarioId", "==", dados.usuarioId)
+        .limit(50));
+      const desde = agora.toMillis() - JANELA_MS;
+      const noPerfil = doUsuario.docs.map(toStory).filter((story) =>
+        story.album === "perfil" && Date.parse(story.createdAt) > desde,
+      );
+      if (noPerfil.length >= tetoPerfil) {
+        return {tipo: "teto"};
+      }
+      tx.create(novoRef, paraDoc(dados, agora));
+      return {tipo: "criada", storyId: novoRef.id};
+    });
   }
 
   async buscarPorId(id: string): Promise<StoryLocal | null> {
@@ -268,6 +316,14 @@ export class FirestoreStoryLocalRepository implements StoryLocalRepository {
         updatedAt: FieldValue.serverTimestamp(),
       }, {merge: true});
     });
+  }
+
+  private consultaCopias(usuarioId: string, postId: string, agora: Date): Query {
+    return firestore
+      .collection(COLECAO)
+      .where("usuarioId", "==", usuarioId)
+      .where("postId", "==", postId)
+      .where("expiresAt", ">", Timestamp.fromDate(agora));
   }
 
   private async listarAtivas(

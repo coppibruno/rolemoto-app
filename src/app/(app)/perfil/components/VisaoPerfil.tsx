@@ -2,11 +2,13 @@
 
 import type { Usuario } from "@/types/user";
 import { CartaoPiloto } from "../[uid]/components/CartaoPiloto";
+import { AbasConteudoPerfil } from "./AbasConteudoPerfil";
 import { BotaoCriarSenha } from "./BotaoCriarSenha";
 import { BotaoExcluirConta } from "./BotaoExcluirConta";
 import { BotaoInstalarApp } from "./BotaoInstalarApp";
 import { BotaoSair } from "./BotaoSair";
 import { CardCompletarPerfil } from "./CardCompletarPerfil";
+import { GradeFotos } from "./GradeFotos";
 import { HistoricoPistas } from "./HistoricoPistas";
 import styles from "../perfil.module.css";
 
@@ -28,7 +30,10 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
         </span>
         Editar perfil
       </button>
-      <HistoricoPistas />
+      <AbasConteudoPerfil
+        fotos={<GradeFotos uid={usuario.uid} propria />}
+        historico={<HistoricoPistas />}
+      />
       <div className={styles.acoes}>
         <BotaoInstalarApp />
         <BotaoCriarSenha />

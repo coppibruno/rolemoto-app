@@ -6,8 +6,11 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {camposBusca, camposBuscaIguais} from "../lib/busca-piloto";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
+import {conquistasDoPerfil, semFalhar} from "../lib/conquistas";
+import {apagarPostsDoUsuario} from "../lib/post-foto-publico";
 import {apagarStoriesDoUsuario} from "../lib/story-local";
 import {
+  conquistaRepository,
   conviteEventoRepository,
   dispositivoRepository,
   seguirRepository,
@@ -15,6 +18,7 @@ import {
 } from "../repositories";
 import {historicoRouter} from "./historico";
 import type {
+  PerfilCliente,
   Pilotagem,
   TipoMoto,
   Usuario,
@@ -31,9 +35,12 @@ const sincronizarCamposBusca = async (perfil: Usuario): Promise<void> => {
   await usuarioRepository.gravarCamposBusca(perfil.uid, proximo);
 };
 
-const paraPerfilCliente = async (usuario: Usuario) => ({
+const paraPerfilCliente = async (usuario: Usuario): Promise<PerfilCliente> => ({
   ...usuario,
   selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
+  conquistas: await semFalhar("Perfil", usuario.uid, () =>
+    conquistasDoPerfil(usuario.uid),
+  ),
 });
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
@@ -348,6 +355,12 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
     }
 
     try {
+      await apagarPostsDoUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover fotos do perfil", {uid, ...erroDe(error)});
+    }
+
+    try {
       await seguirRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover vínculos de seguir", {
@@ -360,6 +373,15 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await conviteEventoRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover convites de evento", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await conquistaRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover conquistas", {
         uid,
         ...erroDe(error),
       });

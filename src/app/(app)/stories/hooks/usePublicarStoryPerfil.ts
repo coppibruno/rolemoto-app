@@ -64,7 +64,7 @@ const mensagem = (e: unknown): string => {
   return e instanceof ApiError ? e.message : "Não foi possível postar a foto.";
 };
 
-export const useMencoesStory = (aberto: boolean) => {
+export const useMencoesStory = (aberto: boolean, comPerto = true) => {
   const [opcoes, setOpcoes] = useState<MencaoOpcao[]>([]);
   const [perto, setPerto] = useState<MencaoOpcao | null>(null);
 
@@ -106,6 +106,12 @@ export const useMencoesStory = (aberto: boolean) => {
       })
       .catch(() => undefined);
 
+    if (!comPerto) {
+      return () => {
+        cancelado = true;
+      };
+    }
+
     navigator.geolocation?.getCurrentPosition((pos) => {
       presencaService
         .proximo(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy)
@@ -130,7 +136,7 @@ export const useMencoesStory = (aberto: boolean) => {
     return () => {
       cancelado = true;
     };
-  }, [aberto]);
+  }, [aberto, comPerto]);
 
   return { opcoes, perto };
 };

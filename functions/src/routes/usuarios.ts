@@ -7,8 +7,10 @@ import {ordenarBusca, termoBusca} from "../lib/busca-piloto";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {erroDe, log} from "../lib/log";
 import {notificarNovoSeguidor} from "../lib/notificacoes";
+import {paraItemGrade} from "../lib/post-foto-publico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
+import {conquistasPublicas, semFalhar} from "../lib/conquistas";
 import {
   apagarStoryPerfil,
   contarStoriesUsuario,
@@ -16,6 +18,7 @@ import {
   marcarVistoPerfil,
 } from "../lib/story-local";
 import {
+  postFotoRepository,
   roleTelemetriaRepository,
   seguirRepository,
   usuarioRepository,
@@ -30,6 +33,7 @@ import type {PerfilPublico, Usuario} from "../types/usuario";
  * GET /usuarios/busca
  * GET /usuarios/:uid
  * GET /usuarios/:uid/stories
+ * GET /usuarios/:uid/posts
  * GET /usuarios/:uid/historico
  * GET /usuarios/:uid/telemetria
  * GET /usuarios/:uid/seguindo
@@ -108,6 +112,9 @@ const paraPerfilPublico = async (
     cidade: usuario.cidade,
     garupaFrequente: usuario.garupaFrequente,
     selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
+    conquistas: await semFalhar("Usuarios", usuario.uid, () =>
+      conquistasPublicas(usuario.uid),
+    ),
     seguindo: usuario.seguindo,
     seguidores: usuario.seguidores,
     seguidoPorMim: vinculo.seguidoPorMim,
@@ -186,6 +193,28 @@ usuariosRouter.get("/:uid/historico", async (req: Request, res: Response) => {
     }
 
     res.json(await carregarHistoricoPublico(uid));
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+usuariosRouter.get("/:uid/posts", async (req: Request, res: Response) => {
+  try {
+    const uid = lerUid(req);
+    const perfil = uid ? await usuarioRepository.buscarPorId(uid) : null;
+    if (!perfil) {
+      res.status(404).json({erro: "Perfil não encontrado"});
+      return;
+    }
+    const pagina = await postFotoRepository.listarPorUsuario(uid, cursorDaQuery(req));
+    if (!pagina.ok) {
+      res.status(400).json({erro: "cursor inválido"});
+      return;
+    }
+    res.json({
+      itens: pagina.itens.map(paraItemGrade),
+      proximoCursor: pagina.proximoCursor,
+    });
   } catch (error) {
     responderErro(res, error);
   }

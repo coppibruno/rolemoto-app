@@ -21,6 +21,7 @@ type Props = {
   onSoltar: (evento: ReactPointerEvent<HTMLDivElement>) => void;
   onCancelar: () => void;
   onMarca: (mencao: MencaoStory) => void;
+  onPublicacao: (publicacao: NonNullable<StoryPublica["publicacao"]>) => void;
 };
 
 export const PalcoFotoStory = ({
@@ -30,8 +31,10 @@ export const PalcoFotoStory = ({
   onSoltar,
   onCancelar,
   onMarca,
+  onPublicacao,
 }: Props) => {
   const mencao = story.mencao;
+  const publicacao = story.publicacao ?? null;
   const lugar = story.localizacao;
   const corMarca: CorSelo = story.marcaCor ?? "neutro";
   const corLugar: CorSelo = lugar?.cor ?? "neutro";
@@ -141,6 +144,28 @@ export const PalcoFotoStory = ({
           </span>
           {lugar.nome}
         </a>
+      ) : null}
+      {pronta && publicacao ? (
+        <button
+          type="button"
+          className={
+            lugar && !posicaoLugar
+              ? `${styles.verPublicacao} ${styles.verPublicacaoAcima}`
+              : styles.verPublicacao
+          }
+          aria-label="Ver publicação"
+          onPointerDown={(evento) => evento.stopPropagation()}
+          onPointerUp={(evento) => evento.stopPropagation()}
+          onClick={(evento) => {
+            evento.stopPropagation();
+            onPublicacao(publicacao);
+          }}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            grid_view
+          </span>
+          Ver publicação
+        </button>
       ) : null}
     </div>
   );

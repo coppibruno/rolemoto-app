@@ -1,3 +1,5 @@
+import type {PontoGps} from "./calcular-metricas-telemetria";
+import type {AmostraConquista} from "../types/conquista";
 import type {
   ItemHistoricoTelemetria,
   PontoTelemetria,
@@ -198,6 +200,64 @@ export const paraItemHistoricoTelemetria = (
   encerradoEm: doc.encerradoEm,
   publica: doc.publica,
 });
+
+export const MAX_AMOSTRAS_CONQUISTA = 6;
+export const MAX_PONTOS_AMOSTRA = 120;
+const PROVIDER_MAX = 16;
+const CONQUISTA_ID_MAX = 128;
+
+const numeroOuNull = (valor: unknown): number | null =>
+  isNumeroFinito(valor) ? valor : null;
+
+const parsePontoAmostra = (valor: unknown): PontoGps | null => {
+  if (!valor || typeof valor !== "object") return null;
+  const o = valor as Record<string, unknown>;
+  if (
+    !isNumeroFinito(o.lat) || Math.abs(o.lat) > 90 ||
+    !isNumeroFinito(o.lng) || Math.abs(o.lng) > 180 ||
+    !isNumeroFinito(o.t)
+  ) {
+    return null;
+  }
+  const provider =
+    typeof o.provider === "string" && o.provider.length <= PROVIDER_MAX ?
+      o.provider :
+      null;
+  return {
+    lat: o.lat,
+    lng: o.lng,
+    t: o.t,
+    speed: numeroOuNull(o.speed),
+    accuracy: numeroOuNull(o.accuracy),
+    provider,
+  };
+};
+
+const parseAmostra = (valor: unknown): AmostraConquista | null => {
+  if (!valor || typeof valor !== "object") return null;
+  const o = valor as Record<string, unknown>;
+  const conquistaId = typeof o.conquistaId === "string" ? o.conquistaId.trim() : "";
+  if (!conquistaId || conquistaId.length > CONQUISTA_ID_MAX || !Array.isArray(o.pontos)) {
+    return null;
+  }
+  const pontos = o.pontos
+    .map(parsePontoAmostra)
+    .filter((p): p is PontoGps => p !== null)
+    .slice(0, MAX_PONTOS_AMOSTRA);
+  return {conquistaId, pontos};
+};
+
+/**
+ * `amostras` opcional do `POST /telemetria` (SPEC 056). Nunca recusa o passeio:
+ * pedaço fora de tipo some e o excedente é cortado.
+ */
+export const parseAmostrasConquista = (valor: unknown): AmostraConquista[] => {
+  if (!Array.isArray(valor)) return [];
+  return valor
+    .map(parseAmostra)
+    .filter((a): a is AmostraConquista => a !== null)
+    .slice(0, MAX_AMOSTRAS_CONQUISTA);
+};
 
 export const parseLimiteTelemetria = (raw: unknown): number => {
   const n = typeof raw === "string" ? Number.parseInt(raw, 10) : NaN;

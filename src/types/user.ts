@@ -1,3 +1,4 @@
+import type { ConquistaPerfil } from "./conquista";
 import type { SeloPublico } from "./selo";
 
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
@@ -17,6 +18,8 @@ export interface Usuario {
   garupaFrequente: boolean;
   admin: boolean;
   selos: SeloPublico[];
+  /** `GET /perfil` — com a velocidade de cada conquista. */
+  conquistas?: ConquistaPerfil[];
   seguindo: number;
   seguidores: number;
   createdAt: string;
@@ -24,7 +27,7 @@ export interface Usuario {
 
 export type UsuarioForm = Omit<
   Usuario,
-  "uid" | "createdAt" | "admin" | "selos" | "seguindo" | "seguidores"
+  "uid" | "createdAt" | "admin" | "selos" | "conquistas" | "seguindo" | "seguidores"
 >;
 
 export type ErrosPrimeiroAcesso = {

@@ -1,15 +1,18 @@
 import {apelidoExibicao} from "./apelido";
 import {RAIO_CHECKIN_KM, validarBodyCheckin} from "./checkin-local";
+import {copiarParaStoryPerfil} from "./copiar-foto-story";
 import {adminStorage} from "./firebase-admin";
 import {filtrarEventosFeed, filtrarLocaisFeed} from "./feed-filtros";
 import {haversineKm} from "./geo";
 import {erroDe, log} from "./log";
 import {notificarStory} from "./notificacoes";
+import {storyJaEncaminhada} from "./post-foto";
 import {ymdSaoPaulo} from "./quando";
 import {
   dispositivoRepository,
   eventoRepository,
   localRepository,
+  postFotoRepository,
   storyLocalRepository,
   usuarioEventoRepository,
   usuarioLocalFavoritoRepository,
@@ -17,6 +20,7 @@ import {
 } from "../repositories";
 import type {Evento} from "../types/evento";
 import type {Local} from "../types/local";
+import type {PostFoto} from "../types/post-foto";
 import type {
   AlbumStory,
   AnelStory,
@@ -26,6 +30,7 @@ import type {
   LocalizacaoStory,
   MencaoStory,
   PessoaStory,
+  ResultadoEncaminhar,
   StoryLocal,
   StoryPublica,
   StoryVisto,
@@ -111,6 +116,7 @@ const paraPublica = (
   },
   mencao: null,
   localizacao: localizacaoPublica(story),
+  publicacao: null,
 });
 
 const localizacaoPublica = (story: StoryLocal): LocalizacaoStory | null => {
@@ -356,15 +362,31 @@ const hidratar = async (stories: StoryLocal[]): Promise<StoryPublica[]> => {
   );
 };
 
+/** O álbum ao vivo tem prioridade; a marca copiada do post só vale sem local e sem evento. */
+const chaveMencao = (story: {
+  localId: string | null;
+  eventoId: string | null;
+  marcaTipo: "local" | "evento" | null;
+  marcaId: string | null;
+}): string => {
+  if (story.eventoId) {
+    return `evento:${story.eventoId}`;
+  }
+  if (story.localId) {
+    return `local:${story.localId}`;
+  }
+  return story.marcaTipo && story.marcaId ? `${story.marcaTipo}:${story.marcaId}` : "";
+};
+
 const nomesMencao = async (
   stories: StoryLocal[],
 ): Promise<Map<string, MencaoStory>> => {
-  const locaisIds = [...new Set(stories.flatMap((story) =>
-    story.localId ? [story.localId] : [],
+  const chaves = stories.map(chaveMencao);
+  const idsDe = (prefixo: string) => [...new Set(chaves.flatMap((chave) =>
+    chave.startsWith(prefixo) ? [chave.slice(prefixo.length)] : [],
   ))];
-  const eventosIds = [...new Set(stories.flatMap((story) =>
-    story.eventoId ? [story.eventoId] : [],
-  ))];
+  const locaisIds = idsDe("local:");
+  const eventosIds = idsDe("evento:");
   const [locais, eventos] = await Promise.all([
     localRepository.buscarPorIds(locaisIds),
     eventoRepository.buscarPorIds(eventosIds),
@@ -383,23 +405,32 @@ const nomesMencao = async (
   return mapa;
 };
 
-const comMencao = (
-  stories: StoryPublica[],
-  mapa: Map<string, MencaoStory>,
-): StoryPublica[] =>
-  stories.map((story) => {
-    const chave = story.eventoId ?
-      `evento:${story.eventoId}` :
-      story.localId ? `local:${story.localId}` : "";
-    return {...story, mencao: mapa.get(chave) ?? null};
-  });
+const postsVivos = async (stories: StoryLocal[]): Promise<Map<string, string>> => {
+  const ids = stories.flatMap((story) => story.postId ? [story.postId] : []);
+  if (ids.length === 0) {
+    return new Map();
+  }
+  const posts = await postFotoRepository.buscarPorIds(ids);
+  return new Map(posts.map((post) => [post.id, post.usuarioId]));
+};
 
 const publicarLista = async (stories: StoryLocal[]): Promise<StoryPublica[]> => {
-  const [publicas, mapa] = await Promise.all([
+  const [publicas, mapa, posts] = await Promise.all([
     hidratar(stories),
     nomesMencao(stories),
+    postsVivos(stories),
   ]);
-  return comMencao(publicas, mapa);
+  return publicas.map((publica, i) => {
+    const story = stories[i];
+    const autorPost = story.postId ? posts.get(story.postId) : undefined;
+    return {
+      ...publica,
+      mencao: mapa.get(chaveMencao(story)) ?? null,
+      publicacao: story.postId && autorPost ?
+        {id: story.postId, autorUid: autorPost} :
+        null,
+    };
+  });
 };
 
 export const publicarStoryPerfil = async (
@@ -435,6 +466,52 @@ export const publicarStoryPerfil = async (
   });
   const usuario = await usuarioRepository.buscarPorId(uid);
   return {ok: true, story: paraPublica(criada, usuario)};
+};
+
+export const encaminhadoPor = async (uid: string, postId: string): Promise<boolean> => {
+  const agora = new Date();
+  const copias = await storyLocalRepository.listarCopiasAtivas(uid, postId, agora);
+  return storyJaEncaminhada(copias, postId, agora);
+};
+
+/** Sem GPS e sem push `story_local`: a cópia vai para a bolinha de quem encaminha. */
+export const encaminharPostParaStory = async (
+  uid: string,
+  post: PostFoto,
+): Promise<{ok: true; storyId: string; criada: boolean} | Falha> => {
+  const agora = new Date();
+  const ativas = await storyLocalRepository.listarCopiasAtivas(uid, post.id, agora);
+  if (storyJaEncaminhada(ativas, post.id, agora)) {
+    return {ok: true, storyId: ativas[0].id, criada: false};
+  }
+  const copia = await copiarParaStoryPerfil(post.storagePath, uid);
+  let resultado: ResultadoEncaminhar;
+  try {
+    resultado = await storyLocalRepository.encaminharPost({
+      usuarioId: uid,
+      album: "perfil",
+      localId: null,
+      eventoId: null,
+      fotoUrl: copia.fotoUrl,
+      storagePath: copia.storagePath,
+      ...camposMarca(null, null),
+      ...camposLocalizacao(null),
+      postId: post.id,
+      marcaTipo: post.marcaTipo,
+      marcaId: post.marcaId,
+    }, TETO_FOTOS);
+  } catch (error) {
+    await apagarObjetoStory(copia.storagePath);
+    throw error;
+  }
+  if (resultado.tipo === "criada") {
+    return {ok: true, storyId: resultado.storyId, criada: true};
+  }
+  await apagarObjetoStory(copia.storagePath);
+  if (resultado.tipo === "teto") {
+    return {ok: false, status: 429, erro: ERRO_TETO_PERFIL};
+  }
+  return {ok: true, storyId: resultado.storyId, criada: false};
 };
 
 const ativasDoUsuario = async (uid: string): Promise<StoryLocal[]> => {

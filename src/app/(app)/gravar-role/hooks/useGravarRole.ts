@@ -1,15 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
+import { fraseConquista } from "@/lib/conquistas";
 import { isErroAuth, isFalhaDeRede } from "@/lib/telemetria/falha-rede";
 import {
   TelemetriaGpsErro,
   obterAdapterGps,
   type TelemetriaGpsAdapter,
 } from "@/lib/telemetria/telemetria-gps.adapter";
-import type { RoleTelemetriaCreate } from "@/types/role-telemetria";
+import type {
+  RoleTelemetriaCreate,
+  RoleTelemetriaCriada,
+} from "@/types/role-telemetria";
+import { TOAST_CONQUISTA_MS } from "../constants";
 import { geocodePontosTelemetria } from "../../telemetria/services/geocode-telemetria.service";
 import { telemetriaService } from "../../telemetria/services/telemetria.service";
 import {
@@ -43,6 +48,8 @@ export const useGravarRole = () => {
   const [online, setOnline] = useState(
     () => typeof navigator === "undefined" || navigator.onLine,
   );
+  const [frasesConquista, setFrasesConquista] = useState<string[]>([]);
+  const redirectRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let cancelado = false;
@@ -97,23 +104,45 @@ export const useGravarRole = () => {
       setResumo(null);
       setTitulo("");
       setErro(null);
+      setFrasesConquista([]);
       router.replace(`/telemetria/${id}`);
     },
     [router],
+  );
+
+  useEffect(() => () => window.clearTimeout(redirectRef.current), []);
+
+  /** Com carimbo novo, segura o redirect para a frase aparecer. `true` se segurou. */
+  const concluirSalvo = useCallback(
+    (criado: RoleTelemetriaCriada): boolean => {
+      const frases = (criado.conquistas ?? []).map(fraseConquista);
+      if (frases.length === 0) {
+        irParaDashboard(criado.id);
+        return false;
+      }
+      setFrasesConquista(frases);
+      window.clearTimeout(redirectRef.current);
+      redirectRef.current = window.setTimeout(
+        () => irParaDashboard(criado.id),
+        TOAST_CONQUISTA_MS,
+      );
+      return true;
+    },
+    [irParaDashboard],
   );
 
   const aoSync = useCallback(
     (resultado: ResultadoSyncResumo) => {
       if (fase !== "resumo") return;
       if (resultado.tipo === "ok") {
-        irParaDashboard(resultado.criado.id);
+        if (concluirSalvo(resultado.criado)) setOcupado(true);
         return;
       }
       if (resultado.tipo === "validacao") {
         setErro(resultado.mensagem);
       }
     },
-    [fase, irParaDashboard],
+    [fase, concluirSalvo],
   );
 
   useEffect(() => onSyncResumo(aoSync), [aoSync]);
@@ -177,12 +206,13 @@ export const useGravarRole = () => {
       titulo: titulo.trim() || resumo.titulo,
       publica: resumo.publica ?? false,
     };
+    let aguardandoToast = false;
     try {
       await adapter?.salvarResumoPendente({ dados });
       const criado = await telemetriaService.criar(dados);
       await adapter?.limparResumoPendente();
       avisarFilaVazia();
-      irParaDashboard(criado.id);
+      aguardandoToast = concluirSalvo(criado);
     } catch (e) {
       if (isFalhaDeRede(e)) {
         setAviso(MENSAGEM_SALVO_NO_CELULAR);
@@ -194,9 +224,9 @@ export const useGravarRole = () => {
         );
       }
     } finally {
-      setOcupado(false);
+      setOcupado(aguardandoToast);
     }
-  }, [adapter, irParaDashboard, resumo, titulo]);
+  }, [adapter, concluirSalvo, resumo, titulo]);
 
   const setPublica = useCallback((publica: boolean) => {
     setResumo((atual) => (atual ? { ...atual, publica } : atual));
@@ -239,6 +269,7 @@ export const useGravarRole = () => {
     aviso,
     erroCodigo,
     online,
+    frasesConquista,
     iniciar,
     finalizar,
     salvar,

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, type MutableRefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, type MutableRefObject } from "react";
 import {
+  Circle,
   MapContainer,
   Marker,
   TileLayer,
@@ -16,9 +17,8 @@ import {
   ZOOM_SUL_GPS,
   ZOOM_SUL_REGIAO,
 } from "@/lib/regiao-sul";
+import { COR_CIRCULO, zoomDoPonto } from "./raio-mapa";
 import styles from "./mapa-selecao-local.module.css";
-
-const ZOOM_LOCAL = 16;
 
 export type PropsMapaSelecaoLocal = {
   lat: number | null;
@@ -30,6 +30,15 @@ export type PropsMapaSelecaoLocal = {
   className?: string;
   hintVazio?: string;
   hintAjuste?: string;
+  /** Desenha o círculo em metros ao redor do pino (conquistas). */
+  raioMetros?: number;
+};
+
+const OPCOES_CIRCULO = {
+  color: COR_CIRCULO,
+  weight: 2,
+  fillColor: COR_CIRCULO,
+  fillOpacity: 0.15,
 };
 
 type MoverPonto = (lat: number, lng: number) => boolean | void;
@@ -50,10 +59,12 @@ const VooParaPonto = ({
   lat,
   lng,
   vooId,
+  zoom,
 }: {
   lat: number;
   lng: number;
   vooId: number;
+  zoom: number;
 }) => {
   const map = useMap();
   const ultimaChave = useRef<number | null>(null);
@@ -61,8 +72,8 @@ const VooParaPonto = ({
   useEffect(() => {
     if (ultimaChave.current === vooId) return;
     ultimaChave.current = vooId;
-    map.flyTo([lat, lng], ZOOM_LOCAL, { duration: 0.7 });
-  }, [lat, lng, vooId, map]);
+    map.flyTo([lat, lng], zoom, { duration: 0.7 });
+  }, [lat, lng, vooId, zoom, map]);
 
   return null;
 };
@@ -125,16 +136,22 @@ const MarcadorArrastavel = ({
   desabilitado,
   desabilitadoRef,
   onMoverPontoRef,
+  onArrastando,
 }: {
   lat: number;
   lng: number;
   desabilitado?: boolean;
   desabilitadoRef: MutableRefObject<boolean>;
   onMoverPontoRef: MutableRefObject<MoverPonto>;
+  onArrastando?: (lat: number, lng: number) => void;
 }) => {
   const icone = useMemo(() => criarIconePin(), []);
   const eventHandlers = useMemo(
     () => ({
+      drag: (e: L.LeafletEvent) => {
+        const pos = (e.target as L.Marker).getLatLng();
+        onArrastando?.(pos.lat, pos.lng);
+      },
       dragend: (e: L.LeafletEvent) => {
         if (desabilitadoRef.current) return;
         const mover = onMoverPontoRef.current;
@@ -144,10 +161,11 @@ const MarcadorArrastavel = ({
         const aceito = mover(pos.lat, pos.lng);
         if (aceito === false) {
           marker.setLatLng([lat, lng]);
+          onArrastando?.(lat, lng);
         }
       },
     }),
-    [desabilitadoRef, onMoverPontoRef, lat, lng],
+    [desabilitadoRef, onMoverPontoRef, onArrastando, lat, lng],
   );
 
   return (
@@ -169,14 +187,20 @@ export const MapaSelecaoLocal = ({
   className,
   hintVazio = "Toque no mapa ou busque o endereço",
   hintAjuste = "Arraste o alfinete para ajustar o ponto",
+  raioMetros,
 }: PropsMapaSelecaoLocal) => {
   const temPonto = lat != null && lng != null && Number.isFinite(lat) && Number.isFinite(lng);
   const centro: [number, number] = temPonto ? [lat, lng] : CENTRO_SUL_DEFAULT;
-  const zoomInicial = temPonto ? ZOOM_LOCAL : ZOOM_SUL_REGIAO;
+  const zoomPonto = zoomDoPonto(raioMetros);
+  const zoomInicial = temPonto ? zoomPonto : ZOOM_SUL_REGIAO;
   const onMoverPontoRef = useRef<MoverPonto>(onMoverPonto);
   const desabilitadoRef = useRef(Boolean(desabilitado));
   onMoverPontoRef.current = onMoverPonto;
   desabilitadoRef.current = Boolean(desabilitado);
+  const circuloRef = useRef<L.Circle | null>(null);
+  const moverCirculo = useCallback((novaLat: number, novaLng: number) => {
+    circuloRef.current?.setLatLng([novaLat, novaLng]);
+  }, []);
 
   return (
     <div className={[styles.mapa, className].filter(Boolean).join(" ")}>
@@ -202,13 +226,23 @@ export const MapaSelecaoLocal = ({
         />
         {temPonto ? (
           <>
-            <VooParaPonto lat={lat} lng={lng} vooId={vooId} />
+            <VooParaPonto lat={lat} lng={lng} vooId={vooId} zoom={zoomPonto} />
+            {raioMetros ? (
+              <Circle
+                ref={circuloRef}
+                center={[lat, lng]}
+                radius={raioMetros}
+                pathOptions={OPCOES_CIRCULO}
+                interactive={false}
+              />
+            ) : null}
             <MarcadorArrastavel
               lat={lat}
               lng={lng}
               desabilitado={desabilitado}
               desabilitadoRef={desabilitadoRef}
               onMoverPontoRef={onMoverPontoRef}
+              onArrastando={raioMetros ? moverCirculo : undefined}
             />
           </>
         ) : null}

@@ -6,6 +6,7 @@ import {
   chaveGoogleMaps,
   ESTILO_MAPA_SELECAO,
   observarFalhaAuthGoogle,
+  type GoogleCircle,
   type GoogleMap,
   type GoogleMapsNs,
   type GoogleMarker,
@@ -18,8 +19,7 @@ import {
   ZOOM_SUL_GPS,
   ZOOM_SUL_REGIAO,
 } from "@/lib/regiao-sul";
-
-const ZOOM_LOCAL = 16;
+import { COR_CIRCULO, zoomDoPonto } from "./raio-mapa";
 
 type MoverPonto = (lat: number, lng: number) => boolean | void;
 
@@ -29,6 +29,7 @@ type Args = {
   vooId: number;
   onMoverPonto: MoverPonto;
   desabilitado?: boolean;
+  raioMetros?: number;
 };
 
 const pontoValido = (lat: number | null, lng: number | null): lat is number =>
@@ -49,11 +50,14 @@ export const useMapaSelecaoGoogle = ({
   vooId,
   onMoverPonto,
   desabilitado,
+  raioMetros,
 }: Args) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<GoogleMap | null>(null);
   const mapsRef = useRef<GoogleMapsNs | null>(null);
   const markerRef = useRef<GoogleMarker | null>(null);
+  const circleRef = useRef<GoogleCircle | null>(null);
+  const raioRef = useRef(raioMetros);
   const listenersRef = useRef<ListenerMapa[]>([]);
   const latRef = useRef(lat);
   const lngRef = useRef(lng);
@@ -67,6 +71,7 @@ export const useMapaSelecaoGoogle = ({
   lngRef.current = lng;
   moverRef.current = onMoverPonto;
   travadoRef.current = Boolean(desabilitado);
+  raioRef.current = raioMetros;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -90,7 +95,7 @@ export const useMapaSelecaoGoogle = ({
 
         const map = new maps.Map(el, {
           center: centro,
-          zoom: temPonto ? ZOOM_LOCAL : ZOOM_SUL_REGIAO,
+          zoom: temPonto ? zoomDoPonto(raioRef.current) : ZOOM_SUL_REGIAO,
           styles: ESTILO_MAPA_SELECAO,
           backgroundColor: "#1a1c20",
           mapTypeControl: false,
@@ -142,6 +147,8 @@ export const useMapaSelecaoGoogle = ({
       listenersRef.current = [];
       markerRef.current?.setMap(null);
       markerRef.current = null;
+      circleRef.current?.setMap(null);
+      circleRef.current = null;
       mapRef.current = null;
     };
   }, []);
@@ -173,6 +180,10 @@ export const useMapaSelecaoGoogle = ({
       markerRef.current = marker;
       const criado = marker;
       listenersRef.current.push(
+        maps.event.addListener(criado, "drag", () => {
+          const pos = criado.getPosition();
+          if (pos) circleRef.current?.setCenter({ lat: pos.lat(), lng: pos.lng() });
+        }),
         maps.event.addListener(criado, "dragend", () => {
           if (travadoRef.current) return;
           const pos = criado.getPosition();
@@ -182,10 +193,12 @@ export const useMapaSelecaoGoogle = ({
             aceito === false &&
             pontoValido(latRef.current, lngRef.current)
           ) {
-            criado.setPosition({
+            const anterior = {
               lat: latRef.current as number,
               lng: lngRef.current as number,
-            });
+            };
+            criado.setPosition(anterior);
+            circleRef.current?.setCenter(anterior);
           }
         }),
       );
@@ -203,8 +216,35 @@ export const useMapaSelecaoGoogle = ({
     vooAplicado.current = vooId;
     if (!pontoValido(lat, lng) || lng == null) return;
     map.panTo({ lat, lng });
-    map.setZoom(ZOOM_LOCAL);
+    map.setZoom(zoomDoPonto(raioRef.current));
   }, [pronto, vooId, lat, lng]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const maps = mapsRef.current;
+    if (!map || !maps?.Circle || !pronto) return;
+    if (!raioMetros || !pontoValido(lat, lng) || lng == null) {
+      circleRef.current?.setMap(null);
+      circleRef.current = null;
+      return;
+    }
+    const centro = { lat, lng };
+    if (!circleRef.current) {
+      circleRef.current = new maps.Circle({
+        map,
+        center: centro,
+        radius: raioMetros,
+        strokeColor: COR_CIRCULO,
+        strokeWeight: 2,
+        fillColor: COR_CIRCULO,
+        fillOpacity: 0.15,
+        clickable: false,
+      });
+      return;
+    }
+    circleRef.current.setCenter(centro);
+    circleRef.current.setRadius(raioMetros);
+  }, [pronto, lat, lng, raioMetros]);
 
   return { containerRef, pronto, falhou };
 };

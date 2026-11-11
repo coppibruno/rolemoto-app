@@ -33,6 +33,12 @@ export type GoogleMarker = {
   getPosition: () => { lat: () => number; lng: () => number } | null | undefined;
 };
 
+export type GoogleCircle = {
+  setCenter: (pos: LatLng) => void;
+  setRadius: (metros: number) => void;
+  setMap: (map: GoogleMap | null) => void;
+};
+
 type EventoMouse = {
   latLng?: { lat: () => number; lng: () => number } | null;
 };
@@ -41,6 +47,8 @@ export type GoogleMapsNs = {
   Map: new (el: HTMLElement, opts: Record<string, unknown>) => GoogleMap;
   Marker: new (opts: Record<string, unknown>) => GoogleMarker;
   Polyline: new (opts: Record<string, unknown>) => OverlayMapa;
+  /** Só a tela de conquistas desenha círculo; os outros mapas não dependem dele. */
+  Circle?: new (opts: Record<string, unknown>) => GoogleCircle;
   LatLngBounds: new () => GoogleLatLngBounds;
   Size: new (w: number, h: number) => unknown;
   Point: new (x: number, y: number) => unknown;

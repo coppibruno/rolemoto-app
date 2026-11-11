@@ -1,5 +1,5 @@
 export type ItemMenuIncluirConfig = {
-  id: "role" | "evento" | "local" | "telemetria";
+  id: "role" | "evento" | "local" | "conquista" | "telemetria";
   href: string | null;
   icone: string;
   titulo: string;
@@ -37,6 +37,14 @@ export const ITENS_MENU_INCLUIR: ItemMenuIncluirConfig[] = [
     icone: "location_on",
     titulo: "Local",
     subtitulo: "Pontos cadastrados",
+    soAdmin: true,
+  },
+  {
+    id: "conquista",
+    href: "/conquistas",
+    icone: "military_tech",
+    titulo: "Cadastrar Conquistas",
+    subtitulo: "Pontos que carimbam o perfil",
     soAdmin: true,
   },
 ];

@@ -6,3 +6,6 @@ export const MODAL_ECONOMIA_BATERIA = {
   desativar: "Desativar economia",
   agoraNao: "Agora não",
 } as const;
+
+/** Tempo da frase de conquista antes de abrir o dashboard do passeio. */
+export const TOAST_CONQUISTA_MS = 3200;

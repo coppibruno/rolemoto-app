@@ -25,6 +25,7 @@ export const useItemMenuAtivo = () => {
         Boolean(pathname?.startsWith("/criar-evento/")) ||
         pathname === "/criar-local" ||
         Boolean(pathname?.startsWith("/criar-local/")) ||
+        pathname === "/conquistas" ||
         pathname === "/gravar-role" ||
         Boolean(pathname?.startsWith("/telemetria"))
       );

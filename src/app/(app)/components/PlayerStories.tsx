@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import { hrefPost } from "@/types/post-foto";
 import type { AlvoPlayer, MencaoStory, StoryPublica } from "@/types/story-local";
 import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
@@ -28,6 +29,11 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
   const abrirMarca = (mencao: MencaoStory) => {
     onFechar();
     router.push(mencao.tipo === "local" ? `/locais/${mencao.id}` : `/eventos/${mencao.id}`);
+  };
+
+  const abrirPublicacao = (publicacao: { id: string; autorUid: string }) => {
+    onFechar();
+    router.push(hrefPost(publicacao.autorUid, publicacao.id));
   };
 
   return createPortal(
@@ -105,6 +111,7 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
           onSoltar={reel.soltar}
           onCancelar={reel.cancelarToque}
           onMarca={abrirMarca}
+          onPublicacao={abrirPublicacao}
         />
       ) : (
         <div className={styles.palco}>

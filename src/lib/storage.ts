@@ -67,6 +67,13 @@ export const uploadFotoAvaliacao = async (
   return getDownloadURL(storageRef);
 };
 
+export const uploadFotoPost = async (uid: string, file: File): Promise<string> => {
+  const id = crypto.randomUUID();
+  const storageRef = ref(storage, `posts/${uid}/${id}.jpg`);
+  await uploadBytes(storageRef, file, { contentType: file.type || "image/jpeg" });
+  return getDownloadURL(storageRef);
+};
+
 export const uploadFotoStory = async (
   album: "local" | "evento" | "perfil",
   alvoId: string,

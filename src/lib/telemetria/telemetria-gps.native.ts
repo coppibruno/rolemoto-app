@@ -17,6 +17,8 @@ import {
 } from "./calcular-metricas";
 import { incorporarBuffer, mesclarComRemoto } from "./aplicar-buffer";
 import type { PontoGps } from "./calcular-metricas";
+import { montarAmostrasConquista } from "./amostras-conquista";
+import { atualizarCacheConquistas, lerCacheConquistas } from "./cache-conquistas";
 import { telemetriaBuffer } from "./telemetria-buffer";
 import { gerarTracado } from "./tracado";
 import {
@@ -334,10 +336,22 @@ const pontoDe = (
   endereco: "",
 });
 
+/** Sem cache ou com erro, o passeio salva sem amostras: não há segunda chance. */
+const amostrasDoBuffer = async (
+  pontos: PontoGps[],
+): Promise<NonNullable<RoleTelemetriaCreate["amostras"]>> => {
+  try {
+    return montarAmostrasConquista(pontos, await lerCacheConquistas());
+  } catch {
+    return [];
+  }
+};
+
 const montarDados = (
   sessao: SessaoTelemetriaLocal,
   encerradoEm: string,
   tracado: string,
+  amostras: NonNullable<RoleTelemetriaCreate["amostras"]>,
 ): RoleTelemetriaCreate => {
   const tempoSegundos = tempoParedeSegundos(sessao.iniciadoEm, encerradoEm);
   return {
@@ -357,6 +371,7 @@ const montarDados = (
     pontoInicio: pontoDe(sessao.primeiro ?? sessao.ultimo),
     pontoFim: pontoDe(sessao.ultimo ?? sessao.primeiro),
     tracado,
+    amostras,
   };
 };
 
@@ -405,6 +420,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     }
 
     await exigirBackground();
+    void atualizarCacheConquistas();
 
     const iniciado: SessaoPersistida = {
       ...estadoCalculoInicial(),
@@ -488,7 +504,12 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     );
     const encerradoEm = new Date().toISOString();
     const local = paraSessao({ ...mesclada, ativa: false, remota: null });
-    const dados = montarDados(local, encerradoEm, gerarTracado(pontosBuffer));
+    const dados = montarDados(
+      local,
+      encerradoEm,
+      gerarTracado(pontosBuffer),
+      await amostrasDoBuffer(pontosBuffer),
+    );
     await gravarResumo({ dados });
     await gravarSessao(null);
     await limparBufferNativo();

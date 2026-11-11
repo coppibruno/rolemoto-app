@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { LocalFeedItem } from "@/types/local";
+import { hrefCriarRoleComDestino } from "@/app/(app)/criar-role/destino-inicial";
 import { urlAbrirMaps } from "@/lib/maps";
 import {
   FACILIDADES_FEED,
@@ -137,6 +138,21 @@ export const LocalCard = ({ local }: Props) => {
           </span>
           <span>Maps</span>
         </a>
+        <Link
+          href={hrefCriarRoleComDestino({
+            nome: local.nome,
+            endereco: local.endereco,
+            lat: local.lat,
+            lng: local.lng,
+          })}
+          className={styles.botaoCriarRole}
+          aria-label={`Criar rolê com destino ${local.nome}`}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            two_wheeler
+          </span>
+          Criar rolê
+        </Link>
         <Link href={`/locais/${local.id}/avaliar`} className={styles.botaoAvaliar}>
           <span className="material-symbols-outlined" aria-hidden>
             star

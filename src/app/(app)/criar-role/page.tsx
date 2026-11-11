@@ -1,6 +1,16 @@
+import { lerDestinoInicial } from "./destino-inicial";
 import { TelaCriarRole } from "./components/TelaCriarRole";
 
-type Props = { searchParams: Promise<{ origem?: string; editar?: string }> };
+type Props = {
+  searchParams: Promise<{
+    origem?: string;
+    editar?: string;
+    destinoNome?: string;
+    destinoEndereco?: string;
+    destinoLat?: string;
+    destinoLng?: string;
+  }>;
+};
 
 const CriarRolePage = async ({ searchParams }: Props) => {
   const params = await searchParams;
@@ -12,10 +22,16 @@ const CriarRolePage = async ({ searchParams }: Props) => {
     !editarId && typeof params.origem === "string" && params.origem.trim()
       ? params.origem.trim()
       : undefined;
+  const destinoInicial =
+    editarId || origemId ? undefined : lerDestinoInicial(params);
 
   return (
     <main>
-      <TelaCriarRole origemId={origemId} editarId={editarId} />
+      <TelaCriarRole
+        origemId={origemId}
+        editarId={editarId}
+        destinoInicial={destinoInicial}
+      />
     </main>
   );
 };

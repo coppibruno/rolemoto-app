@@ -7,6 +7,8 @@ import { DEBOUNCE_BUSCA_MS, DEBOUNCE_REVERSO_MAPA_MS, ENDERECO_MIN } from "../co
 import { geocodeService, type SugestaoEndereco } from "../services/geocode.service";
 import type { GpsStatus, LocalizacaoForm } from "../types";
 
+const NOME_LOCAL_MAX = 60;
+
 const obterGps = (): Promise<GeolocationPosition> =>
   new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -20,11 +22,15 @@ const obterGps = (): Promise<GeolocationPosition> =>
     });
   });
 
-export const useCampoLocalizacao = () => {
-  const [endereco, setEndereco] = useState("");
-  const [lat, setLat] = useState<number | null>(null);
-  const [lng, setLng] = useState<number | null>(null);
-  const [nome, setNome] = useState("");
+export const useCampoLocalizacao = (inicial?: Localizacao) => {
+  const enderecoInicial = inicial?.endereco ?? "";
+  const latInicial = inicial?.lat ?? null;
+  const lngInicial = inicial?.lng ?? null;
+  const nomeInicial = (inicial?.nome ?? "").slice(0, NOME_LOCAL_MAX);
+  const [endereco, setEndereco] = useState(enderecoInicial);
+  const [lat, setLat] = useState<number | null>(latInicial);
+  const [lng, setLng] = useState<number | null>(lngInicial);
+  const [nome, setNome] = useState(nomeInicial);
   const [sugestoes, setSugestoes] = useState<SugestaoEndereco[]>([]);
   const [buscando, setBuscando] = useState(false);
   const [resolvendoEndereco, setResolvendoEndereco] = useState(false);
@@ -35,9 +41,9 @@ export const useCampoLocalizacao = () => {
   const escolhendoRef = useRef(false);
   const reversoTimerRef = useRef<number | null>(null);
   const reversoSeqRef = useRef(0);
-  const enderecoRef = useRef("");
-  const latRef = useRef<number | null>(null);
-  const lngRef = useRef<number | null>(null);
+  const enderecoRef = useRef(enderecoInicial);
+  const latRef = useRef<number | null>(latInicial);
+  const lngRef = useRef<number | null>(lngInicial);
   const pendenteMapaRef = useRef<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
@@ -126,7 +132,7 @@ export const useCampoLocalizacao = () => {
   };
 
   const aoDigitarNome = (texto: string) => {
-    setNome(texto.slice(0, 60));
+    setNome(texto.slice(0, NOME_LOCAL_MAX));
   };
 
   const escolher = (item: SugestaoEndereco) => {

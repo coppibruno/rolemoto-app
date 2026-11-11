@@ -88,11 +88,8 @@ export const totalRolesHistorico = (concluidos: number, comoLider: number): numb
 export const textoTotalRoles = (n: number): string =>
   n === 1 ? "1 pista" : `${n} pistas`;
 
-export const hrefCardHistoricoPublicoRole = (item: ItemHistoricoRole): string => {
-  if (item.status === "lider") return `/roles/${item.roleId}/participar`;
-  if (item.status === "concluido") return `/roles/${item.roleId}/feedback`;
-  return `/roles/${item.roleId}/participar`;
-};
+export const hrefCardHistoricoPublicoRole = (item: ItemHistoricoRole): string =>
+  `/r/${item.roleId}`;
 
 export const hrefCardHistoricoPublicoEvento = (
   item: ItemHistoricoEvento,

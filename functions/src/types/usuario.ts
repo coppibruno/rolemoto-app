@@ -1,3 +1,4 @@
+import type {ConquistaPerfil, ConquistaPublica} from "./conquista";
 import type {SeloPublico} from "./selo";
 
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
@@ -26,6 +27,11 @@ export interface Usuario {
   createdAt: string;
 }
 
+/** `GET /perfil` — o próprio piloto, com a velocidade das conquistas. */
+export type PerfilCliente = Usuario & {
+  conquistas: ConquistaPerfil[];
+};
+
 /** DTO público — sem admin, e-mail, ids de local ou dados sensíveis. */
 export type PerfilPublico = {
   uid: string;
@@ -38,6 +44,8 @@ export type PerfilPublico = {
   cidade: string;
   garupaFrequente: boolean;
   selos: SeloPublico[];
+  /** Sem velocidade, mesmo quando o uid é o do token. */
+  conquistas: ConquistaPublica[];
   seguindo: number;
   seguidores: number;
   seguidoPorMim: boolean;

@@ -37,11 +37,7 @@ export const TelaDetalheLocal = ({ id }: Props) => {
         }}
       />
       <main className={styles.conteudo}>
-        <HeroLocal
-          local={local}
-          onAbrirStories={() => player.abrir(null)}
-          onStoryCriada={(story) => player.abrir(story.id, story)}
-        />
+        <HeroLocal local={local} onAbrirStories={() => player.abrir(null)} />
         <BlocoCheckinLocal local={local} />
         <BlocoHorariosLocal local={local} />
         <BlocoFacilidadesLocal facilidades={local.facilidades} />

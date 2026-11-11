@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Localizacao } from "@/types/role";
 import { useFormularioCriarRole } from "../hooks/useFormularioCriarRole";
 import { useModeloRole } from "../hooks/useModeloRole";
 import { BotaoCancelar } from "./BotaoCancelar";
@@ -30,12 +31,18 @@ type Props = {
   origemId?: string;
   editarId?: string;
   modo: ModoCriarRole;
+  destinoInicial?: Localizacao;
 };
 
-export const FormularioCriarRole = ({ origemId, editarId, modo }: Props) => {
+export const FormularioCriarRole = ({
+  origemId,
+  editarId,
+  modo,
+  destinoInicial,
+}: Props) => {
   const roleId = editarId ?? origemId;
   const { modelo, carregando, erro, recarregar } = useModeloRole(roleId);
-  const form = useFormularioCriarRole(modelo, modo);
+  const form = useFormularioCriarRole(modelo, modo, destinoInicial);
   const precisaModelo = modo !== "criar";
   const [mapaAberto, setMapaAberto] = useState<"partida" | "destino" | null>(null);
 

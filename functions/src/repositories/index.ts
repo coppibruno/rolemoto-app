@@ -88,6 +88,10 @@ import type {TokenInstagramRepository} from "./interfaces/token-instagram.reposi
 import {
   FirestoreTokenInstagramRepository,
 } from "./firestore/firestore-token-instagram.repository";
+import type {ConquistaRepository} from "./interfaces/conquista.repository";
+import {FirestoreConquistaRepository} from "./firestore/firestore-conquista.repository";
+import type {PostFotoRepository} from "./interfaces/post-foto.repository";
+import {FirestorePostFotoRepository} from "./firestore/firestore-post-foto.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -156,3 +160,9 @@ export const conviteEventoRepository: ConviteEventoRepository =
 
 export const tokenInstagramRepository: TokenInstagramRepository =
   new FirestoreTokenInstagramRepository();
+
+export const conquistaRepository: ConquistaRepository =
+  new FirestoreConquistaRepository();
+
+export const postFotoRepository: PostFotoRepository =
+  new FirestorePostFotoRepository();

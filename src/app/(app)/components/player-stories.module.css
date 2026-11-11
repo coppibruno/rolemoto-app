@@ -298,6 +298,43 @@
   font-size: 22px;
 }
 
+.verPublicacao {
+  position: absolute;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-container-highest) 88%, transparent);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+.verPublicacaoAcima {
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+}
+
+.verPublicacao .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.verPublicacao:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
 .pin {
   color: var(--tertiary);
 }

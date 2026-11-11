@@ -8,8 +8,6 @@ import {
 import { labelStatusAberto } from "@/lib/horario-local";
 import { fotosDoLocal } from "@/lib/fotos-local";
 import type { LocalDetalhe } from "@/types/local";
-import type { StoryPublica } from "@/types/story-local";
-import { BotaoPostarStory } from "@/app/(app)/components/BotaoPostarStory";
 import { AnelCapaStory } from "@/app/(app)/feed/components/AnelCapaStory";
 import { CTA_VER_REVIEWS } from "../constants";
 import { BotaoFavoritoHero } from "./BotaoFavoritoHero";
@@ -19,10 +17,9 @@ import styles from "../local-detalhe.module.css";
 type Props = {
   local: LocalDetalhe;
   onAbrirStories: () => void;
-  onStoryCriada: (story: StoryPublica) => void;
 };
 
-export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
+export const HeroLocal = ({ local, onAbrirStories }: Props) => {
   const status = labelStatusAberto(local);
   const aberto = status !== "Fechado";
   const nomeStory = local.eventoAoVivo?.titulo ?? local.nome;
@@ -69,11 +66,6 @@ export const HeroLocal = ({ local, onAbrirStories, onStoryCriada }: Props) => {
         </div>
       </div>
       <div className={styles.heroCorpo}>
-        <BotaoPostarStory
-          alvo={{ tipo: "local", id: local.id }}
-          nome={local.nome}
-          onCriada={onStoryCriada}
-        />
         <span className={styles.badgeCategoria}>
           <span className="material-symbols-outlined" aria-hidden>
             {ICONES_CATEGORIA_LOCAL[local.categoria]}

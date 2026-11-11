@@ -1,0 +1,363 @@
+.tela {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: 88px;
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: var(--touch-min) 1fr var(--touch-min);
+  align-items: center;
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.voltar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.titulo {
+  margin: 0;
+  text-align: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.espaco {
+  width: var(--touch-min);
+}
+
+.foto {
+  display: block;
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  background: var(--surface-container-lowest);
+}
+
+.fotoEsqueleto {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--surface-container-high);
+}
+
+.corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px var(--gutter-md) 0;
+}
+
+.autor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+.avatar,
+.avatarPequeno {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--outline);
+  object-fit: cover;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.avatarPequeno {
+  width: 32px;
+  height: 32px;
+}
+
+.autorNome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.data {
+  color: var(--on-surface-variant);
+  font-size: 13px;
+}
+
+.chip {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: var(--touch-min);
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.chip .material-symbols-outlined {
+  color: var(--primary-container);
+  font-size: 20px;
+}
+
+.chipNome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legenda {
+  margin: 0;
+  color: var(--on-surface);
+  font-size: 15px;
+  line-height: 22px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.acoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.secundario,
+.perigo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.perigo {
+  background: transparent;
+  color: var(--error);
+}
+
+.secundario:disabled,
+.perigo:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.erro,
+.erroCampo {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 24px var(--gutter-md);
+  color: var(--on-surface-variant);
+  font-size: 14px;
+  text-align: center;
+}
+
+.estado p {
+  margin: 0;
+}
+
+.comentarios {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--surface-container-high);
+}
+
+.subtitulo {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.anteriores,
+.apagarComentario {
+  border: none;
+  background: transparent;
+  color: var(--primary-container);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.anteriores {
+  align-self: flex-start;
+  min-height: var(--touch-min);
+  font-size: 14px;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comentario {
+  display: flex;
+  gap: 10px;
+}
+
+.comentarioCorpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.comentarioTexto {
+  margin: 0;
+  color: var(--on-surface);
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.comentarioMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--on-surface-variant);
+  font-size: 12px;
+}
+
+.apagarComentario {
+  min-height: var(--touch-min);
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.campoFixo {
+  position: fixed;
+  left: 50%;
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: min(100%, 560px);
+  padding: 8px var(--gutter-md);
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transform: translateX(-50%);
+}
+
+.campoLinha {
+  display: flex;
+  gap: 8px;
+}
+
+.campo {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-size: 16px;
+}
+
+.campo::placeholder {
+  color: var(--outline);
+}
+
+.enviar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  cursor: pointer;
+}
+
+.enviar:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.voltar:focus-visible,
+.autor:focus-visible,
+.chip:focus-visible,
+.secundario:focus-visible,
+.perigo:focus-visible,
+.anteriores:focus-visible,
+.apagarComentario:focus-visible,
+.campo:focus-visible,
+.enviar:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}

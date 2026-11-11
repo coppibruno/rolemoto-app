@@ -1548,8 +1548,54 @@
   gap: 8px;
 }
 
-.cardLocalAcoes .botaoRotaDireta {
-  flex: 1;
+.cardLocalAcoes {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr) minmax(0, 0.95fr);
+  gap: 6px;
+}
+
+.cardLocalAcoes .botaoRotaDireta,
+.cardLocalAcoes .botaoCriarRole,
+.cardLocalAcoes .botaoAvaliar {
+  min-width: 0;
+  padding: 0 4px;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  gap: 4px;
+}
+
+.cardLocalAcoes .botaoCriarRole {
+  padding: 0 2px;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+.botaoCriarRole {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 0.75rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.botaoCriarRole .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.botaoCriarRole:active {
+  transform: scale(0.98);
+}
+
+.botaoCriarRole:focus-visible {
+  outline: 2px solid var(--on-surface);
+  outline-offset: 2px;
 }
 
 .botaoAvaliar {

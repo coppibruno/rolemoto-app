@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 import { useAuth } from "@/hooks/useAuth";
-import type { RitmoRole, RoleModelo } from "@/types/role";
+import type { Localizacao, RitmoRole, RoleModelo } from "@/types/role";
 import {
   DESCRICAO_MAX,
   ENDERECO_MIN,
@@ -100,12 +100,15 @@ const validar = (campos: {
 export const useFormularioCriarRole = (
   modelo: RoleModelo | null,
   modo: ModoCriarRole,
+  destinoInicial?: Localizacao,
 ) => {
   const router = useRouter();
   const { firebaseUser } = useAuth();
   const foto = useFotoCapa();
   const partida = useCampoLocalizacao();
-  const destino = useCampoLocalizacao();
+  const destino = useCampoLocalizacao(
+    modo === "criar" ? destinoInicial : undefined,
+  );
 
   const [titulo, setTitulo] = useState("");
   const [dataSaida, setDataSaida] = useState("");

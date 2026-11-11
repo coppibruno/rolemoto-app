@@ -18,7 +18,8 @@ export type TipoPush =
   | "cancelamento_role"
   | "story_local"
   | "novo_seguidor"
-  | "convite_evento";
+  | "convite_evento"
+  | "comentario_foto";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -391,6 +392,24 @@ export const notificarNovoSeguidor = async (
     title: frase,
     body: frase,
     url: `/perfil/${seguidorId}`,
+    roleId: "",
+    localId: "",
+    eventoId: "",
+  });
+};
+
+/** Título com a frase inteira: o toast com o app aberto mostra só o título. */
+export const notificarComentarioFoto = async (
+  autorFotoUid: string,
+  postId: string,
+  nome: string,
+): Promise<ResultadoPush> => {
+  const frase = `${nome} comentou na sua foto`;
+  return enviar(autorFotoUid, {
+    tipo: "comentario_foto",
+    title: frase,
+    body: frase,
+    url: `/perfil/${autorFotoUid}/fotos/${postId}`,
     roleId: "",
     localId: "",
     eventoId: "",

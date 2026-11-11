@@ -46,6 +46,7 @@ export type StoryPublica = {
   autor: AutorStory;
   mencao: MencaoStory | null;
   localizacao: LocalizacaoStory | null;
+  publicacao: { id: string; autorUid: string } | null;
 };
 
 export type EventoAoVivoResumo = {

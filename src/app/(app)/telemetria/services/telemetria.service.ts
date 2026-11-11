@@ -3,11 +3,12 @@ import type {
   ItemHistoricoTelemetria,
   RoleTelemetria,
   RoleTelemetriaCreate,
+  RoleTelemetriaCriada,
 } from "@/types/role-telemetria";
 
 export const telemetriaService = {
   criar: (dados: RoleTelemetriaCreate) =>
-    api<RoleTelemetria>("/telemetria", {
+    api<RoleTelemetriaCriada>("/telemetria", {
       method: "POST",
       body: JSON.stringify(dados),
     }),

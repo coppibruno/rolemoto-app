@@ -32,6 +32,9 @@ export const useSessaoTelemetriaNativa = () => {
   useEffect(() => {
     void sincronizar();
     if (!podeGravarTelemetriaNativa()) return;
+    void import("@/lib/telemetria/cache-conquistas").then((m) =>
+      m.atualizarCacheConquistas(),
+    );
     let remover: (() => void) | undefined;
     void import("@capacitor/app")
       .then(({ App }) =>

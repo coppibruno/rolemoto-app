@@ -9,6 +9,7 @@ import { ModalEconomiaBateria } from "./ModalEconomiaBateria";
 import { PainelGravacaoAtiva } from "./PainelGravacaoAtiva";
 import { ResumoPreSave } from "./ResumoPreSave";
 import { StatusGravacao } from "./StatusGravacao";
+import { ToastConquista } from "./ToastConquista";
 
 export const TelaGravarRole = () => {
   const g = useGravarRole();
@@ -72,6 +73,8 @@ export const TelaGravarRole = () => {
             onDescartar={() => void g.descartar()}
           />
         ) : null}
+
+        <ToastConquista frases={g.frasesConquista} />
 
         {g.erroCodigo === "economia_bateria" ? (
           <ModalEconomiaBateria

@@ -1,3 +1,5 @@
+import type { AmostraConquista, ConquistaConcedida } from "./conquista";
+
 export type PontoTelemetria = {
   lat: number;
   lng: number;
@@ -39,6 +41,13 @@ export type RoleTelemetriaCreate = {
   pontoFim: PontoTelemetria;
   tracado?: string;
   publica?: boolean;
+  /** Recorte dos pinos cruzados, cortado no `stop()` nativo (SPEC 056). */
+  amostras?: AmostraConquista[];
+};
+
+/** 201 do `POST /telemetria`: o passeio e os carimbos novos ou recordes. */
+export type RoleTelemetriaCriada = RoleTelemetria & {
+  conquistas?: ConquistaConcedida[];
 };
 
 export type ItemHistoricoTelemetria = {

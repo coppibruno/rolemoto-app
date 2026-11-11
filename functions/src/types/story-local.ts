@@ -42,11 +42,28 @@ export interface StoryLocal {
   localizacaoX: number | null;
   localizacaoY: number | null;
   localizacaoCor: CorSelo | null;
+  postId: string | null;
+  marcaTipo: "local" | "evento" | null;
+  marcaId: string | null;
   createdAt: string;
   expiresAt: string;
 }
 
-export type StoryLocalCreate = Omit<StoryLocal, "id" | "createdAt" | "expiresAt">;
+type CamposPost = "postId" | "marcaTipo" | "marcaId";
+
+export type StoryLocalCreate =
+  Omit<StoryLocal, "id" | "createdAt" | "expiresAt" | CamposPost> &
+  Partial<Pick<StoryLocal, CamposPost>>;
+
+export type ResultadoEncaminhar =
+  | {tipo: "criada"; storyId: string}
+  | {tipo: "existente"; storyId: string}
+  | {tipo: "teto"};
+
+export interface PublicacaoStory {
+  id: string;
+  autorUid: string;
+}
 
 export interface StoryPublica {
   id: string;
@@ -62,6 +79,7 @@ export interface StoryPublica {
   autor: AutorStory;
   mencao: MencaoStory | null;
   localizacao: LocalizacaoStory | null;
+  publicacao: PublicacaoStory | null;
 }
 
 export interface StoryVisto {

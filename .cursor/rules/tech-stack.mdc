@@ -240,6 +240,38 @@ Qualquer autenticado cria via `POST /locais/:id/checkin` `{ lat, lng, accuracy }
 
 Qualquer autenticado no raio (400 m, precisão ≤ 80 m) posta em `POST /locais/:id/stories` ou, com o encontro ao vivo, em `POST /eventos/:id/stories`. Também pode postar no próprio perfil em `POST /stories` e marcar um local ou evento com @nome: a foto entra no álbum daquele lugar. Sem marca, o álbum é `perfil`. A aba Rolês lista as pessoas com story em `GET /stories/pessoas` (bolinha + nome). Abrir a bolinha mostra só as fotos daquela pessoa. No perfil, só as próprias, e o autor apaga. A foto pode levar `localizacaoNome` + lat/lng: o selo abre o Maps, além da marca do evento ou do local. Evento com `localId` grava no álbum do local. Lat/lng do piloto não são persistidos. `GET /stories/ao-vivo?aba=locais|eventos` monta a faixa do ponto. Push `story_local` só na primeira foto do dia (`storyPushYmd`, America/Sao_Paulo).
 
+Story encaminhada de uma foto do perfil (SPEC 057) leva também `postId`, `marcaTipo` (`'local' | 'evento' | null`) e `marcaId`. Os três ficam `null` nas outras. `GET` de story devolve `publicacao: { id, autorUid } | null`, e o player mostra "Ver publicação".
+
+### Coleção `userspostfoto` (foto permanente no perfil — SPEC 057)
+```
+{
+ id: string, // autoId
+ usuarioId: string,
+ fotoUrl: string,
+ storagePath: string, // posts/{uid}/...
+ legenda: string, // "" ok; máx 500
+ marcaTipo: 'local' | 'evento' | null,
+ marcaId: string | null,
+ totalComentarios: number,
+ createdAt: timestamp
+}
+```
+
+`POST /posts` `{ fotoUrl, storagePath, legenda?, marca?, encaminharStory? }`: no máximo 10 por uid em 24 h, sem GPS. Com `encaminharStory`, copia o arquivo para `stories/perfil/{uid}/` e cria story no álbum `perfil`. Conta no teto de 5/24 h e não duplica enquanto a cópia vive. Não dispara `story_local`. `GET|DELETE /posts/:id` (só o autor apaga; leva os comentários). `POST /posts/:id/story` encaminha depois. Grade: `GET /usuarios/:uid/posts?cursor=` (30, `createdAt` desc). Rotas front: aba Fotos em `/perfil` e `/perfil/[uid]`, `/perfil/fotos/nova`, `/perfil/[uid]/fotos/[postId]`.
+
+### Coleção `userspostcomentario`
+```
+{
+ id: string, // autoId
+ postId: string,
+ usuarioId: string,
+ texto: string, // 1..280
+ createdAt: timestamp
+}
+```
+
+Lista plana: `GET|POST /posts/:id/comentarios` (30, cursor). `DELETE /posts/:id/comentarios/:comentarioId` só para o autor do comentário ou o da foto. Comentário de outra pessoa manda o push `comentario_foto` ao autor da foto. `DELETE /perfil` apaga posts, comentários e arquivos do uid.
+
 ### Coleção `userslocalstoryvisto`
 
 ```

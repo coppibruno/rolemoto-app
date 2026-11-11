@@ -378,6 +378,39 @@
   color: var(--primary-container);
 }
 
+.itemConquista {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.chipConquista {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chipConquista .material-symbols-outlined {
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--primary-container);
+}
+
+.chipConquistaVelocidade {
+  flex-shrink: 0;
+  color: var(--tertiary);
+  white-space: nowrap;
+}
+
 .botaoVerSelos {
   align-self: flex-start;
   border: none;
