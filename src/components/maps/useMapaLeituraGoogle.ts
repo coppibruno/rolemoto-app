@@ -14,7 +14,7 @@ import {
   type OverlayMapa,
 } from "@/lib/google-maps";
 import type { PontoLatLng } from "@/lib/mapa-tiles";
-import type { MarcadorMapa } from "./MapaEstatico";
+import { marcadorComIcone, type MarcadorMapa } from "./MapaEstatico";
 
 const ZOOM_PONTO = 15;
 
@@ -33,25 +33,56 @@ const caminhoDoMapa = ({
   trajeto,
 }: DadosMapa): LatLng[] => {
   if (trajeto && trajeto.length >= 2) return trajeto;
-  if (ligarMarcadores && marcadores.length >= 2) {
-    return marcadores.map((m) => ({ lat: m.lat, lng: m.lng }));
+  const pontos = marcadores.filter((m) => !marcadorComIcone(m));
+  if (ligarMarcadores && pontos.length >= 2) {
+    return pontos.map((m) => ({ lat: m.lat, lng: m.lng }));
   }
   return [];
+};
+
+/** O Google pede cor literal; `var(--token)` é lido do tema ativo. */
+const resolverCor = (cor: string): string => {
+  const token = /^var\((--[\w-]+)\)$/.exec(cor.trim())?.[1];
+  if (!token || typeof document === "undefined") return cor;
+  return getComputedStyle(document.documentElement).getPropertyValue(token).trim() || "#f97316";
 };
 
 const desenhar = (
   map: GoogleMap,
   maps: GoogleMapsNs,
   dados: DadosMapa,
+  tocar: (indice: number) => void,
 ): { overlays: OverlayMapa[]; enquadrar: () => void } => {
   const overlays: OverlayMapa[] = [];
   const limites = new maps.LatLngBounds();
   const pontos: LatLng[] = [];
 
-  dados.marcadores.forEach((marcador) => {
+  dados.marcadores.forEach((marcador, indice) => {
     const posicao = { lat: marcador.lat, lng: marcador.lng };
     pontos.push(posicao);
     limites.extend(posicao);
+    if (marcador.icone) {
+      const cor = resolverCor(marcador.cor);
+      const clicavel = Boolean(marcador.onToque);
+      const medalha = new maps.Marker({
+        map,
+        position: posicao,
+        clickable: clicavel,
+        title: marcador.nomeAcessivel,
+        zIndex: 10,
+        icon: { ...iconeCirculo("#121316"), scale: 15, strokeColor: cor },
+        label: {
+          text: marcador.icone,
+          className: "material-symbols-outlined",
+          fontFamily: "Material Symbols Outlined",
+          color: cor,
+          fontSize: "18px",
+        },
+      });
+      if (clicavel) maps.event.addListener(medalha, "click", () => tocar(indice));
+      overlays.push(medalha);
+      return;
+    }
     const marker = new maps.Marker({
       map,
       position: posicao,
@@ -135,7 +166,15 @@ export const useMapaLeituraGoogle = ({
   const assinatura = useMemo(
     () =>
       JSON.stringify({
-        m: marcadores.map((p) => [p.lat, p.lng, p.cor, p.rotulo ?? ""]),
+        m: marcadores.map((p) => [
+          p.lat,
+          p.lng,
+          p.cor,
+          p.rotulo ?? "",
+          p.icone ?? "",
+          p.nomeAcessivel ?? "",
+          Boolean(p.onToque),
+        ]),
         z: zoom ?? null,
         l: Boolean(ligarMarcadores),
         t: (trajeto ?? []).map((p) => [p.lat, p.lng]),
@@ -204,7 +243,9 @@ export const useMapaLeituraGoogle = ({
     if (!map || !maps || !pronto) return;
 
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
-    const desenho = desenhar(map, maps, dadosRef.current);
+    const desenho = desenhar(map, maps, dadosRef.current, (indice) =>
+      dadosRef.current.marcadores[indice]?.onToque?.(),
+    );
     overlaysRef.current = desenho.overlays;
     enquadrarRef.current = desenho.enquadrar;
   }, [assinatura, pronto]);

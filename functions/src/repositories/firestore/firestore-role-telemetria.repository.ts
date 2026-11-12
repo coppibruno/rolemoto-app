@@ -1,6 +1,7 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
+import type {MedalhaTelemetria, NovidadeMedalha} from "../../types/conquista";
 import type {
   PontoTelemetria,
   RoleTelemetria,
@@ -45,9 +46,33 @@ const toResumo = (snap: DocumentSnapshot): RoleTelemetria => {
   };
 };
 
+const NOVIDADES_MEDALHA = new Set<string>(["primeira", "recorde", "passagem"]);
+
+const toMedalha = (valor: unknown): MedalhaTelemetria | null => {
+  if (!valor || typeof valor !== "object") return null;
+  const o = valor as Record<string, unknown>;
+  const novidade = String(o.novidade ?? "");
+  const conquistaId = String(o.conquistaId ?? "");
+  if (!conquistaId || !NOVIDADES_MEDALHA.has(novidade)) return null;
+  return {
+    conquistaId,
+    nome: String(o.nome ?? ""),
+    lat: Number(o.lat ?? 0),
+    lng: Number(o.lng ?? 0),
+    velocidadeMaxKmh: Number(o.velocidadeMaxKmh ?? 0),
+    novidade: novidade as NovidadeMedalha,
+  };
+};
+
+const toMedalhas = (valor: unknown): MedalhaTelemetria[] =>
+  Array.isArray(valor) ?
+    valor.map(toMedalha).filter((m): m is MedalhaTelemetria => m !== null) :
+    [];
+
 const toDoc = (snap: DocumentSnapshot): RoleTelemetria => ({
   ...toResumo(snap),
   tracado: String(snap.data()?.tracado ?? ""),
+  medalhas: toMedalhas(snap.data()?.medalhas),
 });
 
 export class FirestoreRoleTelemetriaRepository
@@ -75,6 +100,7 @@ implements RoleTelemetriaRepository {
       pontoFim: dados.pontoFim,
       tracado: dados.tracado,
       publica: dados.publica,
+      medalhas: [],
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     });
@@ -113,6 +139,13 @@ implements RoleTelemetriaRepository {
       updatedAt: FieldValue.serverTimestamp(),
     });
     return this.buscarPorId(id);
+  }
+
+  async atualizarMedalhas(
+    id: string,
+    medalhas: MedalhaTelemetria[],
+  ): Promise<void> {
+    await firestore.collection(COLECAO).doc(id).update({medalhas});
   }
 
   async excluir(id: string): Promise<void> {

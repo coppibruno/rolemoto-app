@@ -9,6 +9,7 @@ import { BotaoExcluirConta } from "./BotaoExcluirConta";
 import { BotaoInstalarApp } from "./BotaoInstalarApp";
 import { BotaoSair } from "./BotaoSair";
 import { CardCompletarPerfil } from "./CardCompletarPerfil";
+import { FaixaMeusPontos } from "./FaixaMeusPontos";
 import { GradeFotos } from "./GradeFotos";
 import { HistoricoPistas } from "./HistoricoPistas";
 import styles from "../perfil.module.css";
@@ -24,8 +25,9 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
   return (
     <div className={styles.visao}>
       <LinhaTema />
-      <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} />
+      <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} proprio />
       <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
+      <FaixaMeusPontos locais={usuario.locaisComoDono ?? []} />
       <button type="button" className={styles.botaoEditar} onClick={onEditar}>
         <span className="material-symbols-outlined" aria-hidden>
           edit

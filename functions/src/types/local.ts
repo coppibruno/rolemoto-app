@@ -1,3 +1,5 @@
+import type {OfertaVigenteResumo} from "./oferta-local";
+
 export type CategoriaLocal =
   | "posto"
   | "bar_moto_point"
@@ -73,12 +75,17 @@ export type LocalFeedItem = Local & {
   distanciaKm: number;
   avaliado: boolean;
   favorito: boolean;
+  ofertaVigente: OfertaVigenteResumo | null;
 };
 
 export type LocalDetalhe = Local & {
   avaliado: boolean;
   favorito: boolean;
   checkinProprio: boolean;
+  ofertaVigente: OfertaVigenteResumo | null;
+  souDono: boolean;
+  /** Só para admin; a chave não vai no JSON de quem não é. */
+  dono?: {uid: string; nome: string} | null;
 };
 
 export const CATEGORIAS_LOCAL: CategoriaLocal[] = [

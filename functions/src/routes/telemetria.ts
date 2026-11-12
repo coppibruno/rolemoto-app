@@ -6,7 +6,12 @@ import {
   rateLimitPontoTelemetria,
 } from "../middleware/rate-limit";
 import {param} from "../lib/params";
-import {concederConquistas} from "../lib/conquistas";
+import {
+  concederConquistas,
+  gravarMedalhas,
+  medalhasParaLeitor,
+} from "../lib/conquistas";
+import type {MedalhaTelemetria} from "../types/conquista";
 import {
   parseAmostrasConquista,
   parseLimiteTelemetria,
@@ -167,7 +172,7 @@ telemetriaRouter.post("/", async (req: Request, res: Response) => {
       usuarioId: uid,
       ...validado.dados,
     });
-    const conquistas = await concederConquistas(
+    const {conquistas, medalhas} = await concederConquistas(
       {
         usuarioId: uid,
         telemetriaId: criado.id,
@@ -177,7 +182,8 @@ telemetriaRouter.post("/", async (req: Request, res: Response) => {
       },
       parseAmostrasConquista((req.body as Record<string, unknown>)?.amostras),
     );
-    res.status(201).json({...criado, conquistas});
+    await gravarMedalhas(criado.id, medalhas);
+    res.status(201).json({...criado, medalhas: undefined, conquistas});
   } catch (error) {
     responderErro(res, error);
   }
@@ -211,7 +217,13 @@ telemetriaRouter.get("/:id", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Telemetria não encontrada"});
       return;
     }
-    res.json(doc);
+    res.json({
+      ...doc,
+      medalhas: medalhasParaLeitor(
+        (doc.medalhas ?? []) as MedalhaTelemetria[],
+        doc.usuarioId === uid,
+      ),
+    });
   } catch (error) {
     responderErro(res, error);
   }

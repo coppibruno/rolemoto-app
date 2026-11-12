@@ -1,5 +1,5 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
-import {FieldValue} from "firebase-admin/firestore";
+import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
 import type {
   UsuarioLocalCheckin,
@@ -48,6 +48,16 @@ implements UsuarioLocalCheckinRepository {
       .limit(LIMITE_POR_USUARIO)
       .get();
     return snap.docs.map(toCheckin);
+  }
+
+  async contarPorLocalDesde(localId: string, desde: Date): Promise<number> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("localId", "==", localId)
+      .where("createdAt", ">=", Timestamp.fromDate(desde))
+      .count()
+      .get();
+    return snap.data().count;
   }
 
   async criar(

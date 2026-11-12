@@ -4,6 +4,8 @@ import type { Local } from "@/types/local";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
 import { OPCOES_CATEGORIA, OPCOES_FACILIDADES } from "../constants";
 import { formatarHorarioLocal } from "@/lib/horario-local";
+import { FaixaOferta } from "@/components/oferta-local/FaixaOferta";
+import { SeloParceiro } from "@/components/oferta-local/SeloParceiro";
 import styles from "../locais.module.css";
 
 type Props = {
@@ -27,6 +29,7 @@ export const LocalCard = ({ local }: Props) => {
   const extras = facilidades.length - visiveis.length;
   const hrefMaps = local.linkMaps.trim() || undefined;
   const hrefDetalhe = `/locais/${local.id}`;
+  const oferta = local.ofertaVigente ?? null;
 
   return (
     <article className={styles.card}>
@@ -50,12 +53,14 @@ export const LocalCard = ({ local }: Props) => {
           </div>
         )}
         <CreditoFoto texto={local.fotoAtribuicao} />
+        {oferta ? <SeloParceiro className={styles.seloParceiro} /> : null}
       </div>
       <div className={styles.cardCorpo}>
         <span className={styles.chipCategoria}>{labelCategoria(local.categoria)}</span>
         <h2 className={styles.cardNome}>{local.nome}</h2>
         <p className={styles.cardEndereco}>{local.endereco}</p>
         <p className={styles.cardHorario}>{formatarHorarioLocal(local)}</p>
+        {oferta ? <FaixaOferta oferta={oferta} /> : null}
         <div className={`${styles.cardRodape} ${styles.cardDetalheAcao}`}>
           <div className={styles.facilidadesResumo}>
             {visiveis.map((item) => (

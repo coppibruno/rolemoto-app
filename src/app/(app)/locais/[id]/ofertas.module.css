@@ -1,0 +1,606 @@
+/* Detalhe: bloco de ofertas, dono do balcão */
+
+.bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.secao {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linhaOferta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  text-align: left;
+  font: inherit;
+}
+
+.linhaNoAr {
+  border-color: color-mix(in srgb, var(--primary-container) 55%, transparent);
+  cursor: pointer;
+}
+
+.linhaNoAr:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.linhaForaDoAr {
+  opacity: 0.72;
+}
+
+.linhaTitulo {
+  overflow-wrap: anywhere;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.linhaRotulo {
+  grid-row: span 2;
+  align-self: center;
+  justify-self: end;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-container);
+}
+
+.linhaJanela {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.linkBalcao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.linkBalcao:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.donoAtual {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 1rem;
+  background: var(--surface-container-low);
+}
+
+.donoNome {
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.confirmarSoltar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.resultadosBusca {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--surface-container-low);
+}
+
+.resultadoBusca {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid var(--divisor);
+  background: transparent;
+  color: var(--on-surface);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.resultadoBusca small {
+  color: var(--on-surface-variant);
+  font-size: 12px;
+}
+
+/* Botões e campos */
+
+.input,
+.textarea {
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 11px 12px;
+  border: 1px solid transparent;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font: inherit;
+  font-size: 15px;
+}
+
+.textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--outline);
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 0;
+}
+
+.inputComErro {
+  border-color: var(--error);
+}
+
+.botaoTexto,
+.botaoPerigo {
+  min-height: 40px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.botaoPerigo {
+  background: var(--error-container);
+  color: var(--on-error-container);
+}
+
+.botaoTexto:disabled,
+.botaoPerigo:disabled {
+  opacity: 0.6;
+}
+
+.cta,
+.botaoSecundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--touch-target);
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.cta {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+}
+
+.cta:disabled {
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.botaoSecundario {
+  margin-top: 12px;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: 18px;
+}
+
+.cta:focus-visible,
+.botaoSecundario:focus-visible,
+.botaoTexto:focus-visible,
+.botaoPerigo:focus-visible,
+.resultadoBusca:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.erro {
+  margin: 0;
+  font-size: 13px;
+  color: var(--error);
+}
+
+/* Folha do cupom */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.folha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  max-width: 560px;
+  padding: 14px var(--gutter-md) calc(16px + env(safe-area-inset-bottom, 0px));
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--surface-container-high);
+  box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.grip {
+  width: 36px;
+  height: 4px;
+  margin-bottom: 10px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+}
+
+.folhaInstrucao {
+  margin: 0;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.folhaTitulo {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.folhaCodigo {
+  margin: 8px 0 4px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  color: var(--on-surface);
+}
+
+.folhaPiloto {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.folhaMoto {
+  margin: 0;
+  font-size: 14px;
+  color: var(--tertiary);
+}
+
+.folhaRegra {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.folhaTeto,
+.folhaCarregando {
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--secondary-container);
+}
+
+.folhaCarregando {
+  margin: 24px 0;
+  color: var(--on-surface-variant);
+}
+
+/* Balcão e formulário */
+
+.tela {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 560px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--gutter-md) 24px;
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: var(--touch-min) minmax(0, 1fr) var(--touch-min);
+  align-items: center;
+  margin: 0 calc(-1 * var(--gutter-md));
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.botaoIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+.botaoIcone:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.titulo {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 14px;
+  color: var(--on-surface-variant);
+}
+
+.semana {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.numero {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 1rem;
+  background: var(--surface-container-low);
+}
+
+.numero b {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--on-surface);
+}
+
+.numero span {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.cartaoOferta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--card-padding-md);
+  border-radius: 1.5rem;
+  background: var(--surface-container-low);
+}
+
+.cartaoTopo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cartaoCodigo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--on-surface);
+}
+
+.status {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.statusNoAr {
+  background: color-mix(in srgb, var(--primary-container) 18%, transparent);
+  color: var(--primary-container);
+}
+
+.statusFora {
+  background: color-mix(in srgb, var(--tertiary) 15%, transparent);
+  color: var(--tertiary);
+}
+
+.statusPausada {
+  background: var(--surface-container-high);
+  color: var(--outline);
+}
+
+.cartaoAcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 0;
+  text-align: center;
+  color: var(--on-surface-variant);
+}
+
+.vazio p {
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.campoRotulo {
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--outline);
+}
+
+.campoAjuda {
+  margin: 0;
+  font-size: 12px;
+  color: var(--on-surface-variant);
+}
+
+.linha2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.segmento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.chip {
+  min-height: 40px;
+  border: 1px solid var(--outline-variant);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--outline);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.chipAtivo {
+  border-color: var(--primary-container);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.dias .chip {
+  padding: 0;
+  font-size: 13px;
+}

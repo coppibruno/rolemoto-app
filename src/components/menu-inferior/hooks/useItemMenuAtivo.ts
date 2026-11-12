@@ -30,6 +30,9 @@ export const useItemMenuAtivo = () => {
         Boolean(pathname?.startsWith("/telemetria"))
       );
     }
+    if (href === "/perfil" && (pathname === "/ranking" || pathname?.startsWith("/ranking/"))) {
+      return true;
+    }
     return pathname === href || Boolean(pathname?.startsWith(`${href}/`));
   };
 

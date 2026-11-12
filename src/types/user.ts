@@ -23,11 +23,20 @@ export interface Usuario {
   seguindo: number;
   seguidores: number;
   createdAt: string;
+  /** `GET /perfil` — pontos em que esta conta cuida do balcão. */
+  locaisComoDono?: { id: string; nome: string }[];
 }
 
 export type UsuarioForm = Omit<
   Usuario,
-  "uid" | "createdAt" | "admin" | "selos" | "conquistas" | "seguindo" | "seguidores"
+  | "uid"
+  | "createdAt"
+  | "admin"
+  | "selos"
+  | "conquistas"
+  | "seguindo"
+  | "seguidores"
+  | "locaisComoDono"
 >;
 
 export type ErrosPrimeiroAcesso = {

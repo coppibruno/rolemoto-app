@@ -1,3 +1,4 @@
+import type { DonoLocal, OfertaVigenteResumo } from "./oferta-local";
 import type { EventoAoVivoResumo } from "./story-local";
 
 export type CategoriaLocal =
@@ -48,6 +49,8 @@ export interface Local {
   recomendacoesComboio: number;
   createdAt: string;
   updatedAt: string;
+  /** `GET /locais` e `GET /locais/:id`. `null` sem oferta no ar. */
+  ofertaVigente?: OfertaVigenteResumo | null;
 }
 
 export type LocalPublicacao = Omit<
@@ -73,6 +76,9 @@ export type LocalDetalhe = Local & {
   checkinProprio: boolean;
   storiesAtivas: number;
   eventoAoVivo: EventoAoVivoResumo | null;
+  souDono: boolean;
+  /** Só vem para admin. */
+  dono?: DonoLocal | null;
 };
 
 export type HorarioDiaForm = {

@@ -44,6 +44,11 @@
  * - /locais/:id/avaliacoes → GET, POST
  * - /locais/:id/avaliacao → GET, PATCH
  * - /locais/:id/favorito → POST, DELETE
+ * - /locais/:id/dono → PUT (admin)
+ * - /locais/:id/ofertas → GET, POST
+ * - /locais/:id/ofertas/:ofertaId → PUT, PATCH, DELETE
+ * - /locais/:id/ofertas/:ofertaId/cupom → POST
+ * - /locais/:id/balcao → GET
  * - /locais/:id/stories → GET, POST, DELETE
  * - /eventos/:id/stories → GET, POST, DELETE
  * - /stories/ao-vivo → GET
@@ -153,6 +158,11 @@ app.get("/", (_req: Request, res: Response) => {
       "/locais/:id/avaliacoes",
       "/locais/:id/avaliacao",
       "/locais/:id/favorito",
+      "/locais/:id/dono",
+      "/locais/:id/ofertas",
+      "/locais/:id/ofertas/:ofertaId",
+      "/locais/:id/ofertas/:ofertaId/cupom",
+      "/locais/:id/balcao",
       "/locais/:id/stories",
       "/eventos/:id/stories",
       "/stories/ao-vivo",

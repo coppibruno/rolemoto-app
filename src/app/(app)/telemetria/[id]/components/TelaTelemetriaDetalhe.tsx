@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
 import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
 import styles from "@/components/telemetria/telemetria.module.css";
 import { BotaoCompartilharTelemetria } from "./BotaoCompartilharTelemetria";
+import { FolhaMedalha } from "./FolhaMedalha";
 import { ModalCompartilharTelemetria } from "./ModalCompartilharTelemetria";
 import { useCompartilharTelemetria } from "../hooks/useCompartilharTelemetria";
 import { useTelemetriaDetalhe } from "../hooks/useTelemetriaDetalhe";
@@ -37,6 +38,8 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
     };
   }, [apelido, doc, eDono]);
   const share = useCompartilharTelemetria(dadosShare);
+  const [medalhaAberta, setMedalhaAberta] = useState<number | null>(null);
+  const medalha = medalhaAberta === null ? null : doc?.medalhas?.[medalhaAberta] ?? null;
 
   return (
     <div className={styles.tela}>
@@ -74,7 +77,16 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
               pontoInicio={doc.pontoInicio}
               pontoFim={doc.pontoFim}
               tracado={doc.tracado}
+              medalhas={doc.medalhas}
+              onTocarMedalha={setMedalhaAberta}
             />
+            {medalha ? (
+              <FolhaMedalha
+                medalha={medalha}
+                mostrarVelocidade={eDono}
+                onFechar={() => setMedalhaAberta(null)}
+              />
+            ) : null}
             {eDono ? (
               <SeletorVisibilidade
                 publica={doc.publica}

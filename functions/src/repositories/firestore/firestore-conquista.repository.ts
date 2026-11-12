@@ -16,6 +16,7 @@ const COLECAO = "conquistas";
 const CARIMBOS = "usersconquista";
 const LOTE_LIMPEZA = 300;
 const RODADAS_LIMPEZA = 50;
+const LOTE_GET_ALL = 100;
 
 const idCarimbo = (usuarioId: string, conquistaId: string): string =>
   `${usuarioId}_${conquistaId}`;
@@ -149,6 +150,25 @@ export class FirestoreConquistaRepository implements ConquistaRepository {
     return snap.docs
       .map(toCarimbo)
       .sort((a, b) => a.primeiraVezEm.localeCompare(b.primeiraVezEm));
+  }
+
+  async buscarCarimbos(
+    usuarioIds: string[],
+    conquistaId: string,
+  ): Promise<UsuarioConquista[]> {
+    const unicos = [...new Set(usuarioIds)].filter(Boolean);
+    if (!conquistaId || unicos.length === 0) return [];
+    const encontrados: UsuarioConquista[] = [];
+    for (let i = 0; i < unicos.length; i += LOTE_GET_ALL) {
+      const refs = unicos
+        .slice(i, i + LOTE_GET_ALL)
+        .map((uid) => firestore.collection(CARIMBOS).doc(idCarimbo(uid, conquistaId)));
+      const snaps = await firestore.getAll(...refs);
+      for (const snap of snaps) {
+        if (snap.exists) encontrados.push(toCarimbo(snap));
+      }
+    }
+    return encontrados;
   }
 
   async limparPorUsuario(usuarioId: string): Promise<void> {

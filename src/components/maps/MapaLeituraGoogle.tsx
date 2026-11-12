@@ -37,7 +37,7 @@ export const MapaLeituraGoogle = ({
       className={[styles.viewport, styles.viewportGoogle, className]
         .filter(Boolean)
         .join(" ")}
-      role="img"
+      role={marcadores.some((m) => m.icone && m.onToque) ? "group" : "img"}
       aria-label={ariaLabel}
     >
       <div ref={containerRef} className={styles.google} />

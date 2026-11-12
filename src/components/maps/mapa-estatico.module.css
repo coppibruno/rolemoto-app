@@ -64,6 +64,50 @@
   pointer-events: none;
 }
 
+.marcadorIcone {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  margin-left: calc(var(--touch-min) / -2);
+  margin-top: calc(var(--touch-min) / -2);
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+span.marcadorIcone {
+  cursor: default;
+  pointer-events: none;
+}
+
+.marcadorIconeCirculo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: #121316;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 45%);
+}
+
+.marcadorIconeCirculo .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.marcadorIcone:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
 .rotulo {
   position: absolute;
   top: -18px;

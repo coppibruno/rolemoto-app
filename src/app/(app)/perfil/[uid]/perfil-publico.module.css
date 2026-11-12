@@ -405,6 +405,42 @@
   color: var(--primary-container);
 }
 
+.topoConquistas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.botaoRanking {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--touch-min);
+  padding: 0 4px 0 8px;
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.botaoRanking .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.chipConquistaLink {
+  text-decoration: none;
+}
+
+.botaoRanking:focus-visible,
+.chipConquistaLink:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
 .chipConquistaVelocidade {
   flex-shrink: 0;
   color: var(--tertiary);

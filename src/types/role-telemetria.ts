@@ -1,4 +1,8 @@
-import type { AmostraConquista, ConquistaConcedida } from "./conquista";
+import type {
+  AmostraConquista,
+  ConquistaConcedida,
+  MedalhaTelemetria,
+} from "./conquista";
 
 export type PontoTelemetria = {
   lat: number;
@@ -24,6 +28,8 @@ export type RoleTelemetria = {
   tracado?: string;
   /** Ausente em docs antigos → lido como true. */
   publica: boolean;
+  /** Só no detalhe (SPEC 058). */
+  medalhas?: MedalhaTelemetria[];
   createdAt: string;
   updatedAt: string;
 };

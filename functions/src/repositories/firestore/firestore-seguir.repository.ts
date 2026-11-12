@@ -132,6 +132,19 @@ export class FirestoreSeguirRepository implements SeguirRepository {
     return this.listar("seguidoId", uid, cursor);
   }
 
+  async listarSeguidosRecentes(uid: string, limite: number): Promise<string[]> {
+    if (!uid || limite < 1) return [];
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("seguidorId", "==", uid)
+      .orderBy("createdAt", "desc")
+      .limit(limite)
+      .get();
+    return snap.docs
+      .map((doc) => String(doc.get("seguidoId") ?? ""))
+      .filter(Boolean);
+  }
+
   async vinculosCom(
     tokenUid: string,
     uids: string[],

@@ -30,6 +30,8 @@ export interface Usuario {
 /** `GET /perfil` — o próprio piloto, com a velocidade das conquistas. */
 export type PerfilCliente = Usuario & {
   conquistas: ConquistaPerfil[];
+  /** Pontos em que este uid é `locais.donoId`, por nome. Só em `/perfil`. */
+  locaisComoDono: {id: string; nome: string}[];
 };
 
 /** DTO público — sem admin, e-mail, ids de local ou dados sensíveis. */

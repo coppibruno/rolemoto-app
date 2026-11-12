@@ -9,8 +9,12 @@ import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
 import {buscarPontoProximo} from "../lib/ponto-proximo";
 import {validarPublicacaoLocal} from "../lib/validar-local";
+import {apelidoExibicao} from "../lib/apelido";
+import {ofertasVigentesPorLocal} from "../lib/dono-local";
+import {ofertaDoCard, resumoVigente} from "../lib/oferta-local";
 import {
   localRepository,
+  ofertaLocalRepository,
   usuarioLocalFavoritoRepository,
   usuarioLocalFeedbackRepository,
   usuarioRepository,
@@ -19,6 +23,7 @@ import {detalheStoriesLocal} from "../lib/story-local";
 import {avaliacaoLocalRouter} from "./avaliacao-local";
 import {checkinLocalRouter} from "./checkin-local";
 import {favoritoLocalRouter} from "./favorito-local";
+import {ofertaLocalRouter} from "./oferta-local";
 import {storiesLocalRouter} from "./stories-local";
 
 /**
@@ -32,6 +37,7 @@ import {storiesLocalRouter} from "./stories-local";
  * GET    /locais/:id/avaliacao
  * POST|DELETE /locais/:id/favorito
  * POST   /locais/:id/checkin
+ * PUT    /locais/:id/dono, /locais/:id/ofertas…, GET /locais/:id/balcao (oferta-local)
  */
 export const locaisRouter = Router();
 
@@ -40,6 +46,7 @@ locaisRouter.use(rateLimitAutenticado);
 locaisRouter.use(avaliacaoLocalRouter);
 locaisRouter.use(checkinLocalRouter);
 locaisRouter.use(favoritoLocalRouter);
+locaisRouter.use(ofertaLocalRouter);
 locaisRouter.use(storiesLocalRouter);
 
 const idFeedbackLocal = (usuarioId: string, localId: string): string =>
@@ -48,14 +55,15 @@ const idFeedbackLocal = (usuarioId: string, localId: string): string =>
 const marcarAvaliadosEFavoritos = async <T extends {id: string}>(
   itens: T[],
   uid: string,
-): Promise<(T & {avaliado: boolean; favorito: boolean})[]> => {
+) => {
   if (itens.length === 0) {
     return [];
   }
   const idsFeedback = itens.map((item) => idFeedbackLocal(uid, item.id));
-  const [docs, favoritoIds] = await Promise.all([
+  const [docs, favoritoIds, ofertas] = await Promise.all([
     usuarioLocalFeedbackRepository.buscarPorIds(idsFeedback),
     usuarioLocalFavoritoRepository.listarLocalIdsPorUsuario(uid),
+    ofertasVigentesPorLocal(new Date()),
   ]);
   const avaliados = new Set(docs.map((doc) => doc.localId));
   const favoritos = new Set(favoritoIds);
@@ -63,7 +71,24 @@ const marcarAvaliadosEFavoritos = async <T extends {id: string}>(
     ...item,
     avaliado: avaliados.has(item.id),
     favorito: favoritos.has(item.id),
+    ofertaVigente: ofertas.get(item.id) ?? null,
   }));
+};
+
+/** `dono` só entra no JSON para admin. */
+const camposDonoDetalhe = async (uid: string, donoId: string | null) => {
+  const souDono = donoId === uid;
+  const [perfil, dono] = await Promise.all([
+    souDono ? null : usuarioRepository.buscarPorId(uid),
+    donoId ? usuarioRepository.buscarPorId(donoId) : null,
+  ]);
+  if (perfil?.admin !== true) {
+    return {souDono};
+  }
+  return {
+    souDono,
+    dono: donoId ? {uid: donoId, nome: apelidoExibicao(dono)} : null,
+  };
 };
 
 
@@ -138,13 +163,14 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const local = await localRepository.buscarPorId(param(req, "id"));
-    if (!local) {
+    const achado = await localRepository.buscarComDono(param(req, "id"));
+    if (!achado) {
       res.status(404).json({erro: "Local não encontrado"});
       return;
     }
+    const {local, donoId} = achado;
 
-    const [feedback, favorito, agregado, stories] = await Promise.all([
+    const [feedback, favorito, agregado, stories, ofertas, camposDono] = await Promise.all([
       usuarioLocalFeedbackRepository.buscarPorUsuarioELocal(uid, local.id),
       usuarioLocalFavoritoRepository.buscarPorUsuarioELocal(uid, local.id),
       usuarioRepository.buscarAgregadoCheckin(uid),
@@ -152,7 +178,10 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
         log.warn("Local", "Stories do detalhe indisponíveis", erroDe(error));
         return {storiesAtivas: 0, eventoAoVivo: null};
       }),
+      ofertaLocalRepository.listarPorLocal(local.id),
+      camposDonoDetalhe(uid, donoId),
     ]);
+    const vigente = ofertaDoCard(ofertas, new Date());
     res.json({
       ...local,
       avaliado: feedback !== null,
@@ -160,6 +189,8 @@ locaisRouter.get("/:id", async (req: Request, res: Response) => {
       checkinProprio: Boolean(agregado?.locaisVisitadosIds.includes(local.id)),
       storiesAtivas: stories.storiesAtivas,
       eventoAoVivo: stories.eventoAoVivo,
+      ofertaVigente: vigente ? resumoVigente(vigente) : null,
+      ...camposDono,
     });
   } catch (error) {
     responderErro(res, error);

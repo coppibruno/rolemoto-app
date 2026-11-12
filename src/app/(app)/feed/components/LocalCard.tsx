@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { LocalFeedItem } from "@/types/local";
 import { hrefCriarRoleComDestino } from "@/app/(app)/criar-role/destino-inicial";
 import { urlAbrirMaps } from "@/lib/maps";
+import { FaixaOferta } from "@/components/oferta-local/FaixaOferta";
+import { SeloParceiro } from "@/components/oferta-local/SeloParceiro";
 import {
   FACILIDADES_FEED,
   ICONES_CATEGORIA_LOCAL,
@@ -36,6 +38,7 @@ const textoHorario = (local: LocalFeedItem) => {
 
 export const LocalCard = ({ local }: Props) => {
   const horario = textoHorario(local);
+  const oferta = local.ofertaVigente ?? null;
   const facilidades = local.facilidades
     .map((valor) => FACILIDADES_FEED.find((item) => item.valor === valor))
     .filter((item): item is NonNullable<typeof item> => Boolean(item))
@@ -61,6 +64,7 @@ export const LocalCard = ({ local }: Props) => {
       <div className={styles.cardLocalTopo}>
         <div className={styles.cardLocalInfo}>
           <div className={`${styles.cardLocalBadges} ${styles.cardDetalheAcao}`}>
+            {oferta ? <SeloParceiro /> : null}
             {horario ? (
               <span className={styles.badge24h}>
                 {local.aberto24h ? (
@@ -125,6 +129,8 @@ export const LocalCard = ({ local }: Props) => {
           ))}
         </div>
       ) : null}
+
+      {oferta ? <FaixaOferta oferta={oferta} /> : null}
 
       <div className={`${styles.cardLocalAcoes} ${styles.cardDetalheAcao}`}>
         <a

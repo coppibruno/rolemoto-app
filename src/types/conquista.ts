@@ -34,6 +34,34 @@ export type ConquistaConcedida = {
   novidade: "primeira" | "recorde";
 };
 
+export type NovidadeMedalha = "primeira" | "recorde" | "passagem";
+
+/** Item de `medalhas` no `GET /telemetria/:id`. A velocidade só vem para o dono. */
+export type MedalhaTelemetria = {
+  conquistaId: string;
+  nome: string;
+  lat: number;
+  lng: number;
+  velocidadeMaxKmh?: number;
+  novidade: NovidadeMedalha;
+};
+
+/** Linha de `GET /conquistas/:id/ranking`. */
+export type ItemRanking = {
+  posicao: number | null;
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
+  velocidadeMaxKmh: number | null;
+  eu: boolean;
+};
+
+export type RankingConquista = {
+  conquista: { id: string; nome: string };
+  teto: number;
+  itens: ItemRanking[];
+};
+
 /** Recorte do buffer dentro de um círculo, enviado no `POST /telemetria`. */
 export type AmostraConquista = {
   conquistaId: string;

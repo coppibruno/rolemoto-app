@@ -12,9 +12,16 @@ import {
 import styles from "./mapa-estatico.module.css";
 
 export type MarcadorMapa = PontoLatLng & {
+  /** Hex ou `var(--token)`. */
   cor: string;
   rotulo?: string;
+  /** Material Symbol; com ícone o marcador vira botão quando há `onToque`. */
+  icone?: string;
+  nomeAcessivel?: string;
+  onToque?: () => void;
 };
+
+export const marcadorComIcone = (m: MarcadorMapa): boolean => Boolean(m.icone);
 
 export type PropsMapaEstatico = {
   marcadores: MarcadorMapa[];
@@ -35,7 +42,14 @@ type Layout = {
   tiles: TileInfo[];
   mosaicoLeft: number;
   mosaicoTop: number;
-  marcadoresPx: Array<{ left: number; top: number; cor: string; rotulo?: string }>;
+  marcadoresPx: Array<{
+    left: number;
+    top: number;
+    cor: string;
+    rotulo?: string;
+    icone?: string;
+    nomeAcessivel?: string;
+  }>;
   /** Atributo `points` do `<polyline>`; "" sem trajeto. */
   trajetoPx: string;
 };
@@ -94,6 +108,8 @@ const layoutMapa = (
       top: p.y - origemY,
       cor: m.cor,
       rotulo: m.rotulo,
+      icone: m.icone,
+      nomeAcessivel: m.nomeAcessivel,
     };
   });
 
@@ -150,11 +166,13 @@ export const MapaEstatico = ({
         }
       : null;
 
+  const interativo = marcadores.some((m) => m.icone && m.onToque);
+
   return (
     <div
       ref={setHost}
       className={[styles.viewport, className].filter(Boolean).join(" ")}
-      role="img"
+      role={interativo ? "group" : "img"}
       aria-label={ariaLabel}
     >
       {layout ? (
@@ -210,15 +228,49 @@ export const MapaEstatico = ({
               />
             </svg>
           ) : null}
-          {layout.marcadoresPx.map((m, i) => (
-            <div
-              key={`${m.left}-${m.top}-${i}`}
-              className={styles.marcador}
-              style={{ left: m.left, top: m.top, background: m.cor }}
-            >
-              {m.rotulo ? <span className={styles.rotulo}>{m.rotulo}</span> : null}
-            </div>
-          ))}
+          {layout.marcadoresPx.map((m, i) => {
+            const chave = `${m.left}-${m.top}-${i}`;
+            if (m.icone) {
+              const aoTocar = marcadores[i]?.onToque;
+              const icone = (
+                <span className={styles.marcadorIconeCirculo} style={{ color: m.cor }}>
+                  <span className="material-symbols-outlined" aria-hidden>
+                    {m.icone}
+                  </span>
+                </span>
+              );
+              return aoTocar ? (
+                <button
+                  key={chave}
+                  type="button"
+                  className={styles.marcadorIcone}
+                  style={{ left: m.left, top: m.top }}
+                  aria-label={m.nomeAcessivel}
+                  onClick={aoTocar}
+                >
+                  {icone}
+                </button>
+              ) : (
+                <span
+                  key={chave}
+                  className={styles.marcadorIcone}
+                  style={{ left: m.left, top: m.top }}
+                  aria-hidden
+                >
+                  {icone}
+                </span>
+              );
+            }
+            return (
+              <div
+                key={chave}
+                className={styles.marcador}
+                style={{ left: m.left, top: m.top, background: m.cor }}
+              >
+                {m.rotulo ? <span className={styles.rotulo}>{m.rotulo}</span> : null}
+              </div>
+            );
+          })}
         </>
       ) : null}
       <a

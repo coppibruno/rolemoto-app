@@ -963,3 +963,59 @@
     font-size: 20px;
   }
 }
+
+.meusPontos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meusPontosTitulo {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--outline);
+}
+
+.meusPontosLista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meusPontosLinha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--primary-container) 35%, transparent);
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+.meusPontosLinha .material-symbols-outlined:first-child {
+  color: var(--primary-container);
+}
+
+.meusPontosLinha:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.meusPontosNome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}

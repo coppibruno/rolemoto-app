@@ -299,3 +299,9 @@
   text-transform: uppercase;
   cursor: pointer;
 }
+
+.seloParceiro {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}

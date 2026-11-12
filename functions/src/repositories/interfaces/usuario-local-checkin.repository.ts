@@ -12,5 +12,7 @@ export interface UsuarioLocalCheckinRepository {
     localId: string,
   ): Promise<UsuarioLocalCheckin | null>;
   listarPorUsuario(usuarioId: string): Promise<UsuarioLocalCheckin[]>;
+  /** Documentos, não pilotos distintos. */
+  contarPorLocalDesde(localId: string, desde: Date): Promise<number>;
   criar(dados: UsuarioLocalCheckinCreate): Promise<UsuarioLocalCheckin>;
 }

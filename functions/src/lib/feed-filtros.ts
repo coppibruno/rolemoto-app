@@ -132,7 +132,7 @@ export const filtrarLocaisFeed = (
     if (q && !bateBuscaLocal(local, q)) {
       continue;
     }
-    itens.push({...local, distanciaKm, avaliado: false, favorito: false});
+    itens.push({...local, distanciaKm, avaliado: false, favorito: false, ofertaVigente: null});
   }
   itens.sort((a, b) => a.distanciaKm - b.distanciaKm);
   return itens;

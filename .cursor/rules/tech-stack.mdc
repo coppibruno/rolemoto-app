@@ -177,6 +177,7 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
   recomendacoesComboio: number,
   somaNotas: number,              // interno; NÃO expor na API
   storyPushYmd: string,           // interno; 1º push do dia neste ponto
+  donoId: string | null,          // interno (SPEC 059); docs antigos = null; não sai na API
   createdAt: timestamp,
   updatedAt: timestamp
 }
@@ -185,6 +186,41 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
 Sugestões da Places API ficam em `sugestoesLocal` até o admin homologar (`POST /sugestoes-locais/:id/aprovar`), que grava aqui com `googlePlaceId`. A fachada da sugestão é a foto da Places salva no Storage; a homologação copia `fotoFachadaUrl` e `fotoAtribuicao`.
 
 Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`) e avalia (`POST|GET /locais/:id/avaliacoes`, `GET /locais/:id/avaliacao`). Favorita via `POST|DELETE /locais/:id/favorito`. `GET /locais` inclui `favorito: boolean`. `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
+
+### Coleção `ofertaslocal` (vitrine de parceria — SPEC 059)
+```
+{
+  id: string,                 // autoId; no máximo 5 por localId, pausadas inclusive
+  localId: string,
+  titulo: string,             // 1..60
+  tipo: 'preco' | 'percentual' | 'brinde',
+  valor: number | null,       // preço ≤ 99999.99 (2 casas); percentual 1..100; brinde = null
+  codigo: string,             // 4..8 A–Z0–9, maiúsculas; único no local
+  regra: string,              // 1..280
+  tetoDia: number | null,     // 1..999; só texto para o caixa
+  dias: number[],             // 0..6; [] = todo dia
+  horaInicio: string | null,  // 'HH:mm'; os dois null = o dia todo; não vira a noite
+  horaFim: string | null,
+  ativa: boolean,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
+Admin vincula o dono em `PUT /locais/:id/dono` `{uid | null}`; soltar pausa as ofertas, trocar não. Dono ou admin: `POST /locais/:id/ofertas`, `PUT|PATCH|DELETE /locais/:id/ofertas/:ofertaId`, `GET /locais/:id/balcao` (cupons abertos e check-ins desde segunda 00:00 SP). Qualquer autenticado: `GET /locais/:id/ofertas` (sem pausadas; `codigo: null` fora da janela) e `POST /locais/:id/ofertas/:ofertaId/cupom`. `GET /locais` e `GET /locais/:id` trazem `ofertaVigente` (sem código); o detalhe traz `souDono` e, só para admin, `dono`. `GET /perfil` traz `locaisComoDono`. `DELETE /perfil` solta os locais do uid e pausa as ofertas. Vigência no relógio de America/Sao_Paulo.
+
+### Coleção `usersofertacupom`
+```
+{
+  id: string,        // `{usuarioId}_{ofertaId}_{ymd}` (ymd em America/Sao_Paulo)
+  usuarioId: string,
+  ofertaId: string,
+  localId: string,
+  createdAt: timestamp
+}
+```
+
+Um doc por piloto, oferta e dia; abrir de novo devolve `novo: false`. Apagar a oferta mantém os docs. Índice `localId` + `createdAt` desc (e o mesmo em `userslocalcheckin`) para a semana do balcão.
 
 ### Coleção `userslocalfavorito`
 ```
@@ -322,10 +358,13 @@ Local: qualquer autenticado. Evento: só inscrito (`usersevento`) e após encerr
  pontoFim: { lat, lng, nome, endereco },
  tracado: string, // encoded polyline (precisão 5), ≤ 1500 pontos; "" em passeios antigos
  publica: boolean, // padrão false no POST; docs antigos sem o campo são lidos como true
+ medalhas: { conquistaId, nome, lat, lng, velocidadeMaxKmh, novidade: 'primeira' | 'recorde' | 'passagem' }[], // SPEC 058; ausente = []
  createdAt: timestamp,
-  updatedAt: timestamp
+ updatedAt: timestamp
 }
 ```
+
+`medalhas` só sai em `GET /telemetria/:id`; quem não é o dono recebe sem `velocidadeMaxKmh`. Placar `GET /conquistas/:id/ranking`: o token + até 100 seguidos mais recentes que carimbaram o pino.
 
 Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). Lista própria em `GET /telemetria` (sem `tracado`); detalhe autenticado em `GET /telemetria/:id` (404 se privada e quem pede não é o dono); dono altera visibilidade em `PATCH /telemetria/:id` `{publica}`. Perfil em `GET /usuarios/:uid/telemetria` devolve só as públicas quando o uid não é o do token.
 

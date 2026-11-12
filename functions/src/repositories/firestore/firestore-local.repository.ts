@@ -200,4 +200,29 @@ export class FirestoreLocalRepository implements LocalRepository {
   async reservarPushDoDia(id: string, ymd: string): Promise<boolean> {
     return reservarYmd(COLECAO, id, ymd);
   }
+
+  async buscarComDono(
+    id: string,
+  ): Promise<{local: Local; donoId: string | null} | null> {
+    const snap = await firestore.collection(COLECAO).doc(id).get();
+    if (!snap.exists) {
+      return null;
+    }
+    const donoId = snap.get("donoId");
+    return {
+      local: toLocal(snap),
+      donoId: typeof donoId === "string" && donoId ? donoId : null,
+    };
+  }
+
+  async definirDono(id: string, donoId: string | null): Promise<void> {
+    await firestore.collection(COLECAO).doc(id).update({donoId});
+  }
+
+  async listarPorDono(donoId: string): Promise<{id: string; nome: string}[]> {
+    const snap = await firestore.collection(COLECAO).where("donoId", "==", donoId).get();
+    return snap.docs
+      .map((doc) => ({id: doc.id, nome: String(doc.get("nome") ?? "")}))
+      .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  }
 }

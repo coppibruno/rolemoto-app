@@ -2,9 +2,13 @@
 
 import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
+import { useAuth } from "@/hooks/useAuth";
 import { useDetalheLocal } from "../hooks/useDetalheLocal";
 import { BlocoAvaliacaoLocal } from "./BlocoAvaliacaoLocal";
 import { BlocoCheckinLocal } from "./BlocoCheckinLocal";
+import { BlocoDonoBalcao } from "./BlocoDonoBalcao";
+import { BlocoOfertasLocal } from "./BlocoOfertasLocal";
+import { LinkBalcao } from "./LinkBalcao";
 import { BlocoFacilidadesLocal } from "./BlocoFacilidadesLocal";
 import { BlocoHorariosLocal } from "./BlocoHorariosLocal";
 import { BlocoLocalizacaoLocal } from "./BlocoLocalizacaoLocal";
@@ -20,6 +24,7 @@ type Props = {
 export const TelaDetalheLocal = ({ id }: Props) => {
   const { local, carregando, erro } = useDetalheLocal(id);
   const player = usePlayerDetalhe(Boolean(local));
+  const admin = useAuth().usuario?.admin === true;
 
   if (carregando) return <EstadoCarregandoLocal />;
   if (erro || !local) return <EstadoVazioLocal mensagem={erro} />;
@@ -38,11 +43,14 @@ export const TelaDetalheLocal = ({ id }: Props) => {
       />
       <main className={styles.conteudo}>
         <HeroLocal local={local} onAbrirStories={() => player.abrir(null)} />
+        <BlocoOfertasLocal localId={local.id} />
+        {local.souDono || admin ? <LinkBalcao localId={local.id} /> : null}
         <BlocoCheckinLocal local={local} />
         <BlocoHorariosLocal local={local} />
         <BlocoFacilidadesLocal facilidades={local.facilidades} />
         <BlocoLocalizacaoLocal local={local} />
         <BlocoAvaliacaoLocal local={local} />
+        {admin ? <BlocoDonoBalcao localId={local.id} donoInicial={local.dono ?? null} /> : null}
       </main>
       <PlayerStories
         aberto={player.aberto}

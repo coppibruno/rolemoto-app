@@ -13,6 +13,8 @@ import styles from "../perfil-publico.module.css";
 
 type Props = {
   perfil: PerfilPublico;
+  /** `/perfil` do próprio piloto: a faixa de conquistas leva ao ranking. */
+  proprio?: boolean;
 };
 
 const classeRitmo: Record<Pilotagem, string> = {
@@ -21,7 +23,7 @@ const classeRitmo: Record<Pilotagem, string> = {
   agressiva: styles.ritmoAgressiva,
 };
 
-export const CartaoPiloto = ({ perfil }: Props) => {
+export const CartaoPiloto = ({ perfil, proprio = false }: Props) => {
   const cidade = perfil.cidade?.trim() ?? "";
 
   return (
@@ -117,10 +119,10 @@ export const CartaoPiloto = ({ perfil }: Props) => {
           <FaixaSelos selos={perfil.selos ?? []} />
         </>
       ) : null}
-      {(perfil.conquistas ?? []).length > 0 ? (
+      {proprio || (perfil.conquistas ?? []).length > 0 ? (
         <>
           <div className={styles.divisor} role="presentation" />
-          <FaixaConquistas conquistas={perfil.conquistas ?? []} />
+          <FaixaConquistas conquistas={perfil.conquistas ?? []} proprio={proprio} />
         </>
       ) : null}
     </section>

@@ -92,6 +92,12 @@ import type {ConquistaRepository} from "./interfaces/conquista.repository";
 import {FirestoreConquistaRepository} from "./firestore/firestore-conquista.repository";
 import type {PostFotoRepository} from "./interfaces/post-foto.repository";
 import {FirestorePostFotoRepository} from "./firestore/firestore-post-foto.repository";
+import type {OfertaLocalRepository} from "./interfaces/oferta-local.repository";
+import {FirestoreOfertaLocalRepository} from "./firestore/firestore-oferta-local.repository";
+import type {UsuarioOfertaCupomRepository} from "./interfaces/usuario-oferta-cupom.repository";
+import {
+  FirestoreUsuarioOfertaCupomRepository,
+} from "./firestore/firestore-usuario-oferta-cupom.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -166,3 +172,9 @@ export const conquistaRepository: ConquistaRepository =
 
 export const postFotoRepository: PostFotoRepository =
   new FirestorePostFotoRepository();
+
+export const ofertaLocalRepository: OfertaLocalRepository =
+  new FirestoreOfertaLocalRepository();
+
+export const usuarioOfertaCupomRepository: UsuarioOfertaCupomRepository =
+  new FirestoreUsuarioOfertaCupomRepository();

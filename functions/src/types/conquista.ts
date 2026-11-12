@@ -81,6 +81,46 @@ export type ConquistaPublica = {
   nome: string;
 };
 
+/** `passagem` = cruzou o pino sem subir o recorde (SPEC 058). */
+export type NovidadeMedalha = NovidadeConquista | "passagem";
+
+/** Item de `rolestelemetria.medalhas`; nome e coordenada congelados no `POST`. */
+export type MedalhaTelemetria = {
+  conquistaId: string;
+  nome: string;
+  lat: number;
+  lng: number;
+  /** A deste passeio, uma casa. Só o dono do passeio recebe. */
+  velocidadeMaxKmh: number;
+  novidade: NovidadeMedalha;
+};
+
+export type MedalhaPublica = Omit<MedalhaTelemetria, "velocidadeMaxKmh">;
+
+export type ResultadoConcessao = {
+  /** 201 do `POST /telemetria`: só `primeira` e `recorde`. */
+  conquistas: ConquistaConcedida[];
+  medalhas: MedalhaTelemetria[];
+};
+
+export const TETO_RODA_RANKING = 100;
+
+/** Linha de `GET /conquistas/:id/ranking`. */
+export type ItemRanking = {
+  posicao: number | null;
+  uid: string;
+  apelido: string;
+  fotoUrl: string;
+  velocidadeMaxKmh: number | null;
+  eu: boolean;
+};
+
+export type RankingConquista = {
+  conquista: {id: string; nome: string};
+  teto: number;
+  itens: ItemRanking[];
+};
+
 /** Recorte do buffer GPS dentro de um círculo, enviado no `POST /telemetria`. */
 export type AmostraConquista = {
   conquistaId: string;

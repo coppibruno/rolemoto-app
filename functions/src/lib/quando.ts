@@ -32,7 +32,7 @@ export const horaSaoPaulo = (iso: string): string => {
   return `${hora}:${minuto}`;
 };
 
-const weekdaySaoPaulo = (data: Date): number => {
+export const weekdaySaoPaulo = (data: Date): number => {
   const nome = new Intl.DateTimeFormat("en-US", {
     timeZone: TZ,
     weekday: "short",
@@ -49,7 +49,7 @@ const weekdaySaoPaulo = (data: Date): number => {
   return mapa[nome] ?? data.getUTCDay();
 };
 
-const somarDiasYmd = (ymd: string, dias: number): string => {
+export const somarDiasYmd = (ymd: string, dias: number): string => {
   const [ano, mes, dia] = ymd.split("-").map(Number);
   const dt = new Date(Date.UTC(ano, mes - 1, dia + dias));
   return dt.toISOString().slice(0, 10);
@@ -83,7 +83,7 @@ const offsetSaoPauloMs = (instante: Date): number => {
   return comoUtc - instante.getTime();
 };
 
-const paredeSaoPauloParaDate = (
+export const paredeSaoPauloParaDate = (
   ymd: string,
   hora = 0,
   minuto = 0,

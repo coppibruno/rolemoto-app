@@ -16,6 +16,8 @@ export interface SeguirRepository {
   ): Promise<ResultadoDeixarSeguir>;
   listarSeguindo(uid: string, cursor: string | null): Promise<PaginaVinculos>;
   listarSeguidores(uid: string, cursor: string | null): Promise<PaginaVinculos>;
+  /** Uids que `uid` segue, `createdAt` desc, no máximo `limite` vínculos lidos. */
+  listarSeguidosRecentes(uid: string, limite: number): Promise<string[]>;
   vinculosCom(
     tokenUid: string,
     uids: string[],

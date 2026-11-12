@@ -15,9 +15,14 @@ import type {RoleTelemetriaNovo} from "../types/role-telemetria";
 const banco = vi.hoisted(() => ({
   conquistas: new Map<string, Conquista>(),
   carimbos: new Map<string, UsuarioConquista>(),
-  usuarios: new Map<string, {admin: boolean}>(),
+  usuarios: new Map<string, {admin: boolean; apelido?: string; fotoUrl?: string}>(),
+  telemetrias: new Map<string, Record<string, unknown>>(),
+  /** `seguidorId` → seguidos do mais antigo ao mais recente. */
+  seguindo: new Map<string, string[]>(),
+  seguidosLidos: 0,
   falharConcessao: false,
   falharLimpeza: false,
+  falharMedalhas: false,
   relogio: 0,
 }));
 
@@ -119,6 +124,11 @@ vi.mock("../repositories", () => {
       [...banco.carimbos.values()]
         .filter((c) => c.usuarioId === uid)
         .sort((a, b) => a.primeiraVezEm.localeCompare(b.primeiraVezEm)),
+    buscarCarimbos: async (uids: string[], conquistaId: string) =>
+      uids.flatMap((uid) => {
+        const c = banco.carimbos.get(`${uid}_${conquistaId}`);
+        return c ? [c] : [];
+      }),
     limparPorUsuario: async (uid: string) => {
       if (banco.falharLimpeza) throw new Error("forçada");
       for (const [id, c] of banco.carimbos) {
@@ -130,11 +140,11 @@ vi.mock("../repositories", () => {
   const usuario = (uid: string) => ({
     uid,
     nome: "Piloto Teste",
-    apelido: "teste",
+    apelido: banco.usuarios.get(uid)?.apelido ?? "teste",
     moto: "XRE",
     tipoMoto: null,
     pilotagem: "moderada",
-    fotoUrl: "",
+    fotoUrl: banco.usuarios.get(uid)?.fotoUrl ?? "",
     cidade: "",
     garupaFrequente: false,
     admin: banco.usuarios.get(uid)?.admin ?? false,
@@ -149,24 +159,52 @@ vi.mock("../repositories", () => {
     roleTelemetriaRepository: {
       criar: async (dados: RoleTelemetriaNovo) => {
         telemetrias += 1;
-        return {
+        const doc = {
           id: `tele-${telemetrias}`,
           ...dados,
+          medalhas: [],
           createdAt: agoraIso(),
           updatedAt: agoraIso(),
         };
+        banco.telemetrias.set(doc.id, doc);
+        return {...doc};
+      },
+      buscarPorId: async (id: string) => {
+        const doc = banco.telemetrias.get(id);
+        return doc ? {...doc} : null;
+      },
+      listarPorUsuario: async (uid: string) =>
+        [...banco.telemetrias.values()]
+          .filter((t) => t.usuarioId === uid)
+          .map((t) => {
+            const resumo = {...t};
+            delete resumo.tracado;
+            delete resumo.medalhas;
+            return resumo;
+          }),
+      atualizarMedalhas: async (id: string, medalhas: unknown[]) => {
+        if (banco.falharMedalhas) throw new Error("forçada");
+        const doc = banco.telemetrias.get(id);
+        if (doc) doc.medalhas = medalhas;
       },
     },
     telemetriaSessaoRepository: {},
     usuarioRepository: {
       buscarPorId: async (uid: string) =>
         banco.usuarios.has(uid) ? usuario(uid) : null,
+      buscarPorIds: async (uids: string[]) =>
+        uids.filter((uid) => banco.usuarios.has(uid)).map(usuario),
       lerCamposBusca: async () => null,
       remover: async (uid: string) => {
         banco.usuarios.delete(uid);
       },
     },
     seguirRepository: {
+      listarSeguidosRecentes: async (uid: string, limite: number) => {
+        const lidos = [...(banco.seguindo.get(uid) ?? [])].reverse().slice(0, limite);
+        banco.seguidosLidos = lidos.length;
+        return lidos;
+      },
       vinculosCom: async () => new Map(),
       limparPorUsuario: async () => undefined,
     },
@@ -209,8 +247,12 @@ beforeEach(() => {
   banco.usuarios.clear();
   banco.usuarios.set("admin1", {admin: true});
   banco.usuarios.set("piloto", {admin: false});
+  banco.telemetrias.clear();
+  banco.seguindo.clear();
+  banco.seguidosLidos = 0;
   banco.falharConcessao = false;
   banco.falharLimpeza = false;
+  banco.falharMedalhas = false;
 });
 
 const chamar = async (
@@ -559,5 +601,237 @@ describe("CQ4 — perfil e conta", () => {
     await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
     banco.falharLimpeza = true;
     expect((await chamar("DELETE", "/perfil", "piloto")).status).toBe(204);
+  });
+});
+
+const medalhasDoDoc = (id: unknown) =>
+  banco.telemetrias.get(String(id))?.medalhas as Record<string, unknown>[] | undefined;
+
+describe("MD1 — gravar a medalha", () => {
+  beforeEach(async () => {
+    await chamar("GET", "/conquistas/admin", "admin1");
+  });
+
+  it("primeira vez grava medalha com nome, coordenada e uma casa", async () => {
+    const res = await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
+    expect(res.status).toBe(201);
+    expect(medalhasDoDoc(res.json.id)).toEqual([{
+      conquistaId: "serra-rio-do-rastro",
+      nome: "Serra do Rio do Rastro",
+      lat: rastro.lat,
+      lng: rastro.lng,
+      velocidadeMaxKmh: 36,
+      novidade: "primeira",
+    }]);
+    expect(res.json).not.toHaveProperty("medalhas");
+  });
+
+  it("recorde e passagem; a passagem guarda a velocidade do passeio e não mexe no carimbo",
+    async () => {
+      await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
+      const recorde = await chamar(
+        "POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(11)),
+      );
+      expect(medalhasDoDoc(recorde.json.id)?.[0]).toMatchObject({
+        novidade: "recorde",
+        velocidadeMaxKmh: 39.6,
+      });
+      const carimbo = {...banco.carimbos.get("piloto_serra-rio-do-rastro")};
+
+      const lenta = await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
+      expect(lenta.status).toBe(201);
+      expect(lenta.json.conquistas).toEqual([]);
+      expect(medalhasDoDoc(lenta.json.id)).toEqual([
+        expect.objectContaining({novidade: "passagem", velocidadeMaxKmh: 36}),
+      ]);
+      expect(banco.carimbos.get("piloto_serra-rio-do-rastro")).toEqual(carimbo);
+    });
+
+  it("sem amostras o doc fica com medalhas [] e o 201 mantém o contrato", async () => {
+    const res = await chamar("POST", "/telemetria", "piloto", bodyPasseio());
+    expect(res.json.conquistas).toEqual([]);
+    expect(res.json).not.toHaveProperty("medalhas");
+    expect(medalhasDoDoc(res.json.id)).toEqual([]);
+  });
+
+  it("mover e renomear o pino depois não reescreve a medalha", async () => {
+    const res = await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
+    await chamar("PATCH", "/conquistas/serra-rio-do-rastro", "admin1", {
+      lat: -28.41,
+      nome: "Rio do Rastro",
+    });
+    expect(medalhasDoDoc(res.json.id)?.[0]).toMatchObject({
+      lat: rastro.lat,
+      nome: "Serra do Rio do Rastro",
+    });
+  });
+
+  it("falha no update das medalhas ainda dá 201 e mantém o carimbo", async () => {
+    banco.falharMedalhas = true;
+    const res = await chamar("POST", "/telemetria", "piloto", bodyPasseio(amostraRastro(10)));
+    expect(res.status).toBe(201);
+    expect(res.json.conquistas).toEqual([expect.objectContaining({novidade: "primeira"})]);
+    expect(banco.carimbos.has("piloto_serra-rio-do-rastro")).toBe(true);
+    expect(medalhasDoDoc(res.json.id)).toEqual([]);
+  });
+});
+
+describe("MD2 — leitura do passeio", () => {
+  let publicoId = "";
+  let privadoId = "";
+
+  beforeEach(async () => {
+    await chamar("GET", "/conquistas/admin", "admin1");
+    publicoId = String((await chamar("POST", "/telemetria", "piloto", {
+      ...bodyPasseio(amostraRastro(10)),
+      publica: true,
+    })).json.id);
+    privadoId = String((await chamar("POST", "/telemetria", "piloto", {
+      ...bodyPasseio(amostraRastro(11)),
+      publica: false,
+    })).json.id);
+  });
+
+  it("lista não traz medalhas", async () => {
+    const res = await chamar("GET", "/telemetria", "piloto");
+    for (const item of res.json as unknown as Record<string, unknown>[]) {
+      expect(item).not.toHaveProperty("medalhas");
+    }
+  });
+
+  it("dono recebe a velocidade; outro piloto recebe só nome, coordenada e novidade", async () => {
+    const dono = await chamar("GET", `/telemetria/${publicoId}`, "piloto");
+    expect((dono.json.medalhas as unknown[])[0]).toMatchObject({velocidadeMaxKmh: 36});
+
+    const outro = await chamar("GET", `/telemetria/${publicoId}`, "admin1");
+    expect(outro.json.medalhas).toEqual([{
+      conquistaId: "serra-rio-do-rastro",
+      nome: "Serra do Rio do Rastro",
+      lat: rastro.lat,
+      lng: rastro.lng,
+      novidade: "primeira",
+    }]);
+  });
+
+  it("privado continua 404 para quem não é o dono", async () => {
+    expect((await chamar("GET", `/telemetria/${privadoId}`, "admin1")).status).toBe(404);
+    expect((await chamar("GET", `/telemetria/${privadoId}`, "piloto")).status).toBe(200);
+  });
+
+  it("doc antigo sem o campo devolve medalhas []", async () => {
+    delete banco.telemetrias.get(publicoId)?.medalhas;
+    const res = await chamar("GET", `/telemetria/${publicoId}`, "admin1");
+    expect(res.json.medalhas).toEqual([]);
+  });
+});
+
+const carimbar = (uid: string, velocidadeMaxKmh: number, recordeEm: string) => {
+  const id = `${uid}_serra-rio-do-rastro`;
+  banco.carimbos.set(id, {
+    id,
+    usuarioId: uid,
+    conquistaId: "serra-rio-do-rastro",
+    velocidadeMaxKmh,
+    telemetriaId: `t-${uid}`,
+    primeiraVezEm: recordeEm,
+    recordeEm,
+    createdAt: recordeEm,
+    updatedAt: recordeEm,
+  });
+};
+
+const ranking = (uid: string, id = "serra-rio-do-rastro") =>
+  chamar("GET", `/conquistas/${id}/ranking`, uid);
+
+describe("RK1 — placar", () => {
+  beforeEach(async () => {
+    await chamar("GET", "/conquistas/admin", "admin1");
+    for (const uid of ["a", "b", "c"]) {
+      banco.usuarios.set(uid, {admin: false, apelido: uid.toUpperCase()});
+    }
+  });
+
+  it("sem o doc da conquista responde 404", async () => {
+    const res = await ranking("a", "inexistente");
+    expect(res.status).toBe(404);
+    expect(res.json.erro).toBe("Conquista não encontrada");
+  });
+
+  it("arquivada responde 200 com o nome atual", async () => {
+    await chamar("PATCH", "/conquistas/serra-rio-do-rastro", "admin1", {
+      ativa: false,
+      nome: "Rio do Rastro",
+    });
+    const res = await ranking("a");
+    expect(res.status).toBe(200);
+    expect(res.json.conquista).toEqual({id: "serra-rio-do-rastro", nome: "Rio do Rastro"});
+    expect(res.json.teto).toBe(100);
+  });
+
+  it("só o token e quem ele segue; seguir é um sentido", async () => {
+    banco.seguindo.set("a", ["b"]);
+    carimbar("a", 50, "2026-11-01T10:00:00.000Z");
+    carimbar("b", 70.25, "2026-11-02T10:00:00.000Z");
+    carimbar("c", 90, "2026-11-03T10:00:00.000Z");
+
+    const deA = await ranking("a");
+    expect(itens(deA.json)).toEqual([
+      {posicao: 1, uid: "b", apelido: "B", fotoUrl: "", velocidadeMaxKmh: 70.3, eu: false},
+      {posicao: 2, uid: "a", apelido: "A", fotoUrl: "", velocidadeMaxKmh: 50, eu: true},
+    ]);
+
+    const deB = await ranking("b");
+    expect(itens(deB.json).map((i) => i.uid)).toEqual(["b"]);
+  });
+
+  it("empate na casa decimal: recordeEm mais antigo vem antes", async () => {
+    banco.seguindo.set("a", ["b", "c"]);
+    carimbar("b", 60, "2026-11-05T10:00:00.000Z");
+    carimbar("c", 60, "2026-11-04T10:00:00.000Z");
+    const res = await ranking("a");
+    expect(itens(res.json).map((i) => [i.uid, i.posicao])).toEqual([
+      ["c", 1],
+      ["b", 2],
+      ["a", null],
+    ]);
+  });
+
+  it("token sem carimbo fecha a lista sem posição e sem número", async () => {
+    const res = await ranking("a");
+    expect(itens(res.json)).toEqual([
+      {posicao: null, uid: "a", apelido: "A", fotoUrl: "", velocidadeMaxKmh: null, eu: true},
+    ]);
+  });
+
+  it("com 101 seguidos entram os 100 mais recentes", async () => {
+    const seguidos = Array.from({length: 101}, (_, i) => `s${String(i).padStart(3, "0")}`);
+    banco.seguindo.set("a", seguidos);
+    for (const uid of seguidos) {
+      banco.usuarios.set(uid, {admin: false});
+      carimbar(uid, 40, "2026-11-01T10:00:00.000Z");
+    }
+    const res = await ranking("a");
+    expect(banco.seguidosLidos).toBe(100);
+    const uids = itens(res.json).map((i) => i.uid);
+    expect(uids).not.toContain("s000");
+    expect(uids).toContain("s100");
+    expect(uids).toHaveLength(101);
+  });
+
+  it("uid sem doc em users não vira linha", async () => {
+    banco.seguindo.set("a", ["b", "fantasma"]);
+    carimbar("b", 40, "2026-11-01T10:00:00.000Z");
+    carimbar("fantasma", 99, "2026-11-01T10:00:00.000Z");
+    const res = await ranking("a");
+    expect(itens(res.json).map((i) => i.uid)).toEqual(["b", "a"]);
+  });
+
+  it("GET /usuarios/:uid continua sem velocidade nas conquistas", async () => {
+    banco.seguindo.set("a", ["b"]);
+    carimbar("b", 40, "2026-11-01T10:00:00.000Z");
+    const publico = await chamar("GET", "/usuarios/b", "a");
+    expect(publico.json.conquistas).toEqual([
+      {id: "serra-rio-do-rastro", nome: "Serra do Rio do Rastro"},
+    ]);
   });
 });

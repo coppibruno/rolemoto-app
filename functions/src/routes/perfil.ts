@@ -7,12 +7,14 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {camposBusca, camposBuscaIguais} from "../lib/busca-piloto";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
 import {conquistasDoPerfil, semFalhar} from "../lib/conquistas";
+import {soltarLocaisDoUsuario} from "../lib/dono-local";
 import {apagarPostsDoUsuario} from "../lib/post-foto-publico";
 import {apagarStoriesDoUsuario} from "../lib/story-local";
 import {
   conquistaRepository,
   conviteEventoRepository,
   dispositivoRepository,
+  localRepository,
   seguirRepository,
   usuarioRepository,
 } from "../repositories";
@@ -35,12 +37,22 @@ const sincronizarCamposBusca = async (perfil: Usuario): Promise<void> => {
   await usuarioRepository.gravarCamposBusca(perfil.uid, proximo);
 };
 
+const locaisComoDono = async (uid: string): Promise<PerfilCliente["locaisComoDono"]> => {
+  try {
+    return await localRepository.listarPorDono(uid);
+  } catch (error) {
+    log.warn("Perfil", "Locais como dono indisponíveis", {uid, ...erroDe(error)});
+    return [];
+  }
+};
+
 const paraPerfilCliente = async (usuario: Usuario): Promise<PerfilCliente> => ({
   ...usuario,
   selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
   conquistas: await semFalhar("Perfil", usuario.uid, () =>
     conquistasDoPerfil(usuario.uid),
   ),
+  locaisComoDono: await locaisComoDono(usuario.uid),
 });
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
@@ -382,6 +394,15 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await conquistaRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover conquistas", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await soltarLocaisDoUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao soltar locais do dono", {
         uid,
         ...erroDe(error),
       });

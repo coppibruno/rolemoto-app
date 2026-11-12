@@ -3,6 +3,7 @@ import {autenticar} from "../middleware/auth";
 import {exigirAdmin} from "../middleware/exigir-admin";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {rankingDaConquista} from "../lib/conquistas";
 import {garantirConquistasIniciais} from "../lib/conquistas-iniciais";
 import {log} from "../lib/log";
 import {param} from "../lib/params";
@@ -24,6 +25,7 @@ import {conquistaRepository} from "../repositories";
  *
  * GET   /conquistas        — ativas, cache do aparelho
  * GET   /conquistas/admin  — admin; roda o seed; ativas e arquivadas
+ * GET   /conquistas/:id/ranking — o token e quem ele segue (SPEC 058)
  * POST  /conquistas        — admin
  * PATCH /conquistas/:id    — admin
  */
@@ -46,6 +48,24 @@ conquistasRouter.get("/admin", exigirAdmin, async (req: Request, res: Response) 
     await garantirConquistasIniciais(req.usuario?.uid ?? "");
     const todas = await conquistaRepository.listar();
     res.json({itens: ordenarPorNome(todas).map(paraAdmin)});
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+conquistasRouter.get("/:id/ranking", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const ranking = await rankingDaConquista(uid, param(req, "id"));
+    if (!ranking) {
+      res.status(404).json({erro: "Conquista não encontrada"});
+      return;
+    }
+    res.json(ranking);
   } catch (error) {
     responderErro(res, error);
   }

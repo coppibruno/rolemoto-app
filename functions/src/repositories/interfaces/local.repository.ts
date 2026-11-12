@@ -11,4 +11,9 @@ export interface LocalRepository {
   buscarPorIds(ids: string[]): Promise<Local[]>;
   /** `true` quando esta chamada gravou o dia e deve disparar o push. */
   reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
+  /** `donoId` é interno: não entra em `Local`. Documento antigo sem o campo vale `null`. */
+  buscarComDono(id: string): Promise<{local: Local; donoId: string | null} | null>;
+  definirDono(id: string, donoId: string | null): Promise<void>;
+  /** Ordem por nome. */
+  listarPorDono(donoId: string): Promise<{id: string; nome: string}[]>;
 }

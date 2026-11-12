@@ -1,3 +1,5 @@
+import type {MedalhaPublica, MedalhaTelemetria} from "./conquista";
+
 export type PontoTelemetria = {
   lat: number;
   lng: number;
@@ -22,6 +24,8 @@ export type RoleTelemetria = {
   tracado?: string;
   /** Ausente em docs antigos → lido como true. */
   publica: boolean;
+  /** Só no detalhe. Ausente em docs antigos → `[]`. Sem velocidade para quem não é o dono. */
+  medalhas?: (MedalhaTelemetria | MedalhaPublica)[];
   createdAt: string;
   updatedAt: string;
 };

@@ -1,6 +1,7 @@
 import {
   formatarConclusaoTelemetria,
 } from "@/lib/telemetria/formatar-telemetria";
+import type { MedalhaTelemetria } from "@/types/conquista";
 import type { PontoTelemetria } from "@/types/role-telemetria";
 import { GridMetricasTelemetria } from "./GridMetricasTelemetria";
 import { MapaPontosAB } from "./MapaPontosAB";
@@ -16,6 +17,8 @@ type Props = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   tracado?: string;
+  medalhas?: MedalhaTelemetria[];
+  onTocarMedalha?: (indice: number) => void;
   tituloEditavel?: {
     valor: string;
     onMudar: (valor: string) => void;
@@ -32,6 +35,8 @@ export const DashboardTelemetria = ({
   pontoInicio,
   pontoFim,
   tracado,
+  medalhas,
+  onTocarMedalha,
   tituloEditavel,
 }: Props) => {
   return (
@@ -65,6 +70,8 @@ export const DashboardTelemetria = ({
         pontoFim={pontoFim}
         distanciaKm={distanciaKm}
         tracado={tracado}
+        medalhas={medalhas}
+        onTocarMedalha={onTocarMedalha}
       />
       <GridMetricasTelemetria
         distanciaKm={distanciaKm}

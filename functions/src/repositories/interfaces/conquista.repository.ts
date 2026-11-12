@@ -24,5 +24,10 @@ export interface ConquistaRepository {
   registrarPassagem(passagem: PassagemNova): Promise<NovidadeConquista | null>;
   /** Carimbos do uid em `primeiraVezEm` crescente. */
   listarPorUsuario(usuarioId: string): Promise<UsuarioConquista[]>;
+  /** Lê `{uid}_{conquistaId}` de cada uid; quem não tem carimbo não volta. */
+  buscarCarimbos(
+    usuarioIds: string[],
+    conquistaId: string,
+  ): Promise<UsuarioConquista[]>;
   limparPorUsuario(usuarioId: string): Promise<void>;
 }
