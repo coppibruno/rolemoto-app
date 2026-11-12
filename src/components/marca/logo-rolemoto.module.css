@@ -1,0 +1,23 @@
+.caixa {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.imagem {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+.clara {
+  display: none;
+}
+
+:global(html[data-tema="claro"]) .escura {
+  display: none;
+}
+
+:global(html[data-tema="claro"]) .clara {
+  display: block;
+}

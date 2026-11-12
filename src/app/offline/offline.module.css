@@ -48,7 +48,7 @@
   border: none;
   border-radius: 0.5rem;
   background: var(--primary-container);
-  color: var(--surface-container-lowest);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 700;
@@ -65,7 +65,7 @@
   width: 100%;
   max-width: 28rem;
   min-height: 48px;
-  border: 1.5px solid #353a44;
+  border: 1.5px solid var(--borda-neutra);
   border-radius: 0.5rem;
   color: var(--on-surface);
   font-family: "Plus Jakarta Sans", sans-serif;

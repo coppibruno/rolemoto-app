@@ -365,7 +365,7 @@
 
 .input[type="date"],
 .input[type="time"] {
-  color-scheme: dark;
+  color-scheme: inherit;
 }
 
 .inputErro {
@@ -391,7 +391,7 @@
   gap: 8px;
   width: 100%;
   min-height: 48px;
-  border: 1.5px solid #353a44;
+  border: 1.5px solid var(--borda-neutra);
   border-radius: 0.5rem;
   background: transparent;
   color: var(--on-surface);

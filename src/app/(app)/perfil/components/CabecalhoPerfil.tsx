@@ -1,8 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { AvatarStories } from "@/app/(app)/components/AvatarStories";
+import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
+import { BotaoTema } from "@/components/tema/BotaoTema";
 import styles from "../perfil.module.css";
 
 type Props = {
@@ -17,27 +18,23 @@ export const CabecalhoPerfil = ({ fotoUrl, nome }: Props) => {
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
         <div className={styles.cabecalhoMarca}>
-          <Image
-            src="/logo-rolemoto.jpeg"
-            alt="Rolê Moto"
-            width={96}
-            height={32}
-            className={styles.logo}
-            priority
-          />
+          <LogoRolemoto width={96} height={32} className={styles.logo} priority />
           <div className={styles.cabecalhoTitulos}>
             <span className={styles.tituloPagina}>Perfil</span>
           </div>
         </div>
 
-        {usuario ? (
-          <AvatarStories
-            uid={usuario.uid}
-            fotoUrl={fotoUrl}
-            nome={nome}
-            tamanho="header"
-          />
-        ) : null}
+        <div className={styles.cabecalhoAcoes}>
+          <BotaoTema />
+          {usuario ? (
+            <AvatarStories
+              uid={usuario.uid}
+              fotoUrl={fotoUrl}
+              nome={nome}
+              tamanho="header"
+            />
+          ) : null}
+        </div>
       </div>
     </header>
   );

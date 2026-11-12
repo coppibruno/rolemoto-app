@@ -42,7 +42,7 @@
   margin: 0 auto 16px;
   border-radius: 0.5rem;
   overflow: hidden;
-  background: #121316;
+  background: var(--surface);
 }
 
 .imagem {

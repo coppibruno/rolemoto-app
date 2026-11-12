@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
 import { useAuth } from "@/hooks/useAuth";
 import { TITULO_PAGINA } from "../constants";
 import styles from "../criar-local.module.css";
@@ -22,14 +22,7 @@ export const CabecalhoCriarLocal = () => {
           >
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <Image
-            src="/logo-rolemoto.jpeg"
-            alt="Rolê Moto"
-            width={84}
-            height={28}
-            className={styles.logo}
-            priority
-          />
+          <LogoRolemoto width={84} height={28} className={styles.logo} priority />
           <h1 className={styles.tituloPagina}>{TITULO_PAGINA}</h1>
         </div>
         <Link href="/perfil" className={styles.avatarHeader} aria-label="Perfil">

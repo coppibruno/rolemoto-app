@@ -314,7 +314,7 @@
 
 .chipAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .chip:disabled {

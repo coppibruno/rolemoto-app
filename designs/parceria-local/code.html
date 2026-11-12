@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parceria no local — Rolemoto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0" rel="stylesheet">
+  <style>
+    :root {
+      --surface: #121316;
+      --low: #1b1b1f;
+      --container: #1f1f23;
+      --high: #292a2d;
+      --highest: #343538;
+      --lowest: #0d0e11;
+      --on: #e3e2e6;
+      --variant: #e2bfb0;
+      --outline: #a98a7d;
+      --outline-variant: #5a4136;
+      --primary: #ffb693;
+      --cta: #ff6b00;
+      --on-cta: #572000;
+      --amber: #feb300;
+      --cyan: #00daf3;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #0a0b0d; color: var(--on); }
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      padding: 36px 28px 48px;
+    }
+    .material-symbols-outlined {
+      font-family: "Material Symbols Outlined";
+      font-weight: normal;
+      font-style: normal;
+      font-size: 22px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-feature-settings: "liga";
+      font-feature-settings: "liga";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .lede {
+      margin: 0 0 28px;
+      max-width: 720px;
+      color: var(--variant);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(4, 340px);
+      gap: 22px;
+      width: max-content;
+    }
+    .coluna { display: flex; flex-direction: column; gap: 10px; }
+    .legenda {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 0 6px;
+    }
+    .passo {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--cta);
+      letter-spacing: 0.06em;
+    }
+    .quem {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--on);
+    }
+    .oque {
+      font-size: 12px;
+      color: var(--outline);
+    }
+
+    .phone {
+      width: 340px;
+      height: 720px;
+      background: var(--surface);
+      border: 3px solid #2c2d31;
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+    }
+    .status {
+      height: 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 18px 2px;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--on);
+    }
+    .topbar {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 8px 0 4px;
+    }
+    .topbar h2 {
+      margin: 0;
+      flex: 1;
+      text-align: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .iconbtn {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      background: transparent;
+      color: var(--on);
+      display: grid;
+      place-items: center;
+    }
+    .miolo { padding: 0 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+    .abas {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: var(--low);
+      border-radius: 12px;
+      padding: 3px;
+    }
+    .aba {
+      text-align: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--outline);
+      padding: 8px 0;
+      border-radius: 10px;
+    }
+    .aba.ativa { background: var(--high); color: var(--on); }
+
+    .card {
+      background: var(--low);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .hero {
+      height: 108px;
+      background:
+        radial-gradient(120px 80px at 80% 20%, rgba(255, 107, 0, 0.45), transparent 70%),
+        linear-gradient(160deg, #3a2a22 0%, #1a1c22 55%, #12141a 100%);
+      position: relative;
+    }
+    .selo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--cta);
+      color: var(--on-cta);
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+    .dist {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(13, 14, 17, 0.85);
+      color: var(--on);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+    .card-corpo { padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 6px; }
+    .nome {
+      margin: 0;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .meta { display: flex; align-items: center; gap: 6px; color: var(--variant); font-size: 12px; }
+    .estrela { color: var(--amber); font-size: 16px; font-variation-settings: "FILL" 1; }
+    .faixa {
+      margin-top: 4px;
+      background: rgba(255, 107, 0, 0.12);
+      border: 1px solid rgba(255, 107, 0, 0.45);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .faixa strong {
+      display: block;
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .faixa span { color: var(--variant); font-size: 11px; }
+    .preco {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--cta);
+      letter-spacing: 0.02em;
+    }
+    .card.apagado { opacity: 0.72; }
+    .hero.oficina {
+      background:
+        radial-gradient(100px 70px at 20% 80%, rgba(0, 218, 243, 0.28), transparent 70%),
+        linear-gradient(160deg, #1c2830, #14161c);
+    }
+
+    .oferta {
+      background: var(--low);
+      border: 1px solid transparent;
+      border-radius: 16px;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2px 8px;
+    }
+    .oferta.escolhida { border-color: var(--cta); background: #24180f; }
+    .oferta b {
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .oferta small { color: var(--variant); font-size: 11px; }
+    .tag {
+      justify-self: end;
+      align-self: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--cta);
+    }
+    .tag.muda { color: var(--cyan); font-size: 13px; letter-spacing: 0.04em; }
+
+    .sheet {
+      background: var(--container);
+      border-radius: 18px;
+      padding: 14px 16px 16px;
+    }
+    .grip {
+      width: 36px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--highest);
+      margin: 0 auto 10px;
+    }
+    .sheet p { margin: 0; text-align: center; color: var(--variant); font-size: 12px; }
+    .codigo {
+      margin: 6px 0 2px;
+      text-align: center;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 56px;
+      letter-spacing: 0.18em;
+      line-height: 1;
+    }
+    .validade {
+      text-align: center;
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .cta {
+      width: 100%;
+      height: 48px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--cta);
+      color: var(--on-cta);
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+    }
+    .secundario {
+      width: 100%;
+      height: 40px;
+      border: 0;
+      background: transparent;
+      color: var(--outline);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .segmento { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .seg {
+      height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--outline-variant);
+      background: transparent;
+      color: var(--outline);
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .seg.ativo {
+      background: var(--cta);
+      border-color: var(--cta);
+      color: var(--on-cta);
+    }
+    label.campo { display: flex; flex-direction: column; gap: 4px; }
+    label.campo span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--outline);
+      letter-spacing: 0.02em;
+    }
+    .caixa {
+      background: var(--lowest);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .linha2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .aviso {
+      background: var(--low);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .aviso b { display: block; font-size: 13px; }
+    .aviso small { color: var(--variant); font-size: 11px; }
+    .toggle {
+      width: 42px;
+      height: 24px;
+      border-radius: 99px;
+      background: var(--cta);
+      position: relative;
+      flex: none;
+    }
+    .toggle i {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .nota { margin: 0; color: var(--outline); font-size: 11px; line-height: 1.35; }
+
+    .visita {
+      background: var(--low);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .visita .topo { display: flex; justify-content: space-between; align-items: center; }
+    .codigo-mini {
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 26px;
+      letter-spacing: 0.12em;
+    }
+    .piloto { font-size: 13px; font-weight: 600; }
+    .piloto span { color: var(--cyan); font-weight: 500; }
+    .btn-ok {
+      margin-top: 6px;
+      height: 40px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--cta);
+      color: var(--on-cta);
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+    .feita { opacity: 0.55; }
+    .feita .btn-ok { background: var(--high); color: #8d8; box-shadow: none; }
+
+    .semana {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .num {
+      background: var(--low);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .num b {
+      display: block;
+      font-family: "Barlow Condensed", sans-serif;
+      font-weight: 800;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .num span { color: var(--variant); font-size: 11px; }
+    .secao {
+      margin: 2px 0 0;
+      font-family: "Barlow Condensed", sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--outline);
+    }
+    .dock {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      height: 58px;
+      background: #1a1b1f;
+      border-radius: 18px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 6px 4px 8px;
+    }
+    .dock span { display: flex; flex-direction: column; align-items: center; gap: 1px; color: var(--outline); font-size: 9px; font-weight: 600; }
+    .dock .material-symbols-outlined { font-size: 20px; }
+    .dock .on { color: var(--cta); }
+    .fab {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--cta);
+      color: var(--on-cta);
+      display: grid;
+      place-items: center;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 14px rgba(255, 107, 0, 0.4);
+    }
+    .fab .material-symbols-outlined { font-size: 24px; color: var(--on-cta); }
+  </style>
+</head>
+<body>
+  <h1>Parceria no local</h1>
+  <p class="lede">O piloto acha a oferta de quem já está no raio. O comerciante escreve o que quer vender, em que hora, e vê quem parou no caixa.</p>
+
+  <div class="grade">
+    <div class="coluna">
+      <div class="legenda">
+        <span class="passo">01</span>
+        <span class="quem">Piloto</span>
+        <span class="oque">acha no raio</span>
+      </div>
+      <article class="phone" id="tela-raio">
+        <div class="status"><span>9:41</span><span>LTE</span></div>
+        <div class="topbar">
+          <div class="iconbtn"></div>
+          <h2>Locais</h2>
+          <div class="iconbtn"><span class="material-symbols-outlined">search</span></div>
+        </div>
+        <div class="miolo">
+          <div class="abas">
+            <div class="aba">Rolês</div>
+            <div class="aba">Eventos</div>
+            <div class="aba ativa">Locais</div>
+          </div>
+          <article class="card">
+            <div class="hero">
+              <span class="selo">Parceiro</span>
+              <span class="dist">18 km</span>
+            </div>
+            <div class="card-corpo">
+              <h3 class="nome">Posto Estrela</h3>
+              <div class="meta">
+                <span class="material-symbols-outlined estrela">star</span>
+                <span>4.8 · posto · serra</span>
+              </div>
+              <div class="faixa">
+                <div>
+                  <strong>Combo do piloto</strong>
+                  <span>até 17h · restam 12</span>
+                </div>
+                <div class="preco">R$ 32</div>
+              </div>
+            </div>
+          </article>
+          <article class="card apagado">
+            <div class="hero oficina">
+              <span class="selo">Parceiro</span>
+              <span class="dist">27 km</span>
+            </div>
+            <div class="card-corpo">
+              <h3 class="nome">Oficina do Zé</h3>
+              <div class="meta"><span>trail e speed · sexta</span></div>
+              <div class="faixa">
+                <div>
+                  <strong>Revisão de trail</strong>
+                  <span>sexta · 5 vagas</span>
+                </div>
+                <div class="preco">10%</div>
+              </div>
+            </div>
+          </article>
+        </div>
+        <nav class="dock">
+          <span class="on"><span class="material-symbols-outlined">two_wheeler</span>Rolês</span>
+          <span><span class="material-symbols-outlined">sports_score</span>Meus</span>
+          <span class="fab"><span class="material-symbols-outlined">add</span></span>
+          <span><span class="material-symbols-outlined">how_to_reg</span>Fila</span>
+          <span><span class="material-symbols-outlined">account_circle</span>Perfil</span>
+        </nav>
+      </article>
+    </div>
+
+    <div class="coluna">
+      <div class="legenda">
+        <span class="passo">02</span>
+        <span class="quem">Piloto</span>
+        <span class="oque">mostra no caixa</span>
+      </div>
+      <article class="phone" id="tela-cupom">
+        <div class="status"><span>9:41</span><span>LTE</span></div>
+        <div class="topbar">
+          <div class="iconbtn"><span class="material-symbols-outlined">arrow_back</span></div>
+          <h2>Posto Estrela</h2>
+          <div class="iconbtn"><span class="material-symbols-outlined">share</span></div>
+        </div>
+        <div class="miolo">
+          <p class="secao">Ofertas pelo app</p>
+          <div class="oferta escolhida">
+            <b>Combo do piloto</b>
+            <div class="tag">R$ 32</div>
+            <small>Quarta, 14h–17h · restam 12</small>
+          </div>
+          <div class="oferta">
+            <b>Calibragem grátis</b>
+            <div class="tag muda">BRINDE</div>
+            <small>Na compra do café · hoje</small>
+          </div>
+          <div class="oferta">
+            <b>Peça e acessório</b>
+            <div class="tag">10%</div>
+            <small>Até 5 por dia</small>
+          </div>
+          <div class="sheet">
+            <p>Mostre no caixa · Combo do piloto</p>
+            <div class="codigo">7K4M</div>
+            <div class="validade">Vale até 16:42 · o caixa confirma</div>
+          </div>
+          <button class="secundario">Estou aqui · selo de presença</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="coluna">
+      <div class="legenda">
+        <span class="passo">03</span>
+        <span class="quem">Comerciante</span>
+        <span class="oque">escreve a oferta</span>
+      </div>
+      <article class="phone" id="tela-oferta">
+        <div class="status"><span>9:41</span><span>LTE</span></div>
+        <div class="topbar">
+          <div class="iconbtn"><span class="material-symbols-outlined">close</span></div>
+          <h2>Nova oferta</h2>
+          <div class="iconbtn"></div>
+        </div>
+        <div class="miolo">
+          <div class="segmento">
+            <button class="seg ativo">Preço</button>
+            <button class="seg">Percentual</button>
+            <button class="seg">Brinde</button>
+          </div>
+          <label class="campo">
+            <span>O que é</span>
+            <div class="caixa">Combo do piloto</div>
+          </label>
+          <div class="linha2">
+            <label class="campo">
+              <span>No caixa</span>
+              <div class="caixa">R$ 32</div>
+            </label>
+            <label class="campo">
+              <span>Por dia</span>
+              <div class="caixa">20</div>
+            </label>
+          </div>
+          <label class="campo">
+            <span>Quando</span>
+            <div class="caixa">Quarta · 14:00 – 17:00</div>
+          </label>
+          <div class="aviso">
+            <div>
+              <b>Avisar quem favoritou</b>
+              <small>Um aviso, só enquanto a oferta está no ar</small>
+            </div>
+            <div class="toggle"><i></i></div>
+          </div>
+          <p class="nota">Pilotos a até 50 km. Comissão só deste combo, no valor confirmado no caixa.</p>
+          <button class="cta">Publicar oferta</button>
+        </div>
+      </article>
+    </div>
+
+    <div class="coluna">
+      <div class="legenda">
+        <span class="passo">04</span>
+        <span class="quem">Comerciante</span>
+        <span class="oque">confirma e vê a semana</span>
+      </div>
+      <article class="phone" id="tela-balcao">
+        <div class="status"><span>9:41</span><span>LTE</span></div>
+        <div class="topbar">
+          <div class="iconbtn"><span class="material-symbols-outlined">arrow_back</span></div>
+          <h2>Balcão</h2>
+          <div class="iconbtn"><span class="material-symbols-outlined">add</span></div>
+        </div>
+        <div class="miolo">
+          <p class="secao">Agora no caixa</p>
+          <article class="visita">
+            <div class="topo">
+              <span class="codigo-mini">7K4M</span>
+              <span class="preco" style="font-size:20px">R$ 32</span>
+            </div>
+            <div class="piloto">Rafael · <span>CB 500</span></div>
+            <small style="color:#e2bfb0;font-size:11px">Combo do piloto</small>
+            <button class="btn-ok">Confirmar</button>
+          </article>
+          <article class="visita feita">
+            <div class="topo">
+              <span class="codigo-mini">2H9C</span>
+              <span class="preco" style="font-size:20px;color:#e2bfb0">R$ 12</span>
+            </div>
+            <div class="piloto">Ana · <span>XRE 300</span></div>
+            <button class="btn-ok">Confirmado</button>
+          </article>
+          <p class="secao">Esta semana</p>
+          <div class="semana">
+            <div class="num"><b>40</b><span>viram a oferta</span></div>
+            <div class="num"><b>11</b><span>geraram código</span></div>
+            <div class="num"><b>7</b><span>passaram no caixa</span></div>
+            <div class="num"><b>R$ 86</b><span>ticket médio</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>

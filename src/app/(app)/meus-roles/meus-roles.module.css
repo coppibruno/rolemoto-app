@@ -30,6 +30,13 @@
   object-fit: contain;
 }
 
+.cabecalhoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .avatarHeader {
   display: flex;
   align-items: center;
@@ -271,7 +278,7 @@
 
 .abaAtiva .abaBadge {
   background: color-mix(in srgb, var(--surface) 40%, transparent);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .lista {
@@ -990,7 +997,7 @@
 
 .abaTipoAtiva {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(255, 107, 0, 0.28);
 }
@@ -1355,7 +1362,7 @@
   min-height: 44px;
   border-radius: 0.75rem;
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 16px;
   font-weight: 600;

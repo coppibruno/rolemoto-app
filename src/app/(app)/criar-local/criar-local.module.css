@@ -272,7 +272,7 @@
 
 .inputHorario {
   padding-left: 12px;
-  color-scheme: dark;
+  color-scheme: inherit;
   flex: 1;
   width: auto;
   min-width: 0;
@@ -413,7 +413,7 @@
 
 .chipAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -496,7 +496,7 @@
 
 .botaoHorarioAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -741,7 +741,7 @@
     var(--secondary-container),
     var(--primary-container)
   );
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 700;
@@ -817,7 +817,7 @@
   padding: 16px;
   border-radius: 0.75rem;
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
 

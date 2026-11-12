@@ -40,6 +40,12 @@
   position: relative;
 }
 
+.cantoTema {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .logoContainer {
   position: relative;
   display: flex;
@@ -241,7 +247,7 @@
   justify-content: center;
   gap: 8px;
   background: var(--primary-container);
-  color: var(--surface-container-lowest);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 700;
@@ -424,7 +430,7 @@
   width: 20px;
   height: 20px;
   border: 2.5px solid rgba(0, 0, 0, 0.25);
-  border-top-color: var(--surface-container-lowest);
+  border-top-color: var(--on-primary-container);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -558,7 +564,7 @@
   border: none;
   border-radius: 0.5rem;
   background: var(--primary-container);
-  color: var(--surface-container-lowest);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 20px;
   font-weight: 700;

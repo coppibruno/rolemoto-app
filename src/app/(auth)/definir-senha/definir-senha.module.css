@@ -189,7 +189,7 @@
   border: none;
   border-radius: 0.5rem;
   background: var(--primary-container);
-  color: var(--surface-container-lowest);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 22px;
   font-weight: 700;

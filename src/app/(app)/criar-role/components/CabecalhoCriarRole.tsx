@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
 import {
   TITULO_PAGINA,
   TITULO_PAGINA_CLONE,
@@ -50,14 +50,7 @@ export const CabecalhoCriarRole = ({ fotoUrl, nome, modo }: Props) => {
           >
             <span className="material-symbols-outlined">arrow_back_ios_new</span>
           </Link>
-          <Image
-            src="/logo-rolemoto.jpeg"
-            alt="Rolê Moto"
-            width={84}
-            height={28}
-            className={styles.logo}
-            priority
-          />
+          <LogoRolemoto width={84} height={28} className={styles.logo} priority />
           <h1
             className={`${styles.tituloPagina} ${
               destaque ? styles.tituloPaginaClone : ""

@@ -251,7 +251,7 @@
   padding: 8px 16px;
   border-radius: 9999px;
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 16px;
   font-weight: 700;

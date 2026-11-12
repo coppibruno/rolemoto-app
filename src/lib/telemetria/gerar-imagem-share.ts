@@ -123,44 +123,23 @@ const preencherCaixa = (
   ctx.fill();
 };
 
-const recortarFundoPreto = (img: HTMLImageElement): HTMLCanvasElement => {
-  const quadro = document.createElement("canvas");
-  quadro.width = img.naturalWidth;
-  quadro.height = img.naturalHeight;
-  const g = quadro.getContext("2d", { willReadFrequently: true });
-  if (!g) return quadro;
-  g.drawImage(img, 0, 0);
-  const pixels = g.getImageData(0, 0, quadro.width, quadro.height);
-  const data = pixels.data;
-  const w = quadro.width;
-  const h = quadro.height;
-  const visto = new Uint8Array(w * h);
-  const fundo = (i: number) => {
-    const o = i * 4;
-    return data[o] < 30 && data[o + 1] < 30 && data[o + 2] < 30;
-  };
-  const pilha = [0, w - 1, (h - 1) * w, (h - 1) * w + (w - 1)];
-  while (pilha.length > 0) {
-    const i = pilha.pop();
-    if (i === undefined || i < 0 || i >= w * h || visto[i] || !fundo(i)) continue;
-    visto[i] = 1;
-    data[i * 4 + 3] = 0;
-    const x = i % w;
-    if (x > 0) pilha.push(i - 1);
-    if (x < w - 1) pilha.push(i + 1);
-    if (i >= w) pilha.push(i - w);
-    if (i < w * (h - 1)) pilha.push(i + w);
-  }
-  g.putImageData(pixels, 0, 0);
-  return quadro;
-};
-
 const carregarLogo = (): Promise<HTMLCanvasElement | null> =>
   new Promise((resolve) => {
     const img = new Image();
-    img.onload = () => resolve(recortarFundoPreto(img));
+    img.onload = () => {
+      const quadro = document.createElement("canvas");
+      quadro.width = img.naturalWidth;
+      quadro.height = img.naturalHeight;
+      const g = quadro.getContext("2d");
+      if (!g) {
+        resolve(null);
+        return;
+      }
+      g.drawImage(img, 0, 0);
+      resolve(quadro);
+    };
     img.onerror = () => resolve(null);
-    img.src = "/logo-rolemoto.jpeg";
+    img.src = "/logo-rolemoto.png";
   });
 
 const carregarTile = (src: string): Promise<HTMLImageElement | null> =>

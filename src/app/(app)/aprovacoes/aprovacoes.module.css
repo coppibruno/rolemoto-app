@@ -119,7 +119,7 @@
 
 .chipAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 

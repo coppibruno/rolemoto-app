@@ -1,5 +1,6 @@
 "use client";
 
+import { LinhaTema } from "@/components/tema/BotaoTema";
 import type { Usuario } from "@/types/user";
 import { CartaoPiloto } from "../[uid]/components/CartaoPiloto";
 import { AbasConteudoPerfil } from "./AbasConteudoPerfil";
@@ -22,6 +23,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
 
   return (
     <div className={styles.visao}>
+      <LinhaTema />
       <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} />
       <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
       <button type="button" className={styles.botaoEditar} onClick={onEditar}>

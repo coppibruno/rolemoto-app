@@ -57,7 +57,7 @@
 
 .cardAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
 }
 
@@ -68,7 +68,7 @@
 }
 
 .cardAtivo .icone {
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .labelCard {
@@ -82,7 +82,7 @@
 }
 
 .cardAtivo .labelCard {
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .erro {

@@ -291,8 +291,8 @@
 
 .divisor {
   height: 1px;
-  background: #2d323a;
-  box-shadow: 0 -1px 0 #0d0e10;
+  background: var(--divisor);
+  box-shadow: 0 -1px 0 var(--divisor-sombra);
 }
 
 .ficha {
@@ -494,7 +494,7 @@
 .badgeTipo {
   flex-shrink: 0;
   padding: 4px 10px;
-  border: 1px solid #353a44;
+  border: 1px solid var(--borda-neutra);
   border-radius: 9999px;
   color: var(--on-surface-variant);
   font-family: "Barlow Condensed", sans-serif;

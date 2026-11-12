@@ -1,0 +1,113 @@
+.botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex-shrink: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.botao:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.botao .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.linha {
+  width: 100%;
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 1rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  cursor: pointer;
+  text-align: left;
+}
+
+.linha:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.linhaIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--primary);
+}
+
+.linhaIcone .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.linhaTextos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.linhaTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.linhaSub {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.trilho {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--outline);
+  background: var(--chip-fundo);
+}
+
+.bolinha {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--on-surface);
+  transition: transform 0.15s ease;
+}
+
+.trilhoAtivo {
+  border-color: var(--primary-container);
+  background: color-mix(in srgb, var(--primary-container) 35%, var(--chip-fundo));
+}
+
+.trilhoAtivo .bolinha {
+  transform: translateX(20px);
+  background: var(--primary-container);
+}

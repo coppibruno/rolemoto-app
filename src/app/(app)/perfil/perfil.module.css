@@ -35,6 +35,13 @@
   object-fit: contain;
 }
 
+.cabecalhoAcoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .cabecalhoTitulos {
   display: flex;
   flex-direction: column;
@@ -170,7 +177,7 @@
   height: 32px;
   border-radius: 9999px;
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -430,7 +437,7 @@
 
 .cardPilotagemAtivo {
   background: var(--primary-container);
-  color: var(--on-primary);
+  color: var(--on-primary-container);
   box-shadow: 0 0 16px rgba(255, 107, 0, 0.35);
 }
 
@@ -452,7 +459,7 @@
 }
 
 .cardPilotagemAtivo .iconePilotagem {
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .cardPilotagemLabel {
@@ -466,7 +473,7 @@
 }
 
 .cardPilotagemAtivo .cardPilotagemLabel {
-  color: var(--on-primary);
+  color: var(--on-primary-container);
 }
 
 .cardPilotagemSub {
@@ -556,7 +563,7 @@
   gap: 8px;
   width: 100%;
   min-height: 48px;
-  border: 1.5px solid #353a44;
+  border: 1.5px solid var(--borda-neutra);
   border-radius: 0.5rem;
   background: transparent;
   color: var(--on-surface);
@@ -625,7 +632,7 @@
   border: none;
   border-radius: 0.5rem;
   background: var(--primary-container);
-  color: var(--surface);
+  color: var(--on-primary-container);
   font-family: "Barlow Condensed", sans-serif;
   font-size: 24px;
   font-weight: 700;
@@ -935,8 +942,8 @@
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2.5px solid color-mix(in srgb, var(--surface) 25%, transparent);
-  border-top-color: var(--surface);
+  border: 2.5px solid color-mix(in srgb, var(--on-primary-container) 25%, transparent);
+  border-top-color: var(--on-primary-container);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }

@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { IniciarDeepLinkNativo } from "@/components/nativo/IniciarDeepLinkNativo";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { TemaProvider } from "@/components/providers/TemaProvider";
 import { IniciarPushNativo } from "@/components/push/IniciarPushNativo";
+import { scriptTema } from "@/lib/tema";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,16 +38,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body>
-        <AuthProvider>
-          <IniciarPushNativo />
-          <IniciarDeepLinkNativo />
-          {children}
-        </AuthProvider>
+        <Script id="tema-inicial" strategy="beforeInteractive">
+          {scriptTema}
+        </Script>
+        <TemaProvider>
+          <AuthProvider>
+            <IniciarPushNativo />
+            <IniciarDeepLinkNativo />
+            {children}
+          </AuthProvider>
+        </TemaProvider>
       </body>
     </html>
   );

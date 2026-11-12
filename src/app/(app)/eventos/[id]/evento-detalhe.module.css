@@ -314,7 +314,7 @@
 
 .ctaExterno {
   background: var(--primary-container);
-  color: var(--surface-container-lowest);
+  color: var(--on-primary-container);
   box-shadow: 0 4px 14px rgba(255, 107, 0, 0.35);
   border: none;
   cursor: pointer;
@@ -338,7 +338,7 @@
 
 .inputAjuste[type="date"],
 .inputAjuste[type="time"] {
-  color-scheme: dark;
+  color-scheme: inherit;
 }
 
 .textoErro {
