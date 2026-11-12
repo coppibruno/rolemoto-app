@@ -23,4 +23,5 @@ export interface OfertaLocalRepository {
   definirAtiva(id: string, ativa: boolean): Promise<OfertaLocal | null>;
   remover(id: string): Promise<void>;
   pausarPorLocal(localId: string): Promise<void>;
+  removerPorLocal(localId: string): Promise<number>;
 }

@@ -2,6 +2,7 @@ import {FieldValue, Timestamp} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
 import type {UsuarioOfertaCupomCreate} from "../../types/oferta-local";
 import type {UsuarioOfertaCupomRepository} from "../interfaces/usuario-oferta-cupom.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 
 const COLECAO = "usersofertacupom";
 const JA_EXISTE = 6;
@@ -30,8 +31,13 @@ export class FirestoreUsuarioOfertaCupomRepository implements UsuarioOfertaCupom
       .collection(COLECAO)
       .where("localId", "==", localId)
       .where("createdAt", ">=", Timestamp.fromDate(desde))
+      .orderBy("createdAt", "desc")
       .count()
       .get();
     return snap.data().count;
+  }
+
+  async removerPorLocal(localId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "localId", localId);
   }
 }

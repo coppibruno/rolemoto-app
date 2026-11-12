@@ -150,7 +150,7 @@ Sem `aceito` / fila: evento grátis confirma na hora com `POST /eventos/:id/insc
 }
 ```
 
-Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`) e se inscreve (`POST|GET|DELETE /eventos/:id/inscricao`). Avalia após encerrar (`POST|GET /eventos/:id/avaliacoes`, `GET /eventos/:id/avaliacao`). `localId` opcional aponta para um local do catálogo: as stories do encontro vão para o álbum desse ponto. Sem o campo, o evento tem o próprio álbum. Não misturar com a coleção `roles`.
+Só administrador (`users.admin === true`) cria via `POST /eventos` e apaga a data em `DELETE /eventos/:id` (inscrição, avaliação, convite e stories do álbum do evento saem; data de série entra nas exceções para não voltar). Qualquer autenticado lê (`GET /eventos`, `GET /eventos/:id`) e se inscreve (`POST|GET|DELETE /eventos/:id/inscricao`). Avalia após encerrar (`POST|GET /eventos/:id/avaliacoes`, `GET /eventos/:id/avaliacao`). `localId` opcional aponta para um local do catálogo: as stories do encontro vão para o álbum desse ponto. Sem o campo, o evento tem o próprio álbum. Não misturar com a coleção `roles`.
 
 ### Coleção `locais` (pontos oficiais permanentes)
 ```
@@ -185,7 +185,7 @@ Só administrador (`users.admin === true`) cria via `POST /eventos`. Qualquer au
 
 Sugestões da Places API ficam em `sugestoesLocal` até o admin homologar (`POST /sugestoes-locais/:id/aprovar`), que grava aqui com `googlePlaceId`. A fachada da sugestão é a foto da Places salva no Storage; a homologação copia `fotoFachadaUrl` e `fotoAtribuicao`.
 
-Só administrador cria via `POST /locais`. Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`) e avalia (`POST|GET /locais/:id/avaliacoes`, `GET /locais/:id/avaliacao`). Favorita via `POST|DELETE /locais/:id/favorito`. `GET /locais` inclui `favorito: boolean`. `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
+Só administrador cria via `POST /locais` e apaga o ponto em `DELETE /locais/:id` (favorito, avaliação, check-in, oferta, cupom e stories saem; encontros nesse ponto continuam, com `localId` nulo). Qualquer autenticado lê (`GET /locais`, `GET /locais/:id`) e avalia (`POST|GET /locais/:id/avaliacoes`, `GET /locais/:id/avaliacao`). Favorita via `POST|DELETE /locais/:id/favorito`. `GET /locais` inclui `favorito: boolean`. `aberto24h: true` grava `horarios: []`. Senão, os 7 dias (0 = domingo … 6 = sábado) com faixa `HH:mm` recorrente — fechamento pode ser menor que abertura (vira a noite).
 
 ### Coleção `ofertaslocal` (vitrine de parceria — SPEC 059)
 ```

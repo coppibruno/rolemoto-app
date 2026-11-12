@@ -26,4 +26,5 @@ export interface UsuarioLocalFeedbackRepository {
     localId: string,
     dados: AvaliacaoExperienciaCampos,
   ): Promise<UsuarioLocalFeedbackDoc | null>;
+  removerPorLocal(localId: string): Promise<number>;
 }

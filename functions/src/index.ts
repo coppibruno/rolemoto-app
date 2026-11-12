@@ -33,13 +33,13 @@
  * - /usuarios/:uid/seguir → POST, DELETE
  * - /usuarios/:uid/seguindo → GET
  * - /usuarios/:uid/seguidores → GET
- * - /eventos → GET, POST
+ * - /eventos → GET, POST, PATCH, DELETE (DELETE só admin)
  * - /eventos/:id/inscricao → GET, POST, DELETE
  * - /eventos/:id/convites/situacao → POST
  * - /eventos/:id/convites → POST
  * - /eventos/:id/avaliacoes → GET, POST
  * - /eventos/:id/avaliacao → GET, PATCH
- * - /locais  → GET, POST
+ * - /locais  → GET, POST, DELETE (DELETE só admin)
  * - /locais/proximo → GET
  * - /locais/:id/avaliacoes → GET, POST
  * - /locais/:id/avaliacao → GET, PATCH

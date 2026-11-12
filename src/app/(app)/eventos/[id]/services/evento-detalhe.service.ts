@@ -4,6 +4,9 @@ import type { EventoDetalhe } from "@/types/evento";
 export const eventoDetalheService = {
   buscar: (id: string) => api<EventoDetalhe>(`/eventos/${id}`),
 
+  excluir: (id: string) =>
+    api<void>(`/eventos/${encodeURIComponent(id)}`, { method: "DELETE" }),
+
   ajustar: (
     id: string,
     dados: {

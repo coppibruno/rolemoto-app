@@ -3,6 +3,7 @@ import {autenticar} from "../middleware/auth";
 import {exigirAdmin} from "../middleware/exigir-admin";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
+import {apagarEvento} from "../lib/apagar-catalogo";
 import {filtrarEventosFeed} from "../lib/feed-filtros";
 import {escolherUmaPorSerie} from "../lib/serie-evento";
 import {ajustarOcorrencia, anexarRecorrencia, bodyTemAjuste} from "../lib/serie-evento-operacao";
@@ -37,6 +38,7 @@ import {storiesEventoRouter} from "./stories-evento";
  * GET    /eventos/:id
  * GET    /eventos/:id/participantes
  * POST   /eventos   (admin do documento users)
+ * DELETE /eventos/:id (admin)
  * GET|POST|DELETE /eventos/:id/inscricao
  * POST   /eventos/:id/convites/situacao
  * POST   /eventos/:id/convites
@@ -350,6 +352,19 @@ eventosRouter.patch("/:id", exigirAdmin, async (req: Request, res: Response) => 
       return;
     }
     res.json(atualizado);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+eventosRouter.delete("/:id", exigirAdmin, async (req: Request, res: Response) => {
+  try {
+    const resultado = await apagarEvento(param(req, "id"));
+    if (resultado === "ausente") {
+      res.status(404).json({erro: "Evento não encontrado"});
+      return;
+    }
+    res.status(204).send();
   } catch (error) {
     responderErro(res, error);
   }

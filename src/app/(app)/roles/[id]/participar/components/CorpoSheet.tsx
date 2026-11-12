@@ -4,7 +4,7 @@ import { COPY_SHEET } from "../constants";
 import type { EstadoSheet } from "../types";
 import styles from "../confirmacao-role.module.css";
 
-type EstadoDialogo = Exclude<EstadoSheet, "organizador">;
+type EstadoDialogo = Exclude<EstadoSheet, "organizador" | "admin">;
 
 type Props = {
   estado: EstadoDialogo;

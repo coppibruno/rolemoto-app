@@ -17,7 +17,7 @@ export const TelaConviteRole = ({ role }: Props) => {
   const encerrado = Date.parse(role.dataHoraSaida) < Date.now();
 
   return (
-    <div className={styles.tela}>
+    <div className={`${styles.tela} ${styles.telaRole}`}>
       <CabecalhoConviteRole role={role} />
       <BannerInstalarApp variante="fluxo" />
       <HeroCapaRole

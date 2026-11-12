@@ -7,4 +7,5 @@ export interface UsuarioOfertaCupomRepository {
   /** `novo: false` quando o doc do dia já existia. */
   abrir(dados: UsuarioOfertaCupomCreate): Promise<{novo: boolean}>;
   contarPorLocalDesde(localId: string, desde: Date): Promise<number>;
+  removerPorLocal(localId: string): Promise<number>;
 }

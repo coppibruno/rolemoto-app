@@ -225,4 +225,8 @@ export class FirestoreLocalRepository implements LocalRepository {
       .map((doc) => ({id: doc.id, nome: String(doc.get("nome") ?? "")}))
       .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   }
+
+  async remover(id: string): Promise<void> {
+    await firestore.collection(COLECAO).doc(id).delete();
+  }
 }

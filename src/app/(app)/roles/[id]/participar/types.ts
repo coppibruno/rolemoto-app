@@ -2,4 +2,5 @@ export type EstadoSheet =
   | "aguardando"
   | "confirmado"
   | "recusado"
-  | "organizador";
+  | "organizador"
+  | "admin";

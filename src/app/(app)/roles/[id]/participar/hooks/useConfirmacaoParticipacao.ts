@@ -19,8 +19,9 @@ const derivarEstado = (pedido: UsuarioRole): EstadoSheet => {
 
 export const useConfirmacaoParticipacao = (roleId: string) => {
   const router = useRouter();
-  const { firebaseUser } = useAuth();
+  const { firebaseUser, usuario, loading } = useAuth();
   const uid = firebaseUser?.uid;
+  const admin = usuario?.admin === true;
 
   const [carregando, setCarregando] = useState(true);
   const [cancelando, setCancelando] = useState(false);
@@ -30,7 +31,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
   const [erroAcao, setErroAcao] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!uid) return;
+    if (!uid || loading) return;
 
     let cancelado = false;
     setCarregando(true);
@@ -50,6 +51,12 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
         if (obtido.minhaParticipacao) {
           setDetalhe(obtido);
           setEstado(derivarEstado(obtido.minhaParticipacao));
+          return;
+        }
+
+        if (admin) {
+          setDetalhe(obtido);
+          setEstado("admin");
           return;
         }
 
@@ -98,7 +105,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     return () => {
       cancelado = true;
     };
-  }, [roleId, uid, router]);
+  }, [admin, loading, roleId, uid, router]);
 
   const voltarAoFeed = useCallback(() => {
     router.push("/");
@@ -123,6 +130,21 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     }
   }, [cancelando, detalhe, roleId, router]);
 
+  const pedirVaga = useCallback(async () => {
+    if (!detalhe || cancelando || estado !== "admin") return;
+    setCancelando(true);
+    setErroAcao(null);
+    try {
+      const pedido = await participacaoService.solicitar(roleId);
+      setDetalhe({ ...detalhe, minhaParticipacao: pedido });
+      setEstado(derivarEstado(pedido));
+    } catch (falha) {
+      setErroAcao(falha instanceof ApiError ? falha.message : ERRO_GENERICO);
+    } finally {
+      setCancelando(false);
+    }
+  }, [cancelando, detalhe, estado, roleId]);
+
   const cancelarRole = useCallback(async () => {
     if (!detalhe || cancelando) return;
     const confirmados = detalhe.participantes.confirmados;
@@ -135,7 +157,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     try {
       // DELETE /roles/:id — backend notifica só confirmados (aceito === true).
       await rolesService.excluir(roleId);
-      router.push("/meus-roles");
+      router.push(detalhe.criadorId === uid ? "/meus-roles" : "/");
     } catch (falha) {
       console.error(falha);
       setErroAcao(
@@ -143,7 +165,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
       );
       setCancelando(false);
     }
-  }, [cancelando, detalhe, roleId, router]);
+  }, [cancelando, detalhe, roleId, router, uid]);
 
   return {
     carregando,
@@ -155,5 +177,6 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     voltarAoFeed,
     cancelarPedido,
     cancelarRole,
+    pedirVaga,
   };
 };

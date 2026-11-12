@@ -15,4 +15,5 @@ export interface ConviteEventoRepository {
     convidadoIds: string[],
   ): Promise<string[]>;
   limparPorUsuario(uid: string): Promise<void>;
+  removerPorEvento(eventoId: string): Promise<number>;
 }

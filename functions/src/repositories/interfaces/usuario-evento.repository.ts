@@ -23,4 +23,5 @@ export interface UsuarioEventoRepository {
   contarPorUsuario(usuarioId: string): Promise<number>;
   criar(dados: UsuarioEventoCreate): Promise<UsuarioEvento>;
   remover(id: string): Promise<boolean>;
+  removerPorEvento(eventoId: string): Promise<number>;
 }

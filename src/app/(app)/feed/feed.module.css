@@ -550,6 +550,11 @@
   height: 176px;
   overflow: hidden;
   background: var(--surface-container-high);
+  pointer-events: none;
+}
+
+.capa * {
+  pointer-events: none;
 }
 
 .capaImg {

@@ -2,8 +2,11 @@
 
 import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
+import { BotaoApagarCatalogo } from "@/components/catalogo/BotaoApagarCatalogo";
+import { useApagarCatalogo } from "@/components/catalogo/useApagarCatalogo";
 import { useAuth } from "@/hooks/useAuth";
 import { useDetalheLocal } from "../hooks/useDetalheLocal";
+import { localDetalheService } from "../services/local-detalhe.service";
 import { BlocoAvaliacaoLocal } from "./BlocoAvaliacaoLocal";
 import { BlocoCheckinLocal } from "./BlocoCheckinLocal";
 import { BlocoDonoBalcao } from "./BlocoDonoBalcao";
@@ -25,6 +28,11 @@ export const TelaDetalheLocal = ({ id }: Props) => {
   const { local, carregando, erro } = useDetalheLocal(id);
   const player = usePlayerDetalhe(Boolean(local));
   const admin = useAuth().usuario?.admin === true;
+  const exclusao = useApagarCatalogo(
+    () => localDetalheService.excluir(id),
+    "/locais",
+    `Apagar “${local?.nome ?? "este local"}”? Some do catálogo, dos favoritos e das ofertas.`,
+  );
 
   if (carregando) return <EstadoCarregandoLocal />;
   if (erro || !local) return <EstadoVazioLocal mensagem={erro} />;
@@ -51,6 +59,12 @@ export const TelaDetalheLocal = ({ id }: Props) => {
         <BlocoLocalizacaoLocal local={local} />
         <BlocoAvaliacaoLocal local={local} />
         {admin ? <BlocoDonoBalcao localId={local.id} donoInicial={local.dono ?? null} /> : null}
+        <BotaoApagarCatalogo
+          rotulo="Apagar local"
+          ocupado={exclusao.ocupado}
+          erro={exclusao.erro}
+          onApagar={() => void exclusao.apagar()}
+        />
       </main>
       <PlayerStories
         aberto={player.aberto}

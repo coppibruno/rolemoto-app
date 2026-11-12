@@ -1,5 +1,6 @@
 "use client";
 
+import { BotaoApagarCatalogo } from "@/components/catalogo/BotaoApagarCatalogo";
 import { BotaoCancelarPedido } from "./BotaoCancelarPedido";
 import { BotaoNotificacoes } from "./BotaoNotificacoes";
 import { BotaoVoltarFeed } from "./BotaoVoltarFeed";
@@ -12,7 +13,7 @@ import type { RoleDetalhe } from "@/types/role";
 import type { EstadoSheet } from "../types";
 import styles from "../confirmacao-role.module.css";
 
-type EstadoDialogo = Exclude<EstadoSheet, "organizador">;
+type EstadoDialogo = Exclude<EstadoSheet, "organizador" | "admin">;
 
 type Props = {
   detalhe: RoleDetalhe;
@@ -24,6 +25,7 @@ type Props = {
   onVoltar: () => void;
   onAlternarNotificar: () => void;
   onCancelar: () => void;
+  onApagarRole: () => void;
 };
 
 export const SheetConfirmacao = ({
@@ -36,6 +38,7 @@ export const SheetConfirmacao = ({
   onVoltar,
   onAlternarNotificar,
   onCancelar,
+  onApagarRole,
 }: Props) => {
   const copy = COPY_SHEET[estado];
   const apelido = detalhe.criador.apelido || "piloto";
@@ -88,6 +91,12 @@ export const SheetConfirmacao = ({
             <BotaoCancelarPedido disabled={ocupado} onClick={onCancelar} />
           </div>
         ) : null}
+        <BotaoApagarCatalogo
+          rotulo="Apagar rolê"
+          ocupado={cancelando}
+          erro={null}
+          onApagar={onApagarRole}
+        />
       </div>
     </div>
   );

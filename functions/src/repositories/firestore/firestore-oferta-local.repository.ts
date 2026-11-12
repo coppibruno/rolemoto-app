@@ -9,6 +9,7 @@ import type {
   TipoOfertaLocal,
 } from "../../types/oferta-local";
 import type {OfertaLocalRepository} from "../interfaces/oferta-local.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "ofertaslocal";
@@ -160,5 +161,9 @@ export class FirestoreOfertaLocalRepository implements OfertaLocalRepository {
       batch.update(doc.ref, {ativa: false, updatedAt: FieldValue.serverTimestamp()});
     }
     await batch.commit();
+  }
+
+  async removerPorLocal(localId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "localId", localId);
   }
 }

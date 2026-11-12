@@ -6,6 +6,7 @@ import type {
   UsuarioEventoCreate,
 } from "../../types/usuario-evento";
 import type {UsuarioEventoRepository} from "../interfaces/usuario-evento.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "usersevento";
@@ -131,5 +132,9 @@ implements UsuarioEventoRepository {
     }
     await ref.delete();
     return true;
+  }
+
+  async removerPorEvento(eventoId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "eventoId", eventoId);
   }
 }

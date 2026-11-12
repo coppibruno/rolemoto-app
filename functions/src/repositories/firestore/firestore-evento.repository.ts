@@ -275,6 +275,34 @@ export class FirestoreEventoRepository implements EventoRepository {
     return this.buscarPorId(id);
   }
 
+  async desvincularLocal(localId: string): Promise<number> {
+    const LOTE = 400;
+    let alterados = 0;
+    for (let rodada = 0; rodada < 50; rodada += 1) {
+      const snap = await firestore
+        .collection(COLECAO)
+        .where("localId", "==", localId)
+        .limit(LOTE)
+        .get();
+      if (snap.empty) {
+        return alterados;
+      }
+      const batch = firestore.batch();
+      snap.docs.forEach((doc) => {
+        batch.update(doc.ref, {
+          localId: null,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      });
+      await batch.commit();
+      alterados += snap.size;
+      if (snap.size < LOTE) {
+        return alterados;
+      }
+    }
+    return alterados;
+  }
+
   async reservarPushDoDia(id: string, ymd: string): Promise<boolean> {
     return reservarYmd(COLECAO, id, ymd);
   }

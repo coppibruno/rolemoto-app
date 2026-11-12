@@ -23,7 +23,7 @@ type CopySheet = {
   corpo: (apelido: string) => string;
 };
 
-export const COPY_SHEET: Record<Exclude<EstadoSheet, "organizador">, CopySheet> =
+export const COPY_SHEET: Record<Exclude<EstadoSheet, "organizador" | "admin">, CopySheet> =
   {
     aguardando: {
       faixa: "Aguardando Piloto Líder",

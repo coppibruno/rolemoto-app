@@ -3,6 +3,7 @@ import {firestore} from "../../lib/firebase-admin";
 import {LIMITE_UID_CONVITE} from "../../lib/convite-evento";
 import type {SituacaoConvites} from "../../types/convite-evento";
 import type {ConviteEventoRepository} from "../interfaces/convite-evento.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 
 const COLECAO = "usersconviteevento";
 const INSCRICOES = "usersevento";
@@ -102,6 +103,10 @@ implements ConviteEventoRepository {
       });
       return criados;
     });
+  }
+
+  async removerPorEvento(eventoId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "eventoId", eventoId);
   }
 
   async limparPorUsuario(uid: string): Promise<void> {

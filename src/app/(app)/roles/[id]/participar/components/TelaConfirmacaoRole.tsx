@@ -3,6 +3,7 @@
 import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { useConfirmacaoParticipacao } from "../hooks/useConfirmacaoParticipacao";
 import { usePreferenciaNotificar } from "../hooks/usePreferenciaNotificar";
+import { EstadoAdminRole } from "./EstadoAdminRole";
 import { EstadoCarregando } from "./EstadoCarregando";
 import { EstadoErro } from "./EstadoErro";
 import { EstadoOrganizador } from "./EstadoOrganizador";
@@ -26,6 +27,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
     voltarAoFeed,
     cancelarPedido,
     cancelarRole,
+    pedirVaga,
   } = useConfirmacaoParticipacao(roleId);
 
   const preferencia = usePreferenciaNotificar(
@@ -42,6 +44,18 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
 
       {carregando ? <EstadoCarregando /> : null}
       {erro ? <EstadoErro mensagem={erro} onVoltar={voltarAoFeed} /> : null}
+      {estado === "admin" && detalhe ? (
+        <EstadoAdminRole
+          titulo={detalhe.titulo}
+          saidaFutura={Date.parse(detalhe.dataHoraSaida) > Date.now()}
+          cancelando={cancelando}
+          erroAcao={erroAcao}
+          onVoltar={voltarAoFeed}
+          onApagar={cancelarRole}
+          onPedirVaga={() => void pedirVaga()}
+        />
+      ) : null}
+
       {estado === "organizador" && detalhe ? (
         <EstadoOrganizador
           roleId={roleId}
@@ -54,7 +68,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
         />
       ) : null}
 
-      {detalhe && estado && estado !== "organizador" ? (
+      {detalhe && estado && estado !== "organizador" && estado !== "admin" ? (
         <>
           <FundoDetalheRole detalhe={detalhe} />
           <OverlayConfirmacao onFechar={voltarAoFeed}>
@@ -68,6 +82,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
               onVoltar={voltarAoFeed}
               onAlternarNotificar={preferencia.alternar}
               onCancelar={cancelarPedido}
+              onApagarRole={cancelarRole}
             />
           </OverlayConfirmacao>
         </>

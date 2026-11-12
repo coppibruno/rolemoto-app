@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { rolesService } from "@/app/(app)/criar-role/services/roles.service";
+import { confirmCancelarRole } from "@/app/(app)/meus-roles/constants";
+import { BotaoApagarCatalogo } from "@/components/catalogo/BotaoApagarCatalogo";
+import { useApagarCatalogo } from "@/components/catalogo/useApagarCatalogo";
 import type { RolePublico } from "@/types/role-publico";
 import { urlLoginComNext } from "@/lib/destino-pos-auth";
 import { COPY_MICROCOPY } from "../constants";
@@ -16,10 +20,21 @@ type Props = {
 export const RodapeConversao = ({ role }: Props) => {
   const cta = useCtaConvite(role);
   const convite = `/r/${role.id}`;
+  const exclusao = useApagarCatalogo(
+    () => rolesService.excluir(role.id),
+    "/",
+    confirmCancelarRole(role.titulo, role.participantes.confirmados),
+  );
 
   return (
     <footer className={styles.rodape}>
       <div className={styles.rodapeInner}>
+        <BotaoApagarCatalogo
+          rotulo="Apagar rolê"
+          ocupado={exclusao.ocupado}
+          erro={exclusao.erro}
+          onApagar={() => void exclusao.apagar()}
+        />
         {cta.encerrado ? (
           <EstadoRoleEncerrado />
         ) : (

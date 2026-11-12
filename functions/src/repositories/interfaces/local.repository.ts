@@ -16,4 +16,5 @@ export interface LocalRepository {
   definirDono(id: string, donoId: string | null): Promise<void>;
   /** Ordem por nome. */
   listarPorDono(donoId: string): Promise<{id: string; nome: string}[]>;
+  remover(id: string): Promise<void>;
 }

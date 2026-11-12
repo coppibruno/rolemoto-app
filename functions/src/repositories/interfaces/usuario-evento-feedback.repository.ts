@@ -26,4 +26,5 @@ export interface UsuarioEventoFeedbackRepository {
     eventoId: string,
     dados: AvaliacaoExperienciaCampos,
   ): Promise<UsuarioEventoFeedbackDoc | null>;
+  removerPorEvento(eventoId: string): Promise<number>;
 }

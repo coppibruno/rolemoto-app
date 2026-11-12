@@ -15,6 +15,7 @@ type Props = {
   detalhe: RoleDetalhe;
   pendentes: number;
   cancelando: boolean;
+  podeApagar: boolean;
   onCancelar: () => void;
 };
 
@@ -22,6 +23,7 @@ export const ResumoRoleGerenciar = ({
   detalhe,
   pendentes,
   cancelando,
+  podeApagar,
   onCancelar,
 }: Props) => {
   const rota = `${tituloLocal(detalhe.localSaida)} → ${tituloLocal(detalhe.destinoFinal)}`;
@@ -68,26 +70,30 @@ export const ResumoRoleGerenciar = ({
         </div>
       </div>
 
-      {futura ? (
+      {futura || podeApagar ? (
         <div className={styles.acoesRole}>
-          <Link
-            href={hrefEditarRole(detalhe.id)}
-            className={styles.botaoEditar}
-            aria-label={`Editar ${detalhe.titulo}`}
-          >
-            <span className="material-symbols-outlined">edit</span>
-            Editar
-          </Link>
-          <button
-            type="button"
-            className={styles.botaoCancelar}
-            onClick={onCancelar}
-            disabled={cancelando}
-            aria-label={`Cancelar rolê ${detalhe.titulo}`}
-          >
-            <span className="material-symbols-outlined">delete</span>
-            Cancelar
-          </button>
+          {futura ? (
+            <Link
+              href={hrefEditarRole(detalhe.id)}
+              className={styles.botaoEditar}
+              aria-label={`Editar ${detalhe.titulo}`}
+            >
+              <span className="material-symbols-outlined">edit</span>
+              Editar
+            </Link>
+          ) : null}
+          {podeApagar ? (
+            <button
+              type="button"
+              className={styles.botaoCancelar}
+              onClick={onCancelar}
+              disabled={cancelando}
+              aria-label={`${futura ? "Cancelar" : "Apagar"} rolê ${detalhe.titulo}`}
+            >
+              <span className="material-symbols-outlined">delete</span>
+              {futura ? "Cancelar" : "Apagar"}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </section>

@@ -32,6 +32,8 @@ export interface EventoRepository {
   /** Abertura mais recente primeiro. O filtro “ao vivo” fica na aplicação. */
   listarPorLocalId(localId: string, limite: number): Promise<Evento[]>;
   atualizarLocalId(id: string, localId: string | null): Promise<Evento | null>;
+  /** Eventos neste ponto continuam; o álbum deixa de ser o do local. */
+  desvincularLocal(localId: string): Promise<number>;
   /** `true` quando esta chamada gravou o dia e deve disparar o push. */
   reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
 }

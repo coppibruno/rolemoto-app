@@ -31,6 +31,7 @@ export const RotaRole = ({ localSaida, destinoFinal, dataHoraSaida }: Props) => 
           ponto={localSaida}
           variante="icone"
           label="Ver partida"
+          className={styles.cardDetalheAcao}
         />
       </div>
       <div className={styles.rotaTraco} aria-hidden />
@@ -46,6 +47,7 @@ export const RotaRole = ({ localSaida, destinoFinal, dataHoraSaida }: Props) => 
           ponto={destinoFinal}
           variante="icone"
           label="Ver destino"
+          className={styles.cardDetalheAcao}
         />
       </div>
     </div>

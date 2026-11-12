@@ -6,6 +6,7 @@ import type {
   UsuarioLocalFavoritoCreate,
 } from "../../types/favorito-local";
 import type {UsuarioLocalFavoritoRepository} from "../interfaces/usuario-local-favorito.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "userslocalfavorito";
@@ -107,5 +108,9 @@ implements UsuarioLocalFavoritoRepository {
       .count()
       .get();
     return snap.data().count;
+  }
+
+  async removerPorLocal(localId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "localId", localId);
   }
 }

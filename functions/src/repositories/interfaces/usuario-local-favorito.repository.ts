@@ -19,4 +19,5 @@ export interface UsuarioLocalFavoritoRepository {
   /** Favoritos mais recentes primeiro. */
   listarUsuarioIdsPorLocal(localId: string, limite: number): Promise<string[]>;
   contarPorUsuario(usuarioId: string): Promise<number>;
+  removerPorLocal(localId: string): Promise<number>;
 }

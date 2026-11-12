@@ -56,6 +56,7 @@ export const TelaGerenciarRole = ({ roleId }: Props) => {
               detalhe={gerenciar.detalhe}
               pendentes={gerenciar.pendentes.length}
               cancelando={gerenciar.cancelando}
+              podeApagar={gerenciar.podeApagar}
               onCancelar={gerenciar.cancelarRole}
             />
             {gerenciar.erroAcao ? (

@@ -15,4 +15,5 @@ export interface UsuarioLocalCheckinRepository {
   /** Documentos, não pilotos distintos. */
   contarPorLocalDesde(localId: string, desde: Date): Promise<number>;
   criar(dados: UsuarioLocalCheckinCreate): Promise<UsuarioLocalCheckin>;
+  removerPorLocal(localId: string): Promise<number>;
 }

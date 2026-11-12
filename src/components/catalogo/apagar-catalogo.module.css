@@ -1,0 +1,42 @@
+.bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.erro {
+  margin: 0;
+  color: var(--error);
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.botao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--touch-min);
+  border: 1px solid var(--error);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--error) 14%, transparent);
+  color: var(--error);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.botao:focus-visible {
+  outline: 2px solid var(--primary-container);
+}

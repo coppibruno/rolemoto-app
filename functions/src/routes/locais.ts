@@ -10,6 +10,7 @@ import {param} from "../lib/params";
 import {buscarPontoProximo} from "../lib/ponto-proximo";
 import {validarPublicacaoLocal} from "../lib/validar-local";
 import {apelidoExibicao} from "../lib/apelido";
+import {apagarLocal} from "../lib/apagar-catalogo";
 import {ofertasVigentesPorLocal} from "../lib/dono-local";
 import {ofertaDoCard, resumoVigente} from "../lib/oferta-local";
 import {
@@ -33,6 +34,7 @@ import {storiesLocalRouter} from "./stories-local";
  * GET    /locais/proximo
  * GET    /locais/:id
  * POST   /locais   (admin do documento users)
+ * DELETE /locais/:id (admin)
  * GET|POST /locais/:id/avaliacoes
  * GET    /locais/:id/avaliacao
  * POST|DELETE /locais/:id/favorito
@@ -217,6 +219,19 @@ locaisRouter.post("/", exigirAdmin, async (req: Request, res: Response) => {
     });
     log.info("Local", "Local criado", {localId: criado.id, criadorId: uid});
     res.status(201).json(criado);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+locaisRouter.delete("/:id", exigirAdmin, async (req: Request, res: Response) => {
+  try {
+    const resultado = await apagarLocal(param(req, "id"));
+    if (resultado === "ausente") {
+      res.status(404).json({erro: "Local não encontrado"});
+      return;
+    }
+    res.status(204).send();
   } catch (error) {
     responderErro(res, error);
   }

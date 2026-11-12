@@ -14,6 +14,7 @@ import type {
 import type {
   UsuarioEventoFeedbackRepository,
 } from "../interfaces/usuario-evento-feedback.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "userseventofeedback";
@@ -215,5 +216,9 @@ implements UsuarioEventoFeedbackRepository {
     }
 
     return this.buscarPorId(resultado);
+  }
+
+  async removerPorEvento(eventoId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "eventoId", eventoId);
   }
 }

@@ -11,7 +11,10 @@ import type {
   StoryVisto,
   StoryVistoGravacao,
 } from "../../types/story-local";
-import type {StoryLocalRepository} from "../interfaces/story-local.repository";
+import type {
+  StoryLocalRepository,
+  StoryVinculoEvento,
+} from "../interfaces/story-local.repository";
 import {toIso} from "./mapper";
 
 const COLECAO = "userslocalstory";
@@ -274,6 +277,52 @@ export class FirestoreStoryLocalRepository implements StoryLocalRepository {
       .limit(limite)
       .get();
     return snap.docs.map(toStory);
+  }
+
+  async listarPorCampo(
+    campo: "localId" | "eventoId" | "marcaId",
+    valor: string,
+    limite: number,
+  ): Promise<StoryLocal[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where(campo, "==", valor)
+      .limit(limite)
+      .get();
+    return snap.docs.map(toStory);
+  }
+
+  async soltarEvento(
+    itens: StoryVinculoEvento[],
+    eventoId: string,
+  ): Promise<void> {
+    if (itens.length === 0) {
+      return;
+    }
+    const batch = firestore.batch();
+    for (const item of itens) {
+      const ref = firestore.collection(COLECAO).doc(item.id);
+      if (item.marcaTipo === "evento" && item.marcaId === eventoId) {
+        batch.update(ref, {eventoId: null, marcaTipo: null, marcaId: null});
+      } else {
+        batch.update(ref, {eventoId: null});
+      }
+    }
+    await batch.commit();
+  }
+
+  async soltarMarca(ids: string[]): Promise<void> {
+    if (ids.length === 0) {
+      return;
+    }
+    const batch = firestore.batch();
+    for (const id of ids) {
+      batch.update(firestore.collection(COLECAO).doc(id), {
+        marcaTipo: null,
+        marcaId: null,
+      });
+    }
+    await batch.commit();
   }
 
   async remover(id: string): Promise<void> {

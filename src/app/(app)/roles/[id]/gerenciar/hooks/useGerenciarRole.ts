@@ -17,6 +17,7 @@ import {
   ERRO_CARREGAR,
   ERRO_ROLE_NAO_ENCONTRADO,
   ERRO_SEM_ACESSO,
+  saidaFutura,
 } from "../constants";
 
 const filtrarPorRole = (itens: SolicitacaoLider[], roleId: string) =>
@@ -160,5 +161,8 @@ export const useGerenciarRole = (roleId: string) => {
     aplicarDecisao,
     cancelarRole,
     voltar,
+    podeApagar: Boolean(
+      detalhe && (saidaFutura(detalhe.dataHoraSaida) || admin),
+    ),
   };
 };

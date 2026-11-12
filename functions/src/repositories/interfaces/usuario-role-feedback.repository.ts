@@ -17,4 +17,5 @@ export interface UsuarioRoleFeedbackRepository {
   criar(
     dados: UsuarioRoleFeedbackCreate,
   ): Promise<UsuarioRoleFeedbackDoc | "conflito">;
+  removerPorRole(roleId: string): Promise<number>;
 }

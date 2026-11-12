@@ -7,6 +7,7 @@ import type {
   UsuarioRoleFeedbackDoc,
 } from "../../types/usuario-role-feedback";
 import type {UsuarioRoleFeedbackRepository} from "../interfaces/usuario-role-feedback.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "usersrolefeedback";
@@ -112,5 +113,9 @@ implements UsuarioRoleFeedbackRepository {
     });
     const criado = await this.buscarPorId(id);
     return criado as UsuarioRoleFeedbackDoc;
+  }
+
+  async removerPorRole(roleId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "roleId", roleId);
   }
 }

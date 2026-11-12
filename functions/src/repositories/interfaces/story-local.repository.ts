@@ -6,6 +6,12 @@ import type {
   StoryVistoGravacao,
 } from "../../types/story-local";
 
+export type StoryVinculoEvento = {
+  id: string;
+  marcaTipo: "local" | "evento" | null;
+  marcaId: string | null;
+};
+
 /**
  * Persistência de stories (`userslocalstory`) e do visto por álbum.
  */
@@ -37,6 +43,14 @@ export interface StoryLocalRepository {
   listarRecentesNaoExpiradas(agora: Date, limite: number): Promise<StoryLocal[]>;
   listarExpiradas(agora: Date, limite: number): Promise<StoryLocal[]>;
   listarPorUsuario(usuarioId: string, limite: number): Promise<StoryLocal[]>;
+  listarPorCampo(
+    campo: "localId" | "eventoId" | "marcaId",
+    valor: string,
+    limite: number,
+  ): Promise<StoryLocal[]>;
+  /** Tira o vínculo com o evento. Marca do evento no mesmo doc também sai. */
+  soltarEvento(itens: StoryVinculoEvento[], eventoId: string): Promise<void>;
+  soltarMarca(ids: string[]): Promise<void>;
   remover(id: string): Promise<void>;
   /** Cópias do post no ar deste uid (`expiresAt` > agora). */
   listarCopiasAtivas(

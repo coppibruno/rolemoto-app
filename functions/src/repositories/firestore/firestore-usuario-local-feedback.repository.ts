@@ -12,6 +12,7 @@ import type {
   UsuarioLocalFeedbackDoc,
 } from "../../types/avaliacao-experiencia";
 import type {UsuarioLocalFeedbackRepository} from "../interfaces/usuario-local-feedback.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "userslocalfeedback";
@@ -213,5 +214,9 @@ implements UsuarioLocalFeedbackRepository {
     }
 
     return this.buscarPorId(resultado);
+  }
+
+  async removerPorLocal(localId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "localId", localId);
   }
 }

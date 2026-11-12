@@ -6,6 +6,7 @@ import type {
   UsuarioLocalCheckinCreate,
 } from "../../types/checkin-local";
 import type {UsuarioLocalCheckinRepository} from "../interfaces/usuario-local-checkin.repository";
+import {apagarPorCampo} from "./apagar-por-campo";
 import {toIso} from "./mapper";
 
 const COLECAO = "userslocalcheckin";
@@ -55,6 +56,7 @@ implements UsuarioLocalCheckinRepository {
       .collection(COLECAO)
       .where("localId", "==", localId)
       .where("createdAt", ">=", Timestamp.fromDate(desde))
+      .orderBy("createdAt", "desc")
       .count()
       .get();
     return snap.data().count;
@@ -73,5 +75,9 @@ implements UsuarioLocalCheckinRepository {
     });
     const criado = await ref.get();
     return toCheckin(criado);
+  }
+
+  async removerPorLocal(localId: string): Promise<number> {
+    return apagarPorCampo(COLECAO, "localId", localId);
   }
 }

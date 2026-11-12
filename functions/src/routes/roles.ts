@@ -31,6 +31,7 @@ import {
 import {
   roleRepository,
   usuarioRepository,
+  usuarioRoleFeedbackRepository,
   usuarioRoleRepository,
 } from "../repositories";
 import {participacaoRouter} from "./participacao";
@@ -540,9 +541,14 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Rolê não encontrado"});
       return;
     }
-    if (!isDonoOuAdmin(usuario, existente.criadorId)) {
+    let podeApagar = isDonoOuAdmin(usuario, existente.criadorId);
+    if (!podeApagar) {
+      const perfil = await usuarioRepository.buscarPorId(usuario.uid);
+      podeApagar = perfil?.admin === true;
+    }
+    if (!podeApagar) {
       res.status(403).json({
-        erro: "Apenas o criador pode remover este rolê",
+        erro: "Apenas o criador ou um administrador pode remover este rolê",
       });
       return;
     }
@@ -591,12 +597,15 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
     });
 
     const vinculosRemovidos = await usuarioRoleRepository.removerPorRoleId(id);
+    const feedbacksRemovidos =
+      await usuarioRoleFeedbackRepository.removerPorRole(id);
     await roleRepository.remover(id);
     log.info("Role", "Rolê removido", {
       roleId: id,
       criadorId: existente.criadorId,
       lembretesCancelados: userIds.length + 1,
       vinculosRemovidos,
+      feedbacksRemovidos,
       confirmadosNotificados: aNotificar.length,
     });
     res.status(204).send();
