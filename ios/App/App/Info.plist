@@ -82,5 +82,16 @@
 	<array>
 		<string>location</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>br.com.rolemoto.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>rolemoto</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

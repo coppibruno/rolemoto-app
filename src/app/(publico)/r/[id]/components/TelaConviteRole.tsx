@@ -1,4 +1,5 @@
 import type { RolePublico } from "@/types/role-publico";
+import { BannerAbrirAppIos } from "@/components/nativo/BannerAbrirAppIos";
 import { BannerInstalarApp } from "@/components/pwa/BannerInstalarApp";
 import { CabecalhoConviteRole } from "./CabecalhoConviteRole";
 import { CardOrganizador } from "./CardOrganizador";
@@ -20,6 +21,7 @@ export const TelaConviteRole = ({ role }: Props) => {
     <div className={`${styles.tela} ${styles.telaRole}`}>
       <CabecalhoConviteRole role={role} />
       <BannerInstalarApp variante="fluxo" />
+      <BannerAbrirAppIos />
       <HeroCapaRole
         titulo={role.titulo}
         fotoCapaUrl={role.fotoCapaUrl}

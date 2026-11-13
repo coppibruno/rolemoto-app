@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BotaoFotoAmpliavel } from "@/components/fotos/BotaoFotoAmpliavel";
 import type { RoleDetalhe } from "@/types/role";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { tituloLocal } from "@/lib/localizacao";
@@ -34,10 +35,11 @@ export const ResumoRoleGerenciar = ({
     <section className={styles.ficha} aria-label="Resumo do rolê">
       <div className={styles.capa}>
         {detalhe.fotoCapaUrl ? (
-          <img
+          <BotaoFotoAmpliavel
             src={detalhe.fotoCapaUrl}
-            alt=""
-            className={styles.capaImg}
+            rotulo={detalhe.titulo}
+            className={styles.botaoCapa}
+            imgClassName={styles.capaImg}
           />
         ) : (
           <div className={styles.capaPlaceholder} aria-hidden>

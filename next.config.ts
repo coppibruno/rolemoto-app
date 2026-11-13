@@ -36,6 +36,10 @@ const nextConfig: NextConfig = {
         source: "/__/auth/:path*",
         destination: "https://rolemoto-bc47f.firebaseapp.com/__/auth/:path*",
       },
+      {
+        source: "/.well-known/apple-app-site-association",
+        destination: "/api/apple-app-site-association",
+      },
       // Mesma origem para o canvas poder exportar o mapa no card de compartilhar.
       {
         source: "/tiles/:z/:x/:y",

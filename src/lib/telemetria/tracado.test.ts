@@ -79,12 +79,26 @@ describe("pontosDoTracado", () => {
   it("descarta fix impreciso e salto impossível", () => {
     const base = reta(5);
     const ruins: PontoGps[] = [
-      { lat: -27.7, lng: -48.6, t: t0 + 2500, speed: null, accuracy: 80 },
+      { lat: -27.7, lng: -48.6, t: t0 + 2500, speed: null, accuracy: 180 },
       { lat: -26.0, lng: -48.5, t: t0 + 4500, speed: null, accuracy: 5 },
     ];
     const aceitos = pontosDoTracado([...base, ...ruins]);
     expect(aceitos).toHaveLength(5);
     expect(aceitos.every((p) => p.lat < -27.5)).toBe(true);
+  });
+
+  it("mantém fix de 65 m no caminho (GPS do iPhone)", () => {
+    const base = reta(2);
+    const noCaminho: PontoGps = {
+      lat: base[0].lat + 0.00005,
+      lng: base[0].lng,
+      t: base[0].t + 2000,
+      speed: 5.5,
+      accuracy: 65,
+    };
+    const aceitos = pontosDoTracado([base[0], noCaminho]);
+    expect(aceitos).toHaveLength(2);
+    expect(aceitos[1]).toEqual({ lat: noCaminho.lat, lng: noCaminho.lng });
   });
 });
 

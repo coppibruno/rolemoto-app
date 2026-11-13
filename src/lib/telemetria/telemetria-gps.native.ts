@@ -60,6 +60,15 @@ type AgregadosRemotos = {
 
 let memoria: SessaoPersistida | null = null;
 let callbackAnexado = false;
+/** Pontos que o WebView recebeu. No iOS o buffer nativo pode chegar vazio. */
+const pontosDoCallback: PontoGps[] = [];
+
+const juntarComCallback = (buffer: PontoGps[]): PontoGps[] =>
+  pontosDoCallback.length === 0 ? buffer : [...buffer, ...pontosDoCallback];
+
+const limparPontosCallback = () => {
+  pontosDoCallback.length = 0;
+};
 
 const backgroundOk = (valor: string | undefined): boolean =>
   valor === "granted" || valor === "always";
@@ -179,13 +188,9 @@ const aplicarLocalizacao = async (
 ) => {
   const sessao = await lerSessao();
   if (!sessao?.ativa) return;
-  const proximo = aplicarPonto(estadoDe(sessao), {
-    lat,
-    lng,
-    t,
-    speed,
-    accuracy,
-  });
+  const ponto: PontoGps = { lat, lng, t, speed, accuracy };
+  pontosDoCallback.push(ponto);
+  const proximo = aplicarPonto(estadoDe(sessao), ponto);
   await gravarSessao(aplicarEstado(sessao, proximo));
 };
 
@@ -420,6 +425,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     }
 
     await exigirBackground();
+    limparPontosCallback();
     void atualizarCacheConquistas();
 
     const iniciado: SessaoPersistida = {
@@ -472,7 +478,7 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
       callbackAnexado = false;
     }
 
-    const pontosBuffer = await telemetriaBuffer.listar();
+    const pontosBuffer = juntarComCallback(await telemetriaBuffer.listar());
     const comBuffer = await incorporarBufferNaSessao(sessao, pontosBuffer);
 
     const remoto =
@@ -512,12 +518,14 @@ export const nativeAdapter: TelemetriaGpsAdapter = {
     );
     await gravarResumo({ dados });
     await gravarSessao(null);
+    limparPontosCallback();
     await limparBufferNativo();
     return { sessao: local, encerradoEm, dados };
   },
 
   limparResumoPendente: async () => {
     await gravarResumo(null);
+    limparPontosCallback();
     await limparBufferNativo();
   },
 

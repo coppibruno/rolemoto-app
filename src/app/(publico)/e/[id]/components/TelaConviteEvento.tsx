@@ -1,4 +1,5 @@
 import type { EventoPublico } from "@/types/evento-publico";
+import { BannerAbrirAppIos } from "@/components/nativo/BannerAbrirAppIos";
 import { BannerInstalarApp } from "@/components/pwa/BannerInstalarApp";
 import { CardOrganizador } from "@/app/(publico)/r/[id]/components/CardOrganizador";
 import { GradePilotos } from "@/app/(publico)/r/[id]/components/GradePilotos";
@@ -31,6 +32,7 @@ export const TelaConviteEvento = ({ evento }: Props) => {
     <div className={styles.tela}>
       <CabecalhoConviteEvento evento={evento} />
       <BannerInstalarApp variante="fluxo" />
+      <BannerAbrirAppIos />
       <HeroCapaEvento evento={evento} />
       <div className={styles.corpo}>
         {evento.cancelada ? <FaixaDataCancelada /> : null}

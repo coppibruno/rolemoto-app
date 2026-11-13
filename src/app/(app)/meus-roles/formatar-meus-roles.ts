@@ -44,26 +44,20 @@ export const formatarDataConcluido = (iso: string): string =>
     year: "numeric",
   }).format(new Date(iso));
 
+/** "Quarta-feira, 18/11". A capa da garagem aplica maiúsculas no CSS. */
 export const formatarDataEventoCapa = (iso: string): string => {
   const data = new Date(iso);
-  const dia = new Intl.DateTimeFormat("pt-BR", {
+  const diaMes = new Intl.DateTimeFormat("pt-BR", {
     timeZone: TZ,
     day: "2-digit",
+    month: "2-digit",
   }).format(data);
-  const mes = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    month: "short",
-  })
-    .format(data)
-    .replace(".", "")
-    .toUpperCase();
   const weekday = new Intl.DateTimeFormat("pt-BR", {
     timeZone: TZ,
     weekday: "long",
-  })
-    .format(data)
-    .toUpperCase();
-  return `${dia} ${mes} · ${weekday}`;
+  }).format(data);
+  const capitalizado = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  return `${capitalizado}, ${diaMes}`;
 };
 
 export const formatarAvaliadoRelativo = (iso: string): string => {

@@ -25,56 +25,49 @@ export const formatarHora = (iso: string): string =>
 const capitalizar = (texto: string): string =>
   texto.charAt(0).toUpperCase() + texto.slice(1);
 
-/** Faixa do hero do convite: "Domingo, 24 de Novembro • Encontro às 06:30h". */
+const formatarDiaMes = (data: Date): string =>
+  new Intl.DateTimeFormat("pt-BR", {
+    timeZone: TZ,
+    day: "2-digit",
+    month: "2-digit",
+  }).format(data);
+
+const nomeDiaSemana = (data: Date): string =>
+  capitalizar(
+    new Intl.DateTimeFormat("pt-BR", {
+      timeZone: TZ,
+      weekday: "long",
+    }).format(data),
+  );
+
+/** Faixa do hero do convite: "Quarta-feira, 18/11 • Encontro às 06:30h". */
 export const formatarFaixaHero = (iso: string): string => {
   const data = new Date(iso);
-  const weekday = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    weekday: "long",
-  }).format(data);
-  const dia = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    day: "numeric",
-  }).format(data);
-  const mes = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    month: "long",
-  }).format(data);
-  const hora = formatarHora(iso);
-  return `${capitalizar(weekday)}, ${dia} de ${capitalizar(mes)} • Encontro às ${hora}h`;
+  return `${nomeDiaSemana(data)}, ${formatarDiaMes(data)} • Encontro às ${formatarHora(iso)}h`;
 };
 
+/** "Quarta-feira, 18/11 · 14:30". Hoje e amanhã também levam o dia/mês. */
 export const formatarHorarioSaida = (iso: string): string => {
   const data = new Date(iso);
   const hora = formatarHora(iso);
+  const diaMes = formatarDiaMes(data);
   const ymd = ymdSaoPaulo(data);
   const hoje = ymdSaoPaulo(new Date());
-  if (ymd === hoje) return `Hoje, ${hora}`;
-  if (ymd === somarDiasYmd(hoje, 1)) return `Amanhã, ${hora}`;
-
-  const weekday = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    weekday: "long",
-  }).format(data);
-  const capitalizado = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-  return `${capitalizado}, ${hora}`;
+  if (ymd === hoje) return `Hoje, ${diaMes} · ${hora}`;
+  if (ymd === somarDiasYmd(hoje, 1)) return `Amanhã, ${diaMes} · ${hora}`;
+  return `${nomeDiaSemana(data)}, ${diaMes} · ${hora}`;
 };
 
-/** Badge do card de evento: "Hoje às 19:30". */
+/** Badge do card de evento: "Quarta-feira, 18/11 às 19:30". */
 export const formatarHorarioEvento = (iso: string): string => {
   const data = new Date(iso);
   const hora = formatarHora(iso);
+  const diaMes = formatarDiaMes(data);
   const ymd = ymdSaoPaulo(data);
   const hoje = ymdSaoPaulo(new Date());
-  if (ymd === hoje) return `Hoje às ${hora}`;
-  if (ymd === somarDiasYmd(hoje, 1)) return `Amanhã às ${hora}`;
-
-  const weekday = new Intl.DateTimeFormat("pt-BR", {
-    timeZone: TZ,
-    weekday: "short",
-  }).format(data);
-  const capitalizado = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-  return `${capitalizado} às ${hora}`;
+  if (ymd === hoje) return `Hoje, ${diaMes} às ${hora}`;
+  if (ymd === somarDiasYmd(hoje, 1)) return `Amanhã, ${diaMes} às ${hora}`;
+  return `${nomeDiaSemana(data)}, ${diaMes} às ${hora}`;
 };
 
 export const formatarPeriodoEvento = (

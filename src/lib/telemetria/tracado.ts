@@ -6,8 +6,11 @@ import {
   type PontoGps,
 } from "./calcular-metricas";
 
-/** Mais rígido que o cálculo de km: fix de rede desenha zigue-zague no mapa. */
-const ACCURACY_TRACADO_M = 50;
+/**
+ * Mesmo teto do cálculo de km. 50 m apagava o traçado no iPhone, onde o GPS
+ * fino costuma chegar entre 50 e 100 m. O zigue-zague de rede sai antes, pelo provider.
+ */
+const ACCURACY_TRACADO_M = 100;
 const TOLERANCIA_INICIAL_M = 8;
 /** Mantém o polyline abaixo do limite do POST (20 mil caracteres). */
 export const MAX_PONTOS_TRACADO = 1500;

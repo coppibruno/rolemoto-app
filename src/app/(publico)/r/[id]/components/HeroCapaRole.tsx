@@ -1,5 +1,6 @@
 import type { RitmoRole } from "@/types/role";
 import { formatarFaixaHero } from "@/app/(app)/feed/formatar-horario";
+import { BotaoFotoAmpliavel } from "@/components/fotos/BotaoFotoAmpliavel";
 import { LABELS_RITMO_CAPA } from "../constants";
 import styles from "../convite-role.module.css";
 
@@ -27,10 +28,11 @@ export const HeroCapaRole = ({
   return (
     <section className={styles.hero}>
       {fotoCapaUrl ? (
-        <img
+        <BotaoFotoAmpliavel
           src={fotoCapaUrl}
-          alt={`Capa do rolê ${titulo}`}
-          className={styles.heroImg}
+          rotulo={titulo}
+          className={styles.botaoCapa}
+          imgClassName={styles.heroImg}
         />
       ) : (
         <div className={styles.heroPlaceholder} aria-hidden>

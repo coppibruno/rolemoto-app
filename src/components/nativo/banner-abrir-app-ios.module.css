@@ -1,0 +1,32 @@
+.faixa {
+  display: flex;
+  margin: 8px var(--gutter-md) 0;
+}
+
+.botao {
+  flex: 1;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--primary-container) 35%, transparent);
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botao:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.botao .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--primary-container);
+}

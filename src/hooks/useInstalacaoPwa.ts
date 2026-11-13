@@ -1,5 +1,6 @@
 "use client";
 
+import { Capacitor } from "@capacitor/core";
 import { useCallback, useEffect, useState } from "react";
 
 const CHAVE_DISPENSADO = "rolemoto.pwa.ctaDispensado";
@@ -20,7 +21,9 @@ if (typeof window !== "undefined") {
   });
 }
 
+/** App da loja (Capacitor) não marca display-mode standalone; o aviso de PWA não cabe lá. */
 const eStandaloneAgora = () =>
+  Capacitor.isNativePlatform() ||
   window.matchMedia("(display-mode: standalone)").matches ||
   (navigator as NavigatorStandalone).standalone === true;
 

@@ -1,3 +1,4 @@
+import { BannerAbrirAppIos } from "@/components/nativo/BannerAbrirAppIos";
 import { BannerInstalarApp } from "@/components/pwa/BannerInstalarApp";
 import type { LocalPublico } from "@/types/local-publico";
 import { CabecalhoConviteLocal } from "./CabecalhoConviteLocal";
@@ -25,6 +26,7 @@ export const TelaConviteLocal = ({ local }: Props) => {
         }}
       />
       <BannerInstalarApp variante="fluxo" />
+      <BannerAbrirAppIos />
       <HeroCapaLocal local={local} />
       <div className={styles.corpo}>
         <TituloConviteLocal nome={local.nome} endereco={local.endereco} />

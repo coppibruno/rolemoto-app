@@ -8,32 +8,71 @@ private let maxPontos = 15_000
 final class TelemetriaBufferStore: NSObject, CLLocationManagerDelegate {
     static let shared = TelemetriaBufferStore()
 
-    private let manager = CLLocationManager()
+    /// Criado na main: CLLocationManager fora da main não entrega didUpdateLocations.
+    private var manager: CLLocationManager?
     private let fila = DispatchQueue(label: "br.com.rolemoto.telemetria-buffer")
-
-    private override init() {
-        super.init()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = 5
-        manager.allowsBackgroundLocationUpdates = true
-        manager.pausesLocationUpdatesAutomatically = false
-    }
+    private var gravando = false
 
     func iniciarNovaSessao() {
         limpar()
-        garantirListener()
+        DispatchQueue.main.async {
+            self.gravando = true
+            self.ligarNoMain()
+        }
     }
 
     func garantirListener() {
         DispatchQueue.main.async {
-            self.manager.startUpdatingLocation()
+            self.gravando = true
+            self.ligarNoMain()
         }
     }
 
     func parar() {
         DispatchQueue.main.async {
-            self.manager.stopUpdatingLocation()
+            self.gravando = false
+            self.manager?.stopUpdatingLocation()
+        }
+    }
+
+    private func obterManager() -> CLLocationManager {
+        if let manager {
+            return manager
+        }
+        let criado = CLLocationManager()
+        criado.delegate = self
+        criado.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        criado.distanceFilter = 5
+        criado.activityType = .automotiveNavigation
+        criado.pausesLocationUpdatesAutomatically = false
+        manager = criado
+        return criado
+    }
+
+    private func ligarNoMain() {
+        guard gravando else { return }
+        let manager = obterManager()
+        switch manager.authorizationStatus {
+        case .authorizedAlways:
+            manager.allowsBackgroundLocationUpdates = true
+            manager.showsBackgroundLocationIndicator = true
+            manager.startUpdatingLocation()
+        case .authorizedWhenInUse:
+            manager.startUpdatingLocation()
+        case .notDetermined:
+            manager.requestAlwaysAuthorization()
+        default:
+            break
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        ligarNoMain()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        for location in locations where location.horizontalAccuracy >= 0 {
+            append(location)
         }
     }
 
@@ -45,11 +84,6 @@ final class TelemetriaBufferStore: NSObject, CLLocationManagerDelegate {
         fila.sync {
             try? FileManager.default.removeItem(at: urlArquivo())
         }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        append(location)
     }
 
     private func append(_ location: CLLocation) {

@@ -166,6 +166,24 @@
   background: var(--surface-container-high);
 }
 
+.botaoCapa {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.botaoCapa:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: -2px;
+}
+
 .heroImg {
   width: 100%;
   height: 100%;
@@ -198,10 +216,12 @@
   position: absolute;
   top: 12px;
   left: 12px;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   max-width: 85%;
+  pointer-events: none;
 }
 
 .badge {
@@ -244,7 +264,9 @@
   left: 12px;
   right: 12px;
   bottom: 12px;
+  z-index: 1;
   display: flex;
+  pointer-events: none;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;

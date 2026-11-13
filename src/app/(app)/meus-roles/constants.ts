@@ -158,8 +158,9 @@ export const hrefMeuRole = (item: MeuRoleItem): string => {
   if (item.status === "lider" || item.papel === "organizador") {
     return `/roles/${item.roleId}/gerenciar`;
   }
+  // Quem já pediu vaga ou já está no comboio abre a ficha, não a solicitação.
   if (item.status === "pendente" || item.status === "confirmado") {
-    return `/roles/${item.roleId}/participar`;
+    return `/r/${item.roleId}`;
   }
   return `/roles/${item.roleId}/feedback`;
 };
