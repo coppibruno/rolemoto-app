@@ -20,13 +20,18 @@ const config: CapacitorConfig = {
     },
   },
   // Evita colisão de identidade SPM do @capacitor-firebase/authentication (Cap CLI 8.4+).
+  // O trait Google inclui o SDK nativo; sem ele o login no iOS rejeita na hora.
   experimental: {
     ios: {
       spm: {
+        swiftToolsVersion: "6.1",
         packageOptions: {
           "@capacitor-firebase/authentication": {
             symlink: true,
           },
+        },
+        packageTraits: {
+          "@capacitor-firebase/authentication": ["Google"],
         },
       },
     },

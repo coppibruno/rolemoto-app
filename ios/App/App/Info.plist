@@ -82,7 +82,7 @@
 	<array>
 		<string>location</string>
 	</array>
-	<key>CFBundleURLTypes</key>
+		<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
@@ -90,6 +90,14 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>rolemoto</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Google Sign-In</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.59164478458-0rb39b5jgtj49e0u18t1gb69m79pp9jl</string>
 			</array>
 		</dict>
 	</array>
