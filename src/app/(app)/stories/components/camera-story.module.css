@@ -1,9 +1,10 @@
 .tela {
   position: fixed;
   inset: 0;
-  z-index: 96;
+  z-index: 210;
   background: var(--surface-container-lowest);
   color: var(--on-surface);
+  transform: translateZ(0);
 }
 
 .video {
@@ -59,7 +60,7 @@
 
 .erro,
 .nota {
-  bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(128px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
 }
 
 .erro {
@@ -119,7 +120,8 @@
 .rodape {
   bottom: 0;
   justify-content: space-between;
-  padding: 28px calc(var(--gutter-md) + 8px) calc(28px + env(safe-area-inset-bottom, 0px));
+  padding: 28px calc(var(--gutter-md) + 8px)
+    calc(28px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.55));
 }
 

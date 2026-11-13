@@ -1,12 +1,14 @@
 .player {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 200;
   display: flex;
   flex-direction: column;
   background: var(--surface-container-lowest);
   color: var(--on-surface);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
+  touch-action: manipulation;
+  transform: translateZ(0);
 }
 
 .topo {
@@ -40,12 +42,28 @@
   display: block;
   height: 100%;
   background: var(--on-surface);
+  transition: width 80ms linear;
 }
 
 .cabeca {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.perfil {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+  min-height: var(--touch-min);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .fechar,
@@ -139,6 +157,11 @@
   overflow: hidden;
   touch-action: none;
   background: var(--surface-container-lowest);
+  transition: transform 180ms ease-out;
+}
+
+.palcoArrastando {
+  transition: none;
 }
 
 .foto {
@@ -240,7 +263,9 @@
   .fotoPronta,
   .brilho,
   .anel,
-  .trilhoAguarda {
+  .trilhoAguarda,
+  .preenchimento,
+  .palco {
     animation: none;
     transition: none;
   }
@@ -289,7 +314,7 @@
 
 .localizacao {
   left: 50%;
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
   transform: translateX(-50%);
 }
 
@@ -301,7 +326,7 @@
 .verPublicacao {
   position: absolute;
   left: 50%;
-  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
   z-index: 3;
   display: flex;
   align-items: center;
@@ -323,7 +348,7 @@
 }
 
 .verPublicacaoAcima {
-  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
 }
 
 .verPublicacao .material-symbols-outlined {

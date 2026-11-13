@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { BuscaMarcaStory } from "@/app/(app)/stories/components/BuscaMarcaStory";
 import { EntradaFotoStory } from "@/app/(app)/stories/components/EntradaFotoStory";
 import { useBuscaMarca } from "../hooks/useBuscaMarca";
@@ -14,6 +15,7 @@ import styles from "../nova-foto.module.css";
 export const TelaNovaFoto = () => {
   const router = useRouter();
   const nova = useNovaFoto();
+  useCamadaCheia(true);
   const busca = useBuscaMarca(nova.setMarca);
 
   const fechar = () => {

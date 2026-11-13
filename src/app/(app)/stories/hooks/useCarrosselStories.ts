@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import type { PessoaStory, StoryPublica } from "@/types/story-local";
+import { filaPessoasStory, pessoaVizinha, type DirecaoPessoaStory } from "../pessoas-story";
 import { storiesService } from "../services/stories.service";
 import { useCapturaFoto } from "./useCapturaFoto";
 
@@ -12,6 +13,7 @@ export const useCarrosselStories = () => {
   const [erro, setErro] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [alvoId, setAlvoId] = useState<string | null>(null);
+  const [comecarNoFim, setComecarNoFim] = useState(false);
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [inicial, setInicial] = useState<StoryPublica | null>(null);
   const captura = useCapturaFoto(setArquivo);
@@ -63,12 +65,24 @@ export const useCarrosselStories = () => {
       return;
     }
     setInicial(null);
+    setComecarNoFim(false);
     setAlvoId(pessoa.uid);
+  };
+
+  const trocarPessoa = (direcao: DirecaoPessoaStory) => {
+    if (!alvoId) return false;
+    const vizinha = pessoaVizinha(filaPessoasStory(eu, outras), alvoId, direcao);
+    if (!vizinha) return false;
+    setInicial(null);
+    setComecarNoFim(direcao === "anterior");
+    setAlvoId(vizinha.uid);
+    return true;
   };
 
   const publicada = (story: StoryPublica) => {
     setArquivo(null);
     setInicial(story);
+    setComecarNoFim(false);
     setAlvoId(story.autor.uid);
     recarregar();
   };
@@ -76,6 +90,7 @@ export const useCarrosselStories = () => {
   const fechar = () => {
     setAlvoId(null);
     setInicial(null);
+    setComecarNoFim(false);
     recarregar();
   };
 
@@ -94,6 +109,8 @@ export const useCarrosselStories = () => {
     playerAberto: alvoId !== null,
     alvoId,
     inicial,
+    comecarNoFim,
+    trocarPessoa,
     fechar,
     recarregar,
     tentarDeNovo: () => {

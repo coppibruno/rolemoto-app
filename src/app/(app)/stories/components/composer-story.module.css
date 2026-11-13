@@ -1,9 +1,10 @@
 .tela {
   position: fixed;
   inset: 0;
-  z-index: 95;
+  z-index: 210;
   background: var(--surface-container-lowest);
   color: var(--on-surface);
+  transform: translateZ(0);
 }
 
 .foto {
@@ -127,7 +128,7 @@
 .paleta {
   position: absolute;
   right: var(--gutter-md);
-  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
   left: var(--gutter-md);
   z-index: 4;
   display: flex;
@@ -173,7 +174,7 @@
   flex-direction: column;
   gap: 8px;
   padding: var(--gutter-md);
-  padding-bottom: calc(var(--gutter-md) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(var(--gutter-md) + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
 }
 
 .erro {
@@ -207,7 +208,7 @@
 .busca {
   position: absolute;
   right: var(--gutter-md);
-  bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px) + var(--folga-viewport, 0px));
   left: var(--gutter-md);
   z-index: 4;
   max-height: 46%;

@@ -3,6 +3,7 @@
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { hrefPost } from "@/types/post-foto";
+import type { DirecaoPessoaStory } from "@/app/(app)/stories/pessoas-story";
 import type { AlvoPlayer, MencaoStory, StoryPublica } from "@/types/story-local";
 import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
@@ -15,13 +16,33 @@ type Props = {
   alvo: AlvoPlayer | null;
   destaqueId?: string | null;
   inicial?: StoryPublica | null;
+  comecarNoFim?: boolean;
+  onTrocarPessoa?: (direcao: DirecaoPessoaStory) => boolean;
   onFechar: () => void;
   onMudou?: () => void;
 };
 
-export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onMudou }: Props) => {
+export const PlayerStories = ({
+  aberto,
+  alvo,
+  destaqueId,
+  inicial,
+  comecarNoFim,
+  onTrocarPessoa,
+  onFechar,
+  onMudou,
+}: Props) => {
   const router = useRouter();
-  const reel = useReelStories({ aberto, alvo, destaqueId, inicial, onFechar, onMudou });
+  const reel = useReelStories({
+    aberto,
+    alvo,
+    destaqueId,
+    inicial,
+    comecarNoFim,
+    onTrocarPessoa,
+    onFechar,
+    onMudou,
+  });
   if (!reel.montado || !aberto) return null;
 
   const story = reel.story;
@@ -36,9 +57,18 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
     router.push(hrefPost(publicacao.autorUid, publicacao.id));
   };
 
+  const abrirPerfil = () => {
+    if (!story) return;
+    onFechar();
+    router.push(
+      reel.minha ? "/perfil" : `/perfil/${encodeURIComponent(story.autor.uid)}`,
+    );
+  };
+
   return createPortal(
     <div
       className={styles.player}
+      data-player-stories=""
       role="dialog"
       aria-modal="true"
       aria-label="Fotos"
@@ -72,15 +102,26 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
           </button>
           {story ? (
             <>
-              {story.autor.fotoUrl ? (
-                <img src={story.autor.fotoUrl} alt="" className={styles.avatar} />
-              ) : (
-                <span className={styles.avatar} />
-              )}
-              <span className={styles.meta}>
-                <span className={styles.apelido}>{story.autor.apelido}</span>
-                <span className={styles.tempo}>{tempoRelativoStory(story.createdAt)}</span>
-              </span>
+              <button
+                type="button"
+                className={styles.perfil}
+                aria-label={reel.minha ? "Ver seu perfil" : `Ver perfil de ${story.autor.apelido}`}
+                onPointerDown={(evento) => evento.stopPropagation()}
+                onClick={(evento) => {
+                  evento.stopPropagation();
+                  abrirPerfil();
+                }}
+              >
+                {story.autor.fotoUrl ? (
+                  <img src={story.autor.fotoUrl} alt="" className={styles.avatar} />
+                ) : (
+                  <span className={styles.avatar} />
+                )}
+                <span className={styles.meta}>
+                  <span className={styles.apelido}>{story.autor.apelido}</span>
+                  <span className={styles.tempo}>{tempoRelativoStory(story.createdAt)}</span>
+                </span>
+              </button>
               {reel.minha ? (
                 <button type="button" className={styles.apagar} onClick={() => reel.setConfirmando(true)}>
                   Apagar
@@ -108,8 +149,11 @@ export const PlayerStories = ({ aberto, alvo, destaqueId, inicial, onFechar, onM
           story={story}
           onPronta={reel.marcarMidiaPronta}
           onSegurar={reel.segurar}
+          onMover={reel.mover}
           onSoltar={reel.soltar}
           onCancelar={reel.cancelarToque}
+          deslocamento={reel.deslocamento}
+          arrastando={reel.arrastando}
           onMarca={abrirMarca}
           onPublicacao={abrirPublicacao}
         />

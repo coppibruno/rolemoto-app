@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -17,9 +18,12 @@ import styles from "./player-stories.module.css";
 type Props = {
   story: StoryPublica;
   onPronta: (storyId: string) => void;
-  onSegurar: () => void;
+  onSegurar: (evento: ReactPointerEvent<HTMLDivElement>) => void;
+  onMover: (evento: ReactPointerEvent<HTMLDivElement>) => void;
   onSoltar: (evento: ReactPointerEvent<HTMLDivElement>) => void;
   onCancelar: () => void;
+  deslocamento: number;
+  arrastando: boolean;
   onMarca: (mencao: MencaoStory) => void;
   onPublicacao: (publicacao: NonNullable<StoryPublica["publicacao"]>) => void;
 };
@@ -28,8 +32,11 @@ export const PalcoFotoStory = ({
   story,
   onPronta,
   onSegurar,
+  onMover,
   onSoltar,
   onCancelar,
+  deslocamento,
+  arrastando,
   onMarca,
   onPublicacao,
 }: Props) => {
@@ -42,6 +49,7 @@ export const PalcoFotoStory = ({
     ? { x: lugar.x, y: lugar.y }
     : null;
   const imgRef = useRef<HTMLImageElement>(null);
+  const palcoRef = useRef<HTMLDivElement>(null);
   const [prontaId, setProntaId] = useState<string | null>(null);
   const [falhouId, setFalhouId] = useState<string | null>(null);
   const pronta = prontaId === story.id;
@@ -54,9 +62,33 @@ export const PalcoFotoStory = ({
 
   useLayoutEffect(() => {
     const img = imgRef.current;
-    if (!img?.complete || img.naturalWidth === 0) return;
-    marcarPronta(story.id, story.fotoUrl);
+    if (!img) return;
+    if (img.complete && img.naturalWidth > 0) {
+      marcarPronta(story.id, story.fotoUrl);
+      return;
+    }
+    if (!img.complete || !img.decode) return;
+    let cancelado = false;
+    void img.decode().then(() => {
+      if (!cancelado && img.naturalWidth > 0) marcarPronta(story.id, story.fotoUrl);
+    }).catch(() => undefined);
+    return () => {
+      cancelado = true;
+    };
   }, [story.id, story.fotoUrl]);
+
+  useEffect(() => {
+    const palco = palcoRef.current;
+    if (!palco) return;
+    const interativo = (alvo: EventTarget | null) =>
+      alvo instanceof Element && Boolean(alvo.closest("button, a"));
+    const segurarToque = (evento: TouchEvent) => {
+      if (interativo(evento.target)) return;
+      if (evento.cancelable) evento.preventDefault();
+    };
+    palco.addEventListener("touchstart", segurarToque, { passive: false });
+    return () => palco.removeEventListener("touchstart", segurarToque);
+  }, []);
 
   useLayoutEffect(() => {
     if (pronta || falhou) onPronta(story.id);
@@ -69,8 +101,11 @@ export const PalcoFotoStory = ({
 
   return (
     <div
-      className={styles.palco}
+      ref={palcoRef}
+      className={arrastando ? `${styles.palco} ${styles.palcoArrastando}` : styles.palco}
+      style={{ transform: `translate3d(${deslocamento}px, 0, 0)` }}
       onPointerDown={onSegurar}
+      onPointerMove={onMover}
       onPointerUp={onSoltar}
       onPointerCancel={onCancelar}
     >

@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import type { StoryPublica } from "@/types/story-local";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useComposerStory } from "@/app/(app)/stories/hooks/useComposerStory";
 import type { MencaoOpcao } from "@/app/(app)/stories/hooks/usePublicarStoryPerfil";
 import { BuscaMarcaStory } from "./BuscaMarcaStory";
@@ -20,6 +21,7 @@ type Props = {
 
 export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPublicada }: Props) => {
   const composer = useComposerStory({ arquivo, marcaInicial, onPublicada });
+  useCamadaCheia(Boolean(composer.preview));
   if (!composer.preview) return null;
   const painelAberto = composer.paletaAberta || composer.buscaAberta || composer.buscaLocal;
 

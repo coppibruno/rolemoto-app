@@ -7,6 +7,10 @@
   background: var(--surface);
 }
 
+:global(body[data-camada-cheia="1"]) .shell {
+  pointer-events: none;
+}
+
 .conteudo {
   flex: 1;
   min-height: 0;

@@ -83,6 +83,8 @@ export const CarrosselStories = () => {
         alvo={carrossel.alvoId ? { tipo: "usuario", id: carrossel.alvoId } : null}
         inicial={carrossel.inicial}
         destaqueId={carrossel.inicial?.id}
+        comecarNoFim={carrossel.comecarNoFim}
+        onTrocarPessoa={carrossel.trocarPessoa}
         onFechar={carrossel.fechar}
         onMudou={carrossel.recarregar}
       />

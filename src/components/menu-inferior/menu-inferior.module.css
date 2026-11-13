@@ -1,3 +1,7 @@
+:global(body[data-camada-cheia="1"]) .nav {
+  display: none;
+}
+
 .nav {
   position: fixed;
   bottom: 0;

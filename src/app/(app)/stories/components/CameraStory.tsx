@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { arquivoDoVideo } from "@/lib/preparar-foto-story";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useCameraAoVivo } from "../hooks/useCameraAoVivo";
 import styles from "./camera-story.module.css";
 
@@ -25,6 +26,7 @@ export const CameraStory = ({
 }: Props) => {
   const [erroCaptura, setErroCaptura] = useState<string | null>(null);
   const camera = useCameraAoVivo(pedidoInicial);
+  useCamadaCheia(true);
   const mensagem = preparando
     ? "Preparando foto…"
     : erroCaptura
