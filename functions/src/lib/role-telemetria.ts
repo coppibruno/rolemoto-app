@@ -1,10 +1,12 @@
 import type {PontoGps} from "./calcular-metricas-telemetria";
+import {validarFotoStory} from "./validar-foto-storage";
 import type {AmostraConquista} from "../types/conquista";
 import type {
   ItemHistoricoTelemetria,
   PontoTelemetria,
   RoleTelemetria,
   RoleTelemetriaCreate,
+  RoleTelemetriaPatch,
 } from "../types/role-telemetria";
 
 const MAX_DURACAO_MS = 24 * 60 * 60 * 1000;
@@ -75,6 +77,7 @@ const validarPonto = (
 
 export const validarBodyRoleTelemetria = (
   body: Record<string, unknown>,
+  uid: string,
 ):
   | {ok: true; dados: RoleTelemetriaCreate}
   | {ok: false; erro: string} => {
@@ -159,6 +162,13 @@ export const validarBodyRoleTelemetria = (
     return {ok: false, erro: "publica inválida"};
   }
 
+  const fotos = body.fotosUrls === undefined || body.fotosUrls === null ?
+    {ok: true as const, fotosUrls: []} :
+    parseFotosTelemetria(body.fotosUrls, uid);
+  if (!fotos.ok) {
+    return fotos;
+  }
+
   return {
     ok: true,
     dados: {
@@ -174,8 +184,58 @@ export const validarBodyRoleTelemetria = (
       pontoFim: fim.ponto,
       tracado,
       publica,
+      fotosUrls: fotos.fotosUrls,
     },
   };
+};
+
+const CHAVES_PATCH = new Set(["publica", "fotosUrls"]);
+
+/** Aceita `publica`, `fotosUrls` ou os dois. Outra chave, ou nenhuma das duas: 400. */
+export const validarPatchTelemetria = (
+  body: Record<string, unknown>,
+  uid: string,
+): {ok: true; dados: RoleTelemetriaPatch} | {ok: false; erro: string} => {
+  const chaves = Object.keys(body);
+  if (chaves.length === 0 || chaves.some((chave) => !CHAVES_PATCH.has(chave))) {
+    return {ok: false, erro: "body inválido"};
+  }
+  const dados: RoleTelemetriaPatch = {};
+  if ("publica" in body) {
+    if (typeof body.publica !== "boolean") {
+      return {ok: false, erro: "publica inválida"};
+    }
+    dados.publica = body.publica;
+  }
+  if ("fotosUrls" in body) {
+    const fotos = parseFotosTelemetria(body.fotosUrls, uid);
+    if (!fotos.ok) {
+      return fotos;
+    }
+    dados.fotosUrls = fotos.fotosUrls;
+  }
+  return {ok: true, dados};
+};
+
+export const MAX_FOTOS_TELEMETRIA = 4;
+export const ERRO_FOTOS_TELEMETRIA = "fotosUrls inválidas";
+
+/** Lista inteira, 0..4, cada URL do Storage em `telemetria/{uid}/`. */
+export const parseFotosTelemetria = (
+  valor: unknown,
+  uid: string,
+): {ok: true; fotosUrls: string[]} | {ok: false; erro: string} => {
+  if (!Array.isArray(valor) || valor.length > MAX_FOTOS_TELEMETRIA) {
+    return {ok: false, erro: ERRO_FOTOS_TELEMETRIA};
+  }
+  const fotosUrls: string[] = [];
+  for (const item of valor) {
+    if (!validarFotoStory(item, `telemetria/${uid}`).ok) {
+      return {ok: false, erro: ERRO_FOTOS_TELEMETRIA};
+    }
+    fotosUrls.push((item as string).trim());
+  }
+  return {ok: true, fotosUrls};
 };
 
 /** `undefined` no body → privado (padrão do POST). `undefined` de retorno = inválido. */

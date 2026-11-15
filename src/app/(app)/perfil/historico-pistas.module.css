@@ -493,3 +493,34 @@
     font-size: 11px;
   }
 }
+
+.botaoFixado {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.botaoFixado:hover {
+  background: var(--primary-container);
+}
+
+.toastFixar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  max-width: min(90%, 520px);
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  transform: translateX(-50%);
+}
+
+.cardAcoesLaterais:has(> :nth-child(3)) {
+  display: grid;
+  grid-template-columns: repeat(2, var(--touch-min));
+}

@@ -10,8 +10,12 @@ import {conquistasDoPerfil, semFalhar} from "../lib/conquistas";
 import {soltarLocaisDoUsuario} from "../lib/dono-local";
 import {apagarPostsDoUsuario} from "../lib/post-foto-publico";
 import {apagarStoriesDoUsuario} from "../lib/story-local";
+import {rolesFixadosDe} from "../lib/roles-fixados";
+import {codigoAfiliado} from "../lib/afiliado";
 import {
+  afiliadoRepository,
   conquistaRepository,
+  conversaRepository,
   conviteEventoRepository,
   dispositivoRepository,
   localRepository,
@@ -53,7 +57,25 @@ const paraPerfilCliente = async (usuario: Usuario): Promise<PerfilCliente> => ({
     conquistasDoPerfil(usuario.uid),
   ),
   locaisComoDono: await locaisComoDono(usuario.uid),
+  rolesFixados: await rolesFixadosDe(usuario.uid),
 });
+
+/** Código desconhecido ou falha aqui não impedem o perfil. */
+const vincularAfiliado = async (uid: string, bruto: unknown): Promise<void> => {
+  const codigo = codigoAfiliado(bruto);
+  if (!codigo) {
+    return;
+  }
+  try {
+    const vinculou = await afiliadoRepository.vincularConta(uid, codigo);
+    log.info("Perfil", vinculou ? "Conta de afiliado" : "Código de afiliado ignorado", {
+      uid,
+      codigo,
+    });
+  } catch (error) {
+    log.warn("Perfil", "Falha ao vincular afiliado", {uid, codigo, ...erroDe(error)});
+  }
+};
 
 const PILOTAGENS_VALIDAS: Pilotagem[] = ["agressiva", "moderada", "tranquila"];
 const TIPOS_MOTO_VALIDOS: TipoMoto[] = ["trail", "speed", "custom"];
@@ -297,6 +319,7 @@ perfilRouter.post("/", async (req: Request, res: Response) => {
       admin: false,
     }, camposBusca(resultado.dados.nome, resultado.dados.apelido));
     log.info("Perfil", "Perfil criado", {uid, apelido: criado.apelido});
+    await vincularAfiliado(uid, (req.body as Record<string, unknown>)?.codigoAfiliado);
     res.status(201).json(await paraPerfilCliente(criado));
   } catch (error) {
     responderErro(res, error);
@@ -385,6 +408,15 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await conviteEventoRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover convites de evento", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await conversaRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover conversas", {
         uid,
         ...erroDe(error),
       });

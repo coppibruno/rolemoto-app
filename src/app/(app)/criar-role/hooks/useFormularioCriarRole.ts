@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ApiError } from "@/lib/api";
 import { ERRO_FORA_DO_SUL, pontoEstaNoSul } from "@/lib/regiao-sul";
 import { useAuth } from "@/hooks/useAuth";
-import type { Localizacao, RitmoRole, RoleModelo } from "@/types/role";
+import type { AcessoRole, Localizacao, RitmoRole, RoleModelo } from "@/types/role";
 import {
   DESCRICAO_MAX,
   ENDERECO_MIN,
@@ -21,6 +21,7 @@ import type { ErrosCriarRole, LocalizacaoForm, ModoCriarRole } from "../types";
 import { pedirPermissaoERegistrar } from "../../hooks/useRegistroFcm";
 import { useCampoLocalizacao } from "./useCampoLocalizacao";
 import { useFotoCapa } from "./useFotoCapa";
+import { useParadasRole } from "./useParadasRole";
 
 const DATA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const HORA_RE = /^\d{2}:\d{2}$/;
@@ -109,11 +110,13 @@ export const useFormularioCriarRole = (
   const destino = useCampoLocalizacao(
     modo === "criar" ? destinoInicial : undefined,
   );
+  const paradas = useParadasRole();
 
   const [titulo, setTitulo] = useState("");
   const [dataSaida, setDataSaida] = useState("");
   const [horaSaida, setHoraSaida] = useState(HORA_PADRAO);
   const [ritmo, setRitmo] = useState<RitmoRole>(RITMO_PADRAO);
+  const [acesso, setAcesso] = useState<AcessoRole>("aberto");
   const [descricao, setDescricao] = useState("");
   const [erros, setErros] = useState<ErrosCriarRole>({});
   const [publicando, setPublicando] = useState(false);
@@ -136,15 +139,24 @@ export const useFormularioCriarRole = (
     setTitulo(modelo.titulo);
     setDescricao(modelo.descricao);
     setRitmo(modelo.ritmo);
+    setAcesso(modelo.acesso ?? "fechado");
     setHoraSaida(HORA_RE.test(modelo.horaSaida) ? modelo.horaSaida : HORA_PADRAO);
     setDataSaida(
       modo === "editar" ? ymdSaoPauloDeIso(modelo.dataHoraSaida) : "",
     );
     partida.preencher(modelo.localSaida);
     destino.preencher(modelo.destinoFinal);
+    paradas.preencher(modelo.paradas ?? []);
     foto.usarUrlExistente(modelo.fotoCapaUrl);
     setOrigemHidratada(modelo.roleIdOrigem);
-  }, [modelo, modo, partida.preencher, destino.preencher, foto.usarUrlExistente]);
+  }, [
+    modelo,
+    modo,
+    partida.preencher,
+    destino.preencher,
+    paradas.preencher,
+    foto.usarUrlExistente,
+  ]);
 
   const publicar = async (e: FormEvent) => {
     e.preventDefault();
@@ -183,6 +195,7 @@ export const useFormularioCriarRole = (
           endereco: partidaResolvida.endereco.trim(),
           nome: partidaResolvida.nome.trim(),
         },
+        paradas: paradas.paradas,
         destinoFinal: {
           lat: destinoResolvido.lat as number,
           lng: destinoResolvido.lng as number,
@@ -193,7 +206,7 @@ export const useFormularioCriarRole = (
       if (modo === "editar" && modelo) {
         await rolesService.atualizar(modelo.roleIdOrigem, dados);
       } else {
-        await rolesService.criar(dados);
+        await rolesService.criar({ ...dados, acesso });
       }
       setSucesso(true);
       redirectRef.current = window.setTimeout(() => {
@@ -216,6 +229,7 @@ export const useFormularioCriarRole = (
     titulo,
     setTitulo,
     partida,
+    paradas,
     destino,
     dataSaida,
     setDataSaida,
@@ -223,6 +237,8 @@ export const useFormularioCriarRole = (
     setHoraSaida,
     ritmo,
     setRitmo,
+    acesso,
+    setAcesso,
     descricao,
     setDescricao,
     foto,

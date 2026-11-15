@@ -19,7 +19,8 @@ export type TipoPush =
   | "story_local"
   | "novo_seguidor"
   | "convite_evento"
-  | "comentario_foto";
+  | "comentario_foto"
+  | "mensagem";
 
 type PayloadPush = {
   tipo: TipoPush;
@@ -410,6 +411,24 @@ export const notificarComentarioFoto = async (
     title: frase,
     body: frase,
     url: `/perfil/${autorFotoUid}/fotos/${postId}`,
+    roleId: "",
+    localId: "",
+    eventoId: "",
+  });
+};
+
+/** Título com quem mandou; o corpo leva o trecho. Toque abre a conversa. */
+export const notificarMensagem = async (
+  destinatarioId: string,
+  conversaId: string,
+  nome: string,
+  trecho: string,
+): Promise<ResultadoPush> => {
+  return enviar(destinatarioId, {
+    tipo: "mensagem",
+    title: `${nome}: ${trecho}`,
+    body: trecho,
+    url: `/mensagens/${conversaId}`,
     roleId: "",
     localId: "",
     eventoId: "",

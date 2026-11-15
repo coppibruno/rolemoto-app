@@ -11,8 +11,10 @@ import {
 } from "@/lib/destino-pos-auth";
 import type { RolePublico } from "@/types/role-publico";
 import {
-  COPY_CTA,
+  COPY_CTA_ABERTO,
+  COPY_CTA_FECHADO,
   COPY_CTA_SUB,
+  COPY_CTA_SUB_ABERTO,
   COPY_ENCERRADO,
   COPY_GERENCIAR,
   COPY_JA_CONFIRMADO,
@@ -25,7 +27,10 @@ type Vinculo = "carregando" | "livre" | "pendente" | "confirmado" | "recusado";
 const jaNoRole = (vinculo: Vinculo) =>
   vinculo === "carregando" || vinculo === "pendente" || vinculo === "confirmado";
 
-export const useCtaConvite = (role: Pick<RolePublico, "id" | "dataHoraSaida" | "criador">) => {
+export const useCtaConvite = (
+  role: Pick<RolePublico, "id" | "dataHoraSaida" | "criador" | "acesso">,
+) => {
+  const aberto = role.acesso === "aberto";
   const { firebaseUser, usuario, loading } = useAuth();
   const router = useRouter();
   const [vinculo, setVinculo] = useState<Vinculo>("carregando");
@@ -91,14 +96,18 @@ export const useCtaConvite = (role: Pick<RolePublico, "id" | "dataHoraSaida" | "
       ? COPY_JA_CONFIRMADO
       : vinculo === "pendente"
         ? COPY_JA_PENDENTE
-        : COPY_CTA;
+        : aberto
+          ? COPY_CTA_ABERTO
+          : COPY_CTA_FECHADO;
   const subtitulo = encerrado
     ? COPY_ENCERRADO
     : souCriador || vinculo === "confirmado"
       ? null
       : vinculo === "pendente"
         ? COPY_JA_PENDENTE_SUB
-        : COPY_CTA_SUB;
+        : aberto
+          ? COPY_CTA_SUB_ABERTO
+          : COPY_CTA_SUB;
 
   return {
     acionar,

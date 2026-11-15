@@ -83,25 +83,16 @@ export const useFotosVisita = () => {
     inputRef.current?.click();
   }, []);
 
-  const uploadTodas = useCallback(
+  const enviarTodas = useCallback(
     async (
-      uid: string,
-      tipo: TipoAlvoAvaliacao,
-      alvoId: string,
+      enviar: (file: File, contentType: string) => Promise<string>,
     ): Promise<string[]> => {
       if (fotos.length === 0) return [...urlsRemotas];
       setEnviandoFotos(true);
       try {
         const urls: string[] = [...urlsRemotas];
         for (const foto of fotos) {
-          const url = await uploadFotoAvaliacao(
-            uid,
-            tipo,
-            alvoId,
-            foto.file,
-            contentTypeFotoAvaliacao(foto.file),
-          );
-          urls.push(url);
+          urls.push(await enviar(foto.file, contentTypeFotoAvaliacao(foto.file)));
         }
         return urls.slice(0, LIMITE_FOTOS);
       } catch (falha) {
@@ -112,6 +103,14 @@ export const useFotosVisita = () => {
       }
     },
     [fotos, urlsRemotas],
+  );
+
+  const uploadTodas = useCallback(
+    (uid: string, tipo: TipoAlvoAvaliacao, alvoId: string): Promise<string[]> =>
+      enviarTodas((file, contentType) =>
+        uploadFotoAvaliacao(uid, tipo, alvoId, file, contentType),
+      ),
+    [enviarTodas],
   );
 
   const limpar = useCallback(() => {
@@ -141,6 +140,7 @@ export const useFotosVisita = () => {
     removerRemota,
     abrirSeletor,
     uploadTodas,
+    enviarTodas,
     limpar,
     descartarPendentes,
     podeAnexar: totalFotos < LIMITE_FOTOS,

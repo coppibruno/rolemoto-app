@@ -2,6 +2,7 @@
 
 import type { RoleDetalhe, RitmoRole } from "@/types/role";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
+import { BlocoParadasRole } from "@/components/roles/BlocoParadasRole";
 import { tituloLocal } from "@/lib/localizacao";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { LABELS_RITMO_BADGE } from "../constants";
@@ -60,6 +61,9 @@ export const MiniCardRole = ({ detalhe }: Props) => {
           />
         </div>
       </div>
+
+      <div className={styles.miniDivisor} />
+      <BlocoParadasRole roleId={detalhe.id} paradas={detalhe.paradas ?? []} />
     </div>
   );
 };

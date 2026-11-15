@@ -3,6 +3,7 @@
 import type { Localizacao } from "@/types/role";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
 import { tituloLocal } from "@/lib/localizacao";
+import { rotuloParadas } from "@/lib/mapa-viagem/viagem";
 import { formatarHora } from "../formatar-horario";
 import styles from "../feed.module.css";
 
@@ -10,9 +11,15 @@ type Props = {
   localSaida: Localizacao;
   destinoFinal: Localizacao;
   dataHoraSaida: string;
+  totalParadas: number;
 };
 
-export const RotaRole = ({ localSaida, destinoFinal, dataHoraSaida }: Props) => {
+export const RotaRole = ({
+  localSaida,
+  destinoFinal,
+  dataHoraSaida,
+  totalParadas,
+}: Props) => {
   const hora = formatarHora(dataHoraSaida);
 
   return (
@@ -35,6 +42,17 @@ export const RotaRole = ({ localSaida, destinoFinal, dataHoraSaida }: Props) => 
         />
       </div>
       <div className={styles.rotaTraco} aria-hidden />
+      {totalParadas > 0 ? (
+        <>
+          <p className={styles.rotaParadas}>
+            <span className="material-symbols-outlined" aria-hidden>
+              more_vert
+            </span>
+            {rotuloParadas(totalParadas)}
+          </p>
+          <div className={styles.rotaTraco} aria-hidden />
+        </>
+      ) : null}
       <div className={styles.rotaLinha}>
         <span className={`material-symbols-outlined ${styles.iconeDestino}`}>
           flag

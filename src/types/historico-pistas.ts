@@ -21,6 +21,8 @@ export type ItemHistoricoRole = {
   participantesConfirmados: number;
   ritmo: RitmoRole;
   status: StatusItemHistorico;
+  /** Na faixa Rotas do criador. */
+  fixado: boolean;
 };
 
 export type ItemHistoricoEvento = {

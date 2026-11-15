@@ -16,6 +16,8 @@ export type UsuarioRoleCreate = {
   usuarioId: string;
   roleId: string;
   criadorId: string;
+  /** Rolê aberto nasce aceito, fora da fila. */
+  aceito: boolean;
 };
 
 export type UsuarioRoleNotificar = {

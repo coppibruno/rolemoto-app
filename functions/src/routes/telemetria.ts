@@ -16,6 +16,7 @@ import {
   parseAmostrasConquista,
   parseLimiteTelemetria,
   validarBodyRoleTelemetria,
+  validarPatchTelemetria,
 } from "../lib/role-telemetria";
 import {
   HEADER_SESSAO_TOKEN,
@@ -162,6 +163,7 @@ telemetriaRouter.post("/", async (req: Request, res: Response) => {
 
     const validado = validarBodyRoleTelemetria(
       (req.body ?? {}) as Record<string, unknown>,
+      uid,
     );
     if (!validado.ok) {
       res.status(400).json({erro: validado.erro});
@@ -236,9 +238,12 @@ telemetriaRouter.patch("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const body = (req.body ?? {}) as Record<string, unknown>;
-    if (typeof body.publica !== "boolean") {
-      res.status(400).json({erro: "publica inválida"});
+    const validado = validarPatchTelemetria(
+      (req.body ?? {}) as Record<string, unknown>,
+      uid,
+    );
+    if (!validado.ok) {
+      res.status(400).json({erro: validado.erro});
       return;
     }
 
@@ -249,11 +254,18 @@ telemetriaRouter.patch("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const atualizado = await roleTelemetriaRepository.atualizarVisibilidade(
-      id,
-      body.publica,
-    );
-    res.json(atualizado);
+    const atualizado = await roleTelemetriaRepository.atualizar(id, validado.dados);
+    if (!atualizado) {
+      res.status(404).json({erro: "Telemetria não encontrada"});
+      return;
+    }
+    res.json({
+      ...atualizado,
+      medalhas: medalhasParaLeitor(
+        (atualizado.medalhas ?? []) as MedalhaTelemetria[],
+        true,
+      ),
+    });
   } catch (error) {
     responderErro(res, error);
   }

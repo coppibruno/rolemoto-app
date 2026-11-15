@@ -49,8 +49,11 @@ export const TelaPilotos = () => {
         />
       </label>
 
-      {busca.fase === "curto" ? (
-        <p className={styles.aviso}>Digite pelo menos 2 letras</p>
+      {busca.fase === "semSeguidos" ? (
+        <p className={styles.aviso}>Você ainda não segue ninguém.</p>
+      ) : null}
+      {busca.fase === "maisUmaLetra" ? (
+        <p className={styles.aviso}>Digite mais uma letra para buscar todo mundo.</p>
       ) : null}
       {busca.fase === "carregando" ? <p className={styles.aviso}>Buscando…</p> : null}
       {busca.fase === "vazio" ? (

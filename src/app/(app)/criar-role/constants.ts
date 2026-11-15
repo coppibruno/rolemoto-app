@@ -1,4 +1,4 @@
-import type { RitmoRole } from "@/types/role";
+import type { AcessoRole, RitmoRole } from "@/types/role";
 
 export {
   ERRO_FOTO_GRANDE,
@@ -25,6 +25,8 @@ export const HINT_MAPA_VAZIO =
 export const HINT_MAPA_AJUSTE = "Arraste o alfinete para ajustar o ponto";
 export const PLACEHOLDER_NOME_PARTIDA = "Ex.: Posto Shell km 24";
 export const PLACEHOLDER_NOME_DESTINO = "Ex.: Mirante da Serra";
+export const PLACEHOLDER_PARADA = "Ex: Posto na BR-470 km 60";
+export const PLACEHOLDER_NOME_PARADA = "Ex.: Café da serra";
 export const PLACEHOLDER_DESCRICAO =
   "Dicas de pedágio, abastecimento, canal do rádio comunicador e regras de ultrapassagem...";
 
@@ -63,6 +65,11 @@ export type OpcaoRitmo = {
   subtitulo: string;
   hint: string;
 };
+
+export const OPCOES_ACESSO: { valor: AcessoRole; label: string; hint: string }[] = [
+  { valor: "aberto", label: "Aberto", hint: "Quem quiser entra na hora." },
+  { valor: "fechado", label: "Fechado", hint: "Você aceita cada piloto." },
+];
 
 export const OPCOES_RITMO: OpcaoRitmo[] = [
   {

@@ -1,57 +1,101 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { seguirService } from "@/app/(app)/seguir/services/seguir.service";
+import { useAuth } from "@/hooks/useAuth";
 import type { LinhaPiloto } from "@/types/seguir";
+import { filtrarSeguidos, termoDaBusca } from "../filtro-seguidos";
 
-export type FaseBusca = "curto" | "carregando" | "ok" | "vazio" | "erro";
+export type FaseBusca =
+  | "carregando"
+  | "ok"
+  | "vazio"
+  | "erro"
+  | "semSeguidos"
+  | "maisUmaLetra";
 
-const termoDaBusca = (valor: string) => valor.trim().replace(/\s+/g, " ");
+type FaseSeguidos = "carregando" | "ok" | "erro";
 
 export const useBuscaPilotos = () => {
+  const { firebaseUser } = useAuth();
+  const uid = firebaseUser?.uid ?? null;
   const [texto, setTexto] = useState("");
-  const [itens, setItens] = useState<LinhaPiloto[]>([]);
-  const [fase, setFase] = useState<FaseBusca>("curto");
+  const [seguidos, setSeguidos] = useState<LinhaPiloto[]>([]);
+  const [faseSeguidos, setFaseSeguidos] = useState<FaseSeguidos>("carregando");
+  const [itensBusca, setItensBusca] = useState<LinhaPiloto[]>([]);
+  const [faseBusca, setFaseBusca] = useState<FaseBusca>("carregando");
   const pedido = useRef(0);
+
+  const carregarSeguidos = useCallback(async () => {
+    if (!uid) return;
+    setFaseSeguidos("carregando");
+    try {
+      const pagina = await seguirService.listar(uid, "seguindo");
+      setSeguidos(pagina.itens);
+      setFaseSeguidos("ok");
+    } catch {
+      setFaseSeguidos("erro");
+    }
+  }, [uid]);
+
+  useEffect(() => {
+    void carregarSeguidos();
+  }, [carregarSeguidos]);
 
   const buscar = useCallback(async (q: string) => {
     const id = pedido.current + 1;
     pedido.current = id;
-    setFase("carregando");
+    setFaseBusca("carregando");
     try {
       const resposta = await seguirService.busca(q);
       if (id !== pedido.current) return;
-      setItens(resposta.itens);
-      setFase(resposta.itens.length === 0 ? "vazio" : "ok");
+      setItensBusca(resposta.itens);
+      setFaseBusca(resposta.itens.length === 0 ? "vazio" : "ok");
     } catch {
       if (id !== pedido.current) return;
-      setItens([]);
-      setFase("erro");
+      setItensBusca([]);
+      setFaseBusca("erro");
     }
   }, []);
 
+  const termo = termoDaBusca(texto);
+  const local = termo.length < 2;
+
   useEffect(() => {
-    const q = termoDaBusca(texto);
-    if (q.length < 2) {
+    if (local) {
       pedido.current += 1;
-      setItens([]);
-      setFase("curto");
       return;
     }
-
-    setFase("carregando");
-    setItens([]);
+    setFaseBusca("carregando");
+    setItensBusca([]);
     const timer = window.setTimeout(() => {
-      void buscar(q);
+      void buscar(termo);
     }, 300);
     return () => window.clearTimeout(timer);
-  }, [texto, buscar]);
+  }, [termo, local, buscar]);
 
-  const tentarDeNovo = () => {
-    const q = termoDaBusca(texto);
-    if (q.length < 2) return;
-    void buscar(q);
+  const filtrados = useMemo(() => filtrarSeguidos(seguidos, termo), [seguidos, termo]);
+
+  const faseLocal = (): FaseBusca => {
+    if (faseSeguidos !== "ok") return faseSeguidos;
+    if (seguidos.length === 0) return termo ? "maisUmaLetra" : "semSeguidos";
+    if (filtrados.length === 0) return "maisUmaLetra";
+    return "ok";
   };
 
-  return { texto, setTexto, itens, fase, tentarDeNovo };
+  const tentarDeNovo = () => {
+    if (local) {
+      void carregarSeguidos();
+      return;
+    }
+    void buscar(termo);
+  };
+
+  return {
+    texto,
+    setTexto,
+    itens: local ? filtrados : itensBusca,
+    fase: local ? faseLocal() : faseBusca,
+    tentarDeNovo,
+  };
 };

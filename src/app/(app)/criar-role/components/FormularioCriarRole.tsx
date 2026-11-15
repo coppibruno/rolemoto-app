@@ -10,10 +10,12 @@ import { CampoDataHora } from "./CampoDataHora";
 import { CampoDescricao } from "./CampoDescricao";
 import { CampoLocalizacao } from "./CampoLocalizacao";
 import { CampoTitulo } from "./CampoTitulo";
+import { CartaoParadas } from "./CartaoParadas";
 import { EstadoCarregandoModelo } from "./EstadoCarregandoModelo";
 import { EstadoErroModelo } from "./EstadoErroModelo";
 import { FaixaClonando } from "./FaixaClonando";
 import { FotoCapa } from "./FotoCapa";
+import { SeletorAcesso } from "./SeletorAcesso";
 import { SeletorRitmo } from "./SeletorRitmo";
 import { ToastSucesso } from "./ToastSucesso";
 import {
@@ -113,6 +115,8 @@ export const FormularioCriarRole = ({
           desabilitado={form.publicando}
         />
 
+        <CartaoParadas paradas={form.paradas} desabilitado={form.publicando} />
+
         <CampoLocalizacao
           id="destino"
           label="Destino Final"
@@ -135,6 +139,14 @@ export const FormularioCriarRole = ({
           erro={form.erros.ritmo}
           desabilitado={form.publicando}
         />
+
+        {modo === "editar" ? null : (
+          <SeletorAcesso
+            valor={form.acesso}
+            onChange={form.setAcesso}
+            desabilitado={form.publicando}
+          />
+        )}
 
         <FotoCapa
           previewUrl={form.foto.previewUrl}

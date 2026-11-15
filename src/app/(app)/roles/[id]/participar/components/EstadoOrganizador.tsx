@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { hrefEditarRole } from "@/app/(app)/meus-roles/constants";
+import { hrefMapaViagem } from "@/components/roles/BlocoParadasRole";
 import styles from "../confirmacao-role.module.css";
 
 type Props = {
@@ -35,6 +36,9 @@ export const EstadoOrganizador = ({
         className={styles.botaoEstadoPrimario}
       >
         Gerenciar rolê
+      </Link>
+      <Link href={hrefMapaViagem(roleId)} className={styles.botaoEstado}>
+        Mapa da viagem
       </Link>
       {saidaFutura ? (
         <div className={styles.acoesOrganizador}>

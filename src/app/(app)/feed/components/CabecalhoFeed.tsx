@@ -30,6 +30,11 @@ export const CabecalhoFeed = () => {
               search
             </span>
           </Link>
+          <Link href="/mensagens" className={styles.encontrarPilotos} aria-label="Mensagens">
+            <span className="material-symbols-outlined" aria-hidden>
+              chat_bubble
+            </span>
+          </Link>
           {usuario ? (
             <AvatarStories
               uid={usuario.uid}

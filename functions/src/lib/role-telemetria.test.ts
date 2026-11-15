@@ -1,5 +1,9 @@
 import {describe, expect, it} from "vitest";
-import {parseAmostrasConquista} from "./role-telemetria";
+import {
+  parseAmostrasConquista,
+  parseFotosTelemetria,
+  validarPatchTelemetria,
+} from "./role-telemetria";
 
 const ponto = (t: number) => ({lat: -28.4, lng: -49.5, t, speed: 10, accuracy: 5});
 
@@ -39,5 +43,45 @@ describe("parseAmostrasConquista", () => {
   it("valor que não é lista vira []", () => {
     expect(parseAmostrasConquista(undefined)).toEqual([]);
     expect(parseAmostrasConquista({conquistaId: "x"})).toEqual([]);
+  });
+});
+
+const urlFoto = (caminho: string): string =>
+  `https://firebasestorage.googleapis.com/v0/b/bucket/o/${encodeURIComponent(caminho)}?alt=media`;
+
+describe("parseFotosTelemetria", () => {
+  it("aceita até 4 fotos de telemetria/{uid}/", () => {
+    const fotos = [1, 2, 3, 4].map((n) => urlFoto(`telemetria/eu/${n}.jpg`));
+    expect(parseFotosTelemetria(fotos, "eu")).toEqual({ok: true, fotosUrls: fotos});
+    expect(parseFotosTelemetria([], "eu")).toEqual({ok: true, fotosUrls: []});
+  });
+
+  it("a quinta foto responde erro", () => {
+    const fotos = [1, 2, 3, 4, 5].map((n) => urlFoto(`telemetria/eu/${n}.jpg`));
+    expect(parseFotosTelemetria(fotos, "eu").ok).toBe(false);
+  });
+
+  it("recusa pasta de outro uid, outra pasta e não-lista", () => {
+    expect(parseFotosTelemetria([urlFoto("telemetria/outro/1.jpg")], "eu").ok).toBe(false);
+    expect(parseFotosTelemetria([urlFoto("posts/eu/1.jpg")], "eu").ok).toBe(false);
+    expect(parseFotosTelemetria("x", "eu").ok).toBe(false);
+  });
+});
+
+describe("validarPatchTelemetria", () => {
+  const foto = urlFoto("telemetria/eu/a.webp");
+
+  it("aceita publica, fotosUrls ou os dois juntos", () => {
+    expect(validarPatchTelemetria({publica: true}, "eu")).toEqual({ok: true, dados: {publica: true}});
+    expect(validarPatchTelemetria({fotosUrls: [foto]}, "eu"))
+      .toEqual({ok: true, dados: {fotosUrls: [foto]}});
+    expect(validarPatchTelemetria({publica: false, fotosUrls: []}, "eu"))
+      .toEqual({ok: true, dados: {publica: false, fotosUrls: []}});
+  });
+
+  it("outra chave ou body vazio responde erro", () => {
+    expect(validarPatchTelemetria({titulo: "x"}, "eu").ok).toBe(false);
+    expect(validarPatchTelemetria({publica: true, titulo: "x"}, "eu").ok).toBe(false);
+    expect(validarPatchTelemetria({}, "eu").ok).toBe(false);
   });
 });

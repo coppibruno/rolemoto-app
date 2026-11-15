@@ -58,5 +58,13 @@ export const useTelemetriaDetalhe = (id: string) => {
     [doc, id, salvandoVisibilidade],
   );
 
-  return { doc, carregando, erro, salvandoVisibilidade, setPublica };
+  const salvarFotos = useCallback(
+    async (fotosUrls: string[]) => {
+      const atualizado = await telemetriaService.atualizarFotos(id, fotosUrls);
+      setDoc(atualizado);
+    },
+    [id],
+  );
+
+  return { doc, carregando, erro, salvandoVisibilidade, setPublica, salvarFotos };
 };

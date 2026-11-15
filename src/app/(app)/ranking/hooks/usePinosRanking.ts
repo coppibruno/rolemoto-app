@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ConquistaCatalogo } from "@/types/conquista";
+import type { ConquistaMinha } from "@/types/conquista";
 import { rankingService } from "../services/ranking.service";
 
-const porNome = (itens: ConquistaCatalogo[]) =>
+const porNome = (itens: ConquistaMinha[]) =>
   [...itens].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { sensitivity: "base" }));
 
 export const usePinosRanking = () => {
-  const [pinos, setPinos] = useState<ConquistaCatalogo[]>([]);
+  const [pinos, setPinos] = useState<ConquistaMinha[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -16,7 +16,7 @@ export const usePinosRanking = () => {
     setCarregando(true);
     setErro(null);
     try {
-      setPinos(porNome(await rankingService.listarPinos()));
+      setPinos(porNome(await rankingService.listarMeusPinos()));
     } catch {
       setErro("Não deu para carregar os pontos.");
     } finally {

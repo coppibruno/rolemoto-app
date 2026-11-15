@@ -5,6 +5,7 @@ import styles from "../confirmacao-role.module.css";
 
 type Props = {
   titulo: string;
+  aberto: boolean;
   saidaFutura: boolean;
   cancelando: boolean;
   erroAcao: string | null;
@@ -15,6 +16,7 @@ type Props = {
 
 export const EstadoAdminRole = ({
   titulo,
+  aberto,
   saidaFutura,
   cancelando,
   erroAcao,
@@ -41,7 +43,7 @@ export const EstadoAdminRole = ({
         onClick={onPedirVaga}
         disabled={cancelando}
       >
-        Pedir vaga
+        {aberto ? "Entrar" : "Pedir vaga"}
       </button>
     ) : null}
     <button type="button" className={styles.botaoEstado} onClick={onVoltar}>

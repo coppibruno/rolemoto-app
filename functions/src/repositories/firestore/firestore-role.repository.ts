@@ -1,7 +1,12 @@
 import type {DocumentSnapshot} from "firebase-admin/firestore";
 import {FieldValue} from "firebase-admin/firestore";
 import {firestore} from "../../lib/firebase-admin";
-import type {Role, RoleCreate, RoleUpdate} from "../../types/role";
+import type {
+  Localizacao,
+  Role,
+  RoleCreate,
+  RoleUpdate,
+} from "../../types/role";
 import type {
   CriteriosListagemRoles,
   RoleRepository,
@@ -21,8 +26,18 @@ const emChunks = <T>(itens: T[]): T[][] => {
   return saida;
 };
 
+type PontoBruto = {lat?: number; lng?: number; endereco?: unknown; nome?: unknown};
+
+const toLocalizacao = (ponto: PontoBruto | undefined): Localizacao => ({
+  lat: ponto?.lat ?? 0,
+  lng: ponto?.lng ?? 0,
+  endereco: String(ponto?.endereco ?? ""),
+  nome: String(ponto?.nome ?? ""),
+});
+
 const toRole = (snap: DocumentSnapshot): Role => {
   const data = snap.data() ?? {};
+  const paradas: PontoBruto[] = Array.isArray(data.paradas) ? data.paradas : [];
   return {
     id: snap.id,
     titulo: String(data.titulo ?? ""),
@@ -30,18 +45,11 @@ const toRole = (snap: DocumentSnapshot): Role => {
     fotoCapaUrl: String(data.fotoCapaUrl ?? ""),
     ritmo: data.ritmo ?? "tranquila",
     dataHoraSaida: toIso(data.dataHoraSaida),
-    localSaida: {
-      lat: data.localSaida?.lat ?? 0,
-      lng: data.localSaida?.lng ?? 0,
-      endereco: String(data.localSaida?.endereco ?? ""),
-      nome: String(data.localSaida?.nome ?? ""),
-    },
-    destinoFinal: {
-      lat: data.destinoFinal?.lat ?? 0,
-      lng: data.destinoFinal?.lng ?? 0,
-      endereco: String(data.destinoFinal?.endereco ?? ""),
-      nome: String(data.destinoFinal?.nome ?? ""),
-    },
+    localSaida: toLocalizacao(data.localSaida),
+    paradas: paradas.map(toLocalizacao),
+    destinoFinal: toLocalizacao(data.destinoFinal),
+    acesso: data.acesso === "aberto" ? "aberto" : "fechado",
+    fixado: data.fixado === true,
     criadorId: String(data.criadorId ?? ""),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
@@ -117,7 +125,10 @@ export class FirestoreRoleRepository implements RoleRepository {
       ritmo: dados.ritmo,
       dataHoraSaida: toTimestamp(dados.dataHoraSaida),
       localSaida: dados.localSaida,
+      paradas: dados.paradas,
       destinoFinal: dados.destinoFinal,
+      acesso: dados.acesso,
+      fixado: false,
       criadorId: dados.criadorId,
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
@@ -137,12 +148,51 @@ export class FirestoreRoleRepository implements RoleRepository {
     delete payload.criadorId;
     delete payload.id;
     delete payload.createdAt;
+    delete payload.acesso;
+    delete payload.fixado;
     if (dados.dataHoraSaida !== undefined) {
       payload.dataHoraSaida = toTimestamp(dados.dataHoraSaida);
     }
     payload.updatedAt = FieldValue.serverTimestamp();
     await ref.update(payload);
     return this.buscarPorId(id);
+  }
+
+  async listarFixadosPorCriador(criadorId: string, limite: number): Promise<Role[]> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("criadorId", "==", criadorId)
+      .where("fixado", "==", true)
+      .orderBy("dataHoraSaida", "desc")
+      .limit(limite)
+      .get();
+    return snap.docs.map(toRole);
+  }
+
+  async fixarDentroDoTeto(
+    id: string,
+    fixado: boolean,
+    teto: number,
+  ): Promise<"ok" | "teto" | "ausente"> {
+    const ref = firestore.collection(COLECAO).doc(id);
+    return firestore.runTransaction(async (tx) => {
+      const snap = await tx.get(ref);
+      if (!snap.exists) {
+        return "ausente";
+      }
+      if (fixado && snap.get("fixado") !== true) {
+        const outros = await tx.get(firestore
+          .collection(COLECAO)
+          .where("criadorId", "==", String(snap.get("criadorId") ?? ""))
+          .where("fixado", "==", true)
+          .limit(teto));
+        if (outros.size >= teto) {
+          return "teto";
+        }
+      }
+      tx.update(ref, {fixado, updatedAt: FieldValue.serverTimestamp()});
+      return "ok";
+    });
   }
 
   async remover(id: string): Promise<boolean> {

@@ -26,6 +26,12 @@ export const telemetriaService = {
       body: JSON.stringify({ publica }),
     }),
 
+  atualizarFotos: (id: string, fotosUrls: string[]) =>
+    api<RoleTelemetria>(`/telemetria/${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ fotosUrls }),
+    }),
+
   excluir: (id: string) =>
     api<void>(`/telemetria/${encodeURIComponent(id)}`, { method: "DELETE" }),
 

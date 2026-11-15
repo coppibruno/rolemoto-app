@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import type { AcessoRole } from "@/types/role";
 import { pedirPermissaoERegistrar } from "@/app/(app)/hooks/useRegistroFcm";
 import styles from "../feed.module.css";
 
 type Props = {
   id: string;
   criadorId: string;
+  acesso: AcessoRole;
 };
 
-export const BotaoParticipar = ({ id, criadorId }: Props) => {
+export const BotaoParticipar = ({ id, criadorId, acesso }: Props) => {
   const { firebaseUser } = useAuth();
   const souLider = firebaseUser?.uid === criadorId;
 
@@ -32,7 +34,7 @@ export const BotaoParticipar = ({ id, criadorId }: Props) => {
       }}
     >
       <span className="material-symbols-outlined">two_wheeler</span>
-      Participar do Rolê
+      {acesso === "aberto" ? "Entrar" : "Pedir vaga"}
     </Link>
   );
 };

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { codigoAfiliadoValido, limparCodigoAfiliado } from "@/lib/afiliado";
 import { ApiError } from "@/lib/api";
 import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -80,12 +81,15 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
         firebaseUser.photoURL ?? "",
       );
 
+      const codigoAfiliado = codigoAfiliadoValido();
       await perfilPrimeiroAcessoService.criar({
         nome: nome.trim(),
         moto: moto.trim(),
         pilotagem,
         fotoUrl,
+        ...(codigoAfiliado ? { codigoAfiliado } : {}),
       });
+      limparCodigoAfiliado();
 
       setConcluido(true);
       await recarregarPerfil();

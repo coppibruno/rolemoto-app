@@ -5,7 +5,15 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {param} from "../lib/params";
-import {distanciaRotaKm, haversineKm} from "../lib/geo";
+import {haversineKm} from "../lib/geo";
+import {parseLocalizacao} from "../lib/localizacao-role";
+import {
+  ERRO_ACESSO,
+  ERRO_TETO_FIXADOS,
+  parseAcesso,
+  podeUsarModelo,
+} from "../lib/acesso-role";
+import {distanciaViagemKm, parseParadas} from "../lib/mapa-viagem";
 import {
   ERRO_LOCALIZACAO_FORA_DO_SUL,
   pontoEstaNoSul,
@@ -37,7 +45,6 @@ import {
 import {participacaoRouter} from "./participacao";
 import {feedbackRoleRouter} from "./feedback-role";
 import type {
-  Localizacao,
   Role,
   RoleCriadorResumo,
   RoleDetalhe,
@@ -46,6 +53,7 @@ import type {
   RolePublicacao,
   RitmoRole,
 } from "../types/role";
+import {TETO_ROLES_FIXADOS} from "../types/role";
 import type {ParticipantesBloco} from "../types/participante";
 
 /**
@@ -57,6 +65,7 @@ import type {ParticipantesBloco} from "../types/participante";
  * GET    /roles/:id
  * POST   /roles
  * PUT    /roles/:id
+ * PATCH  /roles/:id/fixado
  * DELETE /roles/:id
  */
 export const rolesRouter = Router();
@@ -70,48 +79,6 @@ const RITMOS: RitmoRole[] = ["tranquila", "moderada", "agressiva"];
 
 const isRitmo = (valor: unknown): valor is RitmoRole =>
   typeof valor === "string" && (RITMOS as string[]).includes(valor);
-
-const isCoordLat = (valor: unknown): valor is number =>
-  typeof valor === "number" && Number.isFinite(valor) && valor >= -90 && valor <= 90;
-
-const isCoordLng = (valor: unknown): valor is number =>
-  typeof valor === "number" &&
-  Number.isFinite(valor) &&
-  valor >= -180 &&
-  valor <= 180;
-
-const normalizarNome = (valor: unknown): string | null => {
-  if (valor === undefined || valor === null) return "";
-  if (typeof valor !== "string") return null;
-  const n = valor.trim();
-  if (n.length > 60) return null;
-  return n;
-};
-
-const parseLocalizacao = (valor: unknown): Localizacao | null => {
-  if (!valor || typeof valor !== "object") {
-    return null;
-  }
-  const o = valor as Localizacao;
-  if (
-    !isCoordLat(o.lat) ||
-    !isCoordLng(o.lng) ||
-    typeof o.endereco !== "string" ||
-    o.endereco.trim().length < 3
-  ) {
-    return null;
-  }
-  const nome = normalizarNome(o.nome);
-  if (nome === null) {
-    return null;
-  }
-  return {
-    lat: o.lat,
-    lng: o.lng,
-    endereco: o.endereco.trim(),
-    nome,
-  };
-};
 
 const enriquecerCriadores = async (
   roles: Role[],
@@ -140,14 +107,16 @@ const paraFeedItem = (
   const distanciaPartidaKm = Math.round(
     haversineKm(origem.lat, origem.lng, role.localSaida.lat, role.localSaida.lng),
   );
-  const rotaKm = distanciaRotaKm(role.localSaida, role.destinoFinal);
+  const rotaKm = distanciaViagemKm(role);
   const criador = criadores.get(role.criadorId) ?? {
     uid: role.criadorId,
     apelido: "piloto",
     fotoUrl: "",
   };
+  const {paradas, ...semParadas} = role;
   return {
-    ...role,
+    ...semParadas,
+    totalParadas: paradas.length,
     distanciaPartidaKm,
     distanciaRotaKm: rotaKm,
     criador,
@@ -173,7 +142,7 @@ const paraDetalhe = async (
     usuarioRoleRepository.contarConfirmados(role.id),
     usuarioRoleRepository.buscarPorUsuarioERole(uid, role.id),
   ]);
-  const distanciaKm = distanciaRotaKm(role.localSaida, role.destinoFinal);
+  const distanciaKm = distanciaViagemKm(role);
   return {
     ...role,
     criador,
@@ -274,6 +243,10 @@ const validarBodyCriacao = (
   if (!pontoEstaNoSul(destinoFinalOk.lat, destinoFinalOk.lng)) {
     return {ok: false, erro: ERRO_LOCALIZACAO_FORA_DO_SUL};
   }
+  const paradas = parseParadas(body.paradas);
+  if (!paradas.ok) {
+    return paradas;
+  }
 
   const descricao =
     typeof descricaoBruta === "string" ? descricaoBruta.trim() : "";
@@ -287,6 +260,7 @@ const validarBodyCriacao = (
       ritmo,
       dataHoraSaida,
       localSaida: localSaidaOk,
+      paradas: paradas.paradas,
       destinoFinal: destinoFinalOk,
     },
   };
@@ -359,7 +333,7 @@ rolesRouter.get("/:id/modelo", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Rolê não encontrado"});
       return;
     }
-    if (!isDonoOuAdmin(usuario, role.criadorId)) {
+    if (!podeUsarModelo(role, isDonoOuAdmin(usuario, role.criadorId))) {
       res.status(403).json({
         erro: "Apenas o criador pode clonar ou editar este rolê",
       });
@@ -373,7 +347,9 @@ rolesRouter.get("/:id/modelo", async (req: Request, res: Response) => {
       fotoCapaUrl: role.fotoCapaUrl,
       ritmo: role.ritmo,
       localSaida: role.localSaida,
+      paradas: role.paradas,
       destinoFinal: role.destinoFinal,
+      acesso: role.acesso,
       horaSaida: horaSaoPaulo(role.dataHoraSaida),
       dataHoraSaida: role.dataHoraSaida,
     };
@@ -431,16 +407,21 @@ rolesRouter.post("/", async (req: Request, res: Response) => {
       return;
     }
 
-    const validado = validarBodyCriacao(
-      (req.body ?? {}) as Record<string, unknown>,
-    );
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    const validado = validarBodyCriacao(body);
     if (!validado.ok) {
       res.status(400).json({erro: validado.erro});
+      return;
+    }
+    const acesso = parseAcesso(body.acesso);
+    if (!acesso) {
+      res.status(400).json({erro: ERRO_ACESSO});
       return;
     }
 
     const criado = await roleRepository.criar({
       ...validado.dados,
+      acesso,
       criadorId: uid,
     });
     await agendarLembrete(
@@ -522,6 +503,50 @@ rolesRouter.put("/:id", async (req: Request, res: Response) => {
 
     log.info("Role", "Rolê atualizado", {roleId: id, criadorId: existente.criadorId});
     res.json(atualizado);
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+rolesRouter.patch("/:id/fixado", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const fixado = (req.body ?? {}).fixado;
+    if (typeof fixado !== "boolean") {
+      res.status(400).json({erro: "fixado inválido"});
+      return;
+    }
+
+    const id = param(req, "id");
+    const role = await roleRepository.buscarPorId(id);
+    if (!role) {
+      res.status(404).json({erro: "Rolê não encontrado"});
+      return;
+    }
+    if (role.criadorId !== uid) {
+      res.status(403).json({erro: "Apenas o criador fixa este rolê"});
+      return;
+    }
+
+    const resultado = await roleRepository.fixarDentroDoTeto(
+      id,
+      fixado,
+      TETO_ROLES_FIXADOS,
+    );
+    if (resultado === "ausente") {
+      res.status(404).json({erro: "Rolê não encontrado"});
+      return;
+    }
+    if (resultado === "teto") {
+      res.status(400).json({erro: ERRO_TETO_FIXADOS});
+      return;
+    }
+    log.info("Role", fixado ? "Rolê fixado" : "Rolê desfixado", {roleId: id, criadorId: uid});
+    res.json({id, fixado});
   } catch (error) {
     responderErro(res, error);
   }

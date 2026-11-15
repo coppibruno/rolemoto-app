@@ -4,9 +4,11 @@ import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
+import { FaixaFotosTelemetria } from "@/components/telemetria/FaixaFotosTelemetria";
 import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
 import styles from "@/components/telemetria/telemetria.module.css";
 import { BotaoCompartilharTelemetria } from "./BotaoCompartilharTelemetria";
+import { EditorFotosTelemetria } from "./EditorFotosTelemetria";
 import { FolhaMedalha } from "./FolhaMedalha";
 import { ModalCompartilharTelemetria } from "./ModalCompartilharTelemetria";
 import { useCompartilharTelemetria } from "../hooks/useCompartilharTelemetria";
@@ -18,8 +20,9 @@ type Props = {
 
 export const TelaTelemetriaDetalhe = ({ id }: Props) => {
   const { usuario } = useAuth();
-  const { doc, carregando, erro, salvandoVisibilidade, setPublica } =
+  const { doc, carregando, erro, salvandoVisibilidade, setPublica, salvarFotos } =
     useTelemetriaDetalhe(id);
+  const [editandoFotos, setEditandoFotos] = useState(false);
   const eDono = Boolean(doc && usuario && doc.usuarioId === usuario.uid);
   const apelido = usuario?.apelido?.trim() ?? "";
   const dadosShare = useMemo(() => {
@@ -80,6 +83,28 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
               medalhas={doc.medalhas}
               onTocarMedalha={setMedalhaAberta}
             />
+            {eDono && editandoFotos && usuario ? (
+              <EditorFotosTelemetria
+                uid={usuario.uid}
+                fotosUrls={doc.fotosUrls ?? []}
+                onSalvar={salvarFotos}
+                onFechar={() => setEditandoFotos(false)}
+              />
+            ) : (
+              <FaixaFotosTelemetria fotosUrls={doc.fotosUrls ?? []} />
+            )}
+            {eDono && !editandoFotos ? (
+              <button
+                type="button"
+                className={`${styles.ctaSecundario} ${styles.ctaNeutro}`}
+                onClick={() => setEditandoFotos(true)}
+              >
+                <span className="material-symbols-outlined" aria-hidden>
+                  add_a_photo
+                </span>
+                {(doc.fotosUrls ?? []).length > 0 ? "Editar fotos" : "Adicionar fotos"}
+              </button>
+            ) : null}
             {medalha ? (
               <FolhaMedalha
                 medalha={medalha}

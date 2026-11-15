@@ -7,7 +7,7 @@ import { BotaoApagarCatalogo } from "@/components/catalogo/BotaoApagarCatalogo";
 import { useApagarCatalogo } from "@/components/catalogo/useApagarCatalogo";
 import type { RolePublico } from "@/types/role-publico";
 import { urlLoginComNext } from "@/lib/destino-pos-auth";
-import { COPY_MICROCOPY } from "../constants";
+import { COPY_MICROCOPY, COPY_MICROCOPY_ABERTO } from "../constants";
 import { useCtaConvite } from "../hooks/useCtaConvite";
 import { BotaoParticiparConvite } from "./BotaoParticiparConvite";
 import { EstadoRoleEncerrado } from "./EstadoRoleEncerrado";
@@ -57,7 +57,7 @@ export const RodapeConversao = ({ role }: Props) => {
           <span className="material-symbols-outlined" aria-hidden>
             verified_user
           </span>
-          <span>{COPY_MICROCOPY}</span>
+          <span>{role.acesso === "aberto" ? COPY_MICROCOPY_ABERTO : COPY_MICROCOPY}</span>
         </p>
       </div>
     </footer>

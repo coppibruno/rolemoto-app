@@ -3,12 +3,13 @@ import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
-import {ordenarBusca, termoBusca} from "../lib/busca-piloto";
+import {ordenarBuscaComSeguidos, termoBusca} from "../lib/busca-piloto";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {erroDe, log} from "../lib/log";
 import {notificarNovoSeguidor} from "../lib/notificacoes";
 import {paraItemGrade} from "../lib/post-foto-publico";
 import {paraItemHistoricoTelemetria} from "../lib/role-telemetria";
+import {rolesFixadosDe} from "../lib/roles-fixados";
 import {hidratarSelosSeVazio} from "../lib/checkin-local";
 import {conquistasPublicas, semFalhar} from "../lib/conquistas";
 import {
@@ -119,6 +120,7 @@ const paraPerfilPublico = async (
     seguidores: usuario.seguidores,
     seguidoPorMim: vinculo.seguidoPorMim,
     segueVoce: vinculo.segueVoce,
+    rolesFixados: await rolesFixadosDe(usuario.uid),
   };
 };
 
@@ -140,12 +142,17 @@ usuariosRouter.get("/busca", async (req: Request, res: Response) => {
 
     const pessoas = (await usuarioRepository.buscarPorPrefixo(termo))
       .filter((pessoa) => pessoa.uid !== token);
-    const ordenadas = ordenarBusca(termo, pessoas)
-      .slice(0, LIMITE_BUSCA_PILOTOS);
     const mapa = await seguirRepository.vinculosCom(
       token,
-      ordenadas.map((pessoa) => pessoa.uid),
+      pessoas.map((pessoa) => pessoa.uid),
     );
+    const seguidos = new Set(
+      [...mapa.entries()]
+        .filter(([, vinculo]) => vinculo.seguidoPorMim)
+        .map(([uid]) => uid),
+    );
+    const ordenadas = ordenarBuscaComSeguidos(termo, pessoas, seguidos)
+      .slice(0, LIMITE_BUSCA_PILOTOS);
     const itens = ordenadas.map((pessoa) =>
       paraLinha(pessoa, flagsDe(mapa, pessoa.uid, false)),
     );

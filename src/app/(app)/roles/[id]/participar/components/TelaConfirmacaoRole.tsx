@@ -47,6 +47,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
       {estado === "admin" && detalhe ? (
         <EstadoAdminRole
           titulo={detalhe.titulo}
+          aberto={detalhe.acesso === "aberto"}
           saidaFutura={Date.parse(detalhe.dataHoraSaida) > Date.now()}
           cancelando={cancelando}
           erroAcao={erroAcao}

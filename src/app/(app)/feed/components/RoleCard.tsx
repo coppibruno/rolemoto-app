@@ -37,6 +37,7 @@ export const RoleCard = ({ role }: Props) => {
           localSaida={role.localSaida}
           destinoFinal={role.destinoFinal}
           dataHoraSaida={role.dataHoraSaida}
+          totalParadas={role.totalParadas ?? 0}
         />
         {descricao ? <p className={styles.descricao}>{descricao}</p> : null}
         <div className={`${styles.linhaOrganizacao} ${styles.cardDetalheAcao}`}>
@@ -48,7 +49,7 @@ export const RoleCard = ({ role }: Props) => {
           />
         </div>
         <div className={`${styles.cardAcoes} ${styles.cardDetalheAcao}`}>
-          <BotaoParticipar id={role.id} criadorId={role.criadorId} />
+          <BotaoParticipar id={role.id} criadorId={role.criadorId} acesso={role.acesso} />
         </div>
       </div>
     </article>

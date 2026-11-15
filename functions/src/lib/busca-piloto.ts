@@ -84,3 +84,16 @@ export const ordenarBusca = <T extends CamposBusca>(
     return 0;
   });
 };
+
+/** Quem o token segue vem antes; dentro de cada grupo vale `ordenarBusca`. */
+export const ordenarBuscaComSeguidos = <T extends CamposBusca & {uid: string}>(
+  termoBruto: string,
+  pessoas: readonly T[],
+  seguidos: ReadonlySet<string>,
+): T[] => {
+  const ordenadas = ordenarBusca(termoBruto, pessoas);
+  return [
+    ...ordenadas.filter((pessoa) => seguidos.has(pessoa.uid)),
+    ...ordenadas.filter((pessoa) => !seguidos.has(pessoa.uid)),
+  ];
+};

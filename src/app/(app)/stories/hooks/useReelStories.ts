@@ -53,6 +53,7 @@ export const useReelStories = ({
   const [erro, setErro] = useState(false);
   const [tentativa, setTentativa] = useState(0);
   const [confirmando, setConfirmando] = useState(false);
+  const [respondendo, setRespondendo] = useState(false);
   const [apagando, setApagando] = useState(false);
   const [midiaProntaId, setMidiaProntaId] = useState<string | null>(null);
   const [deslocamento, setDeslocamento] = useState(0);
@@ -65,6 +66,7 @@ export const useReelStories = ({
   const segurando = useRef(false);
   const avancoPendente = useRef(false);
   const confirmandoRef = useRef(false);
+  const respondendoRef = useRef(false);
   const toqueRef = useRef({ x: 0, y: 0, esquerda: 0, largura: 0, dx: 0, dy: 0 });
   const onFecharRef = useRef(onFechar);
   const onTrocarRef = useRef(onTrocarPessoa);
@@ -75,6 +77,7 @@ export const useReelStories = ({
   indiceRef.current = indice;
   storiesRef.current = stories;
   confirmandoRef.current = confirmando;
+  respondendoRef.current = respondendo;
 
   useCamadaCheia(aberto);
 
@@ -182,7 +185,7 @@ export const useReelStories = ({
   }, [indice, alvoId]);
 
   useEffect(() => {
-    if (!aberto || pausado || confirmando || carregando || !midiaPronta || stories.length === 0) return;
+    if (!aberto || pausado || confirmando || respondendo || carregando || !midiaPronta || stories.length === 0) return;
     const restante = ((100 - progressoRef.current) / 100) * DURACAO_MS;
     const fim = performance.now() + restante;
     let encerrado = false;
@@ -201,7 +204,7 @@ export const useReelStories = ({
       encerrado = true;
       window.clearInterval(id);
     };
-  }, [aberto, pausado, confirmando, carregando, midiaPronta, stories.length, indice, ciclo, avancar]);
+  }, [aberto, pausado, confirmando, respondendo, carregando, midiaPronta, stories.length, indice, ciclo, avancar]);
 
   const storyId = story?.id ?? "";
 
@@ -255,6 +258,10 @@ export const useReelStories = ({
 
   const segurar = (evento: ReactPointerEvent<HTMLDivElement>) => {
     if (confirmandoRef.current) return;
+    if (respondendoRef.current) {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      return;
+    }
     if (evento.cancelable) evento.preventDefault();
     evento.stopPropagation();
     const rect = evento.currentTarget.getBoundingClientRect();
@@ -394,6 +401,8 @@ export const useReelStories = ({
     tentarDeNovo: () => setTentativa((atual) => atual + 1),
     confirmando,
     setConfirmando,
+    respondendo,
+    setRespondendo,
     apagando,
     story,
     midiaPronta,

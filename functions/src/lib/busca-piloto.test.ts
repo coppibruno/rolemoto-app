@@ -4,6 +4,7 @@ import {
   camposBuscaIguais,
   normalizarBusca,
   ordenarBusca,
+  ordenarBuscaComSeguidos,
   termoBusca,
 } from "./busca-piloto";
 import type {CamposBusca} from "../types/seguir";
@@ -85,5 +86,15 @@ describe("termoBusca", () => {
     expect(termoBusca("  Á ")).toBeNull();
     expect(termoBusca("jo")).toBe("jo");
     expect(termoBusca(" João ")).toBe("joao");
+  });
+});
+
+describe("ordenarBuscaComSeguidos", () => {
+  it("coloca quem eu sigo antes e mantém quem não sigo na lista", () => {
+    const comUid = (nome: string, apelido = "") => ({...pessoa(nome, apelido), uid: nome});
+    const naoSigo = comUid("Joca Lima", "Joca");
+    const sigo = comUid("Ana Josefa");
+    const ordem = ordenarBuscaComSeguidos("jo", [naoSigo, sigo], new Set(["Ana Josefa"]));
+    expect(ordem.map((item) => item.uid)).toEqual(["Ana Josefa", "Joca Lima"]);
   });
 });

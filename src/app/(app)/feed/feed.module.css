@@ -745,6 +745,21 @@
   white-space: nowrap;
 }
 
+.rotaParadas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+
+.rotaParadas .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--primary-container);
+}
+
 .rotaTraco {
   margin-left: 8px;
   width: 2px;

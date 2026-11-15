@@ -99,6 +99,11 @@ import {
   FirestoreUsuarioOfertaCupomRepository,
 } from "./firestore/firestore-usuario-oferta-cupom.repository";
 
+import type {ConversaRepository} from "./interfaces/conversa.repository";
+import {FirestoreConversaRepository} from "./firestore/firestore-conversa.repository";
+import type {AfiliadoRepository} from "./interfaces/afiliado.repository";
+import {FirestoreAfiliadoRepository} from "./firestore/firestore-afiliado.repository";
+
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
 
@@ -178,3 +183,9 @@ export const ofertaLocalRepository: OfertaLocalRepository =
 
 export const usuarioOfertaCupomRepository: UsuarioOfertaCupomRepository =
   new FirestoreUsuarioOfertaCupomRepository();
+
+export const conversaRepository: ConversaRepository =
+  new FirestoreConversaRepository();
+
+export const afiliadoRepository: AfiliadoRepository =
+  new FirestoreAfiliadoRepository();

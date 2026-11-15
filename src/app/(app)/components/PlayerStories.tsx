@@ -9,6 +9,7 @@ import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
 import { EsqueletoFotoStory } from "./EsqueletoFotoStory";
 import { PalcoFotoStory } from "./PalcoFotoStory";
+import { RespostaStory } from "./RespostaStory";
 import styles from "./player-stories.module.css";
 
 type Props = {
@@ -67,7 +68,7 @@ export const PlayerStories = ({
 
   return createPortal(
     <div
-      className={styles.player}
+      className={story && !reel.minha ? `${styles.player} ${styles.playerComResposta}` : styles.player}
       data-player-stories=""
       role="dialog"
       aria-modal="true"
@@ -157,7 +158,18 @@ export const PlayerStories = ({
           onMarca={abrirMarca}
           onPublicacao={abrirPublicacao}
         />
-      ) : (
+      ) : null}
+      {story && !reel.minha ? (
+        <RespostaStory
+          key={story.id}
+          storyId={story.id}
+          autorUid={story.autor.uid}
+          autorApelido={story.autor.apelido}
+          onFoco={reel.setRespondendo}
+          onEnviada={onFechar}
+        />
+      ) : null}
+      {story ? null : (
         <div className={styles.palco}>
           {reel.carregando ? (
             <EsqueletoFotoStory />

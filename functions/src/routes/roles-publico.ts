@@ -3,7 +3,7 @@ import {responderErro} from "../middleware/errors";
 import {rateLimit} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {param} from "../lib/params";
-import {distanciaRotaKm} from "../lib/geo";
+import {distanciaViagemKm} from "../lib/mapa-viagem";
 import {
   roleRepository,
   usuarioRepository,
@@ -94,6 +94,7 @@ rolesPublicoRouter.get("/:id", async (req: Request, res: Response) => {
       descricao: role.descricao,
       fotoCapaUrl: role.fotoCapaUrl,
       ritmo: role.ritmo,
+      acesso: role.acesso,
       dataHoraSaida: role.dataHoraSaida,
       localSaidaEndereco: role.localSaida.endereco,
       destinoFinalEndereco: role.destinoFinal.endereco,
@@ -103,7 +104,13 @@ rolesPublicoRouter.get("/:id", async (req: Request, res: Response) => {
       localSaidaLng: role.localSaida.lng,
       destinoFinalLat: role.destinoFinal.lat,
       destinoFinalLng: role.destinoFinal.lng,
-      distanciaKm: distanciaRotaKm(role.localSaida, role.destinoFinal),
+      paradas: role.paradas.map(({nome, endereco, lat, lng}) => ({
+        nome,
+        endereco,
+        lat,
+        lng,
+      })),
+      distanciaKm: distanciaViagemKm(role),
       criador: criadorPublico(role.criadorId, criadorDoc),
       participantes: {
         confirmados,

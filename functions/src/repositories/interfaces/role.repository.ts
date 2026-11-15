@@ -17,5 +17,13 @@ export interface RoleRepository {
   buscarPorIds(ids: string[]): Promise<Role[]>;
   criar(dados: RoleCreate): Promise<Role>;
   atualizar(id: string, dados: RoleUpdate): Promise<Role | null>;
+  /** Faixa Rotas: `dataHoraSaida` desc. */
+  listarFixadosPorCriador(criadorId: string, limite: number): Promise<Role[]>;
+  /** Fixar conta os outros fixados do criador na mesma transação. Desfixar não tem teto. */
+  fixarDentroDoTeto(
+    id: string,
+    fixado: boolean,
+    teto: number,
+  ): Promise<"ok" | "teto" | "ausente">;
   remover(id: string): Promise<boolean>;
 }

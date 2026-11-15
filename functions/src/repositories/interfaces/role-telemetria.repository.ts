@@ -2,6 +2,7 @@ import type {MedalhaTelemetria} from "../../types/conquista";
 import type {
   RoleTelemetria,
   RoleTelemetriaNovo,
+  RoleTelemetriaPatch,
 } from "../../types/role-telemetria";
 
 export interface RoleTelemetriaRepository {
@@ -11,7 +12,7 @@ export interface RoleTelemetriaRepository {
     usuarioId: string,
     opcoes?: {limite?: number},
   ): Promise<RoleTelemetria[]>;
-  atualizarVisibilidade(id: string, publica: boolean): Promise<RoleTelemetria | null>;
+  atualizar(id: string, dados: RoleTelemetriaPatch): Promise<RoleTelemetria | null>;
   /** Grava a lista inteira; `criar` já deixa `[]`. */
   atualizarMedalhas(id: string, medalhas: MedalhaTelemetria[]): Promise<void>;
   excluir(id: string): Promise<void>;

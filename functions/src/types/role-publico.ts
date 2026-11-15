@@ -1,4 +1,4 @@
-import type {RitmoRole} from "./role";
+import type {AcessoRole, Localizacao, RitmoRole} from "./role";
 
 export type CriadorPublico = {
   uid: string;
@@ -21,6 +21,7 @@ export type RolePublico = {
   descricao: string;
   fotoCapaUrl: string;
   ritmo: RitmoRole;
+  acesso: AcessoRole;
   dataHoraSaida: string;
   localSaidaEndereco: string;
   destinoFinalEndereco: string;
@@ -30,6 +31,7 @@ export type RolePublico = {
   localSaidaLng: number;
   destinoFinalLat: number;
   destinoFinalLng: number;
+  paradas: Localizacao[];
   distanciaKm: number;
   criador: CriadorPublico;
   participantes: {

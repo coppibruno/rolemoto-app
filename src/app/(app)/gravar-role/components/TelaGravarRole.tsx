@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
+import { useFotosVisita } from "@/app/(app)/avaliar/hooks/useFotosVisita";
+import { useAuth } from "@/hooks/useAuth";
+import { uploadFotoTelemetria } from "@/lib/storage";
 import { useGravarRole } from "../hooks/useGravarRole";
 import { BotaoControleGravacao } from "./BotaoControleGravacao";
 import { ModalEconomiaBateria } from "./ModalEconomiaBateria";
@@ -13,6 +17,29 @@ import { ToastConquista } from "./ToastConquista";
 
 export const TelaGravarRole = () => {
   const g = useGravarRole();
+  const fotos = useFotosVisita();
+  const { firebaseUser } = useAuth();
+  const uid = firebaseUser?.uid;
+  const fotosSalvas = g.resumo?.fotosUrls?.join("\n") ?? "";
+  const { definirRemotas } = fotos;
+
+  useEffect(() => {
+    if (fotosSalvas) definirRemotas(fotosSalvas.split("\n"));
+  }, [fotosSalvas, definirRemotas]);
+
+  const salvar = () => {
+    const enviarFotos = uid
+      ? async () => {
+          const urls = await fotos.enviarTodas((file, tipo) =>
+            uploadFotoTelemetria(uid, file, tipo),
+          );
+          fotos.descartarPendentes();
+          fotos.definirRemotas(urls);
+          return urls;
+        }
+      : undefined;
+    void g.salvar(enviarFotos);
+  };
 
   return (
     <div className={styles.tela}>
@@ -64,13 +91,17 @@ export const TelaGravarRole = () => {
         {g.fase === "resumo" && g.resumo ? (
           <ResumoPreSave
             dados={g.resumo}
+            fotos={fotos}
             titulo={g.titulo}
             ocupado={g.ocupado}
             online={g.online}
             onTitulo={g.setTitulo}
             onPublica={g.setPublica}
-            onSalvar={() => void g.salvar()}
-            onDescartar={() => void g.descartar()}
+            onSalvar={salvar}
+            onDescartar={() => {
+              fotos.limpar();
+              void g.descartar();
+            }}
           />
         ) : null}
 

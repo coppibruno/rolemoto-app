@@ -1,9 +1,9 @@
 import { api } from "@/lib/api";
-import type { ConquistaCatalogo, RankingConquista } from "@/types/conquista";
+import type { ConquistaMinha, RankingConquista } from "@/types/conquista";
 
 export const rankingService = {
-  listarPinos: async (): Promise<ConquistaCatalogo[]> =>
-    (await api<{ itens: ConquistaCatalogo[] }>("/conquistas")).itens ?? [],
+  listarMeusPinos: async (): Promise<ConquistaMinha[]> =>
+    (await api<{ itens: ConquistaMinha[] }>("/conquistas/minhas")).itens ?? [],
 
   placar: (conquistaId: string) =>
     api<RankingConquista>(`/conquistas/${encodeURIComponent(conquistaId)}/ranking`),

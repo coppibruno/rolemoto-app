@@ -13,6 +13,7 @@ import { BlocoDataHistorico } from "./BlocoDataHistorico";
 import type { AlvoApagarHistorico } from "../hooks/useApagarHistorico";
 import { BotaoApagarHistorico } from "./BotaoApagarHistorico";
 import { BotaoClonarRole } from "./BotaoClonarRole";
+import { BotaoFixarRole } from "./BotaoFixarRole";
 import styles from "../historico-pistas.module.css";
 
 type Props = {
@@ -81,7 +82,10 @@ export const CardHistorico = ({ item, ocupado, onApagar }: Props) => {
       </Link>
       <div className={styles.cardAcoesLaterais}>
         {item.status === "lider" ? (
-          <BotaoClonarRole roleId={item.roleId} titulo={item.titulo} />
+          <>
+            <BotaoFixarRole roleId={item.roleId} titulo={item.titulo} fixado={item.fixado} />
+            <BotaoClonarRole roleId={item.roleId} titulo={item.titulo} />
+          </>
         ) : null}
         <BotaoApagarHistorico
           alvo={{ tipo: "role", id: item.roleId, titulo: item.titulo }}

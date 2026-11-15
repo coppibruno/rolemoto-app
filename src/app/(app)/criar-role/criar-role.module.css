@@ -411,6 +411,115 @@
   color: var(--primary-container);
 }
 
+.listaParadas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.linhaParada {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--touch-min);
+  padding-left: 8px;
+  border-radius: 0.5rem;
+  background: var(--surface-container-lowest);
+}
+
+.numeroParada {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--primary-container) 15%, transparent);
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tituloParada {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 4px;
+  color: var(--on-surface);
+  font-size: 14px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.botaoParada {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  flex-shrink: 0;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.botaoParada:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.botaoParada:focus-visible,
+.botaoIncluirParada:focus-visible {
+  outline: 2px solid var(--primary-container);
+}
+
+.hintParadas {
+  color: var(--on-surface-variant);
+  font-size: 13px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.editorParada {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editorParada .cartao {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.editorParadaAcoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.botaoIncluirParada {
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
 .mapaInterativo {
   position: relative;
   width: 100%;
@@ -881,4 +990,21 @@
   .cardRitmoSub {
     font-size: 9px;
   }
+}
+
+.gradeAcesso {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cardAcesso {
+  padding: 10px 8px;
+}
+
+.cardAcessoAtivo {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }

@@ -70,6 +70,13 @@
  * - /posts/:id/comentarios/:comentarioId → DELETE
  * - /posts/:id/story → POST
  * - /usuarios/:uid/posts → GET
+ * - /roles/:id/fixado → PATCH (só o criador)
+ * - /conquistas/minhas → GET
+ * - /conversas → GET, POST
+ * - /conversas/:id/mensagens → GET
+ * - /afiliados → GET, POST (admin)
+ * - /afiliados/:codigo → PATCH (admin)
+ * - /publico/afiliados/:codigo/clique → POST (público, sem Bearer)
  *
  * Local:  http://127.0.0.1:5001/rolemoto-bc47f/us-central1/api
  * Prod:   https://us-central1-rolemoto-bc47f.cloudfunctions.net/api
@@ -104,6 +111,9 @@ import {sugestoesEventosRouter} from "./routes/sugestoes-eventos";
 import {mapasRouter} from "./routes/mapas";
 import {conquistasRouter} from "./routes/conquistas";
 import {postsRouter} from "./routes/posts";
+import {conversasRouter} from "./routes/conversas";
+import {afiliadosRouter} from "./routes/afiliados";
+import {afiliadosPublicoRouter} from "./routes/afiliados-publico";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -183,6 +193,13 @@ app.get("/", (_req: Request, res: Response) => {
       "/posts/:id/comentarios",
       "/posts/:id/story",
       "/usuarios/:uid/posts",
+      "/roles/:id/fixado",
+      "/conquistas/minhas",
+      "/conversas",
+      "/conversas/:id/mensagens",
+      "/afiliados",
+      "/afiliados/:codigo",
+      "/publico/afiliados/:codigo/clique",
     ],
   });
 });
@@ -211,6 +228,9 @@ app.use("/interno", internoRouter);
 app.use("/mapas", mapasRouter);
 app.use("/conquistas", conquistasRouter);
 app.use("/posts", postsRouter);
+app.use("/conversas", conversasRouter);
+app.use("/afiliados", afiliadosRouter);
+app.use("/publico/afiliados", afiliadosPublicoRouter);
 
 export const api = onRequest({
   cors: corsOrigins(),

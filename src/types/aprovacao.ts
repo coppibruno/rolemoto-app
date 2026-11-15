@@ -1,5 +1,5 @@
 import type { Pilotagem } from "./user";
-import type { RitmoRole } from "./role";
+import type { AcessoRole, RitmoRole } from "./role";
 import type { UsuarioRole } from "./usuario-role";
 
 export type StatusAprovacao = "pendente" | "aceito";
@@ -21,6 +21,7 @@ export type RoleResumoSolicitacao = {
   ritmo: RitmoRole;
   dataHoraSaida: string;
   confirmados: number;
+  acesso: AcessoRole;
 };
 
 export type SolicitacaoLider = {

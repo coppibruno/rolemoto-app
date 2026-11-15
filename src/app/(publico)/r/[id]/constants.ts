@@ -1,12 +1,16 @@
-import type { RitmoRole } from "@/types/role";
+import type { AcessoRole, RitmoRole } from "@/types/role";
 
 export const COPY_VAGAS = "Vagas abertas para novos participantes";
 export const COPY_ENCERRADO = "Este rolê já aconteceu";
 export const COPY_MICROCOPY =
   "Necessário aprovação do organizador para garantir a vaga no rolê";
+export const COPY_MICROCOPY_ABERTO = "Rolê aberto: quem quiser entra na hora";
 export const COPY_PRIMEIRO_PILOTO = "Seja o primeiro piloto";
 export const COPY_CTA = "Participar do Rolê";
+export const COPY_CTA_ABERTO = "Entrar";
+export const COPY_CTA_FECHADO = "Pedir vaga";
 export const COPY_CTA_SUB = "Solicitar entrada no comboio";
+export const COPY_CTA_SUB_ABERTO = "Entrar no comboio na hora";
 export const COPY_JA_CONFIRMADO = "Você está no comboio";
 export const COPY_JA_PENDENTE = "Solicitação enviada";
 export const COPY_JA_PENDENTE_SUB = "Aguardando o piloto líder";
@@ -20,6 +24,11 @@ export const LABELS_RITMO_CAPA: Record<RitmoRole, string> = {
   tranquila: "Ritmo Tranquilo",
   moderada: "Ritmo Moderado",
   agressiva: "Ritmo Agressivo",
+};
+
+export const LABELS_ACESSO_FICHA: Record<AcessoRole, string> = {
+  aberto: "Aberto — quem quiser entra na hora",
+  fechado: "Fechado — o líder aceita cada piloto",
 };
 
 export const LABELS_RITMO_FICHA: Record<RitmoRole, string> = {

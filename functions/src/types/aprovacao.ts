@@ -1,4 +1,4 @@
-import type {RitmoRole} from "./role";
+import type {AcessoRole, RitmoRole} from "./role";
 import type {Pilotagem} from "./usuario";
 import type {UsuarioRole} from "./usuario-role";
 
@@ -22,6 +22,7 @@ export type RoleResumoSolicitacao = {
   ritmo: RitmoRole;
   dataHoraSaida: string;
   confirmados: number;
+  acesso: AcessoRole;
 };
 
 export type SolicitacaoLider = {

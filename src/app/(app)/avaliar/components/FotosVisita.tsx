@@ -11,6 +11,7 @@ import {
 import styles from "../avaliar.module.css";
 
 type Props = {
+  titulo?: string;
   fotos: FotoPendente[];
   urlsRemotas?: string[];
   podeAnexar: boolean;
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export const FotosVisita = ({
+  titulo = LABEL_FOTOS,
   fotos,
   urlsRemotas = [],
   podeAnexar,
@@ -40,7 +42,7 @@ export const FotosVisita = ({
           <span className="material-symbols-outlined" aria-hidden>
             photo_camera
           </span>
-          {LABEL_FOTOS}
+          {titulo}
         </h3>
         <span className={styles.contador}>{LABEL_FOTOS_LIMITE}</span>
       </div>

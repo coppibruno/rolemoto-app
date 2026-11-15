@@ -17,6 +17,8 @@ export type ItemHistoricoRole = {
   participantesConfirmados: number;
   ritmo: RitmoRole;
   status: StatusItemHistorico;
+  /** Só tem efeito para o criador, que fixa e desfixa no histórico. */
+  fixado: boolean;
 };
 
 export type ItemHistoricoEvento = {

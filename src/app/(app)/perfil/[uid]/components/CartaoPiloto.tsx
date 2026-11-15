@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AvatarStories } from "@/app/(app)/components/AvatarStories";
+import { FaixaRotas } from "@/components/roles/FaixaRotas";
 import { BotaoSeguir } from "@/app/(app)/seguir/components/BotaoSeguir";
 import {
   LABEL_PILOTAGEM,
@@ -7,6 +8,7 @@ import {
 } from "@/components/perfil/constants-tipo-moto";
 import type { PerfilPublico } from "@/types/perfil-publico";
 import type { Pilotagem } from "@/types/user";
+import { BotaoMensagem } from "./BotaoMensagem";
 import { FaixaConquistas } from "./FaixaConquistas";
 import { FaixaSelos } from "./FaixaSelos";
 import styles from "../perfil-publico.module.css";
@@ -64,12 +66,15 @@ export const CartaoPiloto = ({ perfil, proprio = false }: Props) => {
       {typeof perfil.seguidoPorMim === "boolean" ? (
         <div className={styles.blocoSeguir}>
           {perfil.segueVoce ? <p className={styles.segueVoceCartao}>Segue você</p> : null}
-          <BotaoSeguir
-            uid={perfil.uid}
-            apelido={perfil.apelido}
-            seguido={perfil.seguidoPorMim}
-            largo
-          />
+          <div className={styles.acoesPiloto}>
+            <BotaoSeguir
+              uid={perfil.uid}
+              apelido={perfil.apelido}
+              seguido={perfil.seguidoPorMim}
+              largo
+            />
+            <BotaoMensagem uid={perfil.uid} />
+          </div>
         </div>
       ) : null}
 
@@ -123,6 +128,12 @@ export const CartaoPiloto = ({ perfil, proprio = false }: Props) => {
         <>
           <div className={styles.divisor} role="presentation" />
           <FaixaConquistas conquistas={perfil.conquistas ?? []} proprio={proprio} />
+        </>
+      ) : null}
+      {proprio || (perfil.rolesFixados ?? []).length > 0 ? (
+        <>
+          <div className={styles.divisor} role="presentation" />
+          <FaixaRotas rotas={perfil.rolesFixados ?? []} proprio={proprio} />
         </>
       ) : null}
     </section>

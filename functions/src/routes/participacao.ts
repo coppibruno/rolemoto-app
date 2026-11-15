@@ -6,7 +6,7 @@ import {
   roleRepository,
   usuarioRoleRepository,
 } from "../repositories";
-import {cancelarLembrete} from "../lib/lembretes";
+import {agendarLembrete, cancelarLembrete} from "../lib/lembretes";
 import {notificarPedidoVaga} from "../lib/notificacoes";
 import type {UsuarioRole} from "../types/usuario-role";
 
@@ -99,17 +99,26 @@ participacaoRouter.post(
         return;
       }
 
+      const aberto = role.acesso === "aberto";
       const criado = await usuarioRoleRepository.criar({
         usuarioId: uid,
         roleId,
         criadorId: role.criadorId,
+        aceito: aberto,
       });
-      log.info("Participacao", "Solicitação criada", {
+      log.info("Participacao", aberto ? "Entrada em rolê aberto" : "Solicitação criada", {
         roleId,
         usuarioId: uid,
         criadorId: role.criadorId,
       });
-      await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
+      if (aberto) {
+        await agendarLembrete(
+          {roleId: role.id, userId: uid, titulo: role.titulo},
+          role.dataHoraSaida,
+        );
+      } else {
+        await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
+      }
       res.status(201).json(criado);
     } catch (error) {
       responderErro(res, error);

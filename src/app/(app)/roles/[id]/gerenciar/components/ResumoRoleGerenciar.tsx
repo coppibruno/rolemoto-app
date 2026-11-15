@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BotaoFotoAmpliavel } from "@/components/fotos/BotaoFotoAmpliavel";
+import { BlocoParadasRole } from "@/components/roles/BlocoParadasRole";
 import type { RoleDetalhe } from "@/types/role";
 import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { tituloLocal } from "@/lib/localizacao";
@@ -60,6 +61,8 @@ export const ResumoRoleGerenciar = ({
       <span className={`${styles.ritmo} ${styles[`ritmo_${detalhe.ritmo}`]}`}>
         {LABELS_RITMO[detalhe.ritmo]}
       </span>
+
+      <BlocoParadasRole roleId={detalhe.id} paradas={detalhe.paradas ?? []} />
 
       <div className={styles.contagens}>
         <div className={styles.contagem}>

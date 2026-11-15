@@ -67,6 +67,17 @@ export const uploadFotoAvaliacao = async (
   return getDownloadURL(storageRef);
 };
 
+export const uploadFotoTelemetria = async (
+  uid: string,
+  file: File,
+  contentType = file.type || "image/jpeg",
+): Promise<string> => {
+  const id = crypto.randomUUID();
+  const storageRef = ref(storage, `telemetria/${uid}/${id}.jpg`);
+  await uploadBytes(storageRef, file, { contentType });
+  return getDownloadURL(storageRef);
+};
+
 export const uploadFotoPost = async (uid: string, file: File): Promise<string> => {
   const id = crypto.randomUUID();
   const storageRef = ref(storage, `posts/${uid}/${id}.jpg`);

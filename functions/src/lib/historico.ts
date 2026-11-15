@@ -1,4 +1,4 @@
-import {distanciaRotaKm} from "./geo";
+import {distanciaViagemKm} from "./mapa-viagem";
 import type {Evento} from "../types/evento";
 import type {Role} from "../types/role";
 import type {UsuarioRole} from "../types/usuario-role";
@@ -33,8 +33,7 @@ const eventoEncerrou = (evento: Evento): boolean => {
   return Date.parse(limite) <= Date.now();
 };
 
-const distanciaKm = (role: Role): number =>
-  distanciaRotaKm(role.localSaida, role.destinoFinal);
+const distanciaKm = (role: Role): number => distanciaViagemKm(role);
 
 const dataDoItem = (item: ItemHistoricoPista): number => {
   if (item.tipo === "evento") {
@@ -76,6 +75,7 @@ const paraItemRole = (
   participantesConfirmados,
   ritmo: role.ritmo,
   status,
+  fixado: role.fixado,
 });
 
 export const paraItemEvento = (

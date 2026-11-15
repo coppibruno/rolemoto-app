@@ -1,4 +1,4 @@
-import type { RitmoRole } from "./role";
+import type { AcessoRole, RitmoRole } from "./role";
 import type { TipoEvento } from "./evento";
 import type { CategoriaLocal } from "./local";
 
@@ -34,10 +34,14 @@ export type MeuRoleItem = {
   descricao: string;
   fotoCapaUrl: string;
   ritmo: RitmoRole;
+  acesso: AcessoRole;
+  fixado: boolean;
   dataHoraSaida: string;
   localSaidaEndereco: string;
   localSaidaNome: string;
   distanciaRotaKm: number;
+  /** Hash da saída, paradas e destino — compara com o pacote no celular. */
+  pontosHash: string;
   status: StatusMeuRole;
   papel: PapelMeuRole;
   criador: CriadorMeuRole;

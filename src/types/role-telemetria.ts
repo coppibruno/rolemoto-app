@@ -30,6 +30,8 @@ export type RoleTelemetria = {
   publica: boolean;
   /** Só no detalhe (SPEC 058). */
   medalhas?: MedalhaTelemetria[];
+  /** Só no detalhe. 0..4 fotos. */
+  fotosUrls?: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -47,6 +49,7 @@ export type RoleTelemetriaCreate = {
   pontoFim: PontoTelemetria;
   tracado?: string;
   publica?: boolean;
+  fotosUrls?: string[];
   /** Recorte dos pinos cruzados, cortado no `stop()` nativo (SPEC 056). */
   amostras?: AmostraConquista[];
 };

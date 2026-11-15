@@ -2,11 +2,14 @@
 
 import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria";
 import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
+import { FotosVisita } from "@/app/(app)/avaliar/components/FotosVisita";
+import type { useFotosVisita } from "@/app/(app)/avaliar/hooks/useFotosVisita";
 import type { RoleTelemetriaCreate } from "@/types/role-telemetria";
 import styles from "@/components/telemetria/telemetria.module.css";
 
 type Props = {
   dados: RoleTelemetriaCreate;
+  fotos: ReturnType<typeof useFotosVisita>;
   titulo: string;
   ocupado: boolean;
   online: boolean;
@@ -18,6 +21,7 @@ type Props = {
 
 export const ResumoPreSave = ({
   dados,
+  fotos,
   titulo,
   ocupado,
   online,
@@ -44,6 +48,18 @@ export const ResumoPreSave = ({
         publica={Boolean(dados.publica)}
         desabilitado={ocupado}
         onMudar={onPublica}
+      />
+      <FotosVisita
+        titulo="Fotos do passeio"
+        fotos={fotos.fotos}
+        urlsRemotas={fotos.urlsRemotas}
+        onRemoverRemota={ocupado ? undefined : fotos.removerRemota}
+        podeAnexar={fotos.podeAnexar && !ocupado}
+        erroFoto={fotos.erroFoto}
+        inputRef={fotos.inputRef}
+        onAnexar={fotos.anexar}
+        onRemover={fotos.remover}
+        onAbrirSeletor={fotos.abrirSeletor}
       />
       {!online ? (
         <p className={styles.copyOffline}>

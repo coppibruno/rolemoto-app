@@ -6,6 +6,7 @@ import type {
   PontoTelemetria,
   RoleTelemetria,
   RoleTelemetriaNovo,
+  RoleTelemetriaPatch,
 } from "../../types/role-telemetria";
 import type {RoleTelemetriaRepository} from "../interfaces/role-telemetria.repository";
 import {toIso, toTimestamp} from "./mapper";
@@ -69,10 +70,16 @@ const toMedalhas = (valor: unknown): MedalhaTelemetria[] =>
     valor.map(toMedalha).filter((m): m is MedalhaTelemetria => m !== null) :
     [];
 
+const toFotos = (valor: unknown): string[] =>
+  Array.isArray(valor) ?
+    valor.filter((item): item is string => typeof item === "string" && item.length > 0) :
+    [];
+
 const toDoc = (snap: DocumentSnapshot): RoleTelemetria => ({
   ...toResumo(snap),
   tracado: String(snap.data()?.tracado ?? ""),
   medalhas: toMedalhas(snap.data()?.medalhas),
+  fotosUrls: toFotos(snap.data()?.fotosUrls),
 });
 
 export class FirestoreRoleTelemetriaRepository
@@ -100,6 +107,7 @@ implements RoleTelemetriaRepository {
       pontoFim: dados.pontoFim,
       tracado: dados.tracado,
       publica: dados.publica,
+      fotosUrls: dados.fotosUrls,
       medalhas: [],
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
@@ -125,19 +133,23 @@ implements RoleTelemetriaRepository {
     return snap.docs.map(toResumo);
   }
 
-  async atualizarVisibilidade(
+  async atualizar(
     id: string,
-    publica: boolean,
+    dados: RoleTelemetriaPatch,
   ): Promise<RoleTelemetria | null> {
     const ref = firestore.collection(COLECAO).doc(id);
     const snap = await ref.get();
     if (!snap.exists) {
       return null;
     }
-    await ref.update({
-      publica,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    const payload: Record<string, unknown> = {updatedAt: FieldValue.serverTimestamp()};
+    if (dados.publica !== undefined) {
+      payload.publica = dados.publica;
+    }
+    if (dados.fotosUrls !== undefined) {
+      payload.fotosUrls = dados.fotosUrls;
+    }
+    await ref.update(payload);
     return this.buscarPorId(id);
   }
 

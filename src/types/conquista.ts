@@ -9,6 +9,9 @@ export type ConquistaCatalogo = {
   raioMetros: number;
 };
 
+/** Item de `GET /conquistas/minhas`: pino em que o piloto tem carimbo. */
+export type ConquistaMinha = Pick<ConquistaCatalogo, "id" | "nome">;
+
 /** Item de `GET /conquistas/admin`, `POST` e `PATCH`. */
 export type ConquistaAdmin = ConquistaCatalogo & { ativa: boolean };
 

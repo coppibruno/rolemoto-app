@@ -1,5 +1,9 @@
 import {apelidoExibicao} from "./apelido";
-import {distanciaRotaKm} from "./geo";
+import {
+  cadeiaViagem,
+  distanciaViagemKm,
+  hashPontosViagem,
+} from "./mapa-viagem";
 import {ePedidoAceito, ePedidoPendente, ePedidoRecusado} from "./historico";
 import type {Role} from "../types/role";
 import type {Usuario} from "../types/usuario";
@@ -196,10 +200,15 @@ export const paraMeuRoleItem = (
     descricao: role.descricao,
     fotoCapaUrl: role.fotoCapaUrl,
     ritmo: role.ritmo,
+    acesso: role.acesso,
+    fixado: role.fixado,
     dataHoraSaida: role.dataHoraSaida,
     localSaidaEndereco: role.localSaida.endereco,
     localSaidaNome: role.localSaida.nome ?? "",
-    distanciaRotaKm: distanciaRotaKm(role.localSaida, role.destinoFinal),
+    distanciaRotaKm: distanciaViagemKm(role),
+    pontosHash: hashPontosViagem(
+      cadeiaViagem(role.localSaida, role.paradas, role.destinoFinal),
+    ),
     status: item.status,
     papel: item.papel,
     criador: criadorDe(role.criadorId, usuariosPorId.get(role.criadorId)),

@@ -45,8 +45,10 @@ export const TelaConviteRole = ({ role }: Props) => {
           localSaidaLng={role.localSaidaLng}
           destinoFinalLat={role.destinoFinalLat}
           destinoFinalLng={role.destinoFinalLng}
+          paradas={role.paradas ?? []}
           dataHoraSaida={role.dataHoraSaida}
           ritmo={role.ritmo}
+          acesso={role.acesso}
         />
         <GradePilotos
           confirmados={role.participantes.confirmados}

@@ -1,4 +1,5 @@
 import type {ConquistaPerfil, ConquistaPublica} from "./conquista";
+import type {RoleFixadoResumo} from "./role";
 import type {SeloPublico} from "./selo";
 
 export type Pilotagem = "agressiva" | "moderada" | "tranquila";
@@ -32,6 +33,7 @@ export type PerfilCliente = Usuario & {
   conquistas: ConquistaPerfil[];
   /** Pontos em que este uid é `locais.donoId`, por nome. Só em `/perfil`. */
   locaisComoDono: {id: string; nome: string}[];
+  rolesFixados: RoleFixadoResumo[];
 };
 
 /** DTO público — sem admin, e-mail, ids de local ou dados sensíveis. */
@@ -52,6 +54,7 @@ export type PerfilPublico = {
   seguidores: number;
   seguidoPorMim: boolean;
   segueVoce: boolean;
+  rolesFixados: RoleFixadoResumo[];
 };
 
 export type UsuarioCreate = Omit<

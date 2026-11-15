@@ -32,6 +32,9 @@ export type FaseGravarRole =
   | "gravando"
   | "resumo";
 
+const ERRO_FOTOS_TELEMETRIA =
+  "Não deu para enviar as fotos. Tente de novo ou tire as fotos para salvar.";
+
 export const useGravarRole = () => {
   const router = useRouter();
   const [fase, setFase] = useState<FaseGravarRole>("carregando");
@@ -196,15 +199,26 @@ export const useGravarRole = () => {
     }
   }, [adapter]);
 
-  const salvar = useCallback(async () => {
+  const salvar = useCallback(async (enviarFotos?: () => Promise<string[]>) => {
     if (!resumo) return;
     setErro(null);
     setAviso(null);
     setOcupado(true);
+    let fotosUrls = resumo.fotosUrls ?? [];
+    if (enviarFotos) {
+      try {
+        fotosUrls = await enviarFotos();
+      } catch {
+        setErro(ERRO_FOTOS_TELEMETRIA);
+        setOcupado(false);
+        return;
+      }
+    }
     const dados = {
       ...resumo,
       titulo: titulo.trim() || resumo.titulo,
       publica: resumo.publica ?? false,
+      fotosUrls,
     };
     let aguardandoToast = false;
     try {

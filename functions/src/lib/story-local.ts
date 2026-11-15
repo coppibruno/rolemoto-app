@@ -8,6 +8,7 @@ import {erroDe, log} from "./log";
 import {notificarStory} from "./notificacoes";
 import {storyJaEncaminhada} from "./post-foto";
 import {ymdSaoPaulo} from "./quando";
+import {validarFotoStory} from "./validar-foto-storage";
 import {
   dispositivoRepository,
   eventoRepository,
@@ -54,8 +55,6 @@ const ERRO_TETO_PERFIL = "Você já postou 5 fotos no seu perfil hoje";
 const ERRO_JANELA = "Este encontro não está rolando agora";
 const ERRO_STORY = "Story não encontrada";
 const ERRO_AUTOR = "só o autor apaga";
-
-const EXTENSOES = new Set(["jpg", "jpeg", "png", "webp"]);
 
 export type GeoAneis = {
   lat: number;
@@ -227,54 +226,6 @@ const camposLocalizacao = (localizacao: LocalizacaoStory | null) => ({
 
 const resumo = (evento: Evento | null): EventoAoVivoResumo | null =>
   evento ? {id: evento.id, titulo: evento.titulo} : null;
-
-export const validarFotoStory = (
-  fotoUrl: unknown,
-  prefixo: string,
-): {ok: true; storagePath: string} | {ok: false} => {
-  if (typeof fotoUrl !== "string" || !fotoUrl.trim()) {
-    return {ok: false};
-  }
-  let url: URL;
-  try {
-    url = new URL(fotoUrl.trim());
-  } catch {
-    return {ok: false};
-  }
-  const emulator = process.env.FUNCTIONS_EMULATOR === "true";
-  const esquemaOk = url.protocol === "https:" ||
-    (emulator && url.protocol === "http:");
-  if (!esquemaOk) {
-    return {ok: false};
-  }
-  const marcador = "/o/";
-  const indice = url.pathname.indexOf(marcador);
-  if (indice < 0) {
-    return {ok: false};
-  }
-  let caminho = url.pathname.slice(indice + marcador.length);
-  try {
-    caminho = decodeURIComponent(caminho);
-  } catch {
-    return {ok: false};
-  }
-  const base = `${prefixo}/`;
-  if (!caminho.startsWith(base)) {
-    return {ok: false};
-  }
-  const arquivo = caminho.slice(base.length);
-  if (!arquivo || arquivo.includes("/") || arquivo.includes("..")) {
-    return {ok: false};
-  }
-  if (!/^[\w.-]+$/.test(arquivo)) {
-    return {ok: false};
-  }
-  const ext = arquivo.split(".").pop()?.toLowerCase() ?? "";
-  if (!EXTENSOES.has(ext)) {
-    return {ok: false};
-  }
-  return {ok: true, storagePath: caminho};
-};
 
 const foraDoRaio = (lat: number, lng: number, pins: Pin[]): boolean =>
   !pins.some((pin) => haversineKm(lat, lng, pin.lat, pin.lng) <= RAIO_CHECKIN_KM);
@@ -1351,3 +1302,5 @@ export const apagarStoriesDoUsuario = async (uid: string): Promise<void> => {
     await storyLocalRepository.remover(story.id);
   }
 };
+
+export {validarFotoStory};

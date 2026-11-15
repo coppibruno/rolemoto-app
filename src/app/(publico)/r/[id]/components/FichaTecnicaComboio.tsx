@@ -1,8 +1,15 @@
-import type { RitmoRole } from "@/types/role";
+import type { AcessoRole, Localizacao, RitmoRole } from "@/types/role";
 import { BotaoAbrirMaps } from "@/components/maps/BotaoAbrirMaps";
+import { BlocoParadasRole } from "@/components/roles/BlocoParadasRole";
+import { rotuloParadas } from "@/lib/mapa-viagem/viagem";
 import { subtituloLocal, tituloLocal } from "@/lib/localizacao";
 import { formatarHora } from "@/app/(app)/feed/formatar-horario";
-import { COPY_BRIEFING, COPY_FICHA, LABELS_RITMO_FICHA } from "../constants";
+import {
+  COPY_BRIEFING,
+  COPY_FICHA,
+  LABELS_ACESSO_FICHA,
+  LABELS_RITMO_FICHA,
+} from "../constants";
 import { ItemFicha } from "./ItemFicha";
 import styles from "../convite-role.module.css";
 
@@ -15,8 +22,10 @@ type Props = {
   localSaidaLng: number;
   destinoFinalLat: number;
   destinoFinalLng: number;
+  paradas: Localizacao[];
   dataHoraSaida: string;
   ritmo: RitmoRole;
+  acesso?: AcessoRole;
 };
 
 export const FichaTecnicaComboio = ({
@@ -28,8 +37,10 @@ export const FichaTecnicaComboio = ({
   localSaidaLng,
   destinoFinalLat,
   destinoFinalLng,
+  paradas,
   dataHoraSaida,
   ritmo,
+  acesso,
 }: Props) => {
   const hora = formatarHora(dataHoraSaida);
   const partida = { nome: localSaidaNome, endereco: localSaidaEndereco };
@@ -67,6 +78,15 @@ export const FichaTecnicaComboio = ({
             />
           }
         />
+        {paradas.length > 0 ? (
+          <ItemFicha
+            icone="more_vert"
+            iconeClasse={styles.iconePartida}
+            label="Paradas"
+            titulo={rotuloParadas(paradas.length)}
+            detalhe={<BlocoParadasRole paradas={paradas} comRotulo={false} />}
+          />
+        ) : null}
         <ItemFicha
           icone="flag"
           iconeClasse={styles.iconeDestino}
@@ -90,6 +110,14 @@ export const FichaTecnicaComboio = ({
           label="Nível & Requisitos"
           titulo={LABELS_RITMO_FICHA[ritmo]}
         />
+        {acesso ? (
+          <ItemFicha
+            icone={acesso === "aberto" ? "lock_open" : "lock"}
+            iconeClasse={styles.iconeRitmo}
+            label="Quem entra"
+            titulo={LABELS_ACESSO_FICHA[acesso]}
+          />
+        ) : null}
       </div>
     </section>
   );

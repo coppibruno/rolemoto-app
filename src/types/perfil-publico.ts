@@ -1,5 +1,6 @@
 import type { ItemHistoricoPista, ItemHistoricoRole } from "./historico-pistas";
 import type { ConquistaPerfil } from "./conquista";
+import type { RoleFixadoResumo } from "./role";
 import type { SeloPublico } from "./selo";
 import type { Pilotagem, TipoMoto } from "./user";
 
@@ -21,6 +22,8 @@ export type PerfilPublico = {
   /** Só no perfil de outra pessoa. Ausente no próprio GET /perfil. */
   seguidoPorMim?: boolean;
   segueVoce?: boolean;
+  /** Faixa Rotas: até 12, `dataHoraSaida` desc. */
+  rolesFixados?: RoleFixadoResumo[];
 };
 
 export type AbaHistoricoPublico = "concluidos" | "comoLider";

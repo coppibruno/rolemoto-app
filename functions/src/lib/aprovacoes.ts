@@ -50,6 +50,7 @@ const paraRoleResumo = (
   ritmo: role.ritmo,
   dataHoraSaida: role.dataHoraSaida,
   confirmados,
+  acesso: role.acesso,
 });
 
 export const roleAindaNaoSaiu = (role: Role): boolean =>
@@ -160,7 +161,9 @@ export const montarFilaAprovacoes = async (
   );
   const usuariosMap = new Map(usuarios.map((usuario) => [usuario.uid, usuario]));
 
-  const pendentesAtivos = pendentes.filter((p) => rolesAtivos.has(p.roleId));
+  const pendentesAtivos = pendentes.filter(
+    (p) => rolesAtivos.get(p.roleId)?.acesso === "fechado",
+  );
   const aceitosAtivos = aceitos.filter((p) => rolesAtivos.has(p.roleId));
   const visao = status === "pendente" ? pendentesAtivos : aceitosAtivos;
 

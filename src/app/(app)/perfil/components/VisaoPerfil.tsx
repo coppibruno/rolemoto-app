@@ -12,6 +12,7 @@ import { CardCompletarPerfil } from "./CardCompletarPerfil";
 import { FaixaMeusPontos } from "./FaixaMeusPontos";
 import { GradeFotos } from "./GradeFotos";
 import { HistoricoPistas } from "./HistoricoPistas";
+import { LinhaAfiliados } from "./LinhaAfiliados";
 import styles from "../perfil.module.css";
 
 type Props = {
@@ -28,6 +29,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
       <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} proprio />
       <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
       <FaixaMeusPontos locais={usuario.locaisComoDono ?? []} />
+      {usuario.admin ? <LinhaAfiliados /> : null}
       <button type="button" className={styles.botaoEditar} onClick={onEditar}>
         <span className="material-symbols-outlined" aria-hidden>
           edit

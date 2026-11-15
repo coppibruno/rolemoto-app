@@ -813,3 +813,36 @@
 .badgeTipoEvento .material-symbols-outlined {
   font-size: 14px;
 }
+
+.acoesPiloto {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+}
+
+.botaoMensagem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-target);
+  padding: 0 14px;
+  border: 1.5px solid var(--outline);
+  border-radius: 0.5rem;
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.botaoMensagem .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.botaoMensagem:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}

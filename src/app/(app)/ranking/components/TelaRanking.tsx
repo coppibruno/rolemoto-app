@@ -25,7 +25,7 @@ export const TelaRanking = () => {
         </div>
       ) : null}
       {!carregando && !erro && pinos.length === 0 ? (
-        <p className={styles.aviso}>Nenhum ponto no ranking ainda</p>
+        <p className={styles.aviso}>Você ainda não passou por nenhum ponto.</p>
       ) : null}
       {pinos.length > 0 ? (
         <ul className={styles.lista}>
