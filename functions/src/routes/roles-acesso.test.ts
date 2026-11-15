@@ -14,6 +14,7 @@ const banco = vi.hoisted(() => ({
 
 const espias = vi.hoisted(() => ({
   pedidoVaga: vi.fn(async () => ({tokens: 0, sucesso: 0, falha: 0, erros: []})),
+  entradaRole: vi.fn(async (..._args: unknown[]) => ({tokens: 0, sucesso: 0, falha: 0, erros: []})),
   agendarLembrete: vi.fn(async () => undefined),
 }));
 
@@ -50,6 +51,7 @@ vi.mock("../lib/lembretes", () => ({
 
 vi.mock("../lib/notificacoes", () => ({
   notificarPedidoVaga: espias.pedidoVaga,
+  notificarEntradaRole: espias.entradaRole,
   notificarCancelamentoRole: async () => ({tokens: 0, sucesso: 0, falha: 0, erros: []}),
 }));
 
@@ -165,6 +167,8 @@ beforeEach(() => {
   banco.vinculos.clear();
   banco.seq = 0;
   espias.pedidoVaga.mockClear();
+  espias.entradaRole.mockReset();
+  espias.entradaRole.mockResolvedValue({tokens: 0, sucesso: 0, falha: 0, erros: []});
   espias.agendarLembrete.mockClear();
 });
 
@@ -211,6 +215,7 @@ describe("rolê aberto e fechado — RA1", () => {
     expect(pedido.status).toBe(201);
     expect(pedido.json.aceito).toBe(false);
     expect(espias.pedidoVaga).toHaveBeenCalledTimes(1);
+    expect(espias.entradaRole).not.toHaveBeenCalled();
   });
 
   it("PUT ignora acesso diferente no body", async () => {
@@ -218,6 +223,42 @@ describe("rolê aberto e fechado — RA1", () => {
     const put = await chamar("PUT", `/roles/${criado.json.id}`, corpo({acesso: "fechado"}));
     expect(put.status).toBe(200);
     expect(put.json.acesso).toBe("aberto");
+  });
+});
+
+describe("aviso de entrada no rolê aberto — NE1", () => {
+  it("201 no aberto avisa o criador com o título e a tela de gerenciar", async () => {
+    const criado = await chamar("POST", "/roles", corpo());
+    const entrada = await chamar("POST", `/roles/${criado.json.id}/participacao`, undefined, "bia");
+    expect(entrada.status).toBe(201);
+    expect(espias.entradaRole).toHaveBeenCalledTimes(1);
+    expect(espias.entradaRole).toHaveBeenCalledWith("ana", criado.json.id, "Serra aberta");
+  });
+
+  it("o segundo POST devolve o vínculo e não manda outro push", async () => {
+    const criado = await chamar("POST", "/roles", corpo());
+    await chamar("POST", `/roles/${criado.json.id}/participacao`, undefined, "bia");
+    const repetido = await chamar("POST", `/roles/${criado.json.id}/participacao`, undefined, "bia");
+    expect(repetido.status).toBe(200);
+    expect(espias.entradaRole).toHaveBeenCalledTimes(1);
+  });
+
+  it("falha do envio ainda responde 201", async () => {
+    espias.entradaRole.mockRejectedValueOnce(new Error("fcm fora"));
+    const criado = await chamar("POST", "/roles", corpo());
+    const entrada = await chamar("POST", `/roles/${criado.json.id}/participacao`, undefined, "bia");
+    expect(entrada.status).toBe(201);
+    expect(entrada.json.aceito).toBe(true);
+  });
+
+  it("organizador e rolê que já saiu não disparam push", async () => {
+    const criado = await chamar("POST", "/roles", corpo());
+    const proprio = await chamar("POST", `/roles/${criado.json.id}/participacao`);
+    expect(proprio.status).toBe(403);
+    banco.roles.get(criado.json.id)!.dataHoraSaida = new Date(Date.now() - DIA_MS).toISOString();
+    const passado = await chamar("POST", `/roles/${criado.json.id}/participacao`, undefined, "bia");
+    expect(passado.status).toBe(400);
+    expect(espias.entradaRole).not.toHaveBeenCalled();
   });
 });
 

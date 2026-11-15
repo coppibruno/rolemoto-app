@@ -10,6 +10,8 @@ type Dados = {
   pontos: Localizacao[];
   postos: PontoNomeado[];
   cidades: PontoNomeado[];
+  /** Erro antes do primeiro desenho completo: arquivo ilegível ou estilo recusado. */
+  aoFalhar: (erro: unknown) => void;
 };
 
 export type MapaOffline = {
@@ -53,8 +55,10 @@ const rotuloPonto = (indice: number, total: number): string => {
 };
 
 /** Mapa MapLibre lendo o `mapa.pmtiles` do aparelho. Pan e zoom não pedem rede. */
-export const montarMapaOffline = (container: HTMLElement, dados: Dados): MapaOffline => {
+export const montarMapaOffline = async (container: HTMLElement, dados: Dados): Promise<MapaOffline> => {
   const arquivo = new PMTiles(dados.fonte);
+  // Cabeçalho ilegível rejeita aqui, antes de criar o MapLibre.
+  await arquivo.getHeader();
   garantirProtocolo().add(arquivo);
   const chave = dados.fonte.getKey();
 
@@ -69,6 +73,19 @@ export const montarMapaOffline = (container: HTMLElement, dados: Dados): MapaOff
     minZoom: ZOOM_PACOTE_MIN - 1,
     maxZoom: ZOOM_PACOTE_MAX + 2,
     attributionControl: { compact: false },
+  });
+
+  // Depois do primeiro desenho, um tile ruim no pan não derruba o mapa que já abriu.
+  let desenhou = false;
+  mapa.once("idle", () => {
+    desenhou = true;
+  });
+  mapa.on("error", (evento) => {
+    if (desenhou) {
+      console.warn(evento.error);
+      return;
+    }
+    dados.aoFalhar(evento.error);
   });
 
   mapa.on("load", () => {

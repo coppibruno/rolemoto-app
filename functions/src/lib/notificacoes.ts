@@ -12,6 +12,7 @@ import type {
 
 export type TipoPush =
   | "pedido_vaga"
+  | "entrada_role"
   | "aceite_vaga"
   | "lembrete_role"
   | "lembrete_evento"
@@ -34,6 +35,7 @@ type PayloadPush = {
 
 const COPY = {
   pedido_vaga: "Um motociclista solicitou vaga para um rolê",
+  entrada_role: "Um piloto entrou no rolê",
   aceite_vaga: "O organizador aceitou você no rolê",
 } as const;
 
@@ -304,6 +306,23 @@ export const notificarPedidoVaga = async (
     title: COPY.pedido_vaga,
     body: titulo,
     url: "/aprovacoes",
+    roleId,
+    localId: "",
+    eventoId: "",
+  });
+};
+
+/** Rolê aberto: a entrada já nasce aceita; o toque leva o criador à lista de confirmados. */
+export const notificarEntradaRole = async (
+  criadorId: string,
+  roleId: string,
+  titulo: string,
+): Promise<ResultadoPush> => {
+  return enviar(criadorId, {
+    tipo: "entrada_role",
+    title: COPY.entrada_role,
+    body: titulo,
+    url: `/roles/${roleId}/gerenciar`,
     roleId,
     localId: "",
     eventoId: "",

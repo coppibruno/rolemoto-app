@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { usePacoteMapaSalvo } from "@/hooks/usePacoteMapaSalvo";
-import { ErroTrechoLongo, baixarPacote } from "@/lib/mapa-viagem/baixar-pacote";
 import { apagarPacote } from "@/lib/mapa-viagem/pacote-mapa";
 import { urlPmtilesSul } from "@/lib/mapa-viagem/plataforma";
 import { AVISO_BYTES, estimarBytesPacote, hashPontosViagem } from "@/lib/mapa-viagem/viagem";
@@ -31,15 +30,19 @@ export const usePacoteMapa = (viagem: Viagem | null) => {
     setConfirmacao(null);
     setErro(null);
     setEstado({ tipo: "baixando", fracao: 0 });
+    let ErroTrechoLongo: (new (...args: never[]) => Error) | null = null;
     try {
-      await baixarPacote({
+      // pmtiles só entra quando o piloto toca em Baixar.
+      const modulo = await import("@/lib/mapa-viagem/baixar-pacote");
+      ErroTrechoLongo = modulo.ErroTrechoLongo;
+      await modulo.baixarPacote({
         ...viagem,
         urlSul: url,
         aoProgredir: (fracao) => setEstado({ tipo: "baixando", fracao }),
       });
     } catch (falha) {
       console.error(falha);
-      setErro(falha instanceof ErroTrechoLongo ? ERRO_TRECHO_LONGO : ERRO_BAIXAR);
+      setErro(ErroTrechoLongo && falha instanceof ErroTrechoLongo ? ERRO_TRECHO_LONGO : ERRO_BAIXAR);
     }
     recarregar();
   };

@@ -2,6 +2,7 @@ export const TITULO_TELA = "Mapa da viagem";
 export const ERRO_CARREGAR = "Não foi possível abrir o mapa deste rolê.";
 export const ERRO_NAO_ENCONTRADO = "Não encontramos este rolê.";
 export const TEXTO_NAVEGADOR = "O mapa offline fica no aplicativo Rolemoto instalado.";
+export const TEXTO_FALHA_PACOTE = "Não foi possível abrir o mapa salvo neste celular.";
 export const TEXTO_SEM_GPS = "A posição fica disponível quando o aplicativo puder usar o GPS.";
 export const CTA_BAIXAR = "Baixar mapa desta viagem";
 export const CTA_BAIXANDO = "Baixando…";

@@ -2,6 +2,7 @@ import { Capacitor } from "@capacitor/core";
 import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
 import { base64ParaBytes } from "./base64";
 import { FonteArquivoLocal } from "./fonte-arquivo-local";
+import { lerMetaJson } from "./meta-pacote";
 import type { MetaPacote } from "./tipos";
 
 export const PASTA_MAPAS = "mapas";
@@ -18,7 +19,7 @@ export const lerMetaPacote = async (roleId: string): Promise<MetaPacote | null> 
       directory: DIRETORIO,
       encoding: Encoding.UTF8,
     });
-    return JSON.parse(String(data)) as MetaPacote;
+    return lerMetaJson(String(data));
   } catch {
     return null;
   }

@@ -477,7 +477,7 @@
 }
 
 .botaoParada:focus-visible,
-.botaoIncluirParada:focus-visible {
+.botaoAdicionarParada:focus-visible {
   outline: 2px solid var(--primary-container);
 }
 
@@ -500,13 +500,12 @@
   box-shadow: none;
 }
 
-.editorParadaAcoes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.botaoAdicionarParada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-}
-
-.botaoIncluirParada {
+  width: 100%;
   min-height: var(--touch-min);
   border: none;
   border-radius: 0.5rem;
@@ -518,6 +517,15 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.botaoAdicionarParada .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.botaoAdicionarParada:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .mapaInterativo {

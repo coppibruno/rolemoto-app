@@ -1,13 +1,13 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
-import {log} from "../lib/log";
+import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
 import {
   roleRepository,
   usuarioRoleRepository,
 } from "../repositories";
 import {agendarLembrete, cancelarLembrete} from "../lib/lembretes";
-import {notificarPedidoVaga} from "../lib/notificacoes";
+import {notificarEntradaRole, notificarPedidoVaga} from "../lib/notificacoes";
 import type {UsuarioRole} from "../types/usuario-role";
 
 /**
@@ -116,6 +116,14 @@ participacaoRouter.post(
           {roleId: role.id, userId: uid, titulo: role.titulo},
           role.dataHoraSaida,
         );
+        await notificarEntradaRole(role.criadorId, role.id, role.titulo)
+          .catch((error) => {
+            log.warn("Participacao", "Push de entrada falhou", {
+              roleId,
+              criadorId: role.criadorId,
+              ...erroDe(error),
+            });
+          });
       } else {
         await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
       }

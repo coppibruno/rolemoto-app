@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapaLeitura } from "@/components/maps/MapaLeitura";
 import { formatarDataMeta } from "@/app/(app)/perfil/formatar-data-historico";
@@ -17,6 +18,7 @@ import {
   CTA_BAIXAR,
   FAIXA_ROTA_MUDOU,
   ROTULO_NESTE_CELULAR,
+  TEXTO_FALHA_PACOTE,
   TEXTO_NAVEGADOR,
   TEXTO_ROTA_MUDOU,
   TEXTO_SEM_GPS,
@@ -28,7 +30,7 @@ import {
 import { useDetalheMapa } from "../hooks/useDetalheMapa";
 import { usePacoteMapa } from "../hooks/usePacoteMapa";
 import { usePosicaoViagem } from "../hooks/usePosicaoViagem";
-import { MapaPacote } from "./MapaPacote";
+import { MapaPacoteSeguro } from "./MapaPacoteSeguro";
 import styles from "../mapa.module.css";
 
 type Props = {
@@ -49,6 +51,10 @@ export const TelaMapaViagem = ({ roleId }: Props) => {
     pacote.estado.tipo === "atual" || pacote.estado.tipo === "desatualizado"
       ? pacote.estado.meta
       : null;
+  // Guarda o `baixadoEm` do pacote que falhou: baixar de novo tenta o desenho outra vez.
+  const [pacoteQueFalhou, setPacoteQueFalhou] = useState<string | null>(null);
+  const falhouPacote = meta !== null && pacoteQueFalhou === meta.baixadoEm;
+  const marcarFalha = useCallback(() => setPacoteQueFalhou(meta?.baixadoEm ?? null), [meta]);
   const pontos = viagem?.pontos ?? [];
   const plano = planoDaViagem(pontos, posicao);
   const lugares = meta ? lugaresDoPacote(meta.postos, meta.cidades, posicao) : [];
@@ -91,13 +97,15 @@ export const TelaMapaViagem = ({ roleId }: Props) => {
           </div>
 
           <div className={styles.mapaCaixa}>
-            {meta ? (
-              <MapaPacote
+            {meta && !falhouPacote ? (
+              <MapaPacoteSeguro
+                key={meta.baixadoEm}
                 roleId={roleId}
                 pontos={pontos}
                 postos={meta.postos}
                 cidades={meta.cidades}
                 posicao={posicao}
+                aoFalhar={marcarFalha}
               />
             ) : (
               <MapaLeitura
@@ -120,8 +128,18 @@ export const TelaMapaViagem = ({ roleId }: Props) => {
             )}
           </div>
           <p className={styles.atribuicao}>{ATRIBUICAO}</p>
+          {falhouPacote ? (
+            <p className={styles.erroTexto} role="alert">
+              {TEXTO_FALHA_PACOTE}
+            </p>
+          ) : null}
 
-          <a className={styles.linkMaps} href={urlViagemMaps(pontos)}>
+          <a
+            className={styles.linkMaps}
+            href={urlViagemMaps(pontos)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <span className="material-symbols-outlined" aria-hidden>
               navigation
             </span>

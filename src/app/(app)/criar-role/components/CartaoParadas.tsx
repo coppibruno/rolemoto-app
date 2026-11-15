@@ -54,7 +54,7 @@ export const CartaoParadas = ({ paradas, desabilitado }: Props) => {
       ) : (
         <button
           type="button"
-          className={styles.botaoMapa}
+          className={styles.botaoAdicionarParada}
           onClick={paradas.abrirEditor}
           disabled={desabilitado}
         >

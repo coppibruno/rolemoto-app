@@ -15,29 +15,61 @@ type Props = {
   postos: PontoNomeado[];
   cidades: PontoNomeado[];
   posicao: Coord | null;
+  aoFalhar: () => void;
 };
 
-export const MapaPacote = ({ roleId, pontos, postos, cidades, posicao }: Props) => {
+/** Carregado só via `MapaPacoteSeguro`: MapLibre e pmtiles ficam fora do JS do resto do app. */
+export const MapaPacote = ({ roleId, pontos, postos, cidades, posicao, aoFalhar }: Props) => {
   const caixaRef = useRef<HTMLDivElement>(null);
   const mapaRef = useRef<MapaOffline | null>(null);
+  const posicaoRef = useRef(posicao);
+  const aoFalharRef = useRef(aoFalhar);
+  posicaoRef.current = posicao;
+  aoFalharRef.current = aoFalhar;
 
   useEffect(() => {
     const caixa = caixaRef.current;
     if (!caixa) return;
     let ativo = true;
-    void fonteDoPacote(roleId).then((fonte) => {
-      if (!ativo || !caixaRef.current) return;
-      const mapa = montarMapaOffline(caixaRef.current, { fonte, pontos, postos, cidades });
-      mapa.atualizarPosicao(posicao);
-      mapaRef.current = mapa;
-    });
+    let montado: MapaOffline | null = null;
+    const falhar = (erro: unknown) => {
+      if (!ativo) return;
+      console.error(erro);
+      aoFalharRef.current();
+    };
+
+    const montar = async () => {
+      try {
+        const fonte = await fonteDoPacote(roleId);
+        if (!ativo || !caixaRef.current) return;
+        montado = await montarMapaOffline(caixaRef.current, {
+          fonte,
+          pontos,
+          postos,
+          cidades,
+          aoFalhar: falhar,
+        });
+        if (!ativo) {
+          montado.destruir();
+          return;
+        }
+        montado.atualizarPosicao(posicaoRef.current);
+        mapaRef.current = montado;
+      } catch (erro) {
+        falhar(erro);
+      }
+    };
+    void montar();
+
     return () => {
       ativo = false;
-      mapaRef.current?.destruir();
+      try {
+        montado?.destruir();
+      } catch (erro) {
+        console.warn(erro);
+      }
       mapaRef.current = null;
     };
-    // A posição atualiza no efeito de baixo, sem recriar o mapa.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roleId, pontos, postos, cidades]);
 
   useEffect(() => {

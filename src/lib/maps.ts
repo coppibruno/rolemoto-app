@@ -33,19 +33,17 @@ const coord = (p: PontoMaps): string | null => {
   return null;
 };
 
-/** Saída, paradas e destino nessa ordem. Sem parada, a mesma URL de origem e destino. */
+/**
+ * Saída, paradas e destino no caminho da URL, de carro (`!3e0`). O app do Maps
+ * descarta `waypoints` e `travelmode` da query; no caminho, mantém as paradas e a estrada.
+ */
 export const urlViagemMaps = (pontos: PontoMaps[]): string => {
   const origem = pontos[0];
   const destino = pontos[pontos.length - 1];
-  const meio = pontos.slice(1, -1).map(coord);
-  if (!origem || !destino || pontos.length < 3) {
-    return urlRotaMaps(origem ?? destino, destino ?? origem);
-  }
-  const a = coord(origem);
-  const b = coord(destino);
-  if (!a || !b || meio.some((c) => c === null)) return urlRotaMaps(origem, destino);
-  const waypoints = encodeURIComponent(meio.join("|"));
-  return `https://www.google.com/maps/dir/?api=1&origin=${a}&destination=${b}&waypoints=${waypoints}&travelmode=driving`;
+  if (!origem || !destino) return "https://www.google.com/maps";
+  if (pontos.length < 2 || !coord(origem) || !coord(destino)) return urlAbrirMaps(destino);
+  const caminho = pontos.map(coord).filter((c): c is string => c !== null);
+  return `https://www.google.com/maps/dir/${caminho.join("/")}/data=!3e0`;
 };
 
 export const urlRotaMaps = (origem: PontoMaps, destino: PontoMaps): string => {
