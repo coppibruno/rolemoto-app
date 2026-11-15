@@ -1,0 +1,279 @@
+.tela {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+  padding: 0 var(--gutter-md) 24px;
+}
+
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: var(--touch-min) 1fr var(--touch-min);
+  align-items: center;
+  margin: 0 calc(-1 * var(--gutter-md));
+  padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.botaoVoltar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.titulo {
+  margin: 0;
+  text-align: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.espaco {
+  width: var(--touch-min);
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tituloRole {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 32px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.data,
+.aviso,
+.atribuicao {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.atribuicao {
+  font-size: 12px;
+}
+
+.mapaCaixa {
+  height: 280px;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: var(--surface-container-low);
+}
+
+.mapaOnline,
+.mapaPacote {
+  width: 100%;
+  height: 100%;
+}
+
+.linkMaps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.acoes,
+.confirma,
+.erro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.faixa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.faixaTitulo {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-container);
+}
+
+.cta,
+.secundario,
+.erro button {
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 0.75rem;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+.cta:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.tamanho {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.secundario,
+.erro button {
+  background: transparent;
+  color: var(--on-surface-variant);
+}
+
+.erroTexto,
+.erro p,
+.confirma p {
+  margin: 0;
+  color: var(--error);
+  font-size: 14px;
+}
+
+.confirma p {
+  color: var(--on-surface);
+}
+
+.listaBloco {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.listaTitulo {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+}
+
+.marca {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.itemTextos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.itemTitulo,
+.itemSub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemTitulo {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.itemSub,
+.distancia {
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+}
+
+.distancia {
+  flex-shrink: 0;
+}
+
+.botaoVoltar:focus-visible,
+.linkMaps:focus-visible,
+.cta:focus-visible,
+.secundario:focus-visible,
+.erro button:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
