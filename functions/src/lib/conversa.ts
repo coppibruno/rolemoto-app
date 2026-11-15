@@ -1,9 +1,20 @@
-import {LIMITE_TEXTO_MENSAGEM} from "../types/conversa";
+import {LIMITE_TEXTO_MENSAGEM, REACOES_STORY, type ReacaoStory} from "../types/conversa";
 
 export const ERRO_TEXTO_VAZIO = "escreva uma mensagem";
 export const ERRO_TEXTO_LONGO = "mensagem longa demais";
 export const ERRO_PARA_SI = "não dá para mandar mensagem para você mesmo";
 export const ERRO_STORY_RESPOSTA = "Este story não está mais disponível";
+export const ERRO_REACAO = "reação inválida";
+export const ERRO_REACAO_SEM_STORY = "reação só vale para um story";
+
+export const reacaoDe = (valor: unknown): ReacaoStory | null =>
+  typeof valor === "string" && Object.prototype.hasOwnProperty.call(REACOES_STORY, valor) ?
+    valor as ReacaoStory :
+    null;
+
+/** Linha da lista de conversas e do push quando a mensagem é uma reação. */
+export const resumoReacao = (reacao: ReacaoStory): string =>
+  `Reagiu ao seu story ${REACOES_STORY[reacao]}`;
 
 const TRECHO_MAX = 80;
 

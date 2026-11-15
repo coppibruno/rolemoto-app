@@ -1,3 +1,5 @@
+export type ReacaoStory = "riso" | "assustado" | "apaixonado" | "triste" | "palmas" | "fogo";
+
 export type PessoaConversa = {
   uid: string;
   nome: string;
@@ -17,6 +19,7 @@ export type Mensagem = {
   autorId: string;
   texto: string;
   storyId: string | null;
+  reacao: ReacaoStory | null;
   createdAt: string;
   story: StoryDaMensagem | null;
 };
@@ -27,6 +30,7 @@ export type ConversaItem = {
   ultimaMensagemTexto: string;
   ultimaMensagemEm: string;
   ultimaMensagemAutorId: string;
+  naoLida: boolean;
 };
 
 export type PaginaConversas = {
@@ -43,11 +47,16 @@ export type PaginaMensagens = {
 
 export type EnvioMensagem = {
   destinatarioId: string;
-  texto: string;
+  texto?: string;
   storyId?: string;
+  reacao?: ReacaoStory;
 };
 
 export type RespostaEnvioMensagem = {
   conversaId: string;
   mensagem: Mensagem;
+};
+
+export type NaoLidas = {
+  total: number;
 };

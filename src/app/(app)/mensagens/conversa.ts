@@ -1,4 +1,25 @@
-import type { PessoaConversa } from "@/types/conversa";
+import type { Mensagem, PessoaConversa, ReacaoStory } from "@/types/conversa";
+
+export const REACOES_STORY: { id: ReacaoStory; emoji: string; rotulo: string }[] = [
+  { id: "riso", emoji: "😂", rotulo: "Riso" },
+  { id: "assustado", emoji: "😮", rotulo: "Assustado" },
+  { id: "apaixonado", emoji: "😍", rotulo: "Apaixonado" },
+  { id: "triste", emoji: "😢", rotulo: "Triste" },
+  { id: "palmas", emoji: "👏", rotulo: "Palmas" },
+  { id: "fogo", emoji: "🔥", rotulo: "Fogo" },
+];
+
+/**
+ * Página mais recente (ordem cronológica) por cima do que já está na tela:
+ * mantém as antigas carregadas, troca o trecho recente e não duplica id.
+ */
+export const juntarRecentes = (atuais: Mensagem[], recentes: Mensagem[]): Mensagem[] => {
+  if (recentes.length === 0) return atuais;
+  const ids = new Set(recentes.map((m) => m.id));
+  const inicio = recentes[0].createdAt;
+  const antigas = atuais.filter((m) => !ids.has(m.id) && m.createdAt < inicio);
+  return [...antigas, ...recentes];
+};
 
 /** Mesmo id do backend: os dois uids em ordem, separados por `_`. */
 export const idConversa = (a: string, b: string): string =>

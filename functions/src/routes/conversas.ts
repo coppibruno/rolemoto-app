@@ -5,9 +5,13 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {
   ERRO_PARA_SI,
+  ERRO_REACAO,
+  ERRO_REACAO_SEM_STORY,
   ERRO_STORY_RESPOSTA,
   idConversa,
   outroDaConversa,
+  reacaoDe,
+  resumoReacao,
   storyValidaParaResposta,
   textoMensagem,
   trechoMensagem,
@@ -27,14 +31,16 @@ import type {
   PessoaConversa,
   StoryDaMensagem,
 } from "../types/conversa";
+import {REACOES_STORY} from "../types/conversa";
 import type {Usuario} from "../types/usuario";
 
 /**
  * Mensagem direta entre dois pilotos (SPEC 061 CH). Sem leitura ao vivo.
  *
  * GET  /conversas
- * GET  /conversas/:id/mensagens
- * POST /conversas
+ * GET  /conversas/nao-lidas
+ * GET  /conversas/:id/mensagens (sem cursor marca a conversa como lida)
+ * POST /conversas (`reacao` + `storyId` = reação ao story)
  */
 export const conversasRouter = Router();
 
@@ -102,8 +108,22 @@ conversasRouter.get("/", async (req: Request, res: Response) => {
       ultimaMensagemTexto: trechoMensagem(conversa.ultimaMensagemTexto),
       ultimaMensagemEm: conversa.ultimaMensagemEm,
       ultimaMensagemAutorId: conversa.ultimaMensagemAutorId,
+      naoLida: conversa.naoLidaPor.includes(uid),
     }));
     res.json({itens, proximoCursor: pagina.proximoCursor});
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+conversasRouter.get("/nao-lidas", async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    res.json({total: await conversaRepository.contarNaoLidas(uid)});
   } catch (error) {
     responderErro(res, error);
   }
@@ -123,10 +143,17 @@ conversasRouter.get("/:id/mensagens", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Conversa não encontrada"});
       return;
     }
-    const pagina = await conversaRepository.listarMensagens(conversaId, cursorDaQuery(req));
+    const cursor = cursorDaQuery(req);
+    const pagina = await conversaRepository.listarMensagens(conversaId, cursor);
     if (!pagina.ok) {
       res.status(400).json({erro: "cursor inválido"});
       return;
+    }
+    // Abrir a página mais recente é ler a conversa.
+    if (!cursor) {
+      await conversaRepository.marcarLida(conversaId, uid).catch((error) => {
+        log.warn("Conversa", "Falha ao marcar lida", {conversaId, ...erroDe(error)});
+      });
     }
     const stories = await storiesDasMensagens(pagina.itens);
     res.json({
@@ -159,7 +186,16 @@ conversasRouter.post("/", async (req: Request, res: Response) => {
       res.status(400).json({erro: ERRO_PARA_SI});
       return;
     }
-    const texto = textoMensagem(body.texto);
+    const temReacao = body.reacao !== undefined && body.reacao !== null;
+    const reacao = temReacao ? reacaoDe(body.reacao) : null;
+    if (temReacao && !reacao) {
+      res.status(400).json({erro: ERRO_REACAO});
+      return;
+    }
+    // Reação manda o emoji como texto; o corpo do cliente é ignorado.
+    const texto = reacao ?
+      {ok: true as const, valor: REACOES_STORY[reacao]} :
+      textoMensagem(body.texto);
     if (!texto.ok) {
       res.status(400).json({erro: texto.erro});
       return;
@@ -176,6 +212,11 @@ conversasRouter.post("/", async (req: Request, res: Response) => {
     const storyId = typeof storyIdBruto === "string" && storyIdBruto.trim() ?
       storyIdBruto.trim() :
       null;
+    if (reacao && !storyId) {
+      res.status(400).json({erro: ERRO_REACAO_SEM_STORY});
+      return;
+    }
+    const resumo = reacao ? resumoReacao(reacao) : texto.valor;
 
     const [destinatario, eu] = await Promise.all([
       usuarioRepository.buscarPorId(destinatarioId),
@@ -205,18 +246,21 @@ conversasRouter.post("/", async (req: Request, res: Response) => {
       autorId: uid,
       texto: texto.valor,
       storyId,
+      reacao,
+      resumo,
     });
     log.info("Conversa", "Mensagem enviada", {
       conversaId,
       autorId: uid,
       resposta: storyId !== null,
+      reacao,
     });
     try {
       await notificarMensagem(
         destinatarioId,
         conversaId,
         apelidoExibicao(eu),
-        trechoMensagem(texto.valor),
+        trechoMensagem(resumo),
       );
     } catch (error) {
       log.warn("Conversa", "Push de mensagem não enviado", {conversaId, ...erroDe(error)});

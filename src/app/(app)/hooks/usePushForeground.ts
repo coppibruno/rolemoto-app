@@ -5,6 +5,7 @@ import { Capacitor } from "@capacitor/core";
 import { useAuth } from "@/hooks/useAuth";
 import { ouvirForeground } from "@/lib/fcm";
 import { ouvirForegroundNativo } from "@/lib/fcm-nativo";
+import { avisarPushRecebido } from "@/lib/eventos-mensagens";
 
 const TOAST_MS = 2500;
 
@@ -20,6 +21,7 @@ export const usePushForeground = () => {
       if (ativo) {
         setTitulo(title);
         recarregarPerfil().catch(() => undefined);
+        avisarPushRecebido();
       }
     };
 

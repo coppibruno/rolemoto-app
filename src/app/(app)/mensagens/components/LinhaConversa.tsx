@@ -11,9 +11,13 @@ type Props = {
 
 export const LinhaConversa = ({ conversa, meuUid }: Props) => {
   const minha = conversa.ultimaMensagemAutorId === meuUid;
+  const naoLida = conversa.naoLida === true;
 
   return (
-    <Link href={`/mensagens/${encodeURIComponent(conversa.id)}`} className={styles.linhaConversa}>
+    <Link
+      href={`/mensagens/${encodeURIComponent(conversa.id)}`}
+      className={`${styles.linhaConversa} ${naoLida ? styles.linhaNaoLida : ""}`}
+    >
       <FotoPessoa fotoUrl={conversa.outro.fotoUrl} />
       <span className={styles.textos}>
         <span className={styles.nome}>{nomeNaConversa(conversa.outro)}</span>
@@ -23,6 +27,7 @@ export const LinhaConversa = ({ conversa, meuUid }: Props) => {
         </span>
       </span>
       <span className={styles.quando}>{quandoMensagem(conversa.ultimaMensagemEm)}</span>
+      {naoLida ? <span className={styles.pontoNaoLida} aria-label="Não lida" /> : null}
     </Link>
   );
 };

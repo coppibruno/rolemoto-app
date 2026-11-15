@@ -15,6 +15,10 @@ export interface ConversaRepository {
     conversaId: string,
     cursor: string | null,
   ): Promise<PaginaRepo<Mensagem>>;
+  /** Tira o uid de `naoLidaPor`. Conversa inexistente não faz nada. */
+  marcarLida(conversaId: string, uid: string): Promise<void>;
+  /** Quantas conversas têm mensagem que o uid ainda não abriu. */
+  contarNaoLidas(uid: string): Promise<number>;
   /** Apaga as conversas do uid e as mensagens delas. */
   limparPorUsuario(uid: string): Promise<void>;
 }

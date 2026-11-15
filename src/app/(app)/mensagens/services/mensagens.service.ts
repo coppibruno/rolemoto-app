@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import type {
   EnvioMensagem,
+  NaoLidas,
   PaginaConversas,
   PaginaMensagens,
   RespostaEnvioMensagem,
@@ -17,6 +18,8 @@ export const mensagensService = {
     api<PaginaMensagens>(
       comCursor(`/conversas/${encodeURIComponent(conversaId)}/mensagens`, cursor),
     ),
+
+  naoLidas: () => api<NaoLidas>("/conversas/nao-lidas"),
 
   enviar: (dados: EnvioMensagem) =>
     api<RespostaEnvioMensagem>("/conversas", { method: "POST", body: JSON.stringify(dados) }),

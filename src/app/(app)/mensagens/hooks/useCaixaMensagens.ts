@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ouvirPushRecebido } from "@/lib/eventos-mensagens";
 import type { ConversaItem } from "@/types/conversa";
 import { mensagensService } from "../services/mensagens.service";
 
@@ -28,6 +29,20 @@ export const useCaixaMensagens = () => {
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  useEffect(
+    () =>
+      ouvirPushRecebido(() => {
+        void mensagensService
+          .listarConversas()
+          .then((pagina) => {
+            setItens(pagina.itens);
+            setCursor(pagina.proximoCursor);
+          })
+          .catch(() => undefined);
+      }),
+    [],
+  );
 
   const carregarMais = async () => {
     if (!cursor || carregandoMais) return;

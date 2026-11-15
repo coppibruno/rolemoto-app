@@ -4,6 +4,8 @@ import {
   ERRO_TEXTO_VAZIO,
   idConversa,
   outroDaConversa,
+  reacaoDe,
+  resumoReacao,
   storyValidaParaResposta,
   textoMensagem,
   trechoMensagem,
@@ -67,5 +69,19 @@ describe("storyValidaParaResposta", () => {
     )).toBe(false);
     expect(storyValidaParaResposta(viva, "outro", agora)).toBe(false);
     expect(storyValidaParaResposta(null, "dono", agora)).toBe(false);
+  });
+});
+
+describe("reacaoDe", () => {
+  it("aceita só as seis reações", () => {
+    expect(reacaoDe("riso")).toBe("riso");
+    expect(reacaoDe("fogo")).toBe("fogo");
+    expect(reacaoDe("toString")).toBeNull();
+    expect(reacaoDe("coracao")).toBeNull();
+    expect(reacaoDe(1)).toBeNull();
+  });
+
+  it("resumo leva o emoji", () => {
+    expect(resumoReacao("apaixonado")).toBe("Reagiu ao seu story 😍");
   });
 });

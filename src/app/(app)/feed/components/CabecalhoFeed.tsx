@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
 import { BotaoTema } from "@/components/tema/BotaoTema";
+import { BotaoMensagens } from "./BotaoMensagens";
 import styles from "../feed.module.css";
 
 export const CabecalhoFeed = () => {
@@ -30,11 +31,7 @@ export const CabecalhoFeed = () => {
               search
             </span>
           </Link>
-          <Link href="/mensagens" className={styles.encontrarPilotos} aria-label="Mensagens">
-            <span className="material-symbols-outlined" aria-hidden>
-              chat_bubble
-            </span>
-          </Link>
+          <BotaoMensagens habilitado={Boolean(usuario)} />
           {usuario ? (
             <AvatarStories
               uid={usuario.uid}

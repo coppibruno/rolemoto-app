@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "@/lib/api";
+import { avisarNaoLidasMudaram, ouvirPushRecebido } from "@/lib/eventos-mensagens";
 import type { Mensagem, PessoaConversa } from "@/types/conversa";
+import { juntarRecentes } from "../conversa";
 import { mensagensService } from "../services/mensagens.service";
 
 export const useConversa = (conversaId: string) => {
@@ -23,6 +25,7 @@ export const useConversa = (conversaId: string) => {
       setOutro(pagina.outro);
       setMensagens([...pagina.itens].reverse());
       setCursor(pagina.proximoCursor);
+      avisarNaoLidasMudaram();
     } catch (falha) {
       setErro(
         falha instanceof ApiError && falha.status === 404
@@ -37,6 +40,21 @@ export const useConversa = (conversaId: string) => {
   useEffect(() => {
     void carregar();
   }, [carregar]);
+
+  // Sem leitura ao vivo: o push com o app aberto traz as mensagens novas.
+  useEffect(
+    () =>
+      ouvirPushRecebido(() => {
+        void mensagensService
+          .listarMensagens(conversaId)
+          .then((pagina) => {
+            setMensagens((atuais) => juntarRecentes(atuais, [...pagina.itens].reverse()));
+            avisarNaoLidasMudaram();
+          })
+          .catch(() => undefined);
+      }),
+    [conversaId],
+  );
 
   const carregarAntigas = async () => {
     if (!cursor || carregandoAntigas) return;

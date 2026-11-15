@@ -11,6 +11,7 @@ import {
   LIMITE_PAGINA_CONVERSAS,
   LIMITE_PAGINA_MENSAGENS,
 } from "../../types/conversa";
+import {reacaoDe} from "../../lib/conversa";
 import type {ConversaRepository} from "../interfaces/conversa.repository";
 import {toIso} from "./mapper";
 
@@ -30,6 +31,9 @@ const toConversa = (snap: DocumentSnapshot): Conversa => {
     ultimaMensagemTexto: String(data.ultimaMensagemTexto ?? ""),
     ultimaMensagemEm: toIso(data.ultimaMensagemEm),
     ultimaMensagemAutorId: String(data.ultimaMensagemAutorId ?? ""),
+    naoLidaPor: Array.isArray(data.naoLidaPor) ?
+      data.naoLidaPor.filter((uid: unknown): uid is string => typeof uid === "string") :
+      [],
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -43,6 +47,7 @@ const toMensagem = (snap: DocumentSnapshot): Mensagem => {
     autorId: String(data.autorId ?? ""),
     texto: String(data.texto ?? ""),
     storyId: typeof data.storyId === "string" && data.storyId ? data.storyId : null,
+    reacao: reacaoDe(data.reacao),
     createdAt: toIso(data.createdAt),
   };
 };
@@ -90,10 +95,13 @@ export class FirestoreConversaRepository implements ConversaRepository {
     const mensagemRef = firestore.collection(MENSAGENS).doc();
     await firestore.runTransaction(async (tx) => {
       const conversa = await tx.get(conversaRef);
+      const destinatario = dados.participantes.find((uid) => uid !== dados.autorId);
       const resumo = {
-        ultimaMensagemTexto: dados.texto,
+        ultimaMensagemTexto: dados.resumo,
         ultimaMensagemEm: FieldValue.serverTimestamp(),
         ultimaMensagemAutorId: dados.autorId,
+        // Quem escreve já leu; só o outro fica com a conversa não lida.
+        naoLidaPor: destinatario ? [destinatario] : [],
         updatedAt: FieldValue.serverTimestamp(),
       };
       if (conversa.exists) {
@@ -110,10 +118,32 @@ export class FirestoreConversaRepository implements ConversaRepository {
         autorId: dados.autorId,
         texto: dados.texto,
         storyId: dados.storyId,
+        reacao: dados.reacao,
         createdAt: FieldValue.serverTimestamp(),
       });
     });
     return toMensagem(await mensagemRef.get());
+  }
+
+  async marcarLida(conversaId: string, uid: string): Promise<void> {
+    if (!conversaId || conversaId.includes("/")) {
+      return;
+    }
+    const ref = firestore.collection(CONVERSAS).doc(conversaId);
+    const snap = await ref.get();
+    if (!snap.exists || !toConversa(snap).naoLidaPor.includes(uid)) {
+      return;
+    }
+    await ref.update({naoLidaPor: FieldValue.arrayRemove(uid)});
+  }
+
+  async contarNaoLidas(uid: string): Promise<number> {
+    const snap = await firestore
+      .collection(CONVERSAS)
+      .where("naoLidaPor", "array-contains", uid)
+      .count()
+      .get();
+    return snap.data().count;
   }
 
   async listarDoUsuario(

@@ -460,6 +460,115 @@
   outline-offset: 2px;
 }
 
+.reacoes {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 4px 8px;
+}
+
+.reacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reacao:active {
+  transform: scale(1.25);
+}
+
+.reacao:focus-visible,
+.respostaReagir:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.respostaReagir {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.respostaReagir .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.respostaReagirAtivo {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.reacaoEnviada {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: reacaoSobe 1200ms ease-out forwards;
+}
+
+.reacaoEnviadaEmoji {
+  font-size: 96px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.45));
+}
+
+.reacaoEnviadaTexto {
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+@keyframes reacaoSobe {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 40px) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.1);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, -16px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -48px) scale(0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reacaoEnviada {
+    animation: none;
+  }
+}
+
 .respostaErro {
   margin: 0;
   color: #fff;
