@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { CabecalhoPerfil } from "./CabecalhoPerfil";
+import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { FormularioPerfil } from "./FormularioPerfil";
 import { ToastSucesso } from "./ToastSucesso";
 import { VisaoPerfil } from "./VisaoPerfil";
@@ -37,7 +37,7 @@ export const TelaPerfil = () => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoPerfil fotoUrl={usuario.fotoUrl} nome={usuario.nome} />
+      <CabecalhoFeed />
       {editando ? (
         <FormularioPerfil
           usuario={usuario}

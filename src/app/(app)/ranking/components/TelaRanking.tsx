@@ -7,13 +7,15 @@ import { CabecalhoRanking } from "./CabecalhoRanking";
 import styles from "../ranking.module.css";
 
 export const TelaRanking = () => {
-  const { pinos, carregando, erro, recarregar } = usePinosRanking();
+  const { pinos, admin, carregando, erro, recarregar } = usePinosRanking();
 
   return (
     <div className={styles.tela}>
       <CabecalhoRanking titulo="Ranking" hrefVoltar="/perfil" />
       <p className={styles.intro}>
-        Sua velocidade em cada ponto ao lado de quem você segue.
+        {admin
+          ? "Todos os pontos cadastrados, inclusive os que você ainda não passou."
+          : "Sua velocidade em cada ponto ao lado de quem você segue."}
       </p>
       {carregando ? <p className={styles.aviso}>Carregando…</p> : null}
       {erro ? (
@@ -25,7 +27,9 @@ export const TelaRanking = () => {
         </div>
       ) : null}
       {!carregando && !erro && pinos.length === 0 ? (
-        <p className={styles.aviso}>Você ainda não passou por nenhum ponto.</p>
+        <p className={styles.aviso}>
+          {admin ? "Nenhum ponto cadastrado." : "Você ainda não passou por nenhum ponto."}
+        </p>
       ) : null}
       {pinos.length > 0 ? (
         <ul className={styles.lista}>

@@ -23,7 +23,7 @@ import { useMeusLocaisGaragem } from "../hooks/useMeusLocaisGaragem";
 import { useFiltroAvaliacaoGaragem } from "../hooks/useFiltroAvaliacaoGaragem";
 import { AbasMeusRoles } from "./AbasMeusRoles";
 import { AbasTipoGaragem } from "./AbasTipoGaragem";
-import { CabecalhoMeusRoles } from "./CabecalhoMeusRoles";
+import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { EstadoCarregandoMeusRoles } from "./EstadoCarregandoMeusRoles";
 import { EstadoErroMeusRoles } from "./EstadoErroMeusRoles";
 import { EstadoVazioGaragem } from "./EstadoVazioGaragem";
@@ -171,7 +171,7 @@ export const TelaMeusRoles = () => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoMeusRoles />
+      <CabecalhoFeed />
       <div className={styles.corpo}>
         <IntroGaragem
           mostrarTune={abaTipo === "roles"}
