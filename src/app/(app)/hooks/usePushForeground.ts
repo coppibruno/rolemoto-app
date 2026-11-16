@@ -5,7 +5,7 @@ import { Capacitor } from "@capacitor/core";
 import { useAuth } from "@/hooks/useAuth";
 import { ouvirForeground } from "@/lib/fcm";
 import { ouvirForegroundNativo } from "@/lib/fcm-nativo";
-import { avisarPushRecebido } from "@/lib/eventos-mensagens";
+import { avisarPushRecebido, ouvirPushClicadoDoSw } from "@/lib/eventos-mensagens";
 
 const TOAST_MS = 2500;
 
@@ -16,6 +16,7 @@ export const usePushForeground = () => {
   useEffect(() => {
     let ativo = true;
     let unsubscribe: (() => void) | undefined;
+    const pararSw = ouvirPushClicadoDoSw();
 
     const mostrar = (title: string) => {
       if (ativo) {
@@ -30,6 +31,7 @@ export const usePushForeground = () => {
       return () => {
         ativo = false;
         unsubscribe?.();
+        pararSw();
       };
     }
 
@@ -44,6 +46,7 @@ export const usePushForeground = () => {
     return () => {
       ativo = false;
       unsubscribe?.();
+      pararSw();
     };
   }, [recarregarPerfil]);
 

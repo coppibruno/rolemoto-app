@@ -2,6 +2,8 @@ export const TITULO_PAGINA = "Detalhes do evento";
 export const TOAST_LINK_COPIADO = "Link copiado";
 export const ERRO_SHARE = "Não foi possível compartilhar";
 export const ERRO_CARREGAR = "Não foi possível carregar o evento";
+export const ERRO_EVENTO_INDISPONIVEL =
+  "Este evento não está mais disponível. Pode ter sido uma data antiga da série.";
 export const VAZIO_TITULO = "Evento indisponível";
 export const VAZIO_CORPO = "Evento não encontrado";
 export const CTA_VOLTAR_FEED = "Voltar ao Feed";

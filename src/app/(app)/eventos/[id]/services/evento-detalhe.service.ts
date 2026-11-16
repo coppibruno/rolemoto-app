@@ -2,7 +2,8 @@ import { api } from "@/lib/api";
 import type { EventoDetalhe } from "@/types/evento";
 
 export const eventoDetalheService = {
-  buscar: (id: string) => api<EventoDetalhe>(`/eventos/${id}`),
+  buscar: (id: string) =>
+    api<EventoDetalhe>(`/eventos/${encodeURIComponent(id)}`),
 
   excluir: (id: string) =>
     api<void>(`/eventos/${encodeURIComponent(id)}`, { method: "DELETE" }),
@@ -16,7 +17,7 @@ export const eventoDetalheService = {
       dataHoraEncerramento: string;
     },
   ) =>
-    api<EventoDetalhe>(`/eventos/${id}`, {
+    api<EventoDetalhe>(`/eventos/${encodeURIComponent(id)}`, {
       method: "PATCH",
       body: JSON.stringify(dados),
     }),

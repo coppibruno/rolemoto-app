@@ -37,11 +37,13 @@
   width: var(--touch-min);
   height: var(--touch-min);
   margin-left: -8px;
+  padding: 0;
   border: none;
   border-radius: 9999px;
   background: transparent;
   color: var(--on-surface);
   text-decoration: none;
+  cursor: pointer;
   flex-shrink: 0;
 }
 

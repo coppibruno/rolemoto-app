@@ -29,7 +29,13 @@ export const useParticipantes = (
       setItens([]);
       setTotal(0);
       setErro(
-        e instanceof ApiError ? e.message : "Não foi possível carregar a lista",
+        e instanceof ApiError && e.status === 404
+          ? tipo === "evento"
+            ? "Este evento não está mais disponível."
+            : "Este rolê não está mais disponível."
+          : e instanceof ApiError
+            ? e.message
+            : "Não foi possível carregar a lista",
       );
     } finally {
       setCarregando(false);

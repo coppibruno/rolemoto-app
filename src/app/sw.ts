@@ -108,15 +108,38 @@ const mostrarNotificacao = (
   });
 };
 
+const MSG_PUSH_CLICADO = "rolemoto:push-clicado";
+
+const avisarCliente = (client: Client) => {
+  client.postMessage({ type: MSG_PUSH_CLICADO });
+};
+
+const caminhoDoClient = (client: Client): string => {
+  try {
+    const parsed = new URL(client.url);
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return "";
+  }
+};
+
 const abrirUrl = async (caminho: string) => {
   const url = new URL(caminho, self.location.origin).href;
+  const alvo = `${new URL(url).pathname}${new URL(url).search}${new URL(url).hash}`;
   const clientes = await clientesJanela();
   for (const client of clientes) {
     if ("focus" in client) {
       await client.focus();
+      const mesmaRota = caminhoDoClient(client) === alvo;
+      if (mesmaRota) {
+        // navigate na mesma URL não remonta a página — avisa o refresh.
+        avisarCliente(client);
+        return;
+      }
       if ("navigate" in client) {
         await client.navigate(url);
       }
+      avisarCliente(client);
       return;
     }
   }

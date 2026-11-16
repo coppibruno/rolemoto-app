@@ -41,20 +41,28 @@ export const useConversa = (conversaId: string) => {
     void carregar();
   }, [carregar]);
 
-  // Sem leitura ao vivo: o push com o app aberto traz as mensagens novas.
-  useEffect(
-    () =>
-      ouvirPushRecebido(() => {
-        void mensagensService
-          .listarMensagens(conversaId)
-          .then((pagina) => {
-            setMensagens((atuais) => juntarRecentes(atuais, [...pagina.itens].reverse()));
-            avisarNaoLidasMudaram();
-          })
-          .catch(() => undefined);
-      }),
-    [conversaId],
-  );
+  // Sem leitura ao vivo: push, clique na notificação e foco no app trazem mensagens novas.
+  useEffect(() => {
+    const puxarRecentes = () => {
+      if (document.visibilityState !== "visible") return;
+      void mensagensService
+        .listarMensagens(conversaId)
+        .then((pagina) => {
+          setMensagens((atuais) => juntarRecentes(atuais, [...pagina.itens].reverse()));
+          avisarNaoLidasMudaram();
+        })
+        .catch(() => undefined);
+    };
+    const aoVoltar = () => puxarRecentes();
+    document.addEventListener("visibilitychange", aoVoltar);
+    window.addEventListener("focus", aoVoltar);
+    const pararPush = ouvirPushRecebido(puxarRecentes);
+    return () => {
+      document.removeEventListener("visibilitychange", aoVoltar);
+      window.removeEventListener("focus", aoVoltar);
+      pararPush();
+    };
+  }, [conversaId]);
 
   const carregarAntigas = async () => {
     if (!cursor || carregandoAntigas) return;

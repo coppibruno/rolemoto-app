@@ -4,6 +4,7 @@ import { PushNotifications } from "@capacitor/push-notifications";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
 import type { PlataformaDispositivo } from "@/types/dispositivo";
 import { navegarNoWebView } from "./deep-link-nativo";
+import { avisarPushRecebido } from "./eventos-mensagens";
 import type { PayloadForeground, ResultadoPermissao } from "./fcm";
 
 const CANAL_ID = "rolemoto_push";
@@ -108,6 +109,7 @@ const instalarListeners = async () => {
     "pushNotificationActionPerformed",
     (acao) => {
       const data = (acao.notification.data ?? {}) as Record<string, unknown>;
+      avisarPushRecebido();
       navegarNoWebView(data.url);
     },
   );

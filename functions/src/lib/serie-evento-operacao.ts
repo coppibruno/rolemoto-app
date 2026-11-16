@@ -7,6 +7,7 @@ import {
 import {
   calcularHorizonte,
   diaSemanaDoYmd,
+  escolherUmaPorSerie,
   erroYmdExcecao,
   idOcorrenciaSerie,
   instantesOcorrencia,
@@ -622,6 +623,31 @@ export const gerarHorizonteAtivas = async (): Promise<{series: number; criadas: 
   }
   log.info("SerieEvento", "Horizonte gerado", {series: ativas.length, criadas});
   return {series: ativas.length, criadas};
+};
+
+/**
+ * Ocorrência apagada (série editada) ou id antigo: tenta a data viva da série.
+ * Id estável: `{serieId}_{yyyy-mm-dd}`.
+ */
+export const buscarEventoPorIdOuSerie = async (
+  id: string,
+): Promise<Evento | null> => {
+  const direto = await eventoRepository.buscarPorId(id);
+  if (direto) {
+    return direto;
+  }
+  const match = /^(.+)_(\d{4}-\d{2}-\d{2})$/.exec(id.trim());
+  if (!match) {
+    return null;
+  }
+  const serieId = match[1];
+  const serie = await serieEventoRepository.buscarPorId(serieId);
+  if (!serie || serie.status !== "ativa") {
+    return null;
+  }
+  const ocorrencias = await eventoRepository.listarPorSerie(serieId);
+  const [eleita] = escolherUmaPorSerie(ocorrencias, new Date());
+  return eleita ?? null;
 };
 
 export const anexarRecorrencia = async <T extends {serieId: string | null}>(

@@ -53,12 +53,14 @@ export const FaixaConhecer = () => {
                 <span className={styles.motivo}>{pessoa.motivo.texto}</span>
               </span>
             </Link>
-            <BotaoSeguir
-              uid={pessoa.uid}
-              apelido={pessoa.apelido}
-              seguido={false}
-              onSeguiu={() => sugestoes.remover(pessoa.uid)}
-            />
+            <div className={styles.acao}>
+              <BotaoSeguir
+                uid={pessoa.uid}
+                apelido={pessoa.apelido}
+                seguido={false}
+                onSeguiu={() => sugestoes.remover(pessoa.uid)}
+              />
+            </div>
           </div>
         ))}
       </div>

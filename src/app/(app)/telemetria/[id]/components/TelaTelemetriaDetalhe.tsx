@@ -48,7 +48,8 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
     <div className={styles.tela}>
       <CabecalhoTelemetria
         titulo="Telemetria"
-        hrefVoltar="/perfil"
+        hrefVoltar="/"
+        voltarNoHistorico
         onCompartilhar={eDono ? share.abrir : undefined}
         compartilhando={share.ocupado}
       />

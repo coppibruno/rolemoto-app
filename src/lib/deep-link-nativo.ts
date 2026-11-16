@@ -1,5 +1,6 @@
 import { App } from "@capacitor/app";
 import { Capacitor } from "@capacitor/core";
+import { avisarPushRecebido } from "./eventos-mensagens";
 
 // getLaunchUrl devolve a mesma URL a cada reload do WebView; sem isso vira loop.
 const CHAVE_LAUNCH_TRATADA = "rolemoto.deepLink.launchTratada";
@@ -37,6 +38,8 @@ export const navegarNoWebView = (url: unknown) => {
   }
   const caminho = caminhoRelativo(url);
   if (caminho === caminhoAtual()) {
+    // Mesma rota (ex.: conversa já aberta): não remonta a tela — avisa o refresh.
+    avisarPushRecebido();
     return;
   }
   window.location.assign(caminho);

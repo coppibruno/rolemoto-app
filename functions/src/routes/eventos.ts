@@ -6,7 +6,12 @@ import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apagarEvento} from "../lib/apagar-catalogo";
 import {filtrarEventosFeed} from "../lib/feed-filtros";
 import {escolherUmaPorSerie} from "../lib/serie-evento";
-import {ajustarOcorrencia, anexarRecorrencia, bodyTemAjuste} from "../lib/serie-evento-operacao";
+import {
+  ajustarOcorrencia,
+  anexarRecorrencia,
+  bodyTemAjuste,
+  buscarEventoPorIdOuSerie,
+} from "../lib/serie-evento-operacao";
 import {validarPublicacaoEvento} from "../lib/validar-evento";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {erroDe, log} from "../lib/log";
@@ -224,7 +229,7 @@ eventosRouter.get("/:id/participantes", async (req: Request, res: Response) => {
       return;
     }
 
-    const evento = await eventoRepository.buscarPorId(param(req, "id"));
+    const evento = await buscarEventoPorIdOuSerie(param(req, "id"));
     if (!evento) {
       res.status(404).json({erro: "Evento não encontrado"});
       return;
@@ -245,7 +250,7 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const evento = await eventoRepository.buscarPorId(param(req, "id"));
+    const evento = await buscarEventoPorIdOuSerie(param(req, "id"));
     if (!evento) {
       res.status(404).json({erro: "Evento não encontrado"});
       return;

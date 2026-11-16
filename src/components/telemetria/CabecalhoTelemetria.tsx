@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
 import { useAuth } from "@/hooks/useAuth";
 import styles from "./telemetria.module.css";
@@ -8,6 +9,8 @@ import styles from "./telemetria.module.css";
 type Props = {
   titulo: string;
   hrefVoltar?: string;
+  /** Se true, usa o histórico (fallback em hrefVoltar) — ex.: detalhe aberto pelo feed. */
+  voltarNoHistorico?: boolean;
   onCompartilhar?: () => void;
   compartilhando?: boolean;
 };
@@ -15,24 +18,45 @@ type Props = {
 export const CabecalhoTelemetria = ({
   titulo,
   hrefVoltar = "/",
+  voltarNoHistorico = false,
   onCompartilhar,
   compartilhando = false,
 }: Props) => {
+  const router = useRouter();
   const { usuario } = useAuth();
   const fotoUrl = usuario?.fotoUrl ?? "";
   const nome = usuario?.nome || usuario?.apelido || "";
+
+  const voltar = () => {
+    if (voltarNoHistorico && window.history.length > 1) {
+      router.back();
+      return;
+    }
+    router.push(hrefVoltar);
+  };
 
   return (
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
         <div className={styles.cabecalhoEsquerda}>
-          <Link
-            href={hrefVoltar}
-            className={styles.botaoVoltar}
-            aria-label="Voltar"
-          >
-            <span className="material-symbols-outlined">arrow_back_ios_new</span>
-          </Link>
+          {voltarNoHistorico ? (
+            <button
+              type="button"
+              className={styles.botaoVoltar}
+              aria-label="Voltar"
+              onClick={voltar}
+            >
+              <span className="material-symbols-outlined">arrow_back_ios_new</span>
+            </button>
+          ) : (
+            <Link
+              href={hrefVoltar}
+              className={styles.botaoVoltar}
+              aria-label="Voltar"
+            >
+              <span className="material-symbols-outlined">arrow_back_ios_new</span>
+            </Link>
+          )}
           <LogoRolemoto width={84} height={28} className={styles.logo} priority />
           <h1 className={styles.tituloPagina}>{titulo}</h1>
         </div>
