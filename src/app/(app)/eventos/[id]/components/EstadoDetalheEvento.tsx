@@ -22,7 +22,7 @@ export const EstadoVazioEvento = ({ mensagem }: Props) => (
       </span>
       <h1 className={styles.estadoTitulo}>{VAZIO_TITULO}</h1>
       <p className={styles.estadoTexto}>{mensagem ?? VAZIO_CORPO}</p>
-      <Link href="/" className={styles.linkFeed}>
+      <Link href="/explorar" className={styles.linkFeed}>
         {CTA_VOLTAR_FEED}
       </Link>
     </div>

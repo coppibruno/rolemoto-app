@@ -58,7 +58,7 @@ export const EstadoVazio = ({ status, resumo }: Props) => {
       </div>
       <h2 className={styles.vazioTitulo}>{EMPTY_ORGANIZADO_TITULO}</h2>
       <p className={styles.vazioTexto}>{EMPTY_ORGANIZADO_TEXTO}</p>
-      <Link href="/" className={styles.vazioCta}>
+      <Link href="/explorar" className={styles.vazioCta}>
         Voltar para os Rolês
       </Link>
     </div>

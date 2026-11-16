@@ -10,7 +10,7 @@ type Props = {
 export const BotaoCancelar = ({ desabilitado }: Props) => {
   return (
     <Link
-      href="/"
+      href="/explorar"
       className={`${styles.botaoCancelar} ${
         desabilitado ? styles.botaoCancelarDesabilitado : ""
       }`}

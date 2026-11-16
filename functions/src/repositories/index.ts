@@ -103,6 +103,8 @@ import type {ConversaRepository} from "./interfaces/conversa.repository";
 import {FirestoreConversaRepository} from "./firestore/firestore-conversa.repository";
 import type {AfiliadoRepository} from "./interfaces/afiliado.repository";
 import {FirestoreAfiliadoRepository} from "./firestore/firestore-afiliado.repository";
+import type {AtividadeRepository} from "./interfaces/atividade.repository";
+import {FirestoreAtividadeRepository} from "./firestore/firestore-atividade.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -189,3 +191,6 @@ export const conversaRepository: ConversaRepository =
 
 export const afiliadoRepository: AfiliadoRepository =
   new FirestoreAfiliadoRepository();
+
+export const atividadeRepository: AtividadeRepository =
+  new FirestoreAtividadeRepository();

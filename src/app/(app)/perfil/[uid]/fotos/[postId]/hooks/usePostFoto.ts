@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { ApiError } from "@/lib/api";
 import type { DetalhePost } from "@/types/post-foto";
+import { idAtividadeFoto } from "@/types/atividade";
 import { recarregarTemStories } from "@/app/(app)/stories/hooks/useTemStories";
 import { postsService } from "@/app/(app)/perfil/services/posts.service";
+import { inicioService } from "@/app/(app)/inicio/services/inicio.service";
 
 const CONFIRMA_APAGAR =
   "Apagar esta foto? Os comentários saem junto. O story de quem encaminhou continua até expirar.";
@@ -26,7 +28,12 @@ export const usePostFoto = (postId: string) => {
     setErro(false);
     setNaoEncontrado(false);
     try {
-      setPost(await postsService.detalhe(postId));
+      const detalhe = await postsService.detalhe(postId);
+      setPost({
+        ...detalhe,
+        curtidoPorMim: detalhe.curtidoPorMim === true,
+        totalCurtidas: detalhe.totalCurtidas ?? 0,
+      });
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) setNaoEncontrado(true);
       else setErro(true);
@@ -73,6 +80,36 @@ export const usePostFoto = (postId: string) => {
     );
   }, []);
 
+  const alternarCurtida = async () => {
+    if (!post || ocupado) return;
+    const anterior = {
+      curtidoPorMim: post.curtidoPorMim,
+      totalCurtidas: post.totalCurtidas,
+    };
+    const otimista = post.curtidoPorMim
+      ? { curtidoPorMim: false, totalCurtidas: Math.max(0, post.totalCurtidas - 1) }
+      : { curtidoPorMim: true, totalCurtidas: post.totalCurtidas + 1 };
+    setPost({ ...post, ...otimista });
+    setOcupado(true);
+    setErroAcao(null);
+    try {
+      const id = idAtividadeFoto(post.id);
+      const resp = post.curtidoPorMim
+        ? await inicioService.descurtir(id)
+        : await inicioService.curtir(id);
+      setPost((atual) =>
+        atual
+          ? { ...atual, curtidoPorMim: resp.curtido, totalCurtidas: resp.totalCurtidas }
+          : atual,
+      );
+    } catch (e) {
+      setPost((atual) => (atual ? { ...atual, ...anterior } : atual));
+      setErroAcao(e instanceof ApiError ? e.message : "Não foi possível atualizar a curtida.");
+    } finally {
+      setOcupado(false);
+    }
+  };
+
   return {
     post,
     carregando,
@@ -84,6 +121,7 @@ export const usePostFoto = (postId: string) => {
     erroAcao,
     encaminhar,
     apagar,
+    alternarCurtida,
     mudarTotal,
   };
 };

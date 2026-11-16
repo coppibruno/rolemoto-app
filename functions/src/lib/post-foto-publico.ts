@@ -1,8 +1,10 @@
 import {apelidoExibicao} from "./apelido";
+import {idAtividade} from "./atividade";
 import {adminStorage} from "./firebase-admin";
 import {erroDe, log} from "./log";
 import {encaminhadoPor} from "./story-local";
 import {
+  atividadeRepository,
   eventoRepository,
   localRepository,
   postFotoRepository,
@@ -38,6 +40,24 @@ export const paraItemGrade = (post: PostFoto): ItemGradePost => ({
   createdAt: post.createdAt,
 });
 
+/** Mesma curtida do card no Início (`foto_{postId}`). Falha lê como sem curtida. */
+const curtidaDoPost = async (
+  postId: string,
+  tokenUid: string,
+): Promise<{curtidoPorMim: boolean; totalCurtidas: number}> => {
+  try {
+    const id = idAtividade("foto", [postId]);
+    const [atividade, curtidas] = await Promise.all([
+      atividadeRepository.buscarPorId(id),
+      atividadeRepository.curtidasDe(tokenUid, [id]),
+    ]);
+    return {curtidoPorMim: curtidas.has(id), totalCurtidas: atividade?.totalCurtidas ?? 0};
+  } catch (error) {
+    log.warn("PostFoto", "Curtida do post indisponível", {postId, ...erroDe(error)});
+    return {curtidoPorMim: false, totalCurtidas: 0};
+  }
+};
+
 export const paraDetalhe = async (
   post: PostFoto,
   tokenUid: string,
@@ -46,10 +66,11 @@ export const paraDetalhe = async (
   const marca = post.marcaTipo && post.marcaId ?
     {tipo: post.marcaTipo, id: post.marcaId} :
     null;
-  const [usuario, nome, encaminhadoPorMim] = await Promise.all([
+  const [usuario, nome, encaminhadoPorMim, curtida] = await Promise.all([
     usuarioRepository.buscarPorId(post.usuarioId),
     marca ? nomeDaMarca(marca) : Promise.resolve(null),
     encaminhado ?? encaminhadoPor(tokenUid, post.id),
+    curtidaDoPost(post.id, tokenUid),
   ]);
   return {
     id: post.id,
@@ -59,6 +80,8 @@ export const paraDetalhe = async (
     totalComentarios: post.totalComentarios,
     createdAt: post.createdAt,
     encaminhadoPorMim,
+    curtidoPorMim: curtida.curtidoPorMim,
+    totalCurtidas: curtida.totalCurtidas,
     autor: autorDe(post.usuarioId, usuario),
   };
 };

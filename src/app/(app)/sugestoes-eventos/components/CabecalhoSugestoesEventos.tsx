@@ -7,7 +7,7 @@ export const CabecalhoSugestoesEventos = () => {
   return (
     <header className={styles.cabecalho}>
       <div className={styles.cabecalhoInner}>
-        <Link href="/" className={styles.botaoVoltar} aria-label="Voltar para o feed">
+        <Link href="/explorar" className={styles.botaoVoltar} aria-label="Voltar para explorar">
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
         <h1 className={styles.tituloPagina}>Sugestões</h1>

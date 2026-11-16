@@ -185,7 +185,7 @@ export const useFormularioCriarEvento = (serieInicial?: SerieEvento) => {
       });
       setSucesso(true);
       redirectRef.current = window.setTimeout(() => {
-        router.push("/");
+        router.push("/explorar");
       }, REDIRECT_SUCESSO_MS);
     } catch (erro) {
       console.error(erro);

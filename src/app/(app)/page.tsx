@@ -1,11 +1,9 @@
-import { TelaFeed } from "./feed/components/TelaFeed";
+import { TelaInicio } from "./inicio/components/TelaInicio";
 
-const RolesPage = () => {
-  return (
-    <main>
-      <TelaFeed />
-    </main>
-  );
-};
+const InicioPage = () => (
+  <main>
+    <TelaInicio />
+  </main>
+);
 
-export default RolesPage;
+export default InicioPage;

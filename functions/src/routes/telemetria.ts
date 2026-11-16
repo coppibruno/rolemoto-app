@@ -6,6 +6,7 @@ import {
   rateLimitPontoTelemetria,
 } from "../middleware/rate-limit";
 import {param} from "../lib/params";
+import {registrarAtividade, removerAtividade} from "../lib/atividade-gancho";
 import {
   concederConquistas,
   gravarMedalhas,
@@ -63,6 +64,17 @@ const tokenDoHeader = (req: Request): string | null => {
   }
   return null;
 };
+
+const registrarAtividadeTelemetria = (uid: string, id: string, createdAt: string) =>
+  registrarAtividade({
+    tipo: "telemetria",
+    partes: [id],
+    autorId: uid,
+    alvoTipo: "telemetria",
+    alvoId: id,
+    refId: id,
+    createdAt,
+  });
 
 /** Ingestão nativa Capgo — sem Bearer Firebase (JWT expira com tela off). */
 telemetriaRouter.post(
@@ -185,6 +197,9 @@ telemetriaRouter.post("/", async (req: Request, res: Response) => {
       parseAmostrasConquista((req.body as Record<string, unknown>)?.amostras),
     );
     await gravarMedalhas(criado.id, medalhas);
+    if (criado.publica) {
+      await registrarAtividadeTelemetria(uid, criado.id, criado.createdAt);
+    }
     res.status(201).json({...criado, medalhas: undefined, conquistas});
   } catch (error) {
     responderErro(res, error);
@@ -259,6 +274,11 @@ telemetriaRouter.patch("/:id", async (req: Request, res: Response) => {
       res.status(404).json({erro: "Telemetria não encontrada"});
       return;
     }
+    if (validado.dados.publica === true) {
+      await registrarAtividadeTelemetria(uid, id, atualizado.createdAt);
+    } else if (validado.dados.publica === false) {
+      await removerAtividade("telemetria", [id]);
+    }
     res.json({
       ...atualizado,
       medalhas: medalhasParaLeitor(
@@ -286,6 +306,7 @@ telemetriaRouter.delete("/:id", async (req: Request, res: Response) => {
     }
 
     await roleTelemetriaRepository.excluir(id);
+    await removerAtividade("telemetria", [id]);
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

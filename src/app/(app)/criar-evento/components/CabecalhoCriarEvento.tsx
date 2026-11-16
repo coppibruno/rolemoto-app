@@ -16,7 +16,7 @@ export const CabecalhoCriarEvento = ({ fotoUrl, nome }: Props) => {
       <div className={styles.cabecalhoInner}>
         <div className={styles.cabecalhoEsquerda}>
           <Link
-            href="/"
+            href="/explorar"
             className={styles.botaoVoltar}
             aria-label="Voltar para os rolês"
           >

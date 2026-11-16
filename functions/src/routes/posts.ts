@@ -3,6 +3,7 @@ import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
+import {registrarAtividade, removerAtividade} from "../lib/atividade-gancho";
 import {erroDe, log} from "../lib/log";
 import {notificarComentarioFoto} from "../lib/notificacoes";
 import {
@@ -129,6 +130,15 @@ postsRouter.post("/", async (req: Request, res: Response) => {
       return;
     }
 
+    await registrarAtividade({
+      tipo: "foto",
+      partes: [post.id],
+      autorId: uid,
+      alvoTipo: "post",
+      alvoId: post.id,
+      refId: post.id,
+      createdAt: post.createdAt,
+    });
     const story = encaminhar === true ?
       await encaminharSemDerrubar(uid, post) :
       {story: null, erroStory: null};
@@ -166,6 +176,7 @@ postsRouter.delete("/:id", async (req: Request, res: Response) => {
       return;
     }
     await postFotoRepository.remover(post.id);
+    await removerAtividade("foto", [post.id]);
     await apagarArquivoPost(post.storagePath);
     res.status(204).send();
   } catch (error) {

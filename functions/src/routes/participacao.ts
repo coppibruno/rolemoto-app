@@ -1,6 +1,7 @@
 import {Router, Request, Response} from "express";
 import {responderErro} from "../middleware/errors";
 import {erroDe, log} from "../lib/log";
+import {registrarAtividade, removerAtividade} from "../lib/atividade-gancho";
 import {param} from "../lib/params";
 import {
   roleRepository,
@@ -112,6 +113,15 @@ participacaoRouter.post(
         criadorId: role.criadorId,
       });
       if (aberto) {
+        await registrarAtividade({
+          tipo: "entrada_role",
+          partes: [uid, roleId],
+          autorId: uid,
+          alvoTipo: "role",
+          alvoId: roleId,
+          refId: criado.id,
+          createdAt: criado.aceitoEm ?? criado.createdAt,
+        });
         await agendarLembrete(
           {roleId: role.id, userId: uid, titulo: role.titulo},
           role.dataHoraSaida,
@@ -191,6 +201,7 @@ participacaoRouter.delete(
       const roleId = param(req, "id");
       const role = await roleRepository.buscarPorId(roleId);
       await usuarioRoleRepository.remover(idPedido(uid, roleId));
+      await removerAtividade("entrada_role", [uid, roleId]);
       await cancelarLembrete(roleId, uid, role?.dataHoraSaida ?? "");
       log.info("Participacao", "Solicitação removida", {roleId, usuarioId: uid});
       res.status(204).send();

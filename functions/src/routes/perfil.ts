@@ -14,6 +14,7 @@ import {rolesFixadosDe} from "../lib/roles-fixados";
 import {codigoAfiliado} from "../lib/afiliado";
 import {
   afiliadoRepository,
+  atividadeRepository,
   conquistaRepository,
   conversaRepository,
   conviteEventoRepository,
@@ -393,6 +394,12 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await apagarPostsDoUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover fotos do perfil", {uid, ...erroDe(error)});
+    }
+
+    try {
+      await atividadeRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover atividades do Início", {uid, ...erroDe(error)});
     }
 
     try {

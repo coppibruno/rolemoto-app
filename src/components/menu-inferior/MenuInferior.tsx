@@ -5,21 +5,19 @@ import { ItemMenu } from "./ItemMenu";
 import { BotaoIncluir } from "./BotaoIncluir";
 import { ITENS_MENU } from "./itens-menu";
 import { useItemMenuAtivo } from "./hooks/useItemMenuAtivo";
-import { useMostrarFila } from "./hooks/useMostrarFila";
 import styles from "./menu-inferior.module.css";
 
 export const MenuInferior = () => {
   const { estaAtivo } = useItemMenuAtivo();
   const { usuario } = useAuth();
-  const mostrarFila = useMostrarFila();
-  const [roles, meusRoles, incluir, aprovacoes, perfil] = ITENS_MENU;
+  const [inicio, explorar, incluir, meusRoles, perfil] = ITENS_MENU;
 
   return (
     <nav className={styles.nav} aria-label="Navegação principal">
       <div className={styles.inner}>
         <div className={styles.grupo}>
-          <ItemMenu item={roles} ativo={estaAtivo(roles.href)} />
-          <ItemMenu item={meusRoles} ativo={estaAtivo(meusRoles.href)} />
+          <ItemMenu item={inicio} ativo={estaAtivo(inicio.href)} />
+          <ItemMenu item={explorar} ativo={estaAtivo(explorar.href)} />
         </div>
         <BotaoIncluir
           item={incluir}
@@ -27,9 +25,7 @@ export const MenuInferior = () => {
           admin={usuario?.admin === true}
         />
         <div className={styles.grupo}>
-          {mostrarFila ? (
-            <ItemMenu item={aprovacoes} ativo={estaAtivo(aprovacoes.href)} />
-          ) : null}
+          <ItemMenu item={meusRoles} ativo={estaAtivo(meusRoles.href)} />
           <ItemMenu item={perfil} ativo={estaAtivo(perfil.href)} />
         </div>
       </div>

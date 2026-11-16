@@ -4,6 +4,7 @@ import {
   validarBodyAvaliacao,
 } from "../lib/avaliacao-experiencia";
 import {param} from "../lib/params";
+import {registrarAtividade} from "../lib/atividade-gancho";
 import {responderErro} from "../middleware/errors";
 import {
   localRepository,
@@ -126,6 +127,15 @@ avaliacaoLocalRouter.post(
         return;
       }
 
+      await registrarAtividade({
+        tipo: "avaliacao_local",
+        partes: [criado.id],
+        autorId: uid,
+        alvoTipo: "local",
+        alvoId: localId,
+        refId: criado.id,
+        createdAt: criado.createdAt,
+      });
       const usuario = await usuarioRepository.buscarPorId(uid);
       res.status(201).json(hidratarAvaliacaoLocal(criado, usuario ?? undefined));
     } catch (error) {

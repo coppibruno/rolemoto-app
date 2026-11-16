@@ -87,6 +87,20 @@ export const useConversa = (conversaId: string) => {
     }
   };
 
+  const trocarCurtida = (mensagemId: string, curtida: boolean) =>
+    setMensagens((atuais) =>
+      atuais.map((m) => (m.id === mensagemId ? { ...m, curtida } : m)),
+    );
+
+  // Otimista: o coração aparece na hora e volta se a API recusar.
+  const alternarCurtida = (mensagem: Mensagem) => {
+    const curtida = !mensagem.curtida;
+    trocarCurtida(mensagem.id, curtida);
+    void mensagensService
+      .curtir(conversaId, mensagem.id, curtida)
+      .catch(() => trocarCurtida(mensagem.id, !curtida));
+  };
+
   return {
     outro,
     mensagens,
@@ -99,5 +113,6 @@ export const useConversa = (conversaId: string) => {
     recarregar: carregar,
     carregarAntigas,
     enviar,
+    alternarCurtida,
   };
 };

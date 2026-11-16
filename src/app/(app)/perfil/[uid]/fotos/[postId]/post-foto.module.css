@@ -186,6 +186,14 @@
   cursor: default;
 }
 
+.curtido {
+  color: var(--primary-container);
+}
+
+.curtido .material-symbols-outlined {
+  font-variation-settings: "FILL" 1;
+}
+
 .erro,
 .erroCampo {
   margin: 0;

@@ -1,4 +1,5 @@
 import {Router, Request, Response} from "express";
+import {cargaInicialFeed, registrarRolesRealizados} from "../lib/atividade-jobs";
 import {cronSecretConfere} from "../lib/cron-secret";
 import {gerarHorizonteAtivas} from "../lib/serie-evento-operacao";
 import {expirarStoriesLote} from "../lib/story-local";
@@ -61,4 +62,33 @@ internoRouter.post("/sugestoes-eventos/buscar", async (req: Request, res: Respon
     return;
   }
   await responderBuscaEventos(res);
+});
+
+/**
+ * Rolê realizado no Início. Cloud Scheduler de hora em hora:
+ * POST {FUNCTIONS_BASE_URL}/interno/feed/roles-realizados
+ */
+internoRouter.post("/feed/roles-realizados", async (req: Request, res: Response) => {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
+    res.status(404).json({erro: "Não encontrado"});
+    return;
+  }
+  try {
+    res.json(await registrarRolesRealizados());
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+/** Carga dos últimos 30 dias, uma vez no deploy do Início. Pode repetir. */
+internoRouter.post("/feed/carga", async (req: Request, res: Response) => {
+  if (!cronSecretConfere(req.get("x-cron-secret"))) {
+    res.status(404).json({erro: "Não encontrado"});
+    return;
+  }
+  try {
+    res.json(await cargaInicialFeed());
+  } catch (error) {
+    responderErro(res, error);
+  }
 });

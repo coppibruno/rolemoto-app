@@ -35,6 +35,7 @@ const msg = (id: string, minuto: number): Mensagem => ({
   texto: id,
   storyId: null,
   reacao: null,
+  curtida: false,
   createdAt: new Date(Date.UTC(2026, 10, 15, 12, minuto)).toISOString(),
   story: null,
 });

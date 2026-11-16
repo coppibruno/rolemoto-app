@@ -5,12 +5,38 @@ type Props = {
   meu: boolean;
   ocupado: boolean;
   erro: string | null;
+  curtido: boolean;
+  totalCurtidas: number;
+  onCurtir: () => void;
   onEncaminhar: () => void;
   onApagar: () => void;
 };
 
-export const AcoesPost = ({ encaminhado, meu, ocupado, erro, onEncaminhar, onApagar }: Props) => (
+export const AcoesPost = ({
+  encaminhado,
+  meu,
+  ocupado,
+  erro,
+  curtido,
+  totalCurtidas,
+  onCurtir,
+  onEncaminhar,
+  onApagar,
+}: Props) => (
   <div className={styles.acoes}>
+    <button
+      type="button"
+      className={`${styles.secundario} ${curtido ? styles.curtido : ""}`}
+      onClick={onCurtir}
+      disabled={ocupado}
+      aria-pressed={curtido}
+      aria-label={curtido ? "Descurtir" : "Curtir"}
+    >
+      <span className="material-symbols-outlined" aria-hidden>
+        favorite
+      </span>
+      {totalCurtidas > 0 ? totalCurtidas : "Curtir"}
+    </button>
     <button
       type="button"
       className={styles.secundario}

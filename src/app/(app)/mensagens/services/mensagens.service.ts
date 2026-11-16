@@ -4,6 +4,7 @@ import type {
   NaoLidas,
   PaginaConversas,
   PaginaMensagens,
+  RespostaCurtida,
   RespostaEnvioMensagem,
 } from "@/types/conversa";
 
@@ -23,4 +24,10 @@ export const mensagensService = {
 
   enviar: (dados: EnvioMensagem) =>
     api<RespostaEnvioMensagem>("/conversas", { method: "POST", body: JSON.stringify(dados) }),
+
+  curtir: (conversaId: string, mensagemId: string, curtida: boolean) =>
+    api<RespostaCurtida>(
+      `/conversas/${encodeURIComponent(conversaId)}/mensagens/${encodeURIComponent(mensagemId)}/curtida`,
+      { method: curtida ? "PUT" : "DELETE" },
+    ),
 };

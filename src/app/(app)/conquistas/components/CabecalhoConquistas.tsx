@@ -22,7 +22,7 @@ export const CabecalhoConquistas = ({ onVoltar }: Props) => (
           <span className="material-symbols-outlined">arrow_back</span>
         </button>
       ) : (
-        <Link href="/" className={styles.botaoVoltar} aria-label="Voltar para os rolês">
+        <Link href="/explorar" className={styles.botaoVoltar} aria-label="Voltar para explorar">
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
       )}

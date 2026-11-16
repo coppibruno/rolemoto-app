@@ -103,6 +103,7 @@ export const TelaConversa = ({ conversaId }: Props) => {
                 key={mensagem.id}
                 mensagem={mensagem}
                 minha={mensagem.autorId === meuUid}
+                onAlternarCurtida={conversa.alternarCurtida}
               />
             ))}
           </div>

@@ -11,6 +11,7 @@ import {validarPublicacaoEvento} from "../lib/validar-evento";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
+import {removerAtividadesDoAlvo} from "../lib/atividade-gancho";
 import {
   blocoParticipantesEvento,
   blocoVazio,
@@ -359,11 +360,13 @@ eventosRouter.patch("/:id", exigirAdmin, async (req: Request, res: Response) => 
 
 eventosRouter.delete("/:id", exigirAdmin, async (req: Request, res: Response) => {
   try {
-    const resultado = await apagarEvento(param(req, "id"));
+    const id = param(req, "id");
+    const resultado = await apagarEvento(id);
     if (resultado === "ausente") {
       res.status(404).json({erro: "Evento não encontrado"});
       return;
     }
+    await removerAtividadesDoAlvo("evento", id, ["inscricao_evento", "avaliacao_evento"]);
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

@@ -48,6 +48,7 @@ const toMensagem = (snap: DocumentSnapshot): Mensagem => {
     texto: String(data.texto ?? ""),
     storyId: typeof data.storyId === "string" && data.storyId ? data.storyId : null,
     reacao: reacaoDe(data.reacao),
+    curtida: data.curtida === true,
     createdAt: toIso(data.createdAt),
   };
 };
@@ -119,10 +120,23 @@ export class FirestoreConversaRepository implements ConversaRepository {
         texto: dados.texto,
         storyId: dados.storyId,
         reacao: dados.reacao,
+        curtida: false,
         createdAt: FieldValue.serverTimestamp(),
       });
     });
     return toMensagem(await mensagemRef.get());
+  }
+
+  async buscarMensagem(id: string): Promise<Mensagem | null> {
+    if (!id || id.includes("/")) {
+      return null;
+    }
+    const snap = await firestore.collection(MENSAGENS).doc(id).get();
+    return snap.exists ? toMensagem(snap) : null;
+  }
+
+  async marcarCurtida(mensagemId: string, curtida: boolean): Promise<void> {
+    await firestore.collection(MENSAGENS).doc(mensagemId).update({curtida});
   }
 
   async marcarLida(conversaId: string, uid: string): Promise<void> {

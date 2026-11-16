@@ -24,6 +24,7 @@ import {
   reagendarLembretesDoRole,
 } from "../lib/lembretes";
 import {log} from "../lib/log";
+import {registrarAtividade, removerAtividadesDoAlvo} from "../lib/atividade-gancho";
 import {notificarCancelamentoRole} from "../lib/notificacoes";
 import {
   filtrarRolesFeedDescoberta,
@@ -429,6 +430,15 @@ rolesRouter.post("/", async (req: Request, res: Response) => {
       criado.dataHoraSaida,
     );
     log.info("Role", "Rolê criado", {roleId: criado.id, criadorId: uid});
+    await registrarAtividade({
+      tipo: "role_criado",
+      partes: [criado.id],
+      autorId: uid,
+      alvoTipo: "role",
+      alvoId: criado.id,
+      refId: criado.id,
+      createdAt: criado.createdAt,
+    });
     res.status(201).json(criado);
   } catch (error) {
     responderErro(res, error);
@@ -625,6 +635,7 @@ rolesRouter.delete("/:id", async (req: Request, res: Response) => {
     const feedbacksRemovidos =
       await usuarioRoleFeedbackRepository.removerPorRole(id);
     await roleRepository.remover(id);
+    await removerAtividadesDoAlvo("role", id, ["role_criado", "role_realizado", "entrada_role"]);
     log.info("Role", "Rolê removido", {
       roleId: id,
       criadorId: existente.criadorId,

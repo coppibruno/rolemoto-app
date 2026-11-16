@@ -370,3 +370,20 @@ Qualquer autenticado cria via `POST /telemetria` (sem `roleId` de comboio). List
 
 ### Garagem (`GET /meus-roles`)
 Telemetria: `rolesFeitos`, `eventosParticipados`, `locaisFavoritos`. `contagensTipo` (roles/eventos/locais). Subrotas lazy: `GET /meus-roles/eventos`, `GET /meus-roles/locais`.
+
+### Coleção `atividades` (feed dos amigos — SPEC 063)
+```
+{
+ id: string, // determinístico: foto_{postId}, telemetria_{id}, role_criado_{roleId}, …
+ tipo: TipoAtividade,
+ autorId: string,
+ alvoTipo: "post" | "telemetria" | "role" | "evento" | "local",
+ alvoId: string,
+ refId: string,
+ totalCurtidas: number,
+ totalComentarios: number, // tipo foto: vale o do post
+ createdAt: timestamp // momento da ação na origem
+}
+```
+
+Curtidas em `atividadecurtida` (`{usuarioId}_{atividadeId}`). Comentários em `atividadecomentario` (tipo `foto` usa `userspostcomentario`). Feed: `GET /feed/amigos`, novidades `GET /feed/amigos/novidades`, item `GET /atividades/:id`, curtida e comentários sob `/atividades/:id/…`. Jobs: `POST /interno/feed/roles-realizados` e `/interno/feed/carga`.

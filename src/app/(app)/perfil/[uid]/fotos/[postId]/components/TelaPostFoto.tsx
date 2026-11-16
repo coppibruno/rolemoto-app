@@ -45,6 +45,9 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
               meu={detalhe.meu}
               ocupado={detalhe.ocupado}
               erro={detalhe.erroAcao}
+              curtido={post.curtidoPorMim}
+              totalCurtidas={post.totalCurtidas}
+              onCurtir={() => void detalhe.alternarCurtida()}
               onEncaminhar={() => void detalhe.encaminhar()}
               onApagar={() => void detalhe.apagar()}
             />

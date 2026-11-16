@@ -33,6 +33,8 @@ export type Mensagem = {
   texto: string;
   storyId: string | null;
   reacao: ReacaoStory | null;
+  /** Coração de quem recebeu (toque duplo). Docs antigos sem o campo = false. */
+  curtida: boolean;
   createdAt: string;
 };
 

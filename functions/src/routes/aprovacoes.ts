@@ -12,6 +12,7 @@ import {
 } from "../lib/aprovacoes";
 import {agendarLembrete} from "../lib/lembretes";
 import {log} from "../lib/log";
+import {registrarAtividade} from "../lib/atividade-gancho";
 import {notificarAceite} from "../lib/notificacoes";
 import {roleRepository, usuarioRoleRepository} from "../repositories";
 import type {DecisaoPiloto, StatusAprovacao} from "../types/aprovacao";
@@ -127,6 +128,15 @@ aprovacoesRouter.patch("/:id", async (req: Request, res: Response) => {
     }
 
     if (decisao === "aceitar") {
+      await registrarAtividade({
+        tipo: "entrada_role",
+        partes: [atualizado.usuarioId, atualizado.roleId],
+        autorId: atualizado.usuarioId,
+        alvoTipo: "role",
+        alvoId: atualizado.roleId,
+        refId: atualizado.id,
+        createdAt: atualizado.aceitoEm ?? new Date().toISOString(),
+      });
       if (atualizado.notificar !== false) {
         await notificarAceite(
           atualizado.usuarioId,

@@ -6,6 +6,7 @@ export const ERRO_PARA_SI = "não dá para mandar mensagem para você mesmo";
 export const ERRO_STORY_RESPOSTA = "Este story não está mais disponível";
 export const ERRO_REACAO = "reação inválida";
 export const ERRO_REACAO_SEM_STORY = "reação só vale para um story";
+export const ERRO_CURTIR_PROPRIA = "não dá para curtir a sua própria mensagem";
 
 export const reacaoDe = (valor: unknown): ReacaoStory | null =>
   typeof valor === "string" && Object.prototype.hasOwnProperty.call(REACOES_STORY, valor) ?

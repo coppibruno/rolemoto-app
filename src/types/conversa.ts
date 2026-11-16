@@ -20,6 +20,8 @@ export type Mensagem = {
   texto: string;
   storyId: string | null;
   reacao: ReacaoStory | null;
+  /** Coração de quem recebeu a mensagem. */
+  curtida: boolean;
   createdAt: string;
   story: StoryDaMensagem | null;
 };
@@ -55,6 +57,10 @@ export type EnvioMensagem = {
 export type RespostaEnvioMensagem = {
   conversaId: string;
   mensagem: Mensagem;
+};
+
+export type RespostaCurtida = {
+  curtida: boolean;
 };
 
 export type NaoLidas = {

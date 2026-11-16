@@ -1,5 +1,6 @@
 import {Router, Request, Response} from "express";
 import {param} from "../lib/params";
+import {registrarAtividade} from "../lib/atividade-gancho";
 import {registrarCheckin, validarBodyCheckin} from "../lib/checkin-local";
 import {responderErro} from "../middleware/errors";
 import {localRepository} from "../repositories";
@@ -39,6 +40,17 @@ checkinLocalRouter.post(
         return;
       }
 
+      if (resultado.resposta.seloNovo) {
+        await registrarAtividade({
+          tipo: "selo",
+          partes: [uid, local.id],
+          autorId: uid,
+          alvoTipo: "local",
+          alvoId: local.id,
+          refId: resultado.resposta.id,
+          createdAt: resultado.resposta.createdAt,
+        });
+      }
       res.status(201).json(resultado.resposta);
     } catch (error) {
       responderErro(res, error);

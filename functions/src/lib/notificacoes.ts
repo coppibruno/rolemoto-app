@@ -21,6 +21,7 @@ export type TipoPush =
   | "novo_seguidor"
   | "convite_evento"
   | "comentario_foto"
+  | "comentario_atividade"
   | "mensagem";
 
 type PayloadPush = {
@@ -430,6 +431,34 @@ export const notificarComentarioFoto = async (
     title: frase,
     body: frase,
     url: `/perfil/${autorFotoUid}/fotos/${postId}`,
+    roleId: "",
+    localId: "",
+    eventoId: "",
+  });
+};
+
+const ROTULO_COMENTARIO_ATIVIDADE: Record<string, string> = {
+  telemetria: "no seu rolê gravado",
+  role_criado: "no seu rolê",
+  role_realizado: "no seu rolê",
+  avaliacao_local: "na sua avaliação",
+  avaliacao_evento: "na sua avaliação",
+};
+
+/** Comentário em item do Início que não é foto. Toque abre `/atividades/{id}`. */
+export const notificarComentarioAtividade = async (
+  autorAtividadeUid: string,
+  atividadeId: string,
+  tipo: string,
+  nome: string,
+  texto: string,
+): Promise<ResultadoPush> => {
+  const rotulo = ROTULO_COMENTARIO_ATIVIDADE[tipo] ?? "no seu post";
+  return enviar(autorAtividadeUid, {
+    tipo: "comentario_atividade",
+    title: `${nome} comentou ${rotulo}`,
+    body: texto,
+    url: `/atividades/${atividadeId}`,
     roleId: "",
     localId: "",
     eventoId: "",

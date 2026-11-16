@@ -19,13 +19,16 @@ Motociclistas de todos os níveis que buscam companhia para passeios, desde traj
 - Login com **Google** e **e-mail/senha**
 - Após o primeiro login, primeiro acesso enxuto: **nome, moto e ritmo/pilotagem** (foto opcional). Apelido, tipo de moto, garupa e cidade são opcionais e completados depois no perfil; sem apelido, a exibição usa o primeiro nome
 
-### 2. Feed (Rolês / Eventos / Locais)
-- Home `/` com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)
+### 2. Início e Explorar
+- Home `/` é o **Início** (SPEC 063): feed cronológico do próprio piloto e de quem ele segue (`GET /feed/amigos`), com curtir/comentar; topo com avaliação pendente, banner do líder e stories
+- Dock: **Início** · **Explorar** · **+** · **Meus Rolês** · **Perfil** (a Fila sai do dock; acesso pelo banner ou Gerenciar do rolê)
+- `/explorar` mantém a listagem por raio com abas **Rolês**, **Eventos** e **Locais** (contadores via `GET /feed/contagens`)
 - Geolocalização + raio (pill 25 / 50 / 100 / sem limite) e busca unificada
 - Aba Rolês: filtros de **quando** e **ritmo**; cards de comboio (SPEC 003)
 - Aba Eventos: filtro **quando**; cards de destino fixo (SPEC 022 / 024); inscrição (SPEC 026); ★ média + Avaliar (SPEC 027)
 - Aba Locais: só raio + busca; pontos oficiais permanentes (SPEC 023 / 024); ★ média + Avaliar (SPEC 027); ♥ favorito (SPEC 028)
 - Solicitar participação em um rolê (sujeito à aprovação do criador)
+- Item único / push: `/atividades/[id]`
 
 ### 3. Criação de Rolês
 - Qualquer usuário pode criar rolês com:

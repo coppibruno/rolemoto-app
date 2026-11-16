@@ -5,6 +5,7 @@ import {
   validarBodyAvaliacao,
 } from "../lib/avaliacao-experiencia";
 import {param} from "../lib/params";
+import {registrarAtividade} from "../lib/atividade-gancho";
 import {responderErro} from "../middleware/errors";
 import {
   eventoRepository,
@@ -147,6 +148,15 @@ avaliacaoEventoRouter.post(
         return;
       }
 
+      await registrarAtividade({
+        tipo: "avaliacao_evento",
+        partes: [criado.id],
+        autorId: uid,
+        alvoTipo: "evento",
+        alvoId: eventoId,
+        refId: criado.id,
+        createdAt: criado.createdAt,
+      });
       const usuario = await usuarioRepository.buscarPorId(uid);
       res
         .status(201)

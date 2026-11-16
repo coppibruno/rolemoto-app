@@ -52,6 +52,9 @@ export interface DetalhePost {
   totalComentarios: number;
   createdAt: string;
   encaminhadoPorMim: boolean;
+  /** Curtida de `foto_{postId}`, a mesma do card no Início. */
+  curtidoPorMim: boolean;
+  totalCurtidas: number;
   autor: AutorPost;
 }
 

@@ -4,6 +4,7 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {
+  ERRO_CURTIR_PROPRIA,
   ERRO_PARA_SI,
   ERRO_REACAO,
   ERRO_REACAO_SEM_STORY,
@@ -41,6 +42,7 @@ import type {Usuario} from "../types/usuario";
  * GET  /conversas/nao-lidas
  * GET  /conversas/:id/mensagens (sem cursor marca a conversa como lida)
  * POST /conversas (`reacao` + `storyId` = reação ao story)
+ * PUT|DELETE /conversas/:id/mensagens/:mensagemId/curtida (só quem recebeu)
  */
 export const conversasRouter = Router();
 
@@ -166,6 +168,37 @@ conversasRouter.get("/:id/mensagens", async (req: Request, res: Response) => {
     responderErro(res, error);
   }
 });
+
+const curtir = (curtida: boolean) => async (req: Request, res: Response) => {
+  try {
+    const uid = req.usuario?.uid;
+    if (!uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const conversaId = param(req, "id");
+    const mensagem = outroDaConversa(conversaId, uid) ?
+      await conversaRepository.buscarMensagem(param(req, "mensagemId")) :
+      null;
+    if (!mensagem || mensagem.conversaId !== conversaId) {
+      res.status(404).json({erro: "Mensagem não encontrada"});
+      return;
+    }
+    if (mensagem.autorId === uid) {
+      res.status(400).json({erro: ERRO_CURTIR_PROPRIA});
+      return;
+    }
+    if (mensagem.curtida !== curtida) {
+      await conversaRepository.marcarCurtida(mensagem.id, curtida);
+    }
+    res.json({curtida});
+  } catch (error) {
+    responderErro(res, error);
+  }
+};
+
+conversasRouter.put("/:id/mensagens/:mensagemId/curtida", curtir(true));
+conversasRouter.delete("/:id/mensagens/:mensagemId/curtida", curtir(false));
 
 conversasRouter.post("/", async (req: Request, res: Response) => {
   try {

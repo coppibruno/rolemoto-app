@@ -11,7 +11,19 @@ const espias = vi.hoisted(() => ({
   contarNaoLidas: vi.fn(async () => 3),
   listarMensagens: vi.fn(async () => ({ok: true, itens: [], proximoCursor: null})),
   notificarMensagem: vi.fn(async () => undefined),
+  marcarCurtida: vi.fn(async () => undefined),
 }));
+
+const MENSAGEM_BIA: Mensagem = {
+  id: "mb",
+  conversaId: "ana_bia",
+  autorId: "bia",
+  texto: "bora?",
+  storyId: null,
+  reacao: null,
+  curtida: false,
+  createdAt: "",
+};
 
 vi.mock("../lib/log", () => ({
   log: {info: vi.fn(), warn: vi.fn(), error: vi.fn()},
@@ -44,6 +56,8 @@ vi.mock("../repositories", () => ({
     marcarLida: espias.marcarLida,
     contarNaoLidas: espias.contarNaoLidas,
     listarMensagens: espias.listarMensagens,
+    marcarCurtida: espias.marcarCurtida,
+    buscarMensagem: async (id: string) => (id === MENSAGEM_BIA.id ? {...MENSAGEM_BIA} : null),
     listarDoUsuario: async () => ({ok: true, itens: [], proximoCursor: null}),
   },
   storyLocalRepository: {
@@ -83,9 +97,12 @@ beforeEach(() => {
     texto: dados.texto,
     storyId: dados.storyId,
     reacao: dados.reacao,
+    curtida: false,
     createdAt: new Date().toISOString(),
   }));
   espias.marcarLida.mockClear();
+  espias.marcarCurtida.mockClear();
+  MENSAGEM_BIA.curtida = false;
   espias.notificarMensagem.mockClear();
 });
 
@@ -140,6 +157,42 @@ describe("reação ao story", () => {
     expect(res.status).toBe(201);
     expect(res.json.mensagem.reacao).toBeNull();
     expect((espias.enviar.mock.calls[0][0] as MensagemNova).resumo).toBe("oi");
+  });
+});
+
+describe("curtida", () => {
+  const caminho = "/conversas/ana_bia/mensagens/mb/curtida";
+
+  it("quem recebeu curte e descurte", async () => {
+    const put = await chamar("PUT", caminho);
+    expect(put.status).toBe(200);
+    expect(put.json).toEqual({curtida: true});
+    expect(espias.marcarCurtida).toHaveBeenCalledWith("mb", true);
+    MENSAGEM_BIA.curtida = true;
+    const del = await chamar("DELETE", caminho);
+    expect(del.json).toEqual({curtida: false});
+    expect(espias.marcarCurtida).toHaveBeenLastCalledWith("mb", false);
+  });
+
+  it("repetir o mesmo estado não grava de novo", async () => {
+    MENSAGEM_BIA.curtida = true;
+    const res = await chamar("PUT", caminho);
+    expect(res.status).toBe(200);
+    expect(espias.marcarCurtida).not.toHaveBeenCalled();
+  });
+
+  it("o autor não curte a própria mensagem", async () => {
+    const res = await chamar("PUT", caminho, undefined, "bia");
+    expect(res.status).toBe(400);
+    expect(espias.marcarCurtida).not.toHaveBeenCalled();
+  });
+
+  it("fora da conversa ou mensagem de outra conversa é 404", async () => {
+    const intruso = await chamar("PUT", caminho, undefined, "caio");
+    expect(intruso.status).toBe(404);
+    const outra = await chamar("PUT", "/conversas/ana_caio/mensagens/mb/curtida");
+    expect(outra.status).toBe(404);
+    expect(espias.marcarCurtida).not.toHaveBeenCalled();
   });
 });
 

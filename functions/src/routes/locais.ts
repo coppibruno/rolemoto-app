@@ -7,6 +7,7 @@ import {filtrarLocaisFeed} from "../lib/feed-filtros";
 import {validarQueryGeoOpcional} from "../lib/feed-query";
 import {erroDe, log} from "../lib/log";
 import {param} from "../lib/params";
+import {removerAtividadesDoAlvo} from "../lib/atividade-gancho";
 import {buscarPontoProximo} from "../lib/ponto-proximo";
 import {validarPublicacaoLocal} from "../lib/validar-local";
 import {apelidoExibicao} from "../lib/apelido";
@@ -226,11 +227,13 @@ locaisRouter.post("/", exigirAdmin, async (req: Request, res: Response) => {
 
 locaisRouter.delete("/:id", exigirAdmin, async (req: Request, res: Response) => {
   try {
-    const resultado = await apagarLocal(param(req, "id"));
+    const id = param(req, "id");
+    const resultado = await apagarLocal(id);
     if (resultado === "ausente") {
       res.status(404).json({erro: "Local não encontrado"});
       return;
     }
+    await removerAtividadesDoAlvo("local", id, ["avaliacao_local", "selo"]);
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

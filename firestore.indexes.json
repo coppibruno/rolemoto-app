@@ -1,6 +1,23 @@
 {
   "indexes": [
     {
+      "collectionGroup": "atividades",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "autorId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" },
+        { "fieldPath": "__name__", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "atividadecomentario",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "atividadeId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "roles",
       "queryScope": "COLLECTION",
       "fields": [

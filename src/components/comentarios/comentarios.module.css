@@ -1,0 +1,113 @@
+.comentario {
+  display: flex;
+  gap: 10px;
+}
+
+.comentarioCorpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.comentarioTexto {
+  margin: 0;
+  color: var(--on-surface);
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.comentarioMeta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--on-surface-variant);
+  font-size: 12px;
+}
+
+.avatarPequeno {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--outline);
+  object-fit: cover;
+}
+
+.apagarComentario {
+  min-height: var(--touch-min);
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  color: var(--primary-container);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.campoFixo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px var(--gutter-md) calc(8px + env(safe-area-inset-bottom, 0px));
+  background: var(--surface-container);
+}
+
+.campoLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.campo {
+  flex: 1;
+  min-height: var(--touch-min);
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font: inherit;
+  font-size: 15px;
+}
+
+.campo::placeholder {
+  color: var(--outline);
+}
+
+.campo:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.enviar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  cursor: pointer;
+}
+
+.enviar:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.erroCampo {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-size: 13px;
+  line-height: 18px;
+}

@@ -1,23 +1,18 @@
 "use client";
 
-import { CarrosselStories } from "@/app/(app)/stories/components/CarrosselStories";
 import { useAuth } from "@/hooks/useAuth";
 import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import { useAbaFeed } from "../hooks/useAbaFeed";
 import { useContagensFeed } from "../hooks/useContagensFeed";
-import { useFeedbackPendente } from "../hooks/useFeedbackPendente";
 import { lerEstadoFeed, useFiltrosFeed } from "../hooks/useFiltrosFeed";
 import { useListaEventos } from "../hooks/useListaEventos";
 import { useListaLocais } from "../hooks/useListaLocais";
 import { useListaRoles } from "../hooks/useListaRoles";
 import { useLocalizacaoFeed } from "../hooks/useLocalizacaoFeed";
-import { useResumoAprovacoes } from "../hooks/useResumoAprovacoes";
 import { AbasFeed } from "./AbasFeed";
 import { LinkSugestoesEventos } from "./LinkSugestoesEventos";
-import { BannerCockpitLider } from "./BannerCockpitLider";
 import { BarraBuscaRaio } from "./BarraBuscaRaio";
 import { CabecalhoFeed } from "./CabecalhoFeed";
-import { CardFeedbackPendente } from "./CardFeedbackPendente";
 import { FiltrosData } from "./FiltrosData";
 import { FiltrosRitmo } from "./FiltrosRitmo";
 import { ListaEventos } from "./ListaEventos";
@@ -48,8 +43,6 @@ export const TelaFeed = () => {
       filtros.restaurar(valido);
     },
   );
-  const resumoAprovacoes = useResumoAprovacoes();
-  const feedbackPendente = useFeedbackPendente();
 
   const filtrosBase = {
     ponto: localizacao.ponto,
@@ -87,17 +80,6 @@ export const TelaFeed = () => {
     <div className={styles.tela}>
       <CabecalhoFeed />
       <div className={styles.corpo}>
-        {feedbackPendente.role ? (
-          <CardFeedbackPendente
-            role={feedbackPendente.role}
-            onDispensar={feedbackPendente.dispensar}
-          />
-        ) : null}
-
-        {resumoAprovacoes ? (
-          <BannerCockpitLider resumo={resumoAprovacoes} />
-        ) : null}
-
         <PainelLocalizacao
           ponto={localizacao.ponto}
           status={localizacao.status}
@@ -138,8 +120,6 @@ export const TelaFeed = () => {
         ) : (
           <div id="filtros-feed" className={styles.filtrosAncora} />
         )}
-
-        {aba === "roles" ? <CarrosselStories /> : null}
 
         {aba === "roles" ? (
           <ListaRoles

@@ -8,8 +8,12 @@ export const useItemMenuAtivo = () => {
 
   const estaAtivo = (href: ItemMenuConfig["href"]) => {
     if (href === "/") {
+      return pathname === "/" || Boolean(pathname?.startsWith("/atividades"));
+    }
+    if (href === "/explorar") {
       return (
-        pathname === "/" ||
+        pathname === "/explorar" ||
+        Boolean(pathname?.startsWith("/explorar/")) ||
         Boolean(pathname?.startsWith("/roles")) ||
         Boolean(pathname?.startsWith("/eventos")) ||
         Boolean(pathname?.startsWith("/locais")) ||
