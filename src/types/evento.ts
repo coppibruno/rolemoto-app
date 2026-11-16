@@ -16,6 +16,19 @@ export type AtracaoEvento =
   | "bancada_ferramentas"
   | "area_coberta";
 
+export type AlbumEventoPublico = {
+  id: string;
+  url: string;
+  createdAt: string;
+};
+
+export type FotografoEventoPublico = {
+  uid: string;
+  nome: string;
+  apelido: string;
+  fotoUrl: string;
+};
+
 export interface Evento {
   id: string;
   titulo: string;
@@ -34,6 +47,8 @@ export interface Evento {
   ocorrenciaYmd: string | null;
   ocorrenciaAjustada: boolean;
   cancelada: boolean;
+  fotografoId?: string | null;
+  albumNotificado?: boolean;
   notaMedia: number;
   totalAvaliacoes: number;
   recomendacoesComboio: number;
@@ -79,4 +94,8 @@ export type EventoDetalhe = Evento & {
   storiesAtivas: number;
   podePostarStory: boolean;
   recorrencia: RecorrenciaEvento | null;
+  fotografo: FotografoEventoPublico | null;
+  albuns: AlbumEventoPublico[];
+  possoPublicarAlbum: boolean;
+  possoGerenciarFotografo: boolean;
 };

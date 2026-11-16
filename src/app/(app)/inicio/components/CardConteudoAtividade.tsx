@@ -11,6 +11,7 @@ import { useCurtidaAtividade } from "../hooks/useCurtidaAtividade";
 import { BarraAcoesAtividade } from "./BarraAcoesAtividade";
 import { CabecalhoCardAtividade } from "./CabecalhoCardAtividade";
 import { CorpoAvaliacao } from "./CorpoAvaliacao";
+import { CorpoEvento } from "./CorpoEvento";
 import { CorpoFoto } from "./CorpoFoto";
 import { CorpoRole } from "./CorpoRole";
 import { CorpoTelemetria } from "./CorpoTelemetria";
@@ -59,12 +60,13 @@ export const CardConteudoAtividade = ({
       {item.alvo.tipo === "role" ? (
         <CorpoRole alvo={item.alvo} realizado={item.tipo === "role_realizado"} />
       ) : null}
+      {item.alvo.tipo === "evento" ? <CorpoEvento alvo={item.alvo} /> : null}
       {item.alvo.tipo === "avaliacao" ? <CorpoAvaliacao alvo={item.alvo} /> : null}
       <BarraAcoesAtividade
         curtido={curtida.curtido}
         totalCurtidas={curtida.total}
         totalComentarios={item.totalComentarios}
-        podeComentar
+        podeComentar={item.tipo !== "album_evento"}
         cta={cta}
         onCurtir={() => void curtida.alternar()}
         onComentar={() => onComentar(item)}

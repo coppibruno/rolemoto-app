@@ -54,6 +54,10 @@ export const verboConteudo = (item: ItemAtividade): string => {
     case "avaliacao_local":
     case "avaliacao_evento":
       return item.alvo.tipo === "avaliacao" ? `avaliou ${item.alvo.alvoNome}` : "avaliou";
+    case "album_evento":
+      return item.alvo.tipo === "evento"
+        ? `publicou as fotos de ${item.alvo.titulo}`
+        : "publicou as fotos do evento";
     default:
       return "";
   }
@@ -73,7 +77,9 @@ export const hrefAlvo = (item: ItemAtividade): string => {
     case "role":
       return `/roles/${encodeURIComponent(alvo.id)}`;
     case "evento":
-      return `/eventos/${encodeURIComponent(alvo.id)}`;
+      return item.tipo === "album_evento"
+        ? `/eventos/${encodeURIComponent(alvo.id)}?album=1`
+        : `/eventos/${encodeURIComponent(alvo.id)}`;
     case "avaliacao":
       return alvo.alvoTipo === "local"
         ? `/locais/${encodeURIComponent(alvo.alvoId)}`
@@ -98,6 +104,8 @@ export const ctaDoItem = (item: ItemAtividade): CtaAtividade | null => {
       return { rotulo: "Ver local", href };
     case "avaliacao_evento":
       return { rotulo: "Ver evento", href };
+    case "album_evento":
+      return { rotulo: "Ver álbum", href };
     case "role_criado":
     case "entrada_role":
       if (alvo.tipo !== "role" || alvo.jaSaiu || alvo.minhaParticipacao !== "nenhuma") {

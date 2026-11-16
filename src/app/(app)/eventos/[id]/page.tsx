@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { TelaDetalheEvento } from "./components/TelaDetalheEvento";
 
 type Props = {
@@ -6,7 +7,11 @@ type Props = {
 
 const EventoDetalhePage = async ({ params }: Props) => {
   const { id } = await params;
-  return <TelaDetalheEvento id={id} />;
+  return (
+    <Suspense>
+      <TelaDetalheEvento id={id} />
+    </Suspense>
+  );
 };
 
 export default EventoDetalhePage;

@@ -20,6 +20,7 @@ export type TipoPush =
   | "story_local"
   | "novo_seguidor"
   | "convite_evento"
+  | "album_evento"
   | "comentario_foto"
   | "comentario_atividade"
   | "mensagem";
@@ -495,6 +496,26 @@ export const notificarConvitesEvento = async (
     await enviar(uid, {
       tipo: "convite_evento",
       title,
+      body,
+      url,
+      roleId: "",
+      localId: "",
+      eventoId,
+    });
+  });
+};
+
+/** Só inscritos, na 1ª publicação do álbum (SPEC 065). */
+export const notificarAlbumEvento = async (
+  uids: string[],
+  eventoId: string,
+  body: string,
+): Promise<void> => {
+  const url = `/eventos/${eventoId}?album=1`;
+  await emLote(uids, LOTE_PUSH, async (uid) => {
+    await enviar(uid, {
+      tipo: "album_evento",
+      title: "Fotos do evento disponíveis",
       body,
       url,
       roleId: "",

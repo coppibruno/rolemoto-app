@@ -34,6 +34,7 @@ const TIPOS = new Set<string>([
   "role_realizado",
   "avaliacao_local",
   "avaliacao_evento",
+  "album_evento",
   "entrada_role",
   "inscricao_evento",
   "selo",

@@ -229,9 +229,13 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
   case "role_realizado":
   case "entrada_role":
     return alvoRole(atividade, ctx);
-  case "inscricao_evento": {
+  case "inscricao_evento":
+  case "album_evento": {
     const evento = ctx.eventos.get(atividade.alvoId);
     if (!evento) return null;
+    if (atividade.tipo === "album_evento" && evento.albuns.length === 0) {
+      return null;
+    }
     return {
       tipo: "evento",
       id: evento.id,
@@ -275,7 +279,7 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
 };
 
 const totalComentarios = (atividade: Atividade, ctx: Contexto): number | null => {
-  if (ehCompacto(atividade.tipo)) return null;
+  if (ehCompacto(atividade.tipo) || atividade.tipo === "album_evento") return null;
   if (atividade.tipo === "foto") return ctx.posts.get(atividade.alvoId)?.totalComentarios ?? 0;
   return atividade.totalComentarios;
 };

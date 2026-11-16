@@ -14,6 +14,17 @@ const TIPOS_CONTEUDO: ReadonlySet<string> = new Set<TipoConteudo>([
   "role_realizado",
   "avaliacao_local",
   "avaliacao_evento",
+  "album_evento",
+]);
+
+/** Álbum externo não abre comentário no Início (SPEC 065). */
+const TIPOS_COM_COMENTARIO: ReadonlySet<string> = new Set<TipoConteudo>([
+  "foto",
+  "telemetria",
+  "role_criado",
+  "role_realizado",
+  "avaliacao_local",
+  "avaliacao_evento",
 ]);
 
 /** Só estes viram “Ana, Bruno e mais N…”. Selo fica individual. */
@@ -24,9 +35,10 @@ const TIPOS_AGRUPAVEIS: ReadonlySet<string> = new Set<TipoCompacto>([
 
 const JANELA_GRUPO_MS = 24 * 60 * 60 * 1000;
 
-export const aceitaComentario = (tipo: TipoAtividade): boolean => TIPOS_CONTEUDO.has(tipo);
+export const aceitaComentario = (tipo: TipoAtividade): boolean =>
+  TIPOS_COM_COMENTARIO.has(tipo);
 
-export const ehCompacto = (tipo: TipoAtividade): boolean => !aceitaComentario(tipo);
+export const ehCompacto = (tipo: TipoAtividade): boolean => !TIPOS_CONTEUDO.has(tipo);
 
 /** `foto_{postId}`, `entrada_role_{uid}_{roleId}`… Parte vazia ou com barra dá erro. */
 export const idAtividade = (tipo: TipoAtividade, partes: string[]): string => {

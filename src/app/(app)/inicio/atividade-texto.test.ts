@@ -6,6 +6,7 @@ import {
   nomesDoGrupo,
   rotuloNovidades,
   tempoRelativo,
+  verboConteudo,
   verboLinha,
 } from "./atividade-texto";
 
@@ -100,6 +101,26 @@ describe("ctaDoItem", () => {
     });
     expect(ctaDoItem(item({ tipo: "inscricao_evento", alvo: { ...evento, inscrito: true } })))
       .toBeNull();
+  });
+
+  it("álbum do evento abre o detalhe com destaque", () => {
+    const evento = {
+      tipo: "evento" as const,
+      id: "e1",
+      titulo: "Café",
+      fotoCapaUrl: "",
+      dataHoraAbertura: agora.toISOString(),
+      localNome: "",
+      encerrado: false,
+      inscrito: true,
+    };
+    const card = item({ tipo: "album_evento", alvo: evento });
+    expect(verboConteudo(card)).toBe("publicou as fotos de Café");
+    expect(ctaDoItem(card)).toEqual({
+      rotulo: "Ver álbum",
+      href: "/eventos/e1?album=1",
+    });
+    expect(hrefAlvo(card)).toBe("/eventos/e1?album=1");
   });
 });
 

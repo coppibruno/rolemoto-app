@@ -29,13 +29,17 @@ import {
   localRepository,
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
+  usuarioRepository,
 } from "../repositories";
 import {agendarAvisoEvento, agendarLembreteEvento} from "../lib/lembretes";
 import {aoVivoPorEvento, detalheStoriesEvento, eventoEstaAoVivo} from "../lib/story-local";
 import {inscricaoEventoRouter} from "./inscricao-evento";
 import {conviteEventoRouter} from "./convite-evento";
+import {albumEventoRouter} from "./album-evento";
 import {avaliacaoEventoRouter} from "./avaliacao-evento";
 import {storiesEventoRouter} from "./stories-evento";
+import {apelidoExibicao} from "../lib/apelido";
+import {podePublicarAlbum} from "../lib/album-evento";
 
 /**
  * REST de eventos (destino fixo).
@@ -57,6 +61,7 @@ eventosRouter.use(autenticar);
 eventosRouter.use(rateLimitAutenticado);
 eventosRouter.use(inscricaoEventoRouter);
 eventosRouter.use(conviteEventoRouter);
+eventosRouter.use(albumEventoRouter);
 eventosRouter.use(avaliacaoEventoRouter);
 eventosRouter.use(storiesEventoRouter);
 
@@ -256,16 +261,31 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       return;
     }
 
-    const [inscricao, total, feedback, participantes, stories] = await Promise.all([
-      usuarioEventoRepository.buscarPorUsuarioEEvento(uid, evento.id),
-      usuarioEventoRepository.contarPorEvento(evento.id),
-      usuarioEventoFeedbackRepository.buscarPorUsuarioEEvento(uid, evento.id),
-      blocoParticipantesEvento(evento.id),
-      detalheStoriesEvento(evento).catch((error) => {
-        log.warn("Evento", "Stories do detalhe indisponíveis", erroDe(error));
-        return {storiesAtivas: 0, podePostarStory: eventoEstaAoVivo(evento)};
-      }),
-    ]);
+    const [inscricao, total, feedback, participantes, stories, perfil, fotografoDoc] =
+      await Promise.all([
+        usuarioEventoRepository.buscarPorUsuarioEEvento(uid, evento.id),
+        usuarioEventoRepository.contarPorEvento(evento.id),
+        usuarioEventoFeedbackRepository.buscarPorUsuarioEEvento(uid, evento.id),
+        blocoParticipantesEvento(evento.id),
+        detalheStoriesEvento(evento).catch((error) => {
+          log.warn("Evento", "Stories do detalhe indisponíveis", erroDe(error));
+          return {storiesAtivas: 0, podePostarStory: eventoEstaAoVivo(evento)};
+        }),
+        usuarioRepository.buscarPorId(uid),
+        evento.fotografoId ?
+          usuarioRepository.buscarPorId(evento.fotografoId) :
+          Promise.resolve(null),
+      ]);
+
+    const admin = perfil?.admin === true;
+    const fotografo = fotografoDoc ?
+      {
+        uid: fotografoDoc.uid,
+        nome: fotografoDoc.nome,
+        apelido: apelidoExibicao(fotografoDoc),
+        fotoUrl: fotografoDoc.fotoUrl,
+      } :
+      null;
 
     const [resposta] = await anexarRecorrencia([{
       ...evento,
@@ -275,6 +295,10 @@ eventosRouter.get("/:id", async (req: Request, res: Response) => {
       participantes,
       storiesAtivas: stories.storiesAtivas,
       podePostarStory: stories.podePostarStory,
+      fotografo,
+      albuns: evento.albuns.map(({id, url, createdAt}) => ({id, url, createdAt})),
+      possoPublicarAlbum: podePublicarAlbum(uid, evento.fotografoId, admin),
+      possoGerenciarFotografo: admin,
     }]);
     res.json(resposta);
   } catch (error) {
@@ -371,7 +395,11 @@ eventosRouter.delete("/:id", exigirAdmin, async (req: Request, res: Response) =>
       res.status(404).json({erro: "Evento não encontrado"});
       return;
     }
-    await removerAtividadesDoAlvo("evento", id, ["inscricao_evento", "avaliacao_evento"]);
+    await removerAtividadesDoAlvo("evento", id, [
+      "inscricao_evento",
+      "avaliacao_evento",
+      "album_evento",
+    ]);
     res.status(204).send();
   } catch (error) {
     responderErro(res, error);

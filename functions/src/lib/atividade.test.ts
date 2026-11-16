@@ -16,13 +16,14 @@ const base = Date.UTC(2026, 10, 15, 12);
 const em = (horasAtras: number) => new Date(base - horasAtras * HORA).toISOString();
 
 describe("FA1 — idAtividade", () => {
-  it("monta os nove formatos", () => {
+  it("monta os formatos de id", () => {
     expect(idAtividade("foto", ["p1"])).toBe("foto_p1");
     expect(idAtividade("telemetria", ["t1"])).toBe("telemetria_t1");
     expect(idAtividade("role_criado", ["r1"])).toBe("role_criado_r1");
     expect(idAtividade("role_realizado", ["r1"])).toBe("role_realizado_r1");
     expect(idAtividade("avaliacao_local", ["ana_l1"])).toBe("avaliacao_local_ana_l1");
     expect(idAtividade("avaliacao_evento", ["ana_e1"])).toBe("avaliacao_evento_ana_e1");
+    expect(idAtividade("album_evento", ["e1"])).toBe("album_evento_e1");
     expect(idAtividade("entrada_role", ["ana", "r1"])).toBe("entrada_role_ana_r1");
     expect(idAtividade("inscricao_evento", ["ana", "e1"])).toBe("inscricao_evento_ana_e1");
     expect(idAtividade("selo", ["ana", "l1"])).toBe("selo_ana_l1");
@@ -34,12 +35,12 @@ describe("FA1 — idAtividade", () => {
     expect(() => idAtividade("foto", [])).toThrow();
   });
 
-  it("só conteúdo aceita comentário", () => {
-    const conteudo: TipoAtividade[] = [
+  it("conteúdo com comentário; álbum e compactos sem", () => {
+    const comComentario: TipoAtividade[] = [
       "foto", "telemetria", "role_criado", "role_realizado", "avaliacao_local", "avaliacao_evento",
     ];
-    conteudo.forEach((tipo) => expect(aceitaComentario(tipo)).toBe(true));
-    (["entrada_role", "inscricao_evento", "selo"] as TipoAtividade[])
+    comComentario.forEach((tipo) => expect(aceitaComentario(tipo)).toBe(true));
+    (["album_evento", "entrada_role", "inscricao_evento", "selo"] as TipoAtividade[])
       .forEach((tipo) => expect(aceitaComentario(tipo)).toBe(false));
   });
 

@@ -1,11 +1,13 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { usePlayerDetalhe } from "@/app/(app)/stories/hooks/usePlayerDetalhe";
 import { PlayerStories } from "@/app/(app)/components/PlayerStories";
 import { BotaoApagarCatalogo } from "@/components/catalogo/BotaoApagarCatalogo";
 import { useApagarCatalogo } from "@/components/catalogo/useApagarCatalogo";
 import { useDetalheEvento } from "../hooks/useDetalheEvento";
 import { eventoDetalheService } from "../services/evento-detalhe.service";
+import { BlocoAlbumEvento } from "./BlocoAlbumEvento";
 import { BlocoAtracoesEvento } from "./BlocoAtracoesEvento";
 import { BlocoAdminSerie } from "./BlocoAdminSerie";
 import { BlocoAvaliacaoEvento } from "./BlocoAvaliacaoEvento";
@@ -24,6 +26,8 @@ type Props = {
 };
 
 export const TelaDetalheEvento = ({ id }: Props) => {
+  const searchParams = useSearchParams();
+  const destacarAlbum = searchParams.get("album") === "1";
   const { evento, carregando, erro, recarregar } = useDetalheEvento(id);
   const player = usePlayerDetalhe(Boolean(evento));
   const exclusao = useApagarCatalogo(
@@ -63,6 +67,11 @@ export const TelaDetalheEvento = ({ id }: Props) => {
         <BlocoInformacoesEvento texto={evento.informacoes} />
         <BlocoLocalizacaoEvento local={evento.local} />
         <BlocoPresencasEvento evento={evento} />
+        <BlocoAlbumEvento
+          evento={evento}
+          destacar={destacarAlbum}
+          onMudou={recarregar}
+        />
         <BlocoAvaliacaoEvento evento={evento} />
         <BlocoAdminSerie evento={evento} onSalvo={recarregar} />
         <BotaoApagarCatalogo

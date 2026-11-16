@@ -17,6 +17,27 @@ export type AtracaoEvento =
   | "bancada_ferramentas"
   | "area_coberta";
 
+/** Link externo do álbum (SPEC 065). Até 5 por ocorrência. */
+export interface AlbumEvento {
+  id: string;
+  url: string;
+  createdAt: string;
+  criadoPor: string;
+}
+
+export type AlbumEventoPublico = {
+  id: string;
+  url: string;
+  createdAt: string;
+};
+
+export type FotografoEventoPublico = {
+  uid: string;
+  nome: string;
+  apelido: string;
+  fotoUrl: string;
+};
+
 export interface Evento {
   id: string;
   titulo: string;
@@ -40,6 +61,12 @@ export interface Evento {
   ocorrenciaAjustada: boolean;
   /** Data pulada com inscrição ou avaliação. Docs antigos são `false`. */
   cancelada: boolean;
+  /** Fotógrafo autorizado (SPEC 065). Docs antigos = `null`. */
+  fotografoId: string | null;
+  /** Links de álbum externo. Docs antigos = `[]`. */
+  albuns: AlbumEvento[];
+  /** Já disparou o push da 1ª publicação. Docs antigos = `false`. */
+  albumNotificado: boolean;
   notaMedia: number;
   totalAvaliacoes: number;
   recomendacoesComboio: number;
@@ -62,6 +89,9 @@ export type EventoPublicacao = Omit<
   | "notaMedia"
   | "totalAvaliacoes"
   | "recomendacoesComboio"
+  | "fotografoId"
+  | "albuns"
+  | "albumNotificado"
 >;
 
 export type EventoCreate = EventoPublicacao & {criadorId: string};
@@ -76,7 +106,7 @@ export type EventoFeedItem = Evento & {
   recorrencia: RecorrenciaEvento | null;
 };
 
-export type EventoDetalhe = Evento & {
+export type EventoDetalhe = Omit<Evento, "albuns"> & {
   inscrito: boolean;
   inscritos: {total: number};
   avaliado: boolean;
@@ -84,6 +114,11 @@ export type EventoDetalhe = Evento & {
   storiesAtivas: number;
   podePostarStory: boolean;
   recorrencia: RecorrenciaEvento | null;
+  fotografo: FotografoEventoPublico | null;
+  /** Sem `criadoPor`. */
+  albuns: AlbumEventoPublico[];
+  possoPublicarAlbum: boolean;
+  possoGerenciarFotografo: boolean;
 };
 
 export const TIPOS_EVENTO: TipoEvento[] = [

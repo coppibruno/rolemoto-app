@@ -8,7 +8,8 @@ export type TipoConteudo =
   | "role_criado"
   | "role_realizado"
   | "avaliacao_local"
-  | "avaliacao_evento";
+  | "avaliacao_evento"
+  | "album_evento";
 
 export type TipoCompacto = "entrada_role" | "inscricao_evento" | "selo";
 
@@ -124,6 +125,7 @@ export const TIPOS_CONTEUDO: readonly TipoAtividade[] = [
   "role_realizado",
   "avaliacao_local",
   "avaliacao_evento",
+  "album_evento",
 ];
 
 export const ehConteudo = (tipo: TipoAtividade): boolean => TIPOS_CONTEUDO.includes(tipo);

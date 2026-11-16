@@ -1,9 +1,23 @@
-import type {Evento, EventoCreate, EventoPublicacao} from "../../types/evento";
+import type {
+  AlbumEvento,
+  Evento,
+  EventoCreate,
+  EventoPublicacao,
+} from "../../types/evento";
 
 export type FiltroListagemEventos = {
   dataInicioIso: string;
   dataFimIso?: string;
 };
+
+export type ResultadoAdicionarAlbum =
+  | {tipo: "ok"; album: AlbumEvento; notificou: boolean; evento: Evento}
+  | {tipo: "limite"}
+  | {tipo: "duplicado"};
+
+export type ResultadoRemoverAlbum =
+  | {tipo: "ok"; zerou: boolean; evento: Evento}
+  | {tipo: "ausente"};
 
 /**
  * Contrato de persistência de eventos.
@@ -36,4 +50,12 @@ export interface EventoRepository {
   desvincularLocal(localId: string): Promise<number>;
   /** `true` quando esta chamada gravou o dia e deve disparar o push. */
   reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
+  /** Define ou zera o fotógrafo. Álbuns permanecem. */
+  definirFotografo(id: string, fotografoId: string | null): Promise<Evento | null>;
+  adicionarAlbum(
+    id: string,
+    url: string,
+    criadoPor: string,
+  ): Promise<ResultadoAdicionarAlbum | null>;
+  removerAlbum(id: string, albumId: string): Promise<ResultadoRemoverAlbum | null>;
 }
