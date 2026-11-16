@@ -21,6 +21,7 @@ import {
   dispositivoRepository,
   localRepository,
   seguirRepository,
+  sugestaoRepository,
   usuarioRepository,
 } from "../repositories";
 import {historicoRouter} from "./historico";
@@ -406,6 +407,15 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await seguirRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover vínculos de seguir", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await sugestaoRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover dispensas de sugestão", {
         uid,
         ...erroDe(error),
       });

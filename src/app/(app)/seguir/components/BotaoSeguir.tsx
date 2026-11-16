@@ -9,10 +9,11 @@ type Props = {
   apelido: string;
   seguido: boolean;
   largo?: boolean;
+  onSeguiu?: () => void;
 };
 
-export const BotaoSeguir = ({ uid, apelido, seguido, largo = false }: Props) => {
-  const acao = useSeguirPiloto(uid, seguido);
+export const BotaoSeguir = ({ uid, apelido, seguido, largo = false, onSeguiu }: Props) => {
+  const acao = useSeguirPiloto(uid, seguido, onSeguiu);
   const classe = [
     styles.botaoSeguir,
     acao.seguido ? styles.botaoSeguindo : "",

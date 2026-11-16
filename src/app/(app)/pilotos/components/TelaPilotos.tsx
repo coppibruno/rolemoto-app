@@ -4,12 +4,19 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { LinhaPiloto } from "@/app/(app)/seguir/components/LinhaPiloto";
 import { useBuscaPilotos } from "../hooks/useBuscaPilotos";
+import { usePontoSugestao } from "../hooks/usePontoSugestao";
+import { useSugestoesPilotos } from "../hooks/useSugestoesPilotos";
+import { BlocoConhecer } from "./BlocoConhecer";
+import { BlocoSeguindo } from "./BlocoSeguindo";
 import styles from "../pilotos.module.css";
 
 export const TelaPilotos = () => {
   const router = useRouter();
   const campoRef = useRef<HTMLInputElement>(null);
   const busca = useBuscaPilotos();
+  const local = usePontoSugestao();
+  const sugestoes = useSugestoesPilotos(local.ponto, local.pronto);
+  const modo = busca.termo.length >= 2 ? "busca" : busca.termo.length === 1 ? "letra" : "vazio";
 
   useEffect(() => {
     campoRef.current?.focus();
@@ -49,33 +56,52 @@ export const TelaPilotos = () => {
         />
       </label>
 
-      {busca.fase === "semSeguidos" ? (
-        <p className={styles.aviso}>Você ainda não segue ninguém.</p>
-      ) : null}
-      {busca.fase === "maisUmaLetra" ? (
-        <p className={styles.aviso}>Digite mais uma letra para buscar todo mundo.</p>
-      ) : null}
-      {busca.fase === "carregando" ? <p className={styles.aviso}>Buscando…</p> : null}
-      {busca.fase === "vazio" ? (
-        <p className={styles.aviso}>Nenhum piloto com esse nome</p>
-      ) : null}
-      {busca.fase === "erro" ? (
-        <div className={styles.erro}>
-          <p>Não deu para buscar agora.</p>
-          <button type="button" onClick={busca.tentarDeNovo}>
-            Tentar de novo
-          </button>
-        </div>
-      ) : null}
-      {busca.fase === "ok" ? (
-        <ul className={styles.lista}>
-          {busca.itens.map((pessoa) => (
-            <li key={pessoa.uid}>
-              <LinhaPiloto pessoa={pessoa} />
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {modo === "busca" ? (
+        <>
+          {busca.faseBusca === "carregando" ? <p className={styles.aviso}>Buscando…</p> : null}
+          {busca.faseBusca === "vazio" ? (
+            <p className={styles.aviso}>Nenhum piloto com esse nome</p>
+          ) : null}
+          {busca.faseBusca === "erro" ? (
+            <div className={styles.erro}>
+              <p>Não deu para buscar agora.</p>
+              <button type="button" onClick={busca.tentarBusca}>
+                Tentar de novo
+              </button>
+            </div>
+          ) : null}
+          {busca.faseBusca === "ok" ? (
+            <ul className={styles.lista}>
+              {busca.itensBusca.map((pessoa) => (
+                <li key={pessoa.uid}>
+                  <LinhaPiloto pessoa={pessoa} />
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <BlocoSeguindo
+            fase={busca.faseSeguidos}
+            itens={busca.seguidos}
+            onTentar={busca.tentarSeguidos}
+          />
+          {modo === "vazio" ? (
+            <BlocoConhecer
+              fase={sugestoes.fase}
+              itens={sugestoes.itens}
+              toast={sugestoes.toast}
+              onTentar={() => void sugestoes.recarregar()}
+              onDispensar={(uid) => void sugestoes.dispensar(uid)}
+              onSeguir={(pessoa) => {
+                sugestoes.remover(pessoa.uid);
+                busca.colocarNoTopo({ ...pessoa, seguidoPorMim: true });
+              }}
+            />
+          ) : null}
+        </>
+      )}
     </div>
   );
 };

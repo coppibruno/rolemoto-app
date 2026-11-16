@@ -5,6 +5,9 @@ import styles from "../seguir.module.css";
 
 type Props = {
   pessoa: Linha;
+  motivo?: string;
+  onAgoraNao?: () => void;
+  onSeguiu?: () => void;
 };
 
 const marcaApelido = (pessoa: Linha): string => {
@@ -16,7 +19,7 @@ const marcaApelido = (pessoa: Linha): string => {
   return apelido;
 };
 
-export const LinhaPiloto = ({ pessoa }: Props) => {
+export const LinhaPiloto = ({ pessoa, motivo, onAgoraNao, onSeguiu }: Props) => {
   const apelido = marcaApelido(pessoa);
   const cidade = pessoa.cidade.trim();
 
@@ -40,9 +43,30 @@ export const LinhaPiloto = ({ pessoa }: Props) => {
           {apelido ? <span className={styles.marca}>@{apelido}</span> : null}
           {cidade ? <span className={styles.cidade}>{cidade}</span> : null}
           {pessoa.segueVoce ? <span className={styles.segueVoce}>Segue você</span> : null}
+          {motivo ? <span className={styles.motivo}>{motivo}</span> : null}
         </span>
       </Link>
-      <BotaoSeguir uid={pessoa.uid} apelido={pessoa.apelido} seguido={pessoa.seguidoPorMim} />
+      <div className={styles.colunaAcao}>
+        <BotaoSeguir
+          uid={pessoa.uid}
+          apelido={pessoa.apelido}
+          seguido={pessoa.seguidoPorMim}
+          onSeguiu={onSeguiu}
+        />
+        {onAgoraNao ? (
+          <button
+            type="button"
+            className={styles.agoraNao}
+            onClick={(evento) => {
+              evento.preventDefault();
+              evento.stopPropagation();
+              onAgoraNao();
+            }}
+          >
+            Agora não
+          </button>
+        ) : null}
+      </div>
     </article>
   );
 };

@@ -105,6 +105,8 @@ import type {AfiliadoRepository} from "./interfaces/afiliado.repository";
 import {FirestoreAfiliadoRepository} from "./firestore/firestore-afiliado.repository";
 import type {AtividadeRepository} from "./interfaces/atividade.repository";
 import {FirestoreAtividadeRepository} from "./firestore/firestore-atividade.repository";
+import type {SugestaoRepository} from "./interfaces/sugestao.repository";
+import {FirestoreSugestaoRepository} from "./firestore/firestore-sugestao.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -194,3 +196,6 @@ export const afiliadoRepository: AfiliadoRepository =
 
 export const atividadeRepository: AtividadeRepository =
   new FirestoreAtividadeRepository();
+
+export const sugestaoRepository: SugestaoRepository =
+  new FirestoreSugestaoRepository();

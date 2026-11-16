@@ -801,12 +801,21 @@
   color: var(--on-surface-variant);
 }
 
+.organizadorLinha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
 .organizador {
   display: flex;
   align-items: center;
   gap: 10px;
   padding-top: 4px;
   min-width: 0;
+  flex: 1;
   text-decoration: none;
   color: inherit;
 }
@@ -841,6 +850,9 @@
 }
 
 .organizadorApelido {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 12px;
   font-weight: 600;

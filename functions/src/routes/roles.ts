@@ -39,6 +39,7 @@ import {
 } from "../lib/participantes";
 import {
   roleRepository,
+  seguirRepository,
   usuarioRepository,
   usuarioRoleFeedbackRepository,
   usuarioRoleRepository,
@@ -83,16 +84,20 @@ const isRitmo = (valor: unknown): valor is RitmoRole =>
 
 const enriquecerCriadores = async (
   roles: Role[],
+  uid: string,
 ): Promise<Map<string, RoleCriadorResumo>> => {
   const cache = new Map<string, RoleCriadorResumo>();
   const uids = [...new Set(roles.map((r) => r.criadorId).filter(Boolean))];
+  const vinculos = await seguirRepository.vinculosCom(uid, uids);
   await Promise.all(
-    uids.map(async (uid) => {
-      const usuario = await usuarioRepository.buscarPorId(uid);
-      cache.set(uid, {
-        uid,
+    uids.map(async (criadorId) => {
+      const usuario = await usuarioRepository.buscarPorId(criadorId);
+      cache.set(criadorId, {
+        uid: criadorId,
         apelido: apelidoExibicao(usuario),
         fotoUrl: usuario?.fotoUrl || "",
+        seguidoPorMim: criadorId !== uid &&
+          (vinculos.get(criadorId)?.seguidoPorMim ?? false),
       });
     }),
   );
@@ -113,6 +118,7 @@ const paraFeedItem = (
     uid: role.criadorId,
     apelido: "piloto",
     fotoUrl: "",
+    seguidoPorMim: false,
   };
   const {paradas, ...semParadas} = role;
   return {
@@ -125,12 +131,20 @@ const paraFeedItem = (
   };
 };
 
-const resumoCriador = async (criadorId: string): Promise<RoleCriadorResumo> => {
-  const usuario = await usuarioRepository.buscarPorId(criadorId);
+const resumoCriador = async (
+  criadorId: string,
+  uid: string,
+): Promise<RoleCriadorResumo> => {
+  const [usuario, vinculos] = await Promise.all([
+    usuarioRepository.buscarPorId(criadorId),
+    seguirRepository.vinculosCom(uid, [criadorId]),
+  ]);
   return {
     uid: criadorId,
     apelido: apelidoExibicao(usuario),
     fotoUrl: usuario?.fotoUrl || "",
+    seguidoPorMim: criadorId !== uid &&
+      (vinculos.get(criadorId)?.seguidoPorMim ?? false),
   };
 };
 
@@ -139,7 +153,7 @@ const paraDetalhe = async (
   uid: string,
 ): Promise<RoleDetalhe> => {
   const [criador, confirmados, minhaParticipacao] = await Promise.all([
-    resumoCriador(role.criadorId),
+    resumoCriador(role.criadorId, uid),
     usuarioRoleRepository.contarConfirmados(role.id),
     usuarioRoleRepository.buscarPorUsuarioERole(uid, role.id),
   ]);
@@ -304,7 +318,7 @@ rolesRouter.get("/", async (req: Request, res: Response) => {
     filtrados.sort((a, b) => a.dataHoraSaida.localeCompare(b.dataHoraSaida));
 
     const [criadores, participantesPorRole] = await Promise.all([
-      enriquecerCriadores(filtrados),
+      enriquecerCriadores(filtrados, uid),
       enriquecerParticipantesRoles(filtrados.map((r) => r.id)),
     ]);
     const itens = filtrados.map((role) =>

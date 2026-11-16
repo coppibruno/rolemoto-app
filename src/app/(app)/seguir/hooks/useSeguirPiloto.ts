@@ -6,7 +6,11 @@ import { seguirService } from "../services/seguir.service";
 
 const TOAST = "Não deu para atualizar";
 
-export const useSeguirPiloto = (uid: string, seguidoInicial: boolean) => {
+export const useSeguirPiloto = (
+  uid: string,
+  seguidoInicial: boolean,
+  onSeguiu?: () => void,
+) => {
   const [seguido, setSeguido] = useState(seguidoInicial);
   const [confirmando, setConfirmando] = useState(false);
   const [enviando, setEnviando] = useState(false);
@@ -35,6 +39,7 @@ export const useSeguirPiloto = (uid: string, seguidoInicial: boolean) => {
     try {
       await seguirService.seguir(uid);
       publicarSeguir({ uid, delta: 1 });
+      onSeguiu?.();
     } catch {
       falhar(anterior);
     } finally {

@@ -1,0 +1,133 @@
+.faixa {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  padding: var(--card-padding-md);
+  border-radius: 1.5rem;
+  background: var(--surface-container-low);
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.titulo {
+  margin: 0;
+  min-width: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 18px;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.fechar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.fechar:focus-visible,
+.pessoa:focus-visible,
+.verMais:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.pessoa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: var(--touch-min);
+  color: inherit;
+  text-decoration: none;
+}
+
+.foto,
+.fotoVazia {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  object-fit: cover;
+}
+
+.fotoVazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--outline);
+}
+
+.textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.nome,
+.motivo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nome {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  color: var(--on-surface);
+}
+
+.motivo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.verMais {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}

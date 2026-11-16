@@ -56,6 +56,22 @@ export type PaginaVinculos =
   | {ok: true; vinculos: VinculoSeguir[]; proximoCursor: string | null}
   | {ok: false};
 
+export type TipoMotivoSugestao =
+  | "segue_voce"
+  | "seguido_por"
+  | "organizou_role"
+  | "telemetria"
+  | "publicou";
+
+export type MotivoSugestao = {
+  tipo: TipoMotivoSugestao;
+  texto: string;
+};
+
+export type LinhaSugestao = LinhaPiloto & {
+  motivo: MotivoSugestao;
+};
+
 export type ResultadoSeguir =
   | "criado"
   | "existente"

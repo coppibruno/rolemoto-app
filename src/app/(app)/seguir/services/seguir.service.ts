@@ -3,6 +3,7 @@ import type {
   AbaSeguir,
   PaginaPilotos,
   RespostaBuscaPilotos,
+  RespostaSugestoes,
 } from "@/types/seguir";
 
 const caminhoLista = (uid: string, aba: AbaSeguir, cursor: string | null) => {
@@ -27,4 +28,20 @@ export const seguirService = {
 
   listar: (uid: string, aba: AbaSeguir, cursor: string | null = null) =>
     api<PaginaPilotos>(caminhoLista(uid, aba, cursor)),
+
+  sugestoes: (lat?: number, lng?: number) => {
+    const params = new URLSearchParams();
+    if (lat !== undefined && lng !== undefined) {
+      params.set("lat", String(lat));
+      params.set("lng", String(lng));
+    }
+    const consulta = params.toString();
+    const caminho = consulta ? `/usuarios/sugestoes?${consulta}` : "/usuarios/sugestoes";
+    return api<RespostaSugestoes>(caminho);
+  },
+
+  dispensar: (uid: string) =>
+    api<void>(`/usuarios/sugestoes/${encodeURIComponent(uid)}/dispensa`, {
+      method: "POST",
+    }),
 };

@@ -50,6 +50,7 @@ export type RoleCriadorResumo = {
   uid: string;
   apelido: string;
   fotoUrl: string;
+  seguidoPorMim: boolean;
 };
 
 /** Item do feed — km até a saída + comprimento da rota + organizador. Sem o array de paradas. */

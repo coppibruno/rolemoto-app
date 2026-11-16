@@ -90,6 +90,9 @@ vi.mock("../repositories", () => ({
     listarConfirmadosDoRole: async () => [],
   },
   usuarioRoleFeedbackRepository: {},
+  seguirRepository: {
+    vinculosCom: async () => new Map(),
+  },
 }));
 
 const {rolesRouter} = await import("./roles");

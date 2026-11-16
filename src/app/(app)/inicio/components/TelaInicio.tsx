@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { CarrosselStories } from "@/app/(app)/stories/components/CarrosselStories";
+import { FaixaConhecer } from "./FaixaConhecer";
 import { BannerCockpitLider } from "@/app/(app)/feed/components/BannerCockpitLider";
 import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { CardFeedbackPendente } from "@/app/(app)/feed/components/CardFeedbackPendente";
@@ -74,6 +75,7 @@ export const TelaInicio = () => {
         {resumoAprovacoes ? <BannerCockpitLider resumo={resumoAprovacoes} /> : null}
 
         <CarrosselStories />
+        <FaixaConhecer />
 
         {primeiraCarga ? <EsqueletoInicio /> : null}
 

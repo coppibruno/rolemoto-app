@@ -13,8 +13,28 @@ export type PaginaPilotos = {
   proximoCursor: string | null;
 };
 
+export type TipoMotivoSugestao =
+  | "segue_voce"
+  | "seguido_por"
+  | "organizou_role"
+  | "telemetria"
+  | "publicou";
+
+export type MotivoSugestao = {
+  tipo: TipoMotivoSugestao;
+  texto: string;
+};
+
+export type LinhaSugestao = LinhaPiloto & {
+  motivo: MotivoSugestao;
+};
+
 export type RespostaBuscaPilotos = {
   itens: LinhaPiloto[];
+};
+
+export type RespostaSugestoes = {
+  itens: LinhaSugestao[];
 };
 
 export type AbaSeguir = "seguindo" | "seguidores";

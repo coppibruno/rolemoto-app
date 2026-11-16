@@ -9,6 +9,7 @@ import type {UsuarioRole, UsuarioRoleCreate} from "../types/usuario-role";
 const banco = vi.hoisted(() => ({
   roles: new Map<string, Role>(),
   vinculos: new Map<string, UsuarioRole>(),
+  seguidos: new Set<string>(),
   seq: 0,
 }));
 
@@ -129,6 +130,15 @@ vi.mock("../repositories", () => ({
     },
   },
   usuarioRoleFeedbackRepository: {},
+  seguirRepository: {
+    vinculosCom: async (_uid: string, uids: string[]) => {
+      const mapa = new Map<string, {seguidoPorMim: boolean; segueVoce: boolean}>();
+      for (const id of uids) {
+        mapa.set(id, {seguidoPorMim: banco.seguidos.has(id), segueVoce: false});
+      }
+      return mapa;
+    },
+  },
 }));
 
 const {rolesRouter} = await import("./roles");
@@ -165,6 +175,7 @@ afterAll(() => {
 beforeEach(() => {
   banco.roles.clear();
   banco.vinculos.clear();
+  banco.seguidos.clear();
   banco.seq = 0;
   espias.pedidoVaga.mockClear();
   espias.entradaRole.mockReset();
@@ -286,5 +297,45 @@ describe("fixar e reutilizar — FR1", () => {
     const depois = await chamar("GET", `/roles/${criado.json.id}/modelo`, undefined, "bia");
     expect(depois.status).toBe(200);
     expect(depois.json.acesso).toBe("fechado");
+  });
+});
+
+describe("seguidoPorMim no card — CG6", () => {
+  const roleDe = (id: string, criadorId: string): Role => ({
+    id,
+    titulo: "Serra",
+    descricao: "",
+    fotoCapaUrl: "",
+    ritmo: "moderada",
+    dataHoraSaida: new Date(Date.now() + 3 * DIA_MS).toISOString(),
+    localSaida: BLUMENAU,
+    paradas: [],
+    destinoFinal: JOINVILLE,
+    acesso: "aberto",
+    fixado: false,
+    criadorId,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  it("marca quem eu sigo e deixa false quem eu não sigo", async () => {
+    banco.roles.set("r-bia", roleDe("r-bia", "bia"));
+    banco.roles.set("r-caio", roleDe("r-caio", "caio"));
+    banco.roles.set("r-ana", roleDe("r-ana", "ana"));
+    banco.seguidos.add("bia");
+    const res = await chamar(
+      "GET",
+      "/roles?lat=-26.9189&lng=-49.0661",
+      undefined,
+      "ana",
+    );
+    expect(res.status).toBe(200);
+    const porCriador = new Map(
+      (res.json as {criador: {uid: string; seguidoPorMim: boolean}}[])
+        .map((item) => [item.criador.uid, item.criador.seguidoPorMim]),
+    );
+    expect(porCriador.get("bia")).toBe(true);
+    expect(porCriador.get("caio")).toBe(false);
+    expect(porCriador.has("ana")).toBe(false);
   });
 });

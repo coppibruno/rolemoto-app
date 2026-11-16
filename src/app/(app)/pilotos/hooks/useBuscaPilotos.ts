@@ -83,19 +83,25 @@ export const useBuscaPilotos = () => {
     return "ok";
   };
 
-  const tentarDeNovo = () => {
-    if (local) {
-      void carregarSeguidos();
-      return;
-    }
-    void buscar(termo);
+  const colocarNoTopo = (pessoa: LinhaPiloto) => {
+    setSeguidos((atual) => [pessoa, ...atual.filter((item) => item.uid !== pessoa.uid)]);
+    setFaseSeguidos("ok");
   };
 
   return {
     texto,
     setTexto,
-    itens: local ? filtrados : itensBusca,
-    fase: local ? faseLocal() : faseBusca,
-    tentarDeNovo,
+    termo,
+    seguidos: filtrados,
+    faseSeguidos: faseLocal(),
+    itensBusca,
+    faseBusca,
+    tentarSeguidos: () => {
+      void carregarSeguidos();
+    },
+    tentarBusca: () => {
+      void buscar(termo);
+    },
+    colocarNoTopo,
   };
 };

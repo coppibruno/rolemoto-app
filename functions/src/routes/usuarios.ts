@@ -4,6 +4,7 @@ import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
 import {apelidoExibicao} from "../lib/apelido";
 import {ordenarBuscaComSeguidos, termoBusca} from "../lib/busca-piloto";
+import {carregarSugestoes} from "../lib/carregar-sugestoes";
 import {carregarHistoricoPublico} from "../lib/carregar-historico";
 import {erroDe, log} from "../lib/log";
 import {notificarNovoSeguidor} from "../lib/notificacoes";
@@ -22,6 +23,7 @@ import {
   postFotoRepository,
   roleTelemetriaRepository,
   seguirRepository,
+  sugestaoRepository,
   usuarioRepository,
 } from "../repositories";
 import type {LinhaPiloto, VinculoEntre} from "../types/seguir";
@@ -32,6 +34,8 @@ import type {PerfilPublico, Usuario} from "../types/usuario";
  * Perfil público de qualquer piloto autenticado.
  *
  * GET /usuarios/busca
+ * GET /usuarios/sugestoes
+ * POST /usuarios/sugestoes/:uid/dispensa
  * GET /usuarios/:uid
  * GET /usuarios/:uid/stories
  * GET /usuarios/:uid/posts
@@ -161,6 +165,92 @@ usuariosRouter.get("/busca", async (req: Request, res: Response) => {
     responderErro(res, error);
   }
 });
+
+const numeroQuery = (valor: unknown): number | null => {
+  if (Array.isArray(valor)) {
+    return numeroQuery(valor[0]);
+  }
+  if (typeof valor === "number" && Number.isFinite(valor)) {
+    return valor;
+  }
+  if (typeof valor !== "string" || valor.trim() === "") {
+    return null;
+  }
+  const numero = Number(valor);
+  return Number.isFinite(numero) ? numero : null;
+};
+
+const coordenadasSugestao = (
+  query: Request["query"],
+): {ok: true; ponto: {lat: number; lng: number} | null} | {ok: false} => {
+  const temLat = query.lat !== undefined;
+  const temLng = query.lng !== undefined;
+  if (!temLat && !temLng) {
+    return {ok: true, ponto: null};
+  }
+  if (!temLat || !temLng) {
+    return {ok: false};
+  }
+  const lat = numeroQuery(query.lat);
+  const lng = numeroQuery(query.lng);
+  if (lat === null || lng === null) {
+    return {ok: false};
+  }
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    return {ok: false};
+  }
+  return {ok: true, ponto: {lat, lng}};
+};
+
+usuariosRouter.get("/sugestoes", async (req: Request, res: Response) => {
+  try {
+    const token = req.usuario?.uid;
+    if (!token) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+    const coords = coordenadasSugestao(req.query);
+    if (!coords.ok) {
+      res.status(400).json({erro: "coordenadas inválidas"});
+      return;
+    }
+    const itens = await carregarSugestoes(token, coords.ponto);
+    res.json({itens});
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
+usuariosRouter.post(
+  "/sugestoes/:uid/dispensa",
+  async (req: Request, res: Response) => {
+    try {
+      const token = req.usuario?.uid;
+      if (!token) {
+        res.status(401).json({erro: "Não autenticado"});
+        return;
+      }
+      const alvo = lerUid(req);
+      if (!alvo) {
+        res.status(400).json({erro: "uid inválido"});
+        return;
+      }
+      if (alvo === token) {
+        res.status(400).json({erro: "não dá para dispensar a si mesmo"});
+        return;
+      }
+      const perfil = await usuarioRepository.buscarPorId(alvo);
+      if (!perfil) {
+        res.status(404).json({erro: "Perfil não encontrado"});
+        return;
+      }
+      await sugestaoRepository.dispensar(token, alvo);
+      res.status(204).send();
+    } catch (error) {
+      responderErro(res, error);
+    }
+  },
+);
 
 usuariosRouter.get("/:uid/telemetria", async (req: Request, res: Response) => {
   try {
