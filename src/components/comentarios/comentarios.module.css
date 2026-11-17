@@ -50,11 +50,15 @@
 }
 
 .campoFixo {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 8px var(--gutter-md) calc(8px + env(safe-area-inset-bottom, 0px));
-  background: var(--surface-container);
+  border-top: 1px solid var(--surface-container-high);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .campoLinha {

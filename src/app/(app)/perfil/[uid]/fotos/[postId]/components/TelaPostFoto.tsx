@@ -27,57 +27,61 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
   return (
     <div className={styles.tela}>
       <CabecalhoPost autorUid={autorUid} autor={post?.autor} />
-      {detalhe.carregando ? <div className={styles.fotoEsqueleto} aria-busy="true" /> : null}
-      {detalhe.naoEncontrado ? <p className={styles.estado}>Esta foto não existe mais.</p> : null}
-      {detalhe.erro ? (
-        <div className={styles.estado}>
-          <p>Não foi possível abrir a foto.</p>
-          <button type="button" className={styles.secundario} onClick={() => void detalhe.recarregar()}>
-            Tentar de novo
-          </button>
-        </div>
-      ) : null}
-      {post ? (
-        <>
-          <FotoComToqueDuplo
-            fotoUrl={post.fotoUrl}
-            legenda={post.legenda}
-            onCurtirDuplo={() => void detalhe.curtirSo()}
-          />
-          <div className={styles.corpo}>
-            {post.marca ? <ChipMarcaPost marca={post.marca} /> : null}
-            {post.legenda ? <p className={styles.legenda}>{post.legenda}</p> : null}
-            <AcoesPost
-              encaminhado={post.encaminhadoPorMim}
-              meu={detalhe.meu}
-              ocupado={detalhe.ocupado}
-              erro={detalhe.erroAcao}
-              curtido={post.curtidoPorMim}
-              totalCurtidas={post.totalCurtidas}
-              onCurtir={() => void detalhe.alternarCurtida()}
-              onComentar={() => setFocoPedido((n) => n + 1)}
-              onEncaminhar={() => void detalhe.encaminhar()}
-              onApagar={() => void detalhe.apagar()}
-            />
-            <ListaComentarios
-              total={post.totalComentarios}
-              itens={comentarios.itens}
-              carregando={comentarios.carregando}
-              erro={comentarios.erro}
-              temAnteriores={Boolean(comentarios.cursor)}
-              carregandoMais={comentarios.carregandoMais}
-              onAnteriores={() => void comentarios.carregarAnteriores()}
-              onTentar={() => void comentarios.recarregar()}
-              onApagar={(id) => void comentarios.apagar(id)}
-            />
+      <div className={styles.rolagem}>
+        {detalhe.carregando ? <div className={styles.fotoEsqueleto} aria-busy="true" /> : null}
+        {detalhe.naoEncontrado ? <p className={styles.estado}>Esta foto não existe mais.</p> : null}
+        {detalhe.erro ? (
+          <div className={styles.estado}>
+            <p>Não foi possível abrir a foto.</p>
+            <button type="button" className={styles.secundario} onClick={() => void detalhe.recarregar()}>
+              Tentar de novo
+            </button>
           </div>
-          <CampoComentario
-            enviando={comentarios.enviando}
-            erro={comentarios.erroEnvio}
-            onEnviar={comentarios.enviar}
-            focoPedido={focoPedido}
-          />
-        </>
+        ) : null}
+        {post ? (
+          <>
+            <FotoComToqueDuplo
+              fotoUrl={post.fotoUrl}
+              legenda={post.legenda}
+              onCurtirDuplo={() => void detalhe.curtirSo()}
+            />
+            <div className={styles.corpo}>
+              {post.marca ? <ChipMarcaPost marca={post.marca} /> : null}
+              {post.legenda ? <p className={styles.legenda}>{post.legenda}</p> : null}
+              <AcoesPost
+                encaminhado={post.encaminhadoPorMim}
+                meu={detalhe.meu}
+                ocupado={detalhe.ocupado}
+                erro={detalhe.erroAcao}
+                curtido={post.curtidoPorMim}
+                totalCurtidas={post.totalCurtidas}
+                onCurtir={() => void detalhe.alternarCurtida()}
+                onComentar={() => setFocoPedido((n) => n + 1)}
+                onEncaminhar={() => void detalhe.encaminhar()}
+                onApagar={() => void detalhe.apagar()}
+              />
+              <ListaComentarios
+                total={post.totalComentarios}
+                itens={comentarios.itens}
+                carregando={comentarios.carregando}
+                erro={comentarios.erro}
+                temAnteriores={Boolean(comentarios.cursor)}
+                carregandoMais={comentarios.carregandoMais}
+                onAnteriores={() => void comentarios.carregarAnteriores()}
+                onTentar={() => void comentarios.recarregar()}
+                onApagar={(id) => void comentarios.apagar(id)}
+              />
+            </div>
+          </>
+        ) : null}
+      </div>
+      {post ? (
+        <CampoComentario
+          enviando={comentarios.enviando}
+          erro={comentarios.erroEnvio}
+          onEnviar={comentarios.enviar}
+          focoPedido={focoPedido}
+        />
       ) : null}
     </div>
   );

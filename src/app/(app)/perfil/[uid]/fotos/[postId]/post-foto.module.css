@@ -1,15 +1,20 @@
 .tela {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--folga-viewport, 0px);
+  z-index: 200;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-  margin-bottom: calc(-96px - env(safe-area-inset-bottom, 0px));
-  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  max-width: 560px;
+  margin: 0 auto;
+  background: var(--surface);
+  pointer-events: auto;
 }
 
 .cabecalho {
-  position: sticky;
-  top: 0;
-  z-index: 40;
+  flex-shrink: 0;
   display: grid;
   grid-template-columns: var(--touch-min) 1fr var(--touch-min);
   align-items: center;
@@ -18,6 +23,17 @@
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+.rolagem {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .autorTopo {
@@ -139,7 +155,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 14px var(--gutter-md) 0;
+  padding: 14px var(--gutter-md) 16px;
 }
 
 .autor {
@@ -418,70 +434,13 @@
   font-size: 12px;
 }
 
-.campoFixo {
-  position: fixed;
-  left: 50%;
-  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  z-index: 45;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: min(100%, 560px);
-  padding: 8px var(--gutter-md);
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  transform: translateX(-50%);
-}
-
-.campoLinha {
-  display: flex;
-  gap: 8px;
-}
-
-.campo {
-  flex: 1;
-  min-width: 0;
-  min-height: var(--touch-min);
-  padding: 0 14px;
-  border: none;
-  border-radius: 999px;
-  background: var(--surface-container-lowest);
-  color: var(--on-surface);
-  font-size: 16px;
-}
-
-.campo::placeholder {
-  color: var(--outline);
-}
-
-.enviar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--touch-min);
-  height: var(--touch-min);
-  border: none;
-  border-radius: 999px;
-  background: var(--primary-container);
-  color: var(--on-primary-container);
-  cursor: pointer;
-}
-
-.enviar:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .voltar:focus-visible,
 .autor:focus-visible,
 .chip:focus-visible,
 .secundario:focus-visible,
 .perigo:focus-visible,
 .anteriores:focus-visible,
-.apagarComentario:focus-visible,
-.campo:focus-visible,
-.enviar:focus-visible {
+.apagarComentario:focus-visible {
   outline: 2px solid var(--primary-container);
   outline-offset: 2px;
 }
