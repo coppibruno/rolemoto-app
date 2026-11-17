@@ -16,19 +16,33 @@ const TOLERANCIA_INICIAL_M = 8;
 export const MAX_PONTOS_TRACADO = 1500;
 const METROS_POR_GRAU = 111_320;
 const PRECISAO = 1e5;
+/** Décimos de km/h no encode (87,3 → 873). */
+const PRECISAO_VELOCIDADE = 10;
 
 type Xy = { x: number; y: number };
 
+export type PontoTracado = PontoLatLng & { velocidadeKmh: number };
+
+export type TracadoGerado = {
+  polyline: string;
+  /** Encoded paralelo aos vértices; "" sem caminho. */
+  velocidades: string;
+};
+
 /** Pontos aceitos pelo mesmo filtro de saltos das métricas, em ordem de tempo. */
-export const pontosDoTracado = (pontos: PontoGps[]): PontoLatLng[] => {
+export const pontosDoTracado = (pontos: PontoGps[]): PontoTracado[] => {
   const ordenados = descartarRedeComGps(pontos);
-  const aceitos: PontoLatLng[] = [];
+  const aceitos: PontoTracado[] = [];
   let estado = estadoCalculoInicial();
   for (const ponto of ordenados) {
     if (ponto.accuracy != null && ponto.accuracy > ACCURACY_TRACADO_M) continue;
     const proximo = aplicarPonto(estado, ponto);
     if (proximo.ultimo && proximo.ultimo !== estado.ultimo) {
-      aceitos.push({ lat: proximo.ultimo.lat, lng: proximo.ultimo.lng });
+      aceitos.push({
+        lat: proximo.ultimo.lat,
+        lng: proximo.ultimo.lng,
+        velocidadeKmh: proximo.velocidadeAtualKmh,
+      });
     }
     estado = proximo;
   }
@@ -47,10 +61,10 @@ const distanciaAoSegmento = (p: Xy, a: Xy, b: Xy): number => {
 };
 
 /** Douglas-Peucker iterativo, com distâncias em metros (projeção local). */
-export const simplificarTracado = (
-  pontos: PontoLatLng[],
+export const simplificarTracado = <T extends PontoLatLng>(
+  pontos: T[],
   toleranciaM: number,
-): PontoLatLng[] => {
+): T[] => {
   const n = pontos.length;
   if (n <= 2) return pontos;
   const lat0 = pontos[0].lat;
@@ -94,6 +108,26 @@ const codificarValor = (valor: number): string => {
   return saida + String.fromCharCode(restante + 63);
 };
 
+const lerValorEncoded = (
+  texto: string,
+  inicio: number,
+): { valor: number; proximo: number } | null => {
+  let i = inicio;
+  let resultado = 0;
+  let shift = 0;
+  let byte: number;
+  do {
+    if (i >= texto.length || shift > 30) return null;
+    byte = texto.charCodeAt(i) - 63;
+    i += 1;
+    if (byte < 0 || byte > 63) return null;
+    resultado |= (byte & 0x1f) << shift;
+    shift += 5;
+  } while (byte >= 0x20);
+  const valor = resultado & 1 ? ~(resultado >> 1) : resultado >> 1;
+  return { valor, proximo: i };
+};
+
 /** Encoded polyline (formato Google, precisão 5). */
 export const codificarPolyline = (pontos: PontoLatLng[]): string => {
   let latAnterior = 0;
@@ -116,41 +150,90 @@ export const decodificarPolyline = (texto: string): PontoLatLng[] => {
   let lat = 0;
   let lng = 0;
 
-  const lerValor = (): number | null => {
-    let resultado = 0;
-    let shift = 0;
-    let byte: number;
-    do {
-      if (i >= texto.length || shift > 30) return null;
-      byte = texto.charCodeAt(i) - 63;
-      i += 1;
-      if (byte < 0 || byte > 63) return null;
-      resultado |= (byte & 0x1f) << shift;
-      shift += 5;
-    } while (byte >= 0x20);
-    return resultado & 1 ? ~(resultado >> 1) : resultado >> 1;
-  };
-
   while (i < texto.length) {
-    const dLat = lerValor();
-    const dLng = lerValor();
-    if (dLat === null || dLng === null) break;
-    lat += dLat;
-    lng += dLng;
+    const dLat = lerValorEncoded(texto, i);
+    if (!dLat) break;
+    i = dLat.proximo;
+    const dLng = lerValorEncoded(texto, i);
+    if (!dLng) break;
+    i = dLng.proximo;
+    lat += dLat.valor;
+    lng += dLng.valor;
     pontos.push({ lat: lat / PRECISAO, lng: lng / PRECISAO });
   }
   return pontos;
 };
 
-/** Traçado pronto para o POST; "" se não houver caminho para desenhar. */
-export const gerarTracado = (pontos: PontoGps[]): string => {
+/** Deltas de décimos de km/h, mesmo alfabeto do polyline. */
+export const codificarVelocidades = (velocidadesKmh: number[]): string => {
+  let anterior = 0;
+  let saida = "";
+  for (const kmh of velocidadesKmh) {
+    const atual = Math.round(Math.max(0, kmh) * PRECISAO_VELOCIDADE);
+    saida += codificarValor(atual - anterior);
+    anterior = atual;
+  }
+  return saida;
+};
+
+/** Tolerante a texto truncado ou inválido. */
+export const decodificarVelocidades = (texto: string): number[] => {
+  const velocidades: number[] = [];
+  let i = 0;
+  let atual = 0;
+  while (i < texto.length) {
+    const lido = lerValorEncoded(texto, i);
+    if (!lido) break;
+    i = lido.proximo;
+    atual += lido.valor;
+    velocidades.push(atual / PRECISAO_VELOCIDADE);
+  }
+  return velocidades;
+};
+
+const TRACADO_VAZIO: TracadoGerado = { polyline: "", velocidades: "" };
+
+/** Traçado + velocidades prontos para o POST; vazio se não houver caminho. */
+export const gerarTracado = (pontos: PontoGps[]): TracadoGerado => {
   const aceitos = pontosDoTracado(pontos);
-  if (aceitos.length < 2) return "";
+  if (aceitos.length < 2) return TRACADO_VAZIO;
   let tolerancia = TOLERANCIA_INICIAL_M;
   let simplificado = simplificarTracado(aceitos, tolerancia);
   while (simplificado.length > MAX_PONTOS_TRACADO) {
     tolerancia *= 2;
     simplificado = simplificarTracado(aceitos, tolerancia);
   }
-  return codificarPolyline(simplificado);
+  return {
+    polyline: codificarPolyline(simplificado),
+    velocidades: codificarVelocidades(simplificado.map((p) => p.velocidadeKmh)),
+  };
+};
+
+const haversineM = (a: PontoLatLng, b: PontoLatLng): number => {
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+  const lat1 = (a.lat * Math.PI) / 180;
+  const lat2 = (b.lat * Math.PI) / 180;
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 2 * METROS_POR_GRAU * Math.asin(Math.min(1, Math.sqrt(h)));
+};
+
+/** Índice do vértice mais próximo do toque (para inspecionar velocidade). */
+export const indiceVerticeMaisProximo = (
+  pontos: PontoLatLng[],
+  alvo: PontoLatLng,
+): number => {
+  if (pontos.length === 0) return -1;
+  let melhor = 0;
+  let menor = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < pontos.length; i += 1) {
+    const d = haversineM(pontos[i], alvo);
+    if (d < menor) {
+      menor = d;
+      melhor = i;
+    }
+  }
+  return melhor;
 };

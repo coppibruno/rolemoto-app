@@ -41,6 +41,8 @@ O encontro termina e as fotos ficam fora (Google Photos, Drive, etc.). O app nã
 - No **detalhe** `/eventos/[id]`: bloco com lista de links + formulário para quem pode publicar + gestão do fotógrafo para admin.
 - Query `?album=1` rola até o bloco e destaca.
 - No **Início**, item de conteúdo `album_evento` (curtir sim; comentar não no MVP).
+- Admin: atalho **Passados** na aba Eventos do Explorar → `/eventos-passados` (`GET /eventos/admin/passados`, últimos 60 dias), para autorizar fotógrafo sem ter participado.
+- Garagem (**Meus Rolês → Eventos**): selo **Fotos** + CTA **Ver fotos** quando `temAlbum`, abrindo `/eventos/{id}?album=1`.
 
 ### 2.2 O que não entra
 

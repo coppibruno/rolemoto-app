@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  padding-bottom: 88px;
+  margin-bottom: calc(-96px - env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
 }
 
 .cabecalho {
@@ -12,10 +13,84 @@
   display: grid;
   grid-template-columns: var(--touch-min) 1fr var(--touch-min);
   align-items: center;
+  gap: 8px;
   padding: calc(8px + env(safe-area-inset-top, 0px)) var(--gutter-md) 8px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+
+.autorTopo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--on-surface);
+  text-decoration: none;
+}
+
+.avatarTopo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--surface-container-high);
+  color: var(--outline);
+  object-fit: cover;
+}
+
+.autorTopoNome {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.fotoBotao {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: var(--surface-container-lowest);
+  cursor: pointer;
+}
+
+.coracaoFlash {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--primary-container);
+  animation: flashCoracao 600ms ease-out;
+}
+
+.coracaoFlash .material-symbols-outlined {
+  font-size: 72px;
+  font-variation-settings: "FILL" 1;
+}
+
+@keyframes flashCoracao {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
 }
 
 .voltar {
@@ -152,7 +227,56 @@
 .acoes {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
+}
+
+.linhaIcones {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.iconeAcao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.iconeAcao:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.iconeAcao .material-symbols-outlined {
+  font-size: 28px;
+}
+
+.iconePerigo {
+  margin-left: auto;
+  color: var(--error);
+}
+
+.curtido {
+  color: var(--primary-container);
+}
+
+.curtido .material-symbols-outlined {
+  font-variation-settings: "FILL" 1;
+}
+
+.totalCurtidas {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--on-surface);
 }
 
 .secundario,
@@ -184,14 +308,6 @@
 .perigo:disabled {
   opacity: 0.6;
   cursor: default;
-}
-
-.curtido {
-  color: var(--primary-container);
-}
-
-.curtido .material-symbols-outlined {
-  font-variation-settings: "FILL" 1;
 }
 
 .erro,

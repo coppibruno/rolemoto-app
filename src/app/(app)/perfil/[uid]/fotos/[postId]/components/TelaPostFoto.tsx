@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useComentariosPost } from "../hooks/useComentariosPost";
 import { usePostFoto } from "../hooks/usePostFoto";
 import { AcoesPost } from "./AcoesPost";
-import { AutorPost } from "./AutorPost";
 import { CabecalhoPost } from "./CabecalhoPost";
 import { CampoComentario } from "./CampoComentario";
 import { ChipMarcaPost } from "./ChipMarcaPost";
+import { FotoComToqueDuplo } from "./FotoComToqueDuplo";
 import { ListaComentarios } from "./ListaComentarios";
 import styles from "../post-foto.module.css";
 
@@ -16,13 +18,15 @@ type Props = {
 };
 
 export const TelaPostFoto = ({ autorUid, postId }: Props) => {
+  useCamadaCheia(true);
   const detalhe = usePostFoto(postId);
   const comentarios = useComentariosPost(postId, detalhe.mudarTotal);
   const post = detalhe.post;
+  const [focoPedido, setFocoPedido] = useState(0);
 
   return (
     <div className={styles.tela}>
-      <CabecalhoPost autorUid={autorUid} />
+      <CabecalhoPost autorUid={autorUid} autor={post?.autor} />
       {detalhe.carregando ? <div className={styles.fotoEsqueleto} aria-busy="true" /> : null}
       {detalhe.naoEncontrado ? <p className={styles.estado}>Esta foto não existe mais.</p> : null}
       {detalhe.erro ? (
@@ -35,9 +39,12 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
       ) : null}
       {post ? (
         <>
-          <img src={post.fotoUrl} alt={post.legenda || "Foto"} className={styles.foto} />
+          <FotoComToqueDuplo
+            fotoUrl={post.fotoUrl}
+            legenda={post.legenda}
+            onCurtirDuplo={() => void detalhe.curtirSo()}
+          />
           <div className={styles.corpo}>
-            <AutorPost autor={post.autor} createdAt={post.createdAt} />
             {post.marca ? <ChipMarcaPost marca={post.marca} /> : null}
             {post.legenda ? <p className={styles.legenda}>{post.legenda}</p> : null}
             <AcoesPost
@@ -48,6 +55,7 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
               curtido={post.curtidoPorMim}
               totalCurtidas={post.totalCurtidas}
               onCurtir={() => void detalhe.alternarCurtida()}
+              onComentar={() => setFocoPedido((n) => n + 1)}
               onEncaminhar={() => void detalhe.encaminhar()}
               onApagar={() => void detalhe.apagar()}
             />
@@ -67,6 +75,7 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
             enviando={comentarios.enviando}
             erro={comentarios.erroEnvio}
             onEnviar={comentarios.enviar}
+            focoPedido={focoPedido}
           />
         </>
       ) : null}

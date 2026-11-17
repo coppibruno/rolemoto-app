@@ -1,10 +1,21 @@
-import { useMemo } from "react";
+"use client";
+
+import { useMemo, useState } from "react";
 import { MapaLeitura } from "@/components/maps/MapaLeitura";
 import type { MarcadorMapa } from "@/components/maps/MapaEstatico";
 import { medalhaEmDestaque } from "@/lib/conquistas";
+import type { PontoLatLng } from "@/lib/mapa-tiles";
 import { urlRotaMaps } from "@/lib/maps";
-import { formatarDistancia, labelPontoTelemetria } from "@/lib/telemetria/formatar-telemetria";
-import { decodificarPolyline } from "@/lib/telemetria/tracado";
+import {
+  formatarDistancia,
+  formatarVelocidade,
+  labelPontoTelemetria,
+} from "@/lib/telemetria/formatar-telemetria";
+import {
+  decodificarPolyline,
+  decodificarVelocidades,
+  indiceVerticeMaisProximo,
+} from "@/lib/telemetria/tracado";
 import type { MedalhaTelemetria } from "@/types/conquista";
 import type { PontoTelemetria } from "@/types/role-telemetria";
 import styles from "./telemetria.module.css";
@@ -14,6 +25,7 @@ type Props = {
   pontoFim: PontoTelemetria;
   distanciaKm: number;
   tracado?: string;
+  tracadoVelocidades?: string;
   medalhas?: MedalhaTelemetria[];
   onTocarMedalha?: (indice: number) => void;
 };
@@ -28,10 +40,22 @@ export const MapaPontosAB = ({
   pontoFim,
   distanciaKm,
   tracado,
+  tracadoVelocidades,
   medalhas = SEM_MEDALHAS,
   onTocarMedalha,
 }: Props) => {
   const trajeto = useMemo(() => decodificarPolyline(tracado ?? ""), [tracado]);
+  const velocidades = useMemo(
+    () => decodificarVelocidades(tracadoVelocidades ?? ""),
+    [tracadoVelocidades],
+  );
+  const inspecionavel =
+    trajeto.length >= 2 && velocidades.length === trajeto.length;
+  const [inspecao, setInspecao] = useState<{
+    indice: number;
+    velocidadeKmh: number;
+  } | null>(null);
+
   const marcadores = useMemo<MarcadorMapa[]>(
     () => [
       {
@@ -55,8 +79,16 @@ export const MapaPontosAB = ({
         onToque: onTocarMedalha ? () => onTocarMedalha(indice) : undefined,
       })),
     ],
-    [medalhas, onTocarMedalha, pontoFim.lat, pontoFim.lng, pontoInicio.lat, pontoInicio.lng],
+    [
+      medalhas,
+      onTocarMedalha,
+      pontoFim.lat,
+      pontoFim.lng,
+      pontoInicio.lat,
+      pontoInicio.lng,
+    ],
   );
+
   const hrefMaps = urlRotaMaps(
     {
       lat: pontoInicio.lat,
@@ -72,12 +104,29 @@ export const MapaPontosAB = ({
     },
   );
 
+  const aoTocarTrajeto = inspecionavel
+    ? (ponto: PontoLatLng) => {
+        const indice = indiceVerticeMaisProximo(trajeto, ponto);
+        if (indice < 0) return;
+        if (inspecao?.indice === indice) {
+          setInspecao(null);
+          return;
+        }
+        setInspecao({
+          indice,
+          velocidadeKmh: velocidades[indice],
+        });
+      }
+    : undefined;
+
   return (
     <div className={styles.mapa}>
       <div className={styles.mapaTopo}>
         <span className={styles.mapaLabel}>
           <span className={styles.ping} aria-hidden />
-          Traçado GPS · {formatarDistancia(distanciaKm)}
+          {inspecionavel
+            ? `Toque o caminho · ${formatarDistancia(distanciaKm)}`
+            : `Traçado GPS · ${formatarDistancia(distanciaKm)}`}
         </span>
         <a
           href={hrefMaps}
@@ -94,13 +143,29 @@ export const MapaPontosAB = ({
           marcadores={marcadores}
           ligarMarcadores
           trajeto={trajeto}
+          onTocarTrajeto={aoTocarTrajeto}
           aria-label={
             trajeto.length >= 2
-              ? "Mapa com o caminho percorrido"
+              ? inspecionavel
+                ? "Mapa com o caminho percorrido; toque para ver a velocidade"
+                : "Mapa com o caminho percorrido"
               : "Mapa com partida e destino"
           }
           className={styles.mapaImg}
         />
+        {inspecao ? (
+          <button
+            type="button"
+            className={styles.chipVelocidade}
+            onClick={() => setInspecao(null)}
+            aria-label={`Velocidade ${formatarVelocidade(inspecao.velocidadeKmh)}. Toque para fechar.`}
+          >
+            <span className="material-symbols-outlined" aria-hidden>
+              speed
+            </span>
+            {formatarVelocidade(inspecao.velocidadeKmh)}
+          </button>
+        ) : null}
       </div>
       {medalhas.length > 0 ? (
         <ul className={styles.faixaMedalhas} aria-label="Medalhas deste passeio">

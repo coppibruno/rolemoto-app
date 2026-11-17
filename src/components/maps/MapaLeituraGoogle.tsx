@@ -10,6 +10,7 @@ export const MapaLeituraGoogle = ({
   className,
   ligarMarcadores = false,
   trajeto,
+  onTocarTrajeto,
   "aria-label": ariaLabel = "Mapa",
 }: PropsMapaEstatico) => {
   const { containerRef, pronto, falhou } = useMapaLeituraGoogle({
@@ -17,6 +18,7 @@ export const MapaLeituraGoogle = ({
     zoom,
     ligarMarcadores,
     trajeto,
+    onTocarTrajeto,
   });
 
   if (falhou) {
@@ -27,17 +29,21 @@ export const MapaLeituraGoogle = ({
         className={className}
         ligarMarcadores={ligarMarcadores}
         trajeto={trajeto}
+        onTocarTrajeto={onTocarTrajeto}
         aria-label={ariaLabel}
       />
     );
   }
+
+  const interativo =
+    marcadores.some((m) => m.icone && m.onToque) || Boolean(onTocarTrajeto);
 
   return (
     <div
       className={[styles.viewport, styles.viewportGoogle, className]
         .filter(Boolean)
         .join(" ")}
-      role={marcadores.some((m) => m.icone && m.onToque) ? "group" : "img"}
+      role={interativo ? "group" : "img"}
       aria-label={ariaLabel}
     >
       <div ref={containerRef} className={styles.google} />

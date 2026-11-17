@@ -28,11 +28,15 @@ export const useAnelStories = (uid: string, nome: string) => {
 
   const abrir = () => {
     if (proprio && !tem) {
-      captura.abrir();
+      router.push(href);
       return;
     }
     if (!proprio && !tem) {
       router.push(href);
+      return;
+    }
+    if (proprio && tem) {
+      player.abrir(null);
       return;
     }
     setMenu((atual) => !atual);
@@ -41,11 +45,6 @@ export const useAnelStories = (uid: string, nome: string) => {
   const verFotos = () => {
     setMenu(false);
     player.abrir(null);
-  };
-
-  const novaFoto = () => {
-    setMenu(false);
-    captura.abrir();
   };
 
   const verPerfil = () => {
@@ -59,19 +58,16 @@ export const useAnelStories = (uid: string, nome: string) => {
   };
 
   const opcoes = proprio
-    ? [
-      { rotulo: "Ver fotos", aoClicar: verFotos },
-      { rotulo: "Nova foto", aoClicar: novaFoto },
-    ]
+    ? [{ rotulo: "Ver fotos", aoClicar: verFotos }]
     : [
       { rotulo: "Visualizar perfil", aoClicar: verPerfil },
       { rotulo: "Visualizar Stories", aoClicar: verFotos },
     ];
 
-  const rotulo = proprio && !tem
-    ? "Nova foto"
-    : tem
-      ? `Stories de ${nome}`
+  const rotulo = tem
+    ? `Stories de ${nome}`
+    : proprio
+      ? "Seu perfil"
       : `Perfil de ${nome}`;
 
   return {

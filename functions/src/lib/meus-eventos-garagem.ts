@@ -68,6 +68,7 @@ export const montarItensEventosGaragem = (
         null,
       notaMedia: evento.notaMedia,
       totalAvaliacoes: evento.totalAvaliacoes,
+      temAlbum: evento.albuns.length > 0,
     };
   });
 

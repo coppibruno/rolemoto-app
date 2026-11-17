@@ -10,7 +10,7 @@ import { useListaLocais } from "../hooks/useListaLocais";
 import { useListaRoles } from "../hooks/useListaRoles";
 import { useLocalizacaoFeed } from "../hooks/useLocalizacaoFeed";
 import { AbasFeed } from "./AbasFeed";
-import { LinkSugestoesEventos } from "./LinkSugestoesEventos";
+import { LinksAdminEventos } from "./LinksAdminEventos";
 import { BarraBuscaRaio } from "./BarraBuscaRaio";
 import { CabecalhoFeed } from "./CabecalhoFeed";
 import { FiltrosData } from "./FiltrosData";
@@ -127,11 +127,12 @@ export const TelaFeed = () => {
             carregando={listaRoles.carregando}
             erro={listaRoles.erro}
             semPonto={semPonto}
+            raioKm={filtros.raioKm}
             onTentarDeNovo={listaRoles.recarregar}
           />
         ) : null}
 
-        {aba === "eventos" && usuario?.admin ? <LinkSugestoesEventos /> : null}
+        {aba === "eventos" && usuario?.admin ? <LinksAdminEventos /> : null}
 
         {aba === "eventos" ? (
           <ListaEventos

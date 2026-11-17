@@ -2,8 +2,10 @@ import {describe, expect, it} from "vitest";
 import {
   parseAmostrasConquista,
   parseFotosTelemetria,
+  validarBodyRoleTelemetria,
   validarPatchTelemetria,
 } from "./role-telemetria";
+import {codificarPolyline, codificarVelocidades} from "./tracado";
 
 const ponto = (t: number) => ({lat: -28.4, lng: -49.5, t, speed: 10, accuracy: 5});
 
@@ -83,5 +85,73 @@ describe("validarPatchTelemetria", () => {
     expect(validarPatchTelemetria({titulo: "x"}, "eu").ok).toBe(false);
     expect(validarPatchTelemetria({publica: true, titulo: "x"}, "eu").ok).toBe(false);
     expect(validarPatchTelemetria({}, "eu").ok).toBe(false);
+  });
+});
+
+const bodyBase = (): Record<string, unknown> => {
+  const iniciadoEm = "2026-11-16T12:00:00.000Z";
+  const encerradoEm = "2026-11-16T13:00:00.000Z";
+  return {
+    velocidadeMaxKmh: 80,
+    velocidadeMediaKmh: 40,
+    distanciaKm: 12.5,
+    tempoSegundos: 3600,
+    tempoMovimentoSegundos: 3000,
+    iniciadoEm,
+    encerradoEm,
+    pontoInicio: {lat: -27.6, lng: -48.5, nome: "A", endereco: ""},
+    pontoFim: {lat: -27.7, lng: -48.6, nome: "B", endereco: ""},
+    publica: true,
+  };
+};
+
+describe("validarBodyRoleTelemetria — tracadoVelocidades", () => {
+  it("aceita ausente ou vazio (passeio antigo)", () => {
+    const semCampo = validarBodyRoleTelemetria(bodyBase(), "eu");
+    expect(semCampo.ok).toBe(true);
+    if (semCampo.ok) {
+      expect(semCampo.dados.tracadoVelocidades).toBe("");
+    }
+
+    const vazio = validarBodyRoleTelemetria({...bodyBase(), tracadoVelocidades: ""}, "eu");
+    expect(vazio.ok).toBe(true);
+    if (vazio.ok) {
+      expect(vazio.dados.tracadoVelocidades).toBe("");
+    }
+  });
+
+  it("aceita velocidades alinhadas ao polyline", () => {
+    const pontos = [
+      {lat: -27.6, lng: -48.5},
+      {lat: -27.61, lng: -48.5},
+      {lat: -27.62, lng: -48.51},
+    ];
+    const tracado = codificarPolyline(pontos);
+    const tracadoVelocidades = codificarVelocidades([20, 45.5, 60]);
+    const ok = validarBodyRoleTelemetria(
+      {...bodyBase(), tracado, tracadoVelocidades},
+      "eu",
+    );
+    expect(ok.ok).toBe(true);
+    if (ok.ok) {
+      expect(ok.dados.tracado).toBe(tracado);
+      expect(ok.dados.tracadoVelocidades).toBe(tracadoVelocidades);
+    }
+  });
+
+  it("recusa quantidade diferente do polyline", () => {
+    const pontos = [
+      {lat: -27.6, lng: -48.5},
+      {lat: -27.61, lng: -48.5},
+    ];
+    const resultado = validarBodyRoleTelemetria(
+      {
+        ...bodyBase(),
+        tracado: codificarPolyline(pontos),
+        tracadoVelocidades: codificarVelocidades([30]),
+      },
+      "eu",
+    );
+    expect(resultado).toEqual({ok: false, erro: "tracadoVelocidades inválido"});
   });
 });

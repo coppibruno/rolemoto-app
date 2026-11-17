@@ -113,6 +113,12 @@ export const useReelStories = ({
         if (cancelado) return;
         setErro(false);
         const ordenada = mesclarStories(lista.stories, fotoInicial);
+        if (ordenada.length === 0) {
+          setStories([]);
+          onMudou?.();
+          if (!cancelado) onFecharRef.current();
+          return;
+        }
         const achou = destaqueId
           ? ordenada.findIndex((item) => item.id === destaqueId)
           : 0;
@@ -140,7 +146,7 @@ export const useReelStories = ({
     return () => {
       cancelado = true;
     };
-  }, [aberto, alvoTipo, alvoId, destaqueId, tentativa, inicial?.id, comecarNoFim]);
+  }, [aberto, alvoTipo, alvoId, destaqueId, tentativa, inicial?.id, comecarNoFim, onMudou]);
 
   const avancar = useCallback(() => {
     if (avancoPendente.current) return;
@@ -219,7 +225,7 @@ export const useReelStories = ({
   }, [aberto, indice, stories]);
 
   useEffect(() => {
-    if (!aberto || !storyId || !story) return;
+    if (!aberto || !storyId || !story || !midiaPronta) return;
     if (alvoTipo === "usuario" && alvoId) {
       storiesService.visto({ tipo: "usuario", id: alvoId }, storyId).catch(() => undefined);
       return;
@@ -227,7 +233,7 @@ export const useReelStories = ({
     const alvoStory = alvoDaStory(story);
     if (!alvoStory) return;
     storiesService.visto(alvoStory, storyId).catch(() => undefined);
-  }, [aberto, storyId, story, alvoTipo, alvoId]);
+  }, [aberto, storyId, story, midiaPronta, alvoTipo, alvoId]);
 
   const finalizarToque = useCallback((x: number) => {
     if (!segurando.current) return;

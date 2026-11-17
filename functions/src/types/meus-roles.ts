@@ -92,6 +92,8 @@ export type MeuEventoGaragemItem = {
   } | null;
   notaMedia: number;
   totalAvaliacoes: number;
+  /** SPEC 065 — há link de álbum publicado. */
+  temAlbum: boolean;
 };
 
 export type MeusEventosGaragemPayload = {

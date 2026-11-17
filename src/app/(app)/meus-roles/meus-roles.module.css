@@ -1165,6 +1165,51 @@
   color: var(--error);
 }
 
+.seloFotosEvento {
+  position: absolute;
+  top: 36px;
+  right: 8px;
+  z-index: 1;
+  padding: 4px 8px;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--primary-container) 28%, transparent);
+  color: var(--primary);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.acoesEventoGaragem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.linkFotosEvento {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--primary-container) 18%, transparent);
+  color: var(--primary);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.linkFotosEvento .material-symbols-outlined {
+  font-size: 18px;
+}
+
 .cardEventoTexto {
   position: absolute;
   left: 8px;

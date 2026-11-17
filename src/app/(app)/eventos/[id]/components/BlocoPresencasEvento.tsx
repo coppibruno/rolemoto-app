@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BotaoInscreverEvento } from "@/app/(app)/feed/components/BotaoInscreverEvento";
 import { FaixaDataCancelada } from "@/components/evento/FaixaDataCancelada";
 import { eventoAceitaConvite } from "@/lib/evento-aberto";
@@ -12,6 +13,7 @@ type Props = {
 
 export const BlocoPresencasEvento = ({ evento }: Props) => {
   const total = evento.inscritos?.total ?? evento.participantes?.total ?? 0;
+  const podeConvidar = !evento.cancelada && eventoAceitaConvite(evento);
 
   return (
     <section className={styles.card}>
@@ -34,13 +36,26 @@ export const BlocoPresencasEvento = ({ evento }: Props) => {
       {evento.cancelada ? (
         <FaixaDataCancelada />
       ) : (
-        <BotaoInscreverEvento
-          id={evento.id}
-          acesso={evento.acesso}
-          linkIngresso={evento.linkIngresso}
-          inscrito={evento.inscrito}
-          podeConvidar={eventoAceitaConvite(evento)}
-        />
+        <>
+          <BotaoInscreverEvento
+            id={evento.id}
+            acesso={evento.acesso}
+            linkIngresso={evento.linkIngresso}
+            inscrito={evento.inscrito}
+          />
+          {podeConvidar ? (
+            <Link
+              href={`/eventos/${evento.id}/convidar`}
+              className={styles.linkConvidar}
+              aria-label="Convidar amigo para o evento"
+            >
+              <span className="material-symbols-outlined" aria-hidden>
+                person_add
+              </span>
+              Convidar amigo
+            </Link>
+          ) : null}
+        </>
       )}
     </section>
   );

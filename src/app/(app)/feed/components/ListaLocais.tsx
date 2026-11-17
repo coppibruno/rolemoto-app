@@ -49,7 +49,7 @@ export const ListaLocais = ({
       ) : null}
 
       {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
-      {mostrarVazio ? <EstadoVazio aba="locais" /> : null}
+      {mostrarVazio ? <EstadoVazio aba="locais" raioKm={raioKm} /> : null}
       {!erro
         ? itens.map((local) => <LocalCard key={local.id} local={local} />)
         : null}

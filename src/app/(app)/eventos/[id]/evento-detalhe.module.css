@@ -471,6 +471,30 @@
   font-size: 14px;
 }
 
+.linkConvidar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--touch-min);
+  margin-top: 8px;
+  border: 1.5px solid var(--outline);
+  border-radius: 0.5rem;
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.linkConvidar .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--primary-container);
+}
+
 .srOnly {
   position: absolute;
   width: 1px;

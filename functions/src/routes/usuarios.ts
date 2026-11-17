@@ -106,6 +106,15 @@ const paraPerfilPublico = async (
     seguidoPorMim: false,
     segueVoce: false,
   };
+  let totalFotos = 0;
+  try {
+    totalFotos = await postFotoRepository.contarPorUsuario(usuario.uid);
+  } catch (error) {
+    log.warn("Usuarios", "Contagem de fotos indisponível", {
+      uid: usuario.uid,
+      ...erroDe(error),
+    });
+  }
   return {
     uid: usuario.uid,
     nome: usuario.nome,
@@ -125,6 +134,7 @@ const paraPerfilPublico = async (
     seguidoPorMim: vinculo.seguidoPorMim,
     segueVoce: vinculo.segueVoce,
     rolesFixados: await rolesFixadosDe(usuario.uid),
+    totalFotos,
   };
 };
 

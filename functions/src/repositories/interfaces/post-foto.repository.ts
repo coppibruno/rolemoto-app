@@ -21,6 +21,8 @@ export interface PostFotoRepository {
   buscarPorId(id: string): Promise<PostFoto | null>;
   buscarPorIds(ids: string[]): Promise<PostFoto[]>;
   listarPorUsuario(usuarioId: string, cursor: string | null): Promise<Pagina<PostFoto>>;
+  /** Quantidade de docs em `userspostfoto` daquele uid. */
+  contarPorUsuario(usuarioId: string): Promise<number>;
   /** Comentários em lotes de 100, depois o doc. O arquivo fica com quem chama. */
   remover(id: string): Promise<void>;
   listarComentarios(postId: string, cursor: string | null): Promise<Pagina<ComentarioPost>>;

@@ -47,6 +47,12 @@ export const CartaoPiloto = ({ perfil, proprio = false }: Props) => {
       </div>
 
       <div className={styles.contadores}>
+        <div className={styles.contador}>
+          <span className={styles.contadorNumero}>{perfil.totalFotos ?? 0}</span>
+          <span className={styles.contadorRotulo}>
+            {(perfil.totalFotos ?? 0) === 1 ? "foto" : "fotos"}
+          </span>
+        </div>
         <Link
           href={`/perfil/${perfil.uid}/seguindo?aba=seguindo`}
           className={styles.contador}

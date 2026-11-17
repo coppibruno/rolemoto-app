@@ -3,8 +3,11 @@ import type { PontoGps } from "./calcular-metricas";
 import {
   MAX_PONTOS_TRACADO,
   codificarPolyline,
+  codificarVelocidades,
   decodificarPolyline,
+  decodificarVelocidades,
   gerarTracado,
+  indiceVerticeMaisProximo,
   pontosDoTracado,
   simplificarTracado,
 } from "./tracado";
@@ -53,6 +56,17 @@ describe("codificarPolyline / decodificarPolyline", () => {
   });
 });
 
+describe("codificarVelocidades / decodificarVelocidades", () => {
+  it("ida e volta em décimos de km/h", () => {
+    const valores = [0, 19.8, 87.3, 120, 40.1];
+    expect(decodificarVelocidades(codificarVelocidades(valores))).toEqual(valores);
+  });
+
+  it("string vazia vira lista vazia", () => {
+    expect(decodificarVelocidades("")).toEqual([]);
+  });
+});
+
 describe("simplificarTracado", () => {
   it("reduz uma reta aos extremos", () => {
     const pontos = reta(50).map(({ lat, lng }) => ({ lat, lng }));
@@ -60,14 +74,16 @@ describe("simplificarTracado", () => {
     expect(simples).toEqual([pontos[0], pontos[49]]);
   });
 
-  it("mantém a quina de uma curva em L", () => {
+  it("mantém a quina de uma curva em L e a velocidade do vértice", () => {
     const ida = Array.from({ length: 20 }, (_, i) => ({
       lat: -27.6 + i * 0.0001,
       lng: -48.5,
+      velocidadeKmh: 20 + i,
     }));
     const volta = Array.from({ length: 20 }, (_, i) => ({
       lat: -27.6 + 19 * 0.0001,
       lng: -48.5 + (i + 1) * 0.0001,
+      velocidadeKmh: 40 + i,
     }));
     const simples = simplificarTracado([...ida, ...volta], 8);
     expect(simples).toHaveLength(3);
@@ -85,6 +101,7 @@ describe("pontosDoTracado", () => {
     const aceitos = pontosDoTracado([...base, ...ruins]);
     expect(aceitos).toHaveLength(5);
     expect(aceitos.every((p) => p.lat < -27.5)).toBe(true);
+    expect(aceitos.every((p) => typeof p.velocidadeKmh === "number")).toBe(true);
   });
 
   it("mantém fix de 65 m no caminho (GPS do iPhone)", () => {
@@ -98,14 +115,23 @@ describe("pontosDoTracado", () => {
     };
     const aceitos = pontosDoTracado([base[0], noCaminho]);
     expect(aceitos).toHaveLength(2);
-    expect(aceitos[1]).toEqual({ lat: noCaminho.lat, lng: noCaminho.lng });
+    expect(aceitos[1]).toMatchObject({ lat: noCaminho.lat, lng: noCaminho.lng });
   });
 });
 
 describe("gerarTracado", () => {
   it("devolve vazio sem pontos suficientes", () => {
-    expect(gerarTracado([])).toBe("");
-    expect(gerarTracado(reta(1))).toBe("");
+    expect(gerarTracado([])).toEqual({ polyline: "", velocidades: "" });
+    expect(gerarTracado(reta(1))).toEqual({ polyline: "", velocidades: "" });
+  });
+
+  it("alinha velocidades aos vértices do polyline", () => {
+    const gerado = gerarTracado(reta(20));
+    const pontos = decodificarPolyline(gerado.polyline);
+    const velocidades = decodificarVelocidades(gerado.velocidades);
+    expect(pontos.length).toBeGreaterThanOrEqual(2);
+    expect(velocidades).toHaveLength(pontos.length);
+    expect(velocidades.every((v) => v >= 0)).toBe(true);
   });
 
   it("respeita o teto de pontos em passeio longo e sinuoso", () => {
@@ -116,10 +142,25 @@ describe("gerarTracado", () => {
       speed: 10,
       accuracy: 5,
     }));
-    const tracado = gerarTracado(zigueZague);
-    const pontos = decodificarPolyline(tracado);
+    const gerado = gerarTracado(zigueZague);
+    const pontos = decodificarPolyline(gerado.polyline);
+    const velocidades = decodificarVelocidades(gerado.velocidades);
     expect(pontos.length).toBeGreaterThanOrEqual(2);
     expect(pontos.length).toBeLessThanOrEqual(MAX_PONTOS_TRACADO);
-    expect(tracado.length).toBeLessThanOrEqual(20_000);
+    expect(velocidades).toHaveLength(pontos.length);
+    expect(gerado.polyline.length).toBeLessThanOrEqual(20_000);
+    expect(gerado.velocidades.length).toBeLessThanOrEqual(20_000);
+  });
+});
+
+describe("indiceVerticeMaisProximo", () => {
+  it("escolhe o vértice mais perto do toque", () => {
+    const pontos = [
+      { lat: -27.6, lng: -48.5 },
+      { lat: -27.61, lng: -48.5 },
+      { lat: -27.62, lng: -48.5 },
+    ];
+    expect(indiceVerticeMaisProximo(pontos, { lat: -27.609, lng: -48.5 })).toBe(1);
+    expect(indiceVerticeMaisProximo([], { lat: 0, lng: 0 })).toBe(-1);
   });
 });

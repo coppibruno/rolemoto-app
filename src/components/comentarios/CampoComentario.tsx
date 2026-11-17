@@ -9,15 +9,28 @@ type Props = {
   erro: string | null;
   onEnviar: (texto: string) => Promise<boolean>;
   autoFoco?: boolean;
+  /** Incrementa para focar o campo (ex.: ícone 💬 no detalhe). */
+  focoPedido?: number;
 };
 
-export const CampoComentario = ({ enviando, erro, onEnviar, autoFoco = false }: Props) => {
+export const CampoComentario = ({
+  enviando,
+  erro,
+  onEnviar,
+  autoFoco = false,
+  focoPedido = 0,
+}: Props) => {
   const [texto, setTexto] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (autoFoco) inputRef.current?.focus();
   }, [autoFoco]);
+
+  useEffect(() => {
+    if (!focoPedido) return;
+    inputRef.current?.focus();
+  }, [focoPedido]);
 
   const enviar = async (evento: FormEvent) => {
     evento.preventDefault();

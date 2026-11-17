@@ -172,6 +172,8 @@ vi.mock("../repositories", () => {
       30,
       (id) => banco.posts.get(id)?.usuarioId === uid,
     ),
+    contarPorUsuario: async (uid: string) =>
+      [...banco.posts.values()].filter((p) => p.usuarioId === uid).length,
     remover: removerPost,
     listarComentarios: async (postId: string, cursor: string | null) => paginar(
       ordenarDesc([...banco.comentarios.values()].filter((c) => c.postId === postId)),

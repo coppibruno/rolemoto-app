@@ -8,6 +8,7 @@ type Props = {
   curtido: boolean;
   totalCurtidas: number;
   onCurtir: () => void;
+  onComentar: () => void;
   onEncaminhar: () => void;
   onApagar: () => void;
 };
@@ -20,41 +21,63 @@ export const AcoesPost = ({
   curtido,
   totalCurtidas,
   onCurtir,
+  onComentar,
   onEncaminhar,
   onApagar,
 }: Props) => (
   <div className={styles.acoes}>
-    <button
-      type="button"
-      className={`${styles.secundario} ${curtido ? styles.curtido : ""}`}
-      onClick={onCurtir}
-      disabled={ocupado}
-      aria-pressed={curtido}
-      aria-label={curtido ? "Descurtir" : "Curtir"}
-    >
-      <span className="material-symbols-outlined" aria-hidden>
-        favorite
-      </span>
-      {totalCurtidas > 0 ? totalCurtidas : "Curtir"}
-    </button>
-    <button
-      type="button"
-      className={styles.secundario}
-      onClick={onEncaminhar}
-      disabled={encaminhado || ocupado}
-    >
-      <span className="material-symbols-outlined" aria-hidden>
-        {encaminhado ? "check_circle" : "add_circle"}
-      </span>
-      {encaminhado ? "No seu story" : "Adicionar ao story"}
-    </button>
-    {meu ? (
-      <button type="button" className={styles.perigo} onClick={onApagar} disabled={ocupado}>
+    <div className={styles.linhaIcones}>
+      <button
+        type="button"
+        className={`${styles.iconeAcao} ${curtido ? styles.curtido : ""}`}
+        onClick={onCurtir}
+        disabled={ocupado}
+        aria-pressed={curtido}
+        aria-label={curtido ? "Descurtir" : "Curtir"}
+      >
         <span className="material-symbols-outlined" aria-hidden>
-          delete
+          favorite
         </span>
-        Apagar publicação
       </button>
+      <button
+        type="button"
+        className={styles.iconeAcao}
+        onClick={onComentar}
+        aria-label="Comentar"
+      >
+        <span className="material-symbols-outlined" aria-hidden>
+          chat_bubble
+        </span>
+      </button>
+      <button
+        type="button"
+        className={styles.iconeAcao}
+        onClick={onEncaminhar}
+        disabled={encaminhado || ocupado}
+        aria-label={encaminhado ? "Já no seu story" : "Adicionar ao story"}
+      >
+        <span className="material-symbols-outlined" aria-hidden>
+          {encaminhado ? "check_circle" : "add_circle"}
+        </span>
+      </button>
+      {meu ? (
+        <button
+          type="button"
+          className={`${styles.iconeAcao} ${styles.iconePerigo}`}
+          onClick={onApagar}
+          disabled={ocupado}
+          aria-label="Apagar publicação"
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            delete
+          </span>
+        </button>
+      ) : null}
+    </div>
+    {totalCurtidas > 0 ? (
+      <p className={styles.totalCurtidas}>
+        {totalCurtidas} {totalCurtidas === 1 ? "curtida" : "curtidas"}
+      </p>
     ) : null}
     {erro ? (
       <p className={styles.erro} role="alert">

@@ -17,6 +17,7 @@ type Props = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   tracado?: string;
+  tracadoVelocidades?: string;
   medalhas?: MedalhaTelemetria[];
   onTocarMedalha?: (indice: number) => void;
   tituloEditavel?: {
@@ -35,6 +36,7 @@ export const DashboardTelemetria = ({
   pontoInicio,
   pontoFim,
   tracado,
+  tracadoVelocidades,
   medalhas,
   onTocarMedalha,
   tituloEditavel,
@@ -70,6 +72,7 @@ export const DashboardTelemetria = ({
         pontoFim={pontoFim}
         distanciaKm={distanciaKm}
         tracado={tracado}
+        tracadoVelocidades={tracadoVelocidades}
         medalhas={medalhas}
         onTocarMedalha={onTocarMedalha}
       />

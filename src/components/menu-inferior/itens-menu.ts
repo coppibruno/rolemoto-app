@@ -45,7 +45,7 @@ export const ITENS_MENU: readonly [
     href: "/perfil",
     label: "Perfil",
     icone: "account_circle",
-    ariaLabel: "Editar perfil",
+    ariaLabel: "Perfil",
     tipo: "lateral",
   },
 ];

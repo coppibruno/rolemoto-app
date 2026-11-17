@@ -34,6 +34,8 @@ export type PerfilCliente = Usuario & {
   /** Pontos em que este uid é `locais.donoId`, por nome. Só em `/perfil`. */
   locaisComoDono: {id: string; nome: string}[];
   rolesFixados: RoleFixadoResumo[];
+  /** Docs em `userspostfoto` deste uid. */
+  totalFotos: number;
 };
 
 /** DTO público — sem admin, e-mail, ids de local ou dados sensíveis. */
@@ -55,6 +57,8 @@ export type PerfilPublico = {
   seguidoPorMim: boolean;
   segueVoce: boolean;
   rolesFixados: RoleFixadoResumo[];
+  /** Docs em `userspostfoto` deste uid. */
+  totalFotos: number;
 };
 
 export type UsuarioCreate = Omit<

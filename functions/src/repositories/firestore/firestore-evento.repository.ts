@@ -347,6 +347,30 @@ export class FirestoreEventoRepository implements EventoRepository {
     return reservarYmd(COLECAO, id, ymd);
   }
 
+  async listarEncerradosRecentes(
+    desdeIso: string,
+    agoraIso: string,
+    limite: number,
+  ): Promise<Evento[]> {
+    const teto = Math.max(1, Math.min(limite, 100));
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("dataHoraAbertura", ">=", toTimestamp(desdeIso))
+      .orderBy("dataHoraAbertura", "desc")
+      .limit(LIMITE_LISTAGEM)
+      .get();
+    const agoraMs = Date.parse(agoraIso);
+    return snap.docs
+      .map(toEvento)
+      .filter((evento) => {
+        const fim = Date.parse(
+          evento.dataHoraEncerramento ?? evento.dataHoraAbertura,
+        );
+        return Number.isFinite(fim) && fim < agoraMs;
+      })
+      .slice(0, teto);
+  }
+
   async definirFotografo(
     id: string,
     fotografoId: string | null,

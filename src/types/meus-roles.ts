@@ -100,6 +100,8 @@ export type MeuEventoGaragemItem = {
   } | null;
   notaMedia: number;
   totalAvaliacoes: number;
+  /** Há link de álbum publicado (SPEC 065). Docs antigos / API antiga = false. */
+  temAlbum?: boolean;
 };
 
 export type MeusEventosGaragemPayload = {

@@ -44,8 +44,8 @@ export const CarrosselStories = () => {
         {carrossel.eu ? (
           <li className={styles.item}>
             <Bolha pessoa={carrossel.eu} onAbrir={carrossel.abrir} />
-            {carrossel.eu.contagem > 0 ? (
-              <button type="button" className={styles.adicionar} aria-label="Nova foto" onClick={carrossel.novaFoto}>
+            {carrossel.eu.contagem === 0 ? (
+              <button type="button" className={styles.adicionar} aria-label="Seu story" onClick={carrossel.novaFoto}>
                 <span className={styles.adicionarIcone}>
                   <span className="material-symbols-outlined" aria-hidden>
                     add

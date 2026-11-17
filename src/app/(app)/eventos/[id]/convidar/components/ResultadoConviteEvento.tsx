@@ -29,7 +29,6 @@ export const ResultadoConviteEvento = ({ resultado, evento }: Props) => {
           acesso={evento.acesso}
           linkIngresso={evento.linkIngresso}
           inscrito={false}
-          podeConvidar={false}
         />
       ) : null}
     </section>

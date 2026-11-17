@@ -81,6 +81,7 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
               pontoInicio={doc.pontoInicio}
               pontoFim={doc.pontoFim}
               tracado={doc.tracado}
+              tracadoVelocidades={doc.tracadoVelocidades}
               medalhas={doc.medalhas}
               onTocarMedalha={setMedalhaAberta}
             />

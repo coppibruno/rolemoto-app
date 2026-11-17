@@ -1,4 +1,5 @@
 import type {PontoGps} from "./calcular-metricas-telemetria";
+import {decodificarPolyline, decodificarVelocidades} from "./tracado";
 import {validarFotoStory} from "./validar-foto-storage";
 import type {AmostraConquista} from "../types/conquista";
 import type {
@@ -148,6 +149,25 @@ export const validarBodyRoleTelemetria = (
     return {ok: false, erro: "tracado inválido"};
   }
 
+  const tracadoVelocidades =
+    body.tracadoVelocidades === undefined || body.tracadoVelocidades === null ?
+      "" :
+      body.tracadoVelocidades;
+  if (
+    typeof tracadoVelocidades !== "string" ||
+    tracadoVelocidades.length > TRACADO_MAX ||
+    !TRACADO_CARACTERES.test(tracadoVelocidades)
+  ) {
+    return {ok: false, erro: "tracadoVelocidades inválido"};
+  }
+  if (tracadoVelocidades.length > 0) {
+    const nPontos = decodificarPolyline(tracado).length;
+    const nVel = decodificarVelocidades(tracadoVelocidades).length;
+    if (nPontos < 2 || nVel !== nPontos) {
+      return {ok: false, erro: "tracadoVelocidades inválido"};
+    }
+  }
+
   const tituloBruto = typeof body.titulo === "string" ? body.titulo.trim() : "";
   if (tituloBruto.length > TITULO_MAX) {
     return {ok: false, erro: "titulo inválido"};
@@ -183,6 +203,7 @@ export const validarBodyRoleTelemetria = (
       pontoInicio: inicio.ponto,
       pontoFim: fim.ponto,
       tracado,
+      tracadoVelocidades,
       publica,
       fotosUrls: fotos.fotosUrls,
     },

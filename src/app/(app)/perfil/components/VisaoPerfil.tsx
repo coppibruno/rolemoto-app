@@ -25,11 +25,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
 
   return (
     <div className={styles.visao}>
-      <LinhaTema />
       <CartaoPiloto perfil={{ ...usuario, apelido, selos: usuario.selos ?? [] }} proprio />
-      <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
-      <FaixaMeusPontos locais={usuario.locaisComoDono ?? []} />
-      {usuario.admin ? <LinhaAfiliados /> : null}
       <button type="button" className={styles.botaoEditar} onClick={onEditar}>
         <span className="material-symbols-outlined" aria-hidden>
           edit
@@ -41,6 +37,10 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
         historico={<HistoricoPistas />}
       />
       <div className={styles.acoes}>
+        <LinhaTema />
+        <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />
+        <FaixaMeusPontos locais={usuario.locaisComoDono ?? []} />
+        {usuario.admin ? <LinhaAfiliados /> : null}
         <BotaoInstalarApp />
         <BotaoCriarSenha />
         <BotaoSair />

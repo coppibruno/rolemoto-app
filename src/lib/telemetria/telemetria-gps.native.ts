@@ -355,7 +355,7 @@ const amostrasDoBuffer = async (
 const montarDados = (
   sessao: SessaoTelemetriaLocal,
   encerradoEm: string,
-  tracado: string,
+  tracado: { polyline: string; velocidades: string },
   amostras: NonNullable<RoleTelemetriaCreate["amostras"]>,
 ): RoleTelemetriaCreate => {
   const tempoSegundos = tempoParedeSegundos(sessao.iniciadoEm, encerradoEm);
@@ -375,7 +375,8 @@ const montarDados = (
     encerradoEm,
     pontoInicio: pontoDe(sessao.primeiro ?? sessao.ultimo),
     pontoFim: pontoDe(sessao.ultimo ?? sessao.primeiro),
-    tracado,
+    tracado: tracado.polyline,
+    tracadoVelocidades: tracado.velocidades,
     amostras,
   };
 };

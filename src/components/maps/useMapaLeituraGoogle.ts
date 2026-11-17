@@ -23,6 +23,7 @@ type Args = {
   zoom?: number;
   ligarMarcadores?: boolean;
   trajeto?: PontoLatLng[];
+  onTocarTrajeto?: (ponto: PontoLatLng) => void;
 };
 
 type DadosMapa = Args;
@@ -52,6 +53,7 @@ const desenhar = (
   maps: GoogleMapsNs,
   dados: DadosMapa,
   tocar: (indice: number) => void,
+  tocarTrajeto: (ponto: PontoLatLng) => void,
 ): { overlays: OverlayMapa[]; enquadrar: () => void } => {
   const overlays: OverlayMapa[] = [];
   const limites = new maps.LatLngBounds();
@@ -102,6 +104,8 @@ const desenhar = (
 
   const caminho = caminhoDoMapa(dados);
   const tracejado = !(dados.trajeto && dados.trajeto.length >= 2);
+  const trajetoClicavel =
+    Boolean(dados.onTocarTrajeto) && Boolean(dados.trajeto && dados.trajeto.length >= 2);
   if (caminho.length >= 2) {
     caminho.forEach((ponto) => limites.extend(ponto));
     overlays.push(
@@ -112,6 +116,7 @@ const desenhar = (
         strokeColor: "#f97316",
         strokeOpacity: tracejado ? 0 : 0.95,
         strokeWeight: 4,
+        clickable: false,
         ...(tracejado
           ? {
               icons: [
@@ -130,6 +135,24 @@ const desenhar = (
           : {}),
       }),
     );
+    if (trajetoClicavel) {
+      const alvo = new maps.Polyline({
+        map,
+        path: caminho,
+        geodesic: true,
+        strokeColor: "#f97316",
+        strokeOpacity: 0,
+        strokeWeight: 28,
+        clickable: true,
+        zIndex: 2,
+      });
+      maps.event.addListener(alvo, "click", (evento) => {
+        const latLng = evento?.latLng;
+        if (!latLng) return;
+        tocarTrajeto({ lat: latLng.lat(), lng: latLng.lng() });
+      });
+      overlays.push(alvo);
+    }
   }
 
   const enquadrar = () => {
@@ -151,17 +174,24 @@ export const useMapaLeituraGoogle = ({
   zoom,
   ligarMarcadores,
   trajeto,
+  onTocarTrajeto,
 }: Args) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<GoogleMap | null>(null);
   const mapsRef = useRef<GoogleMapsNs | null>(null);
   const overlaysRef = useRef<OverlayMapa[]>([]);
   const enquadrarRef = useRef<(() => void) | null>(null);
-  const dadosRef = useRef<DadosMapa>({ marcadores, zoom, ligarMarcadores, trajeto });
+  const dadosRef = useRef<DadosMapa>({
+    marcadores,
+    zoom,
+    ligarMarcadores,
+    trajeto,
+    onTocarTrajeto,
+  });
   const [pronto, setPronto] = useState(false);
   const [falhou, setFalhou] = useState(false);
 
-  dadosRef.current = { marcadores, zoom, ligarMarcadores, trajeto };
+  dadosRef.current = { marcadores, zoom, ligarMarcadores, trajeto, onTocarTrajeto };
 
   const assinatura = useMemo(
     () =>
@@ -178,8 +208,9 @@ export const useMapaLeituraGoogle = ({
         z: zoom ?? null,
         l: Boolean(ligarMarcadores),
         t: (trajeto ?? []).map((p) => [p.lat, p.lng]),
+        c: Boolean(onTocarTrajeto),
       }),
-    [ligarMarcadores, marcadores, trajeto, zoom],
+    [ligarMarcadores, marcadores, onTocarTrajeto, trajeto, zoom],
   );
 
   useEffect(() => {
@@ -243,8 +274,12 @@ export const useMapaLeituraGoogle = ({
     if (!map || !maps || !pronto) return;
 
     overlaysRef.current.forEach((overlay) => overlay.setMap(null));
-    const desenho = desenhar(map, maps, dadosRef.current, (indice) =>
-      dadosRef.current.marcadores[indice]?.onToque?.(),
+    const desenho = desenhar(
+      map,
+      maps,
+      dadosRef.current,
+      (indice) => dadosRef.current.marcadores[indice]?.onToque?.(),
+      (ponto) => dadosRef.current.onTocarTrajeto?.(ponto),
     );
     overlaysRef.current = desenho.overlays;
     enquadrarRef.current = desenho.enquadrar;

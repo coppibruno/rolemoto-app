@@ -174,6 +174,9 @@ export const hrefEditarRole = (roleId: string): string =>
 export const hrefAvaliarEvento = (eventoId: string): string =>
   `/eventos/${eventoId}/avaliar`;
 
+export const hrefAlbumEvento = (eventoId: string): string =>
+  `/eventos/${encodeURIComponent(eventoId)}?album=1`;
+
 export const hrefDetalheEvento = (eventoId: string): string =>
   `/eventos/${eventoId}`;
 

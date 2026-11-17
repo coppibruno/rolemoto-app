@@ -61,22 +61,28 @@ export const PLACEHOLDER_BUSCA = "Buscar rolês, eventos ou pontos…";
 
 export const ESTADOS_VAZIOS: Record<
   AbaFeed,
-  { titulo: string; texto: string }
+  { titulo: string; texto: string; textoSemLimite: string }
 > = {
   roles: {
     titulo: "Nenhum rolê por aqui",
     texto:
       "Não encontramos rolês com esses filtros. Aumente o raio, mude a data ou o ritmo.",
+    textoSemLimite:
+      "Nenhum rolê com esses filtros. Mude a data ou o ritmo, ou organize um no +.",
   },
   eventos: {
     titulo: "Nenhum evento por aqui",
     texto:
       "Não encontramos eventos com esses filtros. Aumente o raio ou mude a data.",
+    textoSemLimite:
+      "Nenhum evento com esses filtros. Mude a data ou acompanhe o + para novos encontros.",
   },
   locais: {
     titulo: "Nenhum local por aqui",
     texto:
       "Não encontramos pontos oficiais nesse raio. Aumente o raio ou limpe a busca.",
+    textoSemLimite:
+      "Nenhum ponto oficial com essa busca. Limpe o termo ou sugira um local pelo +.",
   },
 };
 

@@ -227,6 +227,43 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
+const DIAS_PASSADOS_ADMIN = 60;
+const LIMITE_PASSADOS_ADMIN = 50;
+
+/** Admin: ocorrências encerradas nos últimos 60 dias (fotógrafo / álbum). */
+eventosRouter.get("/admin/passados", exigirAdmin, async (req: Request, res: Response) => {
+  try {
+    if (!req.usuario?.uid) {
+      res.status(401).json({erro: "Não autenticado"});
+      return;
+    }
+
+    const agora = new Date();
+    const desde = new Date(agora.getTime() - DIAS_PASSADOS_ADMIN * 24 * 60 * 60 * 1000);
+    const eventos = await eventoRepository.listarEncerradosRecentes(
+      desde.toISOString(),
+      agora.toISOString(),
+      LIMITE_PASSADOS_ADMIN,
+    );
+
+    res.json(
+      eventos.map((evento) => ({
+        id: evento.id,
+        titulo: evento.titulo,
+        dataHoraAbertura: evento.dataHoraAbertura,
+        dataHoraEncerramento: evento.dataHoraEncerramento,
+        localNome: evento.local.nome,
+        fotoCapaUrl: evento.fotoCapaUrl,
+        cancelada: evento.cancelada,
+        fotografoId: evento.fotografoId,
+        totalAlbuns: evento.albuns.length,
+      })),
+    );
+  } catch (error) {
+    responderErro(res, error);
+  }
+});
+
 eventosRouter.get("/:id/participantes", async (req: Request, res: Response) => {
   try {
     if (!req.usuario?.uid) {

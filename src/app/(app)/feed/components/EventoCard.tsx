@@ -5,8 +5,8 @@ import { eventoAceitaConvite } from "@/lib/evento-aberto";
 import type { EventoFeedItem } from "@/types/evento";
 import { LABELS_ACESSO_EVENTO } from "../constants";
 import { formatarPeriodoEvento } from "../formatar-horario";
-import { BotaoCompartilharEvento } from "./BotaoCompartilharEvento";
 import { BotaoInscreverEvento } from "./BotaoInscreverEvento";
+import { MenuOverflowEvento } from "./MenuOverflowEvento";
 import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
 import styles from "../feed.module.css";
 
@@ -65,7 +65,9 @@ export const EventoCard = ({ evento }: Props) => {
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}
               href={`/eventos/${evento.id}/avaliacoes`}
             />
-            <BotaoCompartilharEvento
+            <MenuOverflowEvento
+              id={evento.id}
+              podeConvidar={eventoAceitaConvite(evento)}
               dados={{
                 id: evento.id,
                 titulo: evento.titulo,
@@ -104,7 +106,6 @@ export const EventoCard = ({ evento }: Props) => {
           acesso={evento.acesso}
           linkIngresso={evento.linkIngresso}
           inscrito={evento.inscrito}
-          podeConvidar={eventoAceitaConvite(evento)}
         />
         {mostrarAvaliar || mostrarVerAvaliacao ? (
           <div className={styles.cardEventoAcoesExtra}>

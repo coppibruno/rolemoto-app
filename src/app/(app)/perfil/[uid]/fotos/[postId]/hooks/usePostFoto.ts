@@ -110,6 +110,11 @@ export const usePostFoto = (postId: string) => {
     }
   };
 
+  const curtirSo = async () => {
+    if (!post || ocupado || post.curtidoPorMim) return;
+    await alternarCurtida();
+  };
+
   return {
     post,
     carregando,
@@ -122,6 +127,7 @@ export const usePostFoto = (postId: string) => {
     encaminhar,
     apagar,
     alternarCurtida,
+    curtirSo,
     mudarTotal,
   };
 };

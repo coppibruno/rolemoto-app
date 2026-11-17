@@ -50,6 +50,15 @@ export interface EventoRepository {
   desvincularLocal(localId: string): Promise<number>;
   /** `true` quando esta chamada gravou o dia e deve disparar o push. */
   reservarPushDoDia(id: string, ymd: string): Promise<boolean>;
+  /**
+   * Ocorrências com abertura desde `desdeIso` e já encerradas em `agoraIso`.
+   * Mais recentes primeiro. Limite aplicado depois do filtro de encerramento.
+   */
+  listarEncerradosRecentes(
+    desdeIso: string,
+    agoraIso: string,
+    limite: number,
+  ): Promise<Evento[]>;
   /** Define ou zera o fotógrafo. Álbuns permanecem. */
   definirFotografo(id: string, fotografoId: string | null): Promise<Evento | null>;
   adicionarAlbum(

@@ -19,6 +19,8 @@ export type PerfilPublico = {
   conquistas?: ConquistaPerfil[];
   seguindo: number;
   seguidores: number;
+  /** Docs em `userspostfoto` deste uid. */
+  totalFotos?: number;
   /** Só no perfil de outra pessoa. Ausente no próprio GET /perfil. */
   seguidoPorMim?: boolean;
   segueVoce?: boolean;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent } from "react";
 import {
   TAMANHO_TILE,
   centroPixelDosPontos,
@@ -32,6 +32,8 @@ export type PropsMapaEstatico = {
   ligarMarcadores?: boolean;
   /** Caminho percorrido; com 2+ pontos substitui a linha reta e entra no enquadramento. */
   trajeto?: PontoLatLng[];
+  /** Toque no caminho (ponto clicado; o pai resolve o vértice). */
+  onTocarTrajeto?: (ponto: PontoLatLng) => void;
   "aria-label"?: string;
 };
 
@@ -52,6 +54,8 @@ type Layout = {
   }>;
   /** Atributo `points` do `<polyline>`; "" sem trajeto. */
   trajetoPx: string;
+  /** Pixels dos vértices do trajeto (hit-test do toque). */
+  trajetoPontosPx: Array<{ left: number; top: number }>;
 };
 
 const layoutMapa = (
@@ -113,17 +117,29 @@ const layoutMapa = (
     };
   });
 
-  const trajetoPx =
+  const trajetoPontosPx =
     trajeto.length >= 2
-      ? trajeto
-          .map((p) => {
-            const g = latLngParaPixelGlobal(p.lat, p.lng, zoom);
-            return `${(g.x - origemX).toFixed(1)},${(g.y - origemY).toFixed(1)}`;
-          })
+      ? trajeto.map((p) => {
+          const g = latLngParaPixelGlobal(p.lat, p.lng, zoom);
+          return { left: g.x - origemX, top: g.y - origemY };
+        })
+      : [];
+  const trajetoPx =
+    trajetoPontosPx.length >= 2
+      ? trajetoPontosPx
+          .map((p) => `${p.left.toFixed(1)},${p.top.toFixed(1)}`)
           .join(" ")
       : "";
 
-  return { zoom, tiles, mosaicoLeft, mosaicoTop, marcadoresPx, trajetoPx };
+  return {
+    zoom,
+    tiles,
+    mosaicoLeft,
+    mosaicoTop,
+    marcadoresPx,
+    trajetoPx,
+    trajetoPontosPx,
+  };
 };
 
 const SEM_TRAJETO: PontoLatLng[] = [];
@@ -134,6 +150,7 @@ export const MapaEstatico = ({
   className,
   ligarMarcadores = false,
   trajeto = SEM_TRAJETO,
+  onTocarTrajeto,
   "aria-label": ariaLabel = "Mapa",
 }: PropsMapaEstatico) => {
   const [host, setHost] = useState<HTMLDivElement | null>(null);
@@ -166,7 +183,32 @@ export const MapaEstatico = ({
         }
       : null;
 
-  const interativo = marcadores.some((m) => m.icone && m.onToque);
+  const trajetoClicavel =
+    Boolean(onTocarTrajeto) && trajeto.length >= 2 && Boolean(layout?.trajetoPx);
+  const interativo =
+    marcadores.some((m) => m.icone && m.onToque) || trajetoClicavel;
+
+  const aoTocarMapa = (evento: MouseEvent<HTMLDivElement>) => {
+    if (!onTocarTrajeto || !layout || trajeto.length < 2) return;
+    const alvo = evento.target as HTMLElement | null;
+    if (alvo?.closest("button, a")) return;
+    const rect = evento.currentTarget.getBoundingClientRect();
+    const x = evento.clientX - rect.left;
+    const y = evento.clientY - rect.top;
+    let melhor = 0;
+    let menor = Number.POSITIVE_INFINITY;
+    for (let i = 0; i < layout.trajetoPontosPx.length; i += 1) {
+      const p = layout.trajetoPontosPx[i];
+      const d = Math.hypot(p.left - x, p.top - y);
+      if (d < menor) {
+        menor = d;
+        melhor = i;
+      }
+    }
+    /** Toque longe do caminho não conta (≈ 28 px). */
+    if (menor > 28) return;
+    onTocarTrajeto(trajeto[melhor]);
+  };
 
   return (
     <div
@@ -174,6 +216,7 @@ export const MapaEstatico = ({
       className={[styles.viewport, className].filter(Boolean).join(" ")}
       role={interativo ? "group" : "img"}
       aria-label={ariaLabel}
+      onClick={trajetoClicavel ? aoTocarMapa : undefined}
     >
       {layout ? (
         <>

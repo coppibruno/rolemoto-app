@@ -42,6 +42,7 @@ export const ResumoPreSave = ({
         pontoInicio={dados.pontoInicio}
         pontoFim={dados.pontoFim}
         tracado={dados.tracado}
+        tracadoVelocidades={dados.tracadoVelocidades}
         tituloEditavel={{ valor: titulo, onMudar: onTitulo }}
       />
       <SeletorVisibilidade

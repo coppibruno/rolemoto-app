@@ -20,6 +20,7 @@ import {
   conviteEventoRepository,
   dispositivoRepository,
   localRepository,
+  postFotoRepository,
   seguirRepository,
   sugestaoRepository,
   usuarioRepository,
@@ -52,6 +53,15 @@ const locaisComoDono = async (uid: string): Promise<PerfilCliente["locaisComoDon
   }
 };
 
+const totalFotosDe = async (uid: string): Promise<number> => {
+  try {
+    return await postFotoRepository.contarPorUsuario(uid);
+  } catch (error) {
+    log.warn("Perfil", "Contagem de fotos indisponível", {uid, ...erroDe(error)});
+    return 0;
+  }
+};
+
 const paraPerfilCliente = async (usuario: Usuario): Promise<PerfilCliente> => ({
   ...usuario,
   selos: await hidratarSelosSeVazio(usuario.uid, usuario.selos),
@@ -60,6 +70,7 @@ const paraPerfilCliente = async (usuario: Usuario): Promise<PerfilCliente> => ({
   ),
   locaisComoDono: await locaisComoDono(usuario.uid),
   rolesFixados: await rolesFixadosDe(usuario.uid),
+  totalFotos: await totalFotosDe(usuario.uid),
 });
 
 /** Código desconhecido ou falha aqui não impedem o perfil. */

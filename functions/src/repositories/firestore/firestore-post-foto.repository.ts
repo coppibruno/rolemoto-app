@@ -152,6 +152,18 @@ export class FirestorePostFotoRepository implements PostFotoRepository {
     );
   }
 
+  async contarPorUsuario(usuarioId: string): Promise<number> {
+    if (!usuarioId || usuarioId.includes("/")) {
+      return 0;
+    }
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("usuarioId", "==", usuarioId)
+      .count()
+      .get();
+    return snap.data().count;
+  }
+
   async remover(id: string): Promise<void> {
     await this.apagarComentariosDoPost(id);
     await firestore.collection(COLECAO).doc(id).delete();

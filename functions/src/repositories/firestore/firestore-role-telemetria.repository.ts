@@ -78,6 +78,7 @@ const toFotos = (valor: unknown): string[] =>
 const toDoc = (snap: DocumentSnapshot): RoleTelemetria => ({
   ...toResumo(snap),
   tracado: String(snap.data()?.tracado ?? ""),
+  tracadoVelocidades: String(snap.data()?.tracadoVelocidades ?? ""),
   medalhas: toMedalhas(snap.data()?.medalhas),
   fotosUrls: toFotos(snap.data()?.fotosUrls),
 });
@@ -106,6 +107,7 @@ implements RoleTelemetriaRepository {
       pontoInicio: dados.pontoInicio,
       pontoFim: dados.pontoFim,
       tracado: dados.tracado,
+      tracadoVelocidades: dados.tracadoVelocidades,
       publica: dados.publica,
       fotosUrls: dados.fotosUrls,
       medalhas: [],

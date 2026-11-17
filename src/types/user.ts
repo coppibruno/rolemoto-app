@@ -23,6 +23,8 @@ export interface Usuario {
   conquistas?: ConquistaPerfil[];
   seguindo: number;
   seguidores: number;
+  /** Docs em `userspostfoto` deste uid. */
+  totalFotos?: number;
   createdAt: string;
   /** `GET /perfil` — pontos em que esta conta cuida do balcão. */
   locaisComoDono?: { id: string; nome: string }[];

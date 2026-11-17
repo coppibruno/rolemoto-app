@@ -57,7 +57,7 @@ export const useCarrosselStories = () => {
       propria: true,
     }
     : null);
-  const outras = pessoas.filter((pessoa) => !pessoa.propria);
+  const outras = pessoas.filter((pessoa) => !pessoa.propria && pessoa.contagem > 0);
 
   const abrir = (pessoa: PessoaStory) => {
     if (pessoa.propria && pessoa.contagem === 0) {

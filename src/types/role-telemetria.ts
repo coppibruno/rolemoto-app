@@ -26,6 +26,11 @@ export type RoleTelemetria = {
   pontoFim: PontoTelemetria;
   /** Encoded polyline (precisão 5); vazio em passeios antigos. Só no detalhe. */
   tracado?: string;
+  /**
+   * Velocidades (décimos de km/h, delta-encoded) alinhadas aos vértices do
+   * `tracado`. Ausente/`""` em passeios antigos. Só no detalhe.
+   */
+  tracadoVelocidades?: string;
   /** Ausente em docs antigos → lido como true. */
   publica: boolean;
   /** Só no detalhe (SPEC 058). */
@@ -48,6 +53,8 @@ export type RoleTelemetriaCreate = {
   pontoInicio: PontoTelemetria;
   pontoFim: PontoTelemetria;
   tracado?: string;
+  /** Paralelo ao `tracado`; `""` se sem caminho. */
+  tracadoVelocidades?: string;
   publica?: boolean;
   fotosUrls?: string[];
   /** Recorte dos pinos cruzados, cortado no `stop()` nativo (SPEC 056). */

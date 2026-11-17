@@ -1,6 +1,7 @@
 "use client";
 
 import type { RoleFeedItem } from "@/types/role";
+import type { RaioKm } from "../types";
 import { EstadoCarregando } from "./EstadoCarregando";
 import { EstadoVazio } from "./EstadoVazio";
 import { RoleCard } from "./RoleCard";
@@ -11,6 +12,7 @@ type Props = {
   carregando: boolean;
   erro: string | null;
   semPonto: boolean;
+  raioKm: RaioKm;
   onTentarDeNovo: () => void;
 };
 
@@ -19,6 +21,7 @@ export const ListaRoles = ({
   carregando,
   erro,
   semPonto,
+  raioKm,
   onTentarDeNovo,
 }: Props) => {
   const mostrarVazio = !semPonto && !carregando && !erro && itens.length === 0;
@@ -42,7 +45,7 @@ export const ListaRoles = ({
       ) : null}
 
       {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
-      {mostrarVazio ? <EstadoVazio aba="roles" /> : null}
+      {mostrarVazio ? <EstadoVazio aba="roles" raioKm={raioKm} /> : null}
       {!erro
         ? itens.map((role) => <RoleCard key={role.id} role={role} />)
         : null}

@@ -6,7 +6,7 @@ import {
   formatarAvaliadoRelativo,
   formatarDataEventoCapa,
 } from "../formatar-meus-roles";
-import { hrefAvaliarEvento, hrefDetalheEvento } from "../constants";
+import { hrefAlbumEvento, hrefAvaliarEvento, hrefDetalheEvento } from "../constants";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -34,6 +34,8 @@ export const CardMeuEvento = ({ item }: Props) => {
       : badgeConfirmado
         ? styles.badgeStatusTertiary
         : styles.badgeStatusSecondary;
+  const temAlbum = item.temAlbum === true;
+  const mostrarVerEvento = item.status === "confirmado" || item.status === "cancelado";
 
   return (
     <article className={styles.cardGaragem}>
@@ -50,6 +52,7 @@ export const CardMeuEvento = ({ item }: Props) => {
           {formatarDataEventoCapa(item.dataHoraAbertura)}
         </span>
         <span className={badgeClass}>{badgeLabel}</span>
+        {temAlbum ? <span className={styles.seloFotosEvento}>Fotos</span> : null}
         <div className={styles.cardEventoTexto}>
           <h3 className={styles.cardEventoTitulo}>{item.titulo}</h3>
           <p className={styles.cardEventoMeta}>
@@ -61,13 +64,25 @@ export const CardMeuEvento = ({ item }: Props) => {
         </div>
       </div>
 
-      {item.status === "confirmado" || item.status === "cancelado" ? (
-        <Link href={hrefDetalheEvento(item.eventoId)} className={styles.linkVerEvento}>
-          Ver evento
-          <span className="material-symbols-outlined" aria-hidden>
-            arrow_forward
-          </span>
-        </Link>
+      {mostrarVerEvento || temAlbum ? (
+        <div className={styles.acoesEventoGaragem}>
+          {mostrarVerEvento ? (
+            <Link href={hrefDetalheEvento(item.eventoId)} className={styles.linkVerEvento}>
+              Ver evento
+              <span className="material-symbols-outlined" aria-hidden>
+                arrow_forward
+              </span>
+            </Link>
+          ) : null}
+          {temAlbum ? (
+            <Link href={hrefAlbumEvento(item.eventoId)} className={styles.linkFotosEvento}>
+              <span className="material-symbols-outlined" aria-hidden>
+                photo_library
+              </span>
+              Ver fotos
+            </Link>
+          ) : null}
+        </div>
       ) : null}
 
       {item.status === "concluido" && !item.avaliado ? (

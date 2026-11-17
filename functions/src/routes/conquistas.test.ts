@@ -210,6 +210,11 @@ vi.mock("../repositories", () => {
     },
     dispositivoRepository: {removerPorUid: async () => undefined},
     conviteEventoRepository: {limparPorUsuario: async () => undefined},
+    postFotoRepository: {
+      contarPorUsuario: async () => 0,
+      limparPorUsuario: async () => [],
+    },
+    localRepository: {listarPorDono: async () => []},
     roleRepository: {},
     usuarioRoleRepository: {},
     historicoOcultoRepository: {},

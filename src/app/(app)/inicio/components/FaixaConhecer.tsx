@@ -31,15 +31,20 @@ export const FaixaConhecer = () => {
     <section className={styles.faixa} aria-label="Conhecer">
       <div className={styles.topo}>
         <h2 className={styles.titulo}>Conhecer</h2>
-        <button type="button" className={styles.fechar} aria-label="Agora não" onClick={fechar}>
-          <span className="material-symbols-outlined" aria-hidden>
-            close
-          </span>
-        </button>
+        <div className={styles.topoAcoes}>
+          <Link href="/pilotos" className={styles.verMais}>
+            Ver mais
+          </Link>
+          <button type="button" className={styles.fechar} aria-label="Agora não" onClick={fechar}>
+            <span className="material-symbols-outlined" aria-hidden>
+              close
+            </span>
+          </button>
+        </div>
       </div>
-      <div className={styles.lista}>
+      <ul className={styles.carrossel}>
         {visiveis.map((pessoa) => (
-          <div key={pessoa.uid} className={styles.linha}>
+          <li key={pessoa.uid} className={styles.card}>
             <Link href={`/perfil/${pessoa.uid}`} className={styles.pessoa}>
               {pessoa.fotoUrl ? (
                 <img src={pessoa.fotoUrl} alt="" className={styles.foto} referrerPolicy="no-referrer" />
@@ -48,10 +53,8 @@ export const FaixaConhecer = () => {
                   <span className="material-symbols-outlined">person</span>
                 </span>
               )}
-              <span className={styles.textos}>
-                <span className={styles.nome}>{pessoa.nome}</span>
-                <span className={styles.motivo}>{pessoa.motivo.texto}</span>
-              </span>
+              <span className={styles.nome}>{pessoa.nome}</span>
+              <span className={styles.motivo}>{pessoa.motivo.texto}</span>
             </Link>
             <div className={styles.acao}>
               <BotaoSeguir
@@ -61,12 +64,9 @@ export const FaixaConhecer = () => {
                 onSeguiu={() => sugestoes.remover(pessoa.uid)}
               />
             </div>
-          </div>
+          </li>
         ))}
-      </div>
-      <Link href="/pilotos" className={styles.verMais}>
-        Ver mais
-      </Link>
+      </ul>
     </section>
   );
 };

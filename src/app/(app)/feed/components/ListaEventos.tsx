@@ -49,7 +49,7 @@ export const ListaEventos = ({
       ) : null}
 
       {carregando && itens.length === 0 ? <EstadoCarregando /> : null}
-      {mostrarVazio ? <EstadoVazio aba="eventos" /> : null}
+      {mostrarVazio ? <EstadoVazio aba="eventos" raioKm={raioKm} /> : null}
       {!erro
         ? itens.map((evento) => <EventoCard key={evento.id} evento={evento} />)
         : null}
