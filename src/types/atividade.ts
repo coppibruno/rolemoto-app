@@ -63,6 +63,8 @@ export type AlvoEvento = {
   localNome: string;
   encerrado: boolean;
   inscrito: boolean;
+  /** URL do álbum externo; presente em atividades album_evento. */
+  albumUrl?: string | null;
 };
 
 export type AlvoAvaliacao = {

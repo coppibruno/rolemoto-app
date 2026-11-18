@@ -65,6 +65,7 @@ export const TelaPerfilPublico = ({ uid }: Props) => {
             itens={historico.itens}
             telemetrias={historico.telemetrias}
             modoTelemetria={historico.modoTelemetria}
+            mostrarTelemetriaEmTodos={historico.mostrarTelemetriaEmTodos}
             carregando={historico.carregando}
             erro={historico.erro}
             onAba={historico.setAba}

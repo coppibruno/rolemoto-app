@@ -54,10 +54,10 @@ export const AcoesPost = ({
         className={styles.iconeAcao}
         onClick={onEncaminhar}
         disabled={encaminhado || ocupado}
-        aria-label={encaminhado ? "Já no seu story" : "Adicionar ao story"}
+        aria-label={encaminhado ? "Já no seu story" : "Enviar para o story"}
       >
         <span className="material-symbols-outlined" aria-hidden>
-          {encaminhado ? "check_circle" : "add_circle"}
+          {encaminhado ? "check_circle" : "send"}
         </span>
       </button>
       {meu ? (

@@ -8,6 +8,7 @@ type Props = {
   aberto: boolean;
   saidaFutura: boolean;
   cancelando: boolean;
+  pedindoVaga: boolean;
   erroAcao: string | null;
   onVoltar: () => void;
   onApagar: () => void;
@@ -19,6 +20,7 @@ export const EstadoAdminRole = ({
   aberto,
   saidaFutura,
   cancelando,
+  pedindoVaga,
   erroAcao,
   onVoltar,
   onApagar,
@@ -41,9 +43,13 @@ export const EstadoAdminRole = ({
         type="button"
         className={styles.botaoEstado}
         onClick={onPedirVaga}
-        disabled={cancelando}
+        disabled={cancelando || pedindoVaga}
       >
-        {aberto ? "Entrar" : "Pedir vaga"}
+        {pedindoVaga
+          ? "Enviando…"
+          : aberto
+            ? "Entrar"
+            : "Pedir vaga"}
       </button>
     ) : null}
     <button type="button" className={styles.botaoEstado} onClick={onVoltar}>

@@ -20,6 +20,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
   const {
     carregando,
     cancelando,
+    pedindoVaga,
     detalhe,
     estado,
     erro,
@@ -50,6 +51,7 @@ export const TelaConfirmacaoRole = ({ roleId }: Props) => {
           aberto={detalhe.acesso === "aberto"}
           saidaFutura={Date.parse(detalhe.dataHoraSaida) > Date.now()}
           cancelando={cancelando}
+          pedindoVaga={pedindoVaga}
           erroAcao={erroAcao}
           onVoltar={voltarAoFeed}
           onApagar={cancelarRole}

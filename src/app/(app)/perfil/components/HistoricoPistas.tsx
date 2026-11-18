@@ -78,18 +78,33 @@ export const HistoricoPistas = () => {
             {apagar.feedback}
           </p>
         ) : null}
-        {!historico.erro && (historico.dados || !historico.carregando) && historico.modoTelemetria ? (
+        {!historico.erro && historico.dados && !historico.modoTelemetria
+          ? historico.itensVisiveis.length > 0 ||
+            !historico.mostrarTelemetriaEmTodos ||
+            historico.telemetrias.length === 0 ? (
+              <ListaHistorico
+                itens={historico.itensVisiveis}
+                aba={historico.aba}
+                ariaLabel={listaAria}
+                ocupadoId={apagar.ocupadoId}
+                onApagar={(alvo) => void apagar.apagar(alvo)}
+              />
+            ) : null
+          : null}
+        {!historico.erro &&
+        (historico.dados || !historico.carregando) &&
+        historico.modoTelemetria ? (
           <ListaHistoricoTelemetria
             itens={historico.telemetrias}
             ocupadoId={apagar.ocupadoId}
             onApagar={(alvo) => void apagar.apagar(alvo)}
           />
         ) : null}
-        {!historico.erro && historico.dados && !historico.modoTelemetria ? (
-          <ListaHistorico
-            itens={historico.itensVisiveis}
-            aba={historico.aba}
-            ariaLabel={listaAria}
+        {!historico.erro &&
+        historico.mostrarTelemetriaEmTodos &&
+        historico.telemetrias.length > 0 ? (
+          <ListaHistoricoTelemetria
+            itens={historico.telemetrias}
             ocupadoId={apagar.ocupadoId}
             onApagar={(alvo) => void apagar.apagar(alvo)}
           />

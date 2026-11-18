@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { CampoComentario } from "@/components/comentarios/CampoComentario";
 import { ItemComentario } from "@/components/comentarios/ItemComentario";
 import type { ItemAtividade } from "@/types/atividade";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useComentariosAtividade } from "../hooks/useComentariosAtividade";
 import styles from "../inicio.module.css";
 
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const FolhaComentarios = ({ item, onFechar, onTotalMudou }: Props) => {
+  useCamadaCheia(true);
   const comentarios = useComentariosAtividade(item.id, (delta) =>
     onTotalMudou(item.id, delta),
   );

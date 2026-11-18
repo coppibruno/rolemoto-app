@@ -13,11 +13,13 @@ import { CardConteudoAtividade } from "@/app/(app)/inicio/components/CardConteud
 import { LinhaAtividade } from "@/app/(app)/inicio/components/LinhaAtividade";
 import { useComentariosAtividade } from "@/app/(app)/inicio/hooks/useComentariosAtividade";
 import { inicioService } from "@/app/(app)/inicio/services/inicio.service";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import styles from "@/app/(app)/inicio/inicio.module.css";
 
 type Props = { atividadeId: string };
 
 export const TelaAtividade = ({ atividadeId }: Props) => {
+  useCamadaCheia(true);
   const router = useRouter();
   const { usuario } = useAuth();
   const [item, setItem] = useState<ItemAtividade | null>(null);

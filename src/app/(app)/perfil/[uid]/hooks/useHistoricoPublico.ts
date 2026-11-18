@@ -107,7 +107,13 @@ export const useHistoricoPublico = (uid: string) => {
   }, [uid]);
 
   useEffect(() => {
-    if (!uid || aba !== "concluidos" || filtroTipo !== "telemetria") return;
+    if (
+      !uid ||
+      aba !== "concluidos" ||
+      (filtroTipo !== "telemetria" && filtroTipo !== "todos")
+    ) {
+      return;
+    }
     let cancelado = false;
     setCarregandoTelemetria(true);
     telemetriaService
@@ -138,6 +144,8 @@ export const useHistoricoPublico = (uid: string) => {
         : historico.comoLider;
 
   const modoTelemetria = aba === "concluidos" && filtroTipo === "telemetria";
+  const mostrarTelemetriaEmTodos =
+    aba === "concluidos" && filtroTipo === "todos";
   const itens = modoTelemetria
     ? []
     : aba === "concluidos"
@@ -153,7 +161,10 @@ export const useHistoricoPublico = (uid: string) => {
     itens,
     telemetrias,
     modoTelemetria,
-    carregando: carregando || (modoTelemetria && carregandoTelemetria),
+    mostrarTelemetriaEmTodos,
+    carregando:
+      carregando ||
+      ((modoTelemetria || mostrarTelemetriaEmTodos) && carregandoTelemetria),
     erro,
   };
 };

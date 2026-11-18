@@ -975,6 +975,7 @@
   background: var(--surface-container-high);
   color: var(--on-surface);
   cursor: pointer;
+  text-decoration: none;
 }
 
 .botaoCompartilhar:active {

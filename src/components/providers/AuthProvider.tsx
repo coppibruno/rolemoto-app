@@ -145,8 +145,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           await carregarPerfil();
         } catch (error) {
+          // Rede/5xx: mantém perfil em memória. Só 404 em perfilService.buscar
+          // devolve null (primeiro acesso) sem throw.
           console.error("Erro ao carregar perfil:", error);
-          setUsuario(null);
         }
       } else {
         setUsuario(null);

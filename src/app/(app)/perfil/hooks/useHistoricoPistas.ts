@@ -125,7 +125,12 @@ export const useHistoricoPistas = () => {
   }, [ticket]);
 
   useEffect(() => {
-    if (aba !== "participei" || filtroTipo !== "telemetria") return;
+    if (
+      aba !== "participei" ||
+      (filtroTipo !== "telemetria" && filtroTipo !== "todos")
+    ) {
+      return;
+    }
     let cancelado = false;
     setCarregandoTelemetria(true);
     telemetriaService
@@ -151,6 +156,8 @@ export const useHistoricoPistas = () => {
 
   const bruto = dados ? dados[aba] : [];
   const modoTelemetria = aba === "participei" && filtroTipo === "telemetria";
+  const mostrarTelemetriaEmTodos =
+    aba === "participei" && filtroTipo === "todos";
   const itensVisiveis = modoTelemetria
     ? []
     : aba === "participei"
@@ -194,7 +201,10 @@ export const useHistoricoPistas = () => {
     itensVisiveis,
     telemetrias,
     modoTelemetria,
-    carregando: carregando || (modoTelemetria && carregandoTelemetria),
+    mostrarTelemetriaEmTodos,
+    carregando:
+      carregando ||
+      ((modoTelemetria || mostrarTelemetriaEmTodos) && carregandoTelemetria),
     erro,
     recarregar,
     removerLocal,

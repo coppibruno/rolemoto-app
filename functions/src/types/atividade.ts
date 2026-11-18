@@ -113,6 +113,7 @@ export type AlvoAtividade =
     localNome: string;
     encerrado: boolean;
     inscrito: boolean;
+    albumUrl?: string | null;
   }
   | {
     tipo: "avaliacao";

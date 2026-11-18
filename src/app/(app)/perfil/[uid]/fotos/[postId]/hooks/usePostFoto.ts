@@ -48,6 +48,7 @@ export const usePostFoto = (postId: string) => {
 
   const encaminhar = async () => {
     if (!post || post.encaminhadoPorMim || ocupado) return;
+    if (!window.confirm("Compartilhar esta foto no seu story?")) return;
     setOcupado(true);
     setErroAcao(null);
     try {

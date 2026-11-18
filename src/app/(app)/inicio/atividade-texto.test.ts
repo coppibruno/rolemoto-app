@@ -103,7 +103,28 @@ describe("ctaDoItem", () => {
       .toBeNull();
   });
 
-  it("álbum do evento abre o detalhe com destaque", () => {
+  it("álbum do evento abre a URL externa quando houver", () => {
+    const evento = {
+      tipo: "evento" as const,
+      id: "e1",
+      titulo: "Café",
+      fotoCapaUrl: "",
+      dataHoraAbertura: agora.toISOString(),
+      localNome: "",
+      encerrado: false,
+      inscrito: true,
+      albumUrl: "https://drive.google.com/album",
+    };
+    const card = item({ tipo: "album_evento", alvo: evento });
+    expect(verboConteudo(card)).toBe("publicou as fotos de Café");
+    expect(ctaDoItem(card)).toEqual({
+      rotulo: "Ver álbum",
+      href: "https://drive.google.com/album",
+    });
+    expect(hrefAlvo(card)).toBe("https://drive.google.com/album");
+  });
+
+  it("álbum sem URL externa cai no detalhe com destaque", () => {
     const evento = {
       tipo: "evento" as const,
       id: "e1",
@@ -115,11 +136,6 @@ describe("ctaDoItem", () => {
       inscrito: true,
     };
     const card = item({ tipo: "album_evento", alvo: evento });
-    expect(verboConteudo(card)).toBe("publicou as fotos de Café");
-    expect(ctaDoItem(card)).toEqual({
-      rotulo: "Ver álbum",
-      href: "/eventos/e1?album=1",
-    });
     expect(hrefAlvo(card)).toBe("/eventos/e1?album=1");
   });
 });

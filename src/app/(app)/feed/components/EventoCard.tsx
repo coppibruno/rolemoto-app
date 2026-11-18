@@ -5,8 +5,8 @@ import { eventoAceitaConvite } from "@/lib/evento-aberto";
 import type { EventoFeedItem } from "@/types/evento";
 import { LABELS_ACESSO_EVENTO } from "../constants";
 import { formatarPeriodoEvento } from "../formatar-horario";
+import { BotaoCompartilharEvento } from "./BotaoCompartilharEvento";
 import { BotaoInscreverEvento } from "./BotaoInscreverEvento";
-import { MenuOverflowEvento } from "./MenuOverflowEvento";
 import { SeloMediaAvaliacoes } from "./SeloMediaAvaliacoes";
 import styles from "../feed.module.css";
 
@@ -25,6 +25,15 @@ export const EventoCard = ({ evento }: Props) => {
   const mostrarAvaliar =
     evento.inscrito && encerrado && evento.avaliado !== true;
   const mostrarVerAvaliacao = evento.avaliado === true;
+  const podeConvidar = eventoAceitaConvite(evento);
+  const dadosConvite = {
+    id: evento.id,
+    titulo: evento.titulo,
+    dataHoraAbertura: evento.dataHoraAbertura,
+    dataHoraEncerramento: evento.dataHoraEncerramento,
+    localNome: evento.local.nome,
+    localEndereco: evento.local.endereco,
+  };
 
   return (
     <article className={styles.cardEvento}>
@@ -65,18 +74,19 @@ export const EventoCard = ({ evento }: Props) => {
               totalAvaliacoes={evento.totalAvaliacoes ?? 0}
               href={`/eventos/${evento.id}/avaliacoes`}
             />
-            <MenuOverflowEvento
-              id={evento.id}
-              podeConvidar={eventoAceitaConvite(evento)}
-              dados={{
-                id: evento.id,
-                titulo: evento.titulo,
-                dataHoraAbertura: evento.dataHoraAbertura,
-                dataHoraEncerramento: evento.dataHoraEncerramento,
-                localNome: evento.local.nome,
-                localEndereco: evento.local.endereco,
-              }}
-            />
+            <BotaoCompartilharEvento dados={dadosConvite} />
+            {podeConvidar ? (
+              <Link
+                href={`/eventos/${evento.id}/convidar`}
+                className={styles.botaoCompartilhar}
+                aria-label="Convidar amigo"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="material-symbols-outlined" aria-hidden>
+                  person_add
+                </span>
+              </Link>
+            ) : null}
           </div>
           <h3 className={styles.cardEventoTitulo}>{evento.titulo}</h3>
           <p className={styles.cardEventoEndereco}>

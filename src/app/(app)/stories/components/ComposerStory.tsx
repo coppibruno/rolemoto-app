@@ -96,6 +96,8 @@ export const ComposerStory = ({ arquivo, marcaInicial = null, onDescartar, onPub
           lista={composer.listaLocal}
           semResultado={composer.semLocal}
           onEscolher={composer.escolherLocalizacao}
+          onUsarTextoLivre={(nome) => void composer.escolherLocalizacaoLivre(nome)}
+          ocupadoLivre={composer.obtendoGpsLocal}
         />
       ) : null}
       {composer.buscaAberta && !composer.escolhida ? (

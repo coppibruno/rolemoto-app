@@ -66,6 +66,9 @@ export const verboConteudo = (item: ItemAtividade): string => {
 export const hrefPerfil = (uid: string, tokenUid: string | undefined): string =>
   uid === tokenUid ? "/perfil" : `/perfil/${encodeURIComponent(uid)}`;
 
+export const ehHrefExterno = (href: string): boolean =>
+  /^https?:\/\//i.test(href);
+
 /** Ficha do alvo, aberta pelo toque no card ou na linha. */
 export const hrefAlvo = (item: ItemAtividade): string => {
   const alvo = item.alvo;
@@ -77,9 +80,12 @@ export const hrefAlvo = (item: ItemAtividade): string => {
     case "role":
       return `/roles/${encodeURIComponent(alvo.id)}`;
     case "evento":
-      return item.tipo === "album_evento"
-        ? `/eventos/${encodeURIComponent(alvo.id)}?album=1`
-        : `/eventos/${encodeURIComponent(alvo.id)}`;
+      if (item.tipo === "album_evento") {
+        const url = alvo.albumUrl?.trim();
+        if (url && ehHrefExterno(url)) return url;
+        return `/eventos/${encodeURIComponent(alvo.id)}?album=1`;
+      }
+      return `/eventos/${encodeURIComponent(alvo.id)}`;
     case "avaliacao":
       return alvo.alvoTipo === "local"
         ? `/locais/${encodeURIComponent(alvo.alvoId)}`
@@ -87,6 +93,14 @@ export const hrefAlvo = (item: ItemAtividade): string => {
     case "local":
       return `/locais/${encodeURIComponent(alvo.id)}`;
   }
+};
+
+export const abrirHrefAtividade = (href: string, navegar: (rota: string) => void) => {
+  if (ehHrefExterno(href)) {
+    window.open(href, "_blank", "noopener,noreferrer");
+    return;
+  }
+  navegar(href);
 };
 
 export type CtaAtividade = { rotulo: string; href: string };

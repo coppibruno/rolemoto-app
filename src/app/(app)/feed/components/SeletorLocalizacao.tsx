@@ -1,6 +1,7 @@
 "use client";
 
 import { useBuscaEndereco } from "../hooks/useBuscaEndereco";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useFocoModal } from "@/hooks/useFocoModal";
 import styles from "../feed.module.css";
 
@@ -11,6 +12,7 @@ type Props = {
 };
 
 export const SeletorLocalizacao = ({ onFechar, onUsarGps, onEscolher }: Props) => {
+  useCamadaCheia(true);
   const sheetRef = useFocoModal(onFechar);
   const { texto, setTexto, sugestoes, buscando } = useBuscaEndereco();
 

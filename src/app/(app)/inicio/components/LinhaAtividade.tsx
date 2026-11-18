@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import type { ItemAtividade } from "@/types/atividade";
 import {
+  abrirHrefAtividade,
   ctaDoItem,
   dataDoAlvo,
+  ehHrefExterno,
   hrefAlvo,
   nomesDoGrupo,
   tempoRelativo,
@@ -37,7 +39,7 @@ export const LinhaAtividade = ({ item, onCurtidaMudou }: Props) => {
       <div
         className={styles.pilhaLinha}
         aria-hidden
-        onClick={() => router.push(hrefAlvo(item))}
+        onClick={() => abrirHrefAtividade(hrefAlvo(item), (rota) => router.push(rota))}
         onKeyDown={undefined}
         role="presentation"
       >
@@ -70,7 +72,7 @@ export const LinhaAtividade = ({ item, onCurtidaMudou }: Props) => {
           flex: 1,
           minWidth: 0,
         }}
-        onClick={() => router.push(hrefAlvo(item))}
+        onClick={() => abrirHrefAtividade(hrefAlvo(item), (rota) => router.push(rota))}
       >
         <p className={styles.linhaTexto}>
           <strong>{nomes}</strong>
@@ -96,9 +98,20 @@ export const LinhaAtividade = ({ item, onCurtidaMudou }: Props) => {
           </button>
         ) : null}
         {cta ? (
-          <Link href={cta.href} className={styles.ctaChip}>
-            {cta.rotulo}
-          </Link>
+          ehHrefExterno(cta.href) ? (
+            <a
+              href={cta.href}
+              className={styles.ctaChip}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {cta.rotulo}
+            </a>
+          ) : (
+            <Link href={cta.href} className={styles.ctaChip}>
+              {cta.rotulo}
+            </Link>
+          )
         ) : null}
       </div>
       {curtida.toast ? (

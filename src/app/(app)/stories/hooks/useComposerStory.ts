@@ -35,6 +35,8 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
   const [buscaLocal, setBuscaLocal] = useState(false);
   const [termo, setTermo] = useState("");
   const [termoLocal, setTermoLocal] = useState("");
+  const [obtendoGpsLocal, setObtendoGpsLocal] = useState(false);
+  const [erroLocal, setErroLocal] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const posicaoRef = useRef(posicao);
@@ -110,6 +112,40 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     setCorLocal("neutro");
     fecharPaineis();
     setTermoLocal("");
+  };
+
+  const escolherLocalizacaoLivre = async (nome: string) => {
+    const limpo = nome.trim().slice(0, 80);
+    if (!limpo || enviando || obtendoGpsLocal) return;
+    setErroLocal(null);
+    setObtendoGpsLocal(true);
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(Object.assign(new Error("gps"), { code: 2 }));
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 15000,
+        });
+      });
+      escolherLocalizacao({
+        nome: limpo,
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      });
+    } catch (e) {
+      const code = (e as GeolocationPositionError).code;
+      if (code === 1) {
+        setErroLocal("Precisamos da localização na hora para marcar esse lugar.");
+      } else {
+        setErroLocal("GPS impreciso. Tente ao ar livre.");
+      }
+    } finally {
+      setObtendoGpsLocal(false);
+    }
   };
 
   const tirarLocalizacao = () => {
@@ -231,6 +267,8 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     abrirBusca,
     abrirLocalizacao,
     escolherLocalizacao,
+    escolherLocalizacaoLivre,
+    obtendoGpsLocal,
     tirarMarca,
     tirarLocalizacao,
     aoSegurar,
@@ -238,7 +276,7 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     aoSoltar,
     enviar,
     enviando,
-    erro,
+    erro: erroLocal ?? erro,
     semResultado: buscaAberta && !pertoVisivel && lista.length === 0 && termo.trim().length > 0,
     semLocal: buscaLocal && listaLocal.length === 0 && termoLocal.trim().length > 0 && !lugarVisivel,
   };

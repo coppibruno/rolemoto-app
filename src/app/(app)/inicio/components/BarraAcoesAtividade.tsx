@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { CtaAtividade } from "../atividade-texto";
+import { ehHrefExterno, type CtaAtividade } from "../atividade-texto";
 import styles from "../inicio.module.css";
 
 type Props = {
@@ -49,9 +49,21 @@ export const BarraAcoesAtividade = ({
         </button>
       ) : null}
       {cta ? (
-        <Link href={cta.href} className={styles.ctaChip} onClick={(e) => e.stopPropagation()}>
-          {cta.rotulo}
-        </Link>
+        ehHrefExterno(cta.href) ? (
+          <a
+            href={cta.href}
+            className={styles.ctaChip}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {cta.rotulo}
+          </a>
+        ) : (
+          <Link href={cta.href} className={styles.ctaChip} onClick={(e) => e.stopPropagation()}>
+            {cta.rotulo}
+          </Link>
+        )
       ) : null}
     </div>
     {podeComentar && totalComentarios != null && totalComentarios > 0 ? (

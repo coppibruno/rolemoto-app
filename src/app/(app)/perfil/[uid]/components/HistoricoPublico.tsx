@@ -32,6 +32,7 @@ type Props = {
   itens: ItemHistoricoPista[];
   telemetrias: ItemHistoricoTelemetria[];
   modoTelemetria: boolean;
+  mostrarTelemetriaEmTodos?: boolean;
   carregando: boolean;
   erro: string | null;
   onAba: (aba: AbaHistoricoPublico) => void;
@@ -45,6 +46,7 @@ export const HistoricoPublicoSecao = ({
   itens,
   telemetrias,
   modoTelemetria,
+  mostrarTelemetriaEmTodos = false,
   carregando,
   erro,
   onAba,
@@ -55,7 +57,11 @@ export const HistoricoPublicoSecao = ({
   const vazio = modoTelemetria
     ? VAZIO_TELEMETRIA_PUBLICO
     : VAZIOS_HISTORICO_PUBLICO[aba];
-  const listaItens = modoTelemetria ? telemetrias : itens;
+  const listaItens = modoTelemetria
+    ? telemetrias
+    : mostrarTelemetriaEmTodos
+      ? [...itens, ...telemetrias]
+      : itens;
   const abaAtual = ABAS_HISTORICO_PUBLICO.find((a) => a.id === aba);
 
   return (
@@ -155,18 +161,30 @@ export const HistoricoPublicoSecao = ({
                   item={item}
                 />
               ))
-            : itens.map((item) =>
-                item.tipo === "evento" ? (
-                  <CardHistoricoPublicoEvento
-                    key={`${aba}-evento-${item.eventoId}`}
-                    item={item}
-                  />
-                ) : (
-                  <CardHistoricoPublicoRole
-                    key={`${aba}-role-${item.roleId}`}
-                    item={item}
-                  />
-                ),
+            : (
+                <>
+                  {itens.map((item) =>
+                    item.tipo === "evento" ? (
+                      <CardHistoricoPublicoEvento
+                        key={`${aba}-evento-${item.eventoId}`}
+                        item={item}
+                      />
+                    ) : (
+                      <CardHistoricoPublicoRole
+                        key={`${aba}-role-${item.roleId}`}
+                        item={item}
+                      />
+                    ),
+                  )}
+                  {mostrarTelemetriaEmTodos
+                    ? telemetrias.map((item) => (
+                        <CardHistoricoPublicoTelemetria
+                          key={`${aba}-telemetria-${item.id}`}
+                          item={item}
+                        />
+                      ))
+                    : null}
+                </>
               )}
         </div>
       )}

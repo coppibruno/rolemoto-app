@@ -236,6 +236,7 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
     if (atividade.tipo === "album_evento" && evento.albuns.length === 0) {
       return null;
     }
+    const albumRecente = evento.albuns[evento.albuns.length - 1];
     return {
       tipo: "evento",
       id: evento.id,
@@ -245,6 +246,9 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
       localNome: nomeDoPonto(evento.local),
       encerrado: eventoEncerrouParaAvaliacao(evento),
       inscrito: ctx.inscritos.has(evento.id),
+      ...(atividade.tipo === "album_evento"
+        ? {albumUrl: albumRecente?.url ?? null}
+        : {}),
     };
   }
   case "avaliacao_local":

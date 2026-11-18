@@ -25,6 +25,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
 
   const [carregando, setCarregando] = useState(true);
   const [cancelando, setCancelando] = useState(false);
+  const [pedindoVaga, setPedindoVaga] = useState(false);
   const [detalhe, setDetalhe] = useState<RoleDetalhe | null>(null);
   const [estado, setEstado] = useState<EstadoSheet | null>(null);
   const [erro, setErro] = useState<string | null>(null);
@@ -131,8 +132,8 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
   }, [cancelando, detalhe, roleId, router]);
 
   const pedirVaga = useCallback(async () => {
-    if (!detalhe || cancelando || estado !== "admin") return;
-    setCancelando(true);
+    if (!detalhe || cancelando || pedindoVaga || estado !== "admin") return;
+    setPedindoVaga(true);
     setErroAcao(null);
     try {
       const pedido = await participacaoService.solicitar(roleId);
@@ -141,12 +142,12 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     } catch (falha) {
       setErroAcao(falha instanceof ApiError ? falha.message : ERRO_GENERICO);
     } finally {
-      setCancelando(false);
+      setPedindoVaga(false);
     }
-  }, [cancelando, detalhe, estado, roleId]);
+  }, [cancelando, detalhe, estado, pedindoVaga, roleId]);
 
   const cancelarRole = useCallback(async () => {
-    if (!detalhe || cancelando) return;
+    if (!detalhe || cancelando || pedindoVaga) return;
     const confirmados = detalhe.participantes.confirmados;
     if (!window.confirm(confirmCancelarRole(detalhe.titulo, confirmados))) {
       return;
@@ -165,11 +166,12 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
       );
       setCancelando(false);
     }
-  }, [cancelando, detalhe, roleId, router, uid]);
+  }, [cancelando, detalhe, pedindoVaga, roleId, router, uid]);
 
   return {
     carregando,
     cancelando,
+    pedindoVaga,
     detalhe,
     estado,
     erro,
