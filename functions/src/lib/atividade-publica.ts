@@ -237,7 +237,17 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
       return null;
     }
     const albumRecente = evento.albuns[evento.albuns.length - 1];
-    return {
+    const alvo: {
+      tipo: "evento";
+      id: string;
+      titulo: string;
+      fotoCapaUrl: string;
+      dataHoraAbertura: string;
+      localNome: string;
+      encerrado: boolean;
+      inscrito: boolean;
+      albumUrl?: string | null;
+    } = {
       tipo: "evento",
       id: evento.id,
       titulo: evento.titulo,
@@ -246,10 +256,11 @@ const alvoDe = (atividade: Atividade, ctx: Contexto): AlvoAtividade | null => {
       localNome: nomeDoPonto(evento.local),
       encerrado: eventoEncerrouParaAvaliacao(evento),
       inscrito: ctx.inscritos.has(evento.id),
-      ...(atividade.tipo === "album_evento"
-        ? {albumUrl: albumRecente?.url ?? null}
-        : {}),
     };
+    if (atividade.tipo === "album_evento") {
+      alvo.albumUrl = albumRecente?.url ?? null;
+    }
+    return alvo;
   }
   case "avaliacao_local":
   case "avaliacao_evento": {
