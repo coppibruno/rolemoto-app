@@ -15,11 +15,16 @@ const config: CapacitorConfig = {
     FirebaseAuthentication: {
       providers: ["google.com"],
     },
+    // Android continua em @capacitor/push-notifications.
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"],
     },
+    // iOS: token FCM via @capacitor-firebase/messaging.
+    FirebaseMessaging: {
+      presentationOptions: ["badge", "sound", "alert"],
+    },
   },
-  // Evita colisão de identidade SPM do @capacitor-firebase/authentication (Cap CLI 8.4+).
+  // Evita colisão de identidade SPM do @capacitor-firebase/* (Cap CLI 8.4+).
   // O trait Google inclui o SDK nativo; sem ele o login no iOS rejeita na hora.
   experimental: {
     ios: {
@@ -27,6 +32,9 @@ const config: CapacitorConfig = {
         swiftToolsVersion: "6.1",
         packageOptions: {
           "@capacitor-firebase/authentication": {
+            symlink: true,
+          },
+          "@capacitor-firebase/messaging": {
             symlink: true,
           },
         },

@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { FirebaseMessaging } from "@capacitor-firebase/messaging";
 import { Preferences } from "@capacitor/preferences";
 import { PushNotifications } from "@capacitor/push-notifications";
 import { dispositivosService } from "@/app/(app)/services/dispositivos.service";
@@ -26,6 +27,9 @@ export const plataformaAtual = (): PlataformaDispositivo => {
   return "web";
 };
 
+const ehIos = () => Capacitor.getPlatform() === "ios";
+const ehAndroid = () => Capacitor.getPlatform() === "android";
+
 let recusouNestaSessao = false;
 let tokenEmMemoria: string | null = null;
 let listenersPromise: Promise<void> | null = null;
@@ -34,6 +38,18 @@ let onForeground: ((payload: PayloadForeground) => void) | null = null;
 const guardarToken = async (token: string) => {
   tokenEmMemoria = token;
   await Preferences.set({ key: PREF_TOKEN, value: token });
+};
+
+const persistirToken = async (token: string) => {
+  if (!token) {
+    return;
+  }
+  try {
+    await guardarToken(token);
+    await dispositivosService.registrar(token, plataformaAtual());
+  } catch {
+    console.warn("FCM nativo: falha ao registrar token");
+  }
 };
 
 export const obterTokenNativo = async (): Promise<string | null> => {
@@ -61,8 +77,8 @@ const tituloDoPayload = (
   body: notification?.body || textoDoCampo(data?.body),
 });
 
-const criarCanal = async () => {
-  if (Capacitor.getPlatform() !== "android") {
+const criarCanalAndroid = async () => {
+  if (!ehAndroid()) {
     return;
   }
   try {
@@ -79,17 +95,10 @@ const criarCanal = async () => {
   }
 };
 
-const instalarListeners = async () => {
+/** Android: @capacitor/push-notifications (token FCM). Não alterar este fluxo. */
+const instalarListenersAndroid = async () => {
   await PushNotifications.addListener("registration", (evento) => {
-    const token = evento.value;
-    if (!token) {
-      return;
-    }
-    void guardarToken(token)
-      .then(() => dispositivosService.registrar(token, plataformaAtual()))
-      .catch(() => {
-        console.warn("FCM nativo: falha ao registrar token");
-      });
+    void persistirToken(evento.value);
   });
 
   await PushNotifications.addListener("registrationError", (erro) => {
@@ -115,6 +124,46 @@ const instalarListeners = async () => {
   );
 };
 
+/**
+ * iOS: @capacitor-firebase/messaging (token FCM).
+ * @capacitor/push-notifications no iOS devolve APNs hex — incompatível com Admin FCM.
+ */
+const instalarListenersIos = async () => {
+  await FirebaseMessaging.addListener("tokenReceived", (evento) => {
+    void persistirToken(evento.token);
+  });
+
+  await FirebaseMessaging.addListener("notificationReceived", (evento) => {
+    const notificacao = evento.notification;
+    const data = (notificacao.data ?? {}) as Record<string, unknown>;
+    const { title, body } = tituloDoPayload(
+      { title: notificacao.title, body: notificacao.body },
+      data,
+    );
+    if (!title || !onForeground) {
+      return;
+    }
+    onForeground({ title, body });
+  });
+
+  await FirebaseMessaging.addListener(
+    "notificationActionPerformed",
+    (evento) => {
+      const data = (evento.notification.data ?? {}) as Record<string, unknown>;
+      avisarPushRecebido();
+      navegarNoWebView(data.url);
+    },
+  );
+};
+
+const instalarListeners = async () => {
+  if (ehIos()) {
+    await instalarListenersIos();
+    return;
+  }
+  await instalarListenersAndroid();
+};
+
 const garantirListeners = () => {
   if (!listenersPromise) {
     listenersPromise = instalarListeners();
@@ -130,18 +179,46 @@ export const iniciarListenersNativos = () => {
   void garantirListeners();
 };
 
-const registrar = async () => {
+const registrarAndroid = async () => {
   await garantirListeners();
-  await criarCanal();
+  await criarCanalAndroid();
   await PushNotifications.register();
+};
+
+const registrarIos = async () => {
+  await garantirListeners();
+  const { token } = await FirebaseMessaging.getToken();
+  await persistirToken(token);
+};
+
+const registrar = async () => {
+  if (ehIos()) {
+    await registrarIos();
+    return;
+  }
+  await registrarAndroid();
+};
+
+const checarPermissao = async () => {
+  if (ehIos()) {
+    return (await FirebaseMessaging.checkPermissions()).receive;
+  }
+  return (await PushNotifications.checkPermissions()).receive;
+};
+
+const pedirPermissao = async () => {
+  if (ehIos()) {
+    return (await FirebaseMessaging.requestPermissions()).receive;
+  }
+  return (await PushNotifications.requestPermissions()).receive;
 };
 
 export const registrarSeJaPermitidoNativo = async (): Promise<void> => {
   if (!ehNativo()) {
     return;
   }
-  const atual = await PushNotifications.checkPermissions();
-  if (atual.receive !== "granted") {
+  const atual = await checarPermissao();
+  if (atual !== "granted") {
     return;
   }
   await registrar();
@@ -156,19 +233,19 @@ export const pedirPermissaoERegistrarNativo =
       return "denied";
     }
 
-    let atual = await PushNotifications.checkPermissions();
-    if (atual.receive === "denied") {
+    let atual = await checarPermissao();
+    if (atual === "denied") {
       recusouNestaSessao = true;
       return "denied";
     }
-    if (atual.receive !== "granted") {
-      atual = await PushNotifications.requestPermissions();
+    if (atual !== "granted") {
+      atual = await pedirPermissao();
     }
-    if (atual.receive === "denied") {
+    if (atual === "denied") {
       recusouNestaSessao = true;
       return "denied";
     }
-    if (atual.receive !== "granted") {
+    if (atual !== "granted") {
       return "default";
     }
 
@@ -189,7 +266,12 @@ export const ouvirForegroundNativo = (
 
 export const limparPushNativoNoLogout = async (): Promise<void> => {
   try {
-    await PushNotifications.removeAllDeliveredNotifications();
+    if (ehIos()) {
+      await FirebaseMessaging.removeAllDeliveredNotifications();
+      await FirebaseMessaging.deleteToken();
+    } else {
+      await PushNotifications.removeAllDeliveredNotifications();
+    }
   } catch {
     // best-effort — não bloqueia o logout
   }
