@@ -132,6 +132,9 @@ export const TelaAtividade = ({ atividadeId }: Props) => {
                   key={c.id}
                   comentario={c}
                   onApagar={(id) => void comentarios.apagar(id)}
+                  alvoDenuncia={
+                    item.tipo === "foto" ? "comentario_post" : "comentario_atividade"
+                  }
                 />
               ))}
             </ul>

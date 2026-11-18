@@ -1,0 +1,413 @@
+.overflow {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.botaoOverflow {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.botaoOverflowEscuro {
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  color: #fff;
+}
+
+.botaoOverflow .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  min-width: 196px;
+  padding: 6px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  border: 1px solid color-mix(in srgb, var(--outline) 35%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.itemMenu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  padding: 0 12px;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.itemMenu:hover,
+.itemMenu:focus-visible {
+  background: var(--surface-container-highest);
+  outline: none;
+}
+
+.itemMenu .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--on-surface-variant);
+}
+
+.itemPerigo {
+  color: var(--error);
+}
+
+.itemPerigo .material-symbols-outlined {
+  color: var(--error);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--gutter-md);
+  padding-bottom: calc(var(--gutter-md) + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.overlayCentro {
+  align-items: center;
+}
+
+.folha {
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px 20px;
+  border-radius: 1.25rem 1.25rem 0.75rem 0.75rem;
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.grip {
+  align-self: center;
+  width: 36px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--outline);
+}
+
+.tituloFolha,
+.tituloModal {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--outline);
+  background: #22252b;
+  color: var(--outline);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chipAtivo {
+  border-color: var(--primary-container);
+  color: var(--primary-container);
+}
+
+.campo {
+  width: 100%;
+  min-height: 96px;
+  padding: 12px;
+  border: none;
+  border-radius: 0.75rem;
+  resize: vertical;
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.campo::placeholder {
+  color: var(--outline);
+}
+
+.campo:focus-visible {
+  outline: 2px solid var(--primary-container);
+}
+
+.cta {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+  cursor: pointer;
+}
+
+.cta:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.cartaoModal {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 0.75rem;
+  background: var(--surface-container);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.corpoModal {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--on-surface-variant);
+}
+
+.acoesModal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.botaoConfirmar {
+  min-height: var(--touch-target);
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--error-container);
+  color: var(--error);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoCancelar {
+  min-height: var(--touch-min);
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--surface-container-high);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  z-index: 100;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-highest);
+  color: var(--on-surface);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.telaBloqueados {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100%;
+  padding: 0 var(--gutter-md) calc(88px + env(safe-area-inset-bottom));
+}
+
+.cabecalhoBloqueados {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch-min);
+  margin: 0 calc(var(--gutter-md) * -1);
+  padding: 0 var(--gutter-md);
+}
+
+.voltar {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  cursor: pointer;
+}
+
+.tituloPagina {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--touch-min);
+  padding: 8px 0;
+}
+
+.avatar,
+.avatarVazio {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: var(--surface-container-high);
+  object-fit: cover;
+}
+
+.avatarVazio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface-variant);
+}
+
+.textos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--on-surface);
+}
+
+.apelido {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--on-surface-variant);
+}
+
+.botaoDesbloquear {
+  flex-shrink: 0;
+  min-height: var(--touch-min);
+  padding: 0 14px;
+  border: 1.5px solid var(--outline);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.vazio {
+  margin: 32px 0;
+  text-align: center;
+  color: var(--on-surface-variant);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.linkBloqueados {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch-min);
+  padding: 0 4px;
+  color: var(--on-surface);
+  text-decoration: none;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+}
+
+.linkBloqueados .material-symbols-outlined {
+  font-size: 22px;
+  color: var(--on-surface-variant);
+}
+
+.linkBloqueados:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}

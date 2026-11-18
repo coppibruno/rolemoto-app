@@ -46,7 +46,7 @@ export const EstadoErroPublico = ({
         </span>
         <p className={styles.estadoTitulo}>{mensagem}</p>
         <p className={styles.estadoCorpo}>
-          Este piloto pode ter saído do Rolemoto ou o link está inválido.
+          Este perfil não está disponível agora.
         </p>
       </div>
     </div>

@@ -8,7 +8,8 @@ import {
   publicarStoryPerfil,
   type GeoAneis,
 } from "../lib/story-local";
-import {eventoRepository, localRepository} from "../repositories";
+import {omitirBloqueados} from "../lib/moderacao";
+import {bloqueioRepository, eventoRepository, localRepository} from "../repositories";
 import {autenticar} from "../middleware/auth";
 import {responderErro} from "../middleware/errors";
 import {rateLimitAutenticado} from "../middleware/rate-limit";
@@ -66,7 +67,13 @@ storiesAoVivoRouter.get("/pessoas", async (req: Request, res: Response) => {
       res.status(401).json({erro: "Não autenticado"});
       return;
     }
-    res.json({pessoas: await listarPessoasStory(uid)});
+    const [pessoas, bloqueados] = await Promise.all([
+      listarPessoasStory(uid),
+      bloqueioRepository.setDoPar(uid),
+    ]);
+    res.json({
+      pessoas: omitirBloqueados(pessoas, bloqueados, (pessoa) => pessoa.uid),
+    });
   } catch (error) {
     responderErro(res, error);
   }

@@ -15,9 +15,11 @@ import {codigoAfiliado} from "../lib/afiliado";
 import {
   afiliadoRepository,
   atividadeRepository,
+  bloqueioRepository,
   conquistaRepository,
   conversaRepository,
   conviteEventoRepository,
+  denunciaRepository,
   dispositivoRepository,
   localRepository,
   notificacaoInboxRepository,
@@ -419,6 +421,24 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await seguirRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover vínculos de seguir", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await bloqueioRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover bloqueios", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await denunciaRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover denúncias", {
         uid,
         ...erroDe(error),
       });

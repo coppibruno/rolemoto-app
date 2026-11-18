@@ -6,8 +6,17 @@ import {apelidoExibicao} from "../lib/apelido";
 import {aceitaComentario, idAtividade, textoDoComentario} from "../lib/atividade";
 import {montarItens, paraComentariosPublicos, removerSumidas} from "../lib/atividade-publica";
 import {erroDe, log} from "../lib/log";
+import {
+  ERRO_COMENTAR_BLOQUEADO,
+  estaNoParBloqueado,
+} from "../lib/moderacao";
 import {notificarComentarioAtividade, notificarComentarioFoto} from "../lib/notificacoes";
-import {atividadeRepository, postFotoRepository, usuarioRepository} from "../repositories";
+import {
+  atividadeRepository,
+  bloqueioRepository,
+  postFotoRepository,
+  usuarioRepository,
+} from "../repositories";
 import type {Atividade, AtividadeCreate} from "../types/atividade";
 import type {PostFoto} from "../types/post-foto";
 
@@ -193,6 +202,14 @@ atividadesRouter.post("/:id/comentarios", async (req: Request, res: Response) =>
     if (!texto.ok) {
       res.status(400).json({erro: texto.erro});
       return;
+    }
+
+    if (uid !== atividade.autorId) {
+      const bloqueados = await bloqueioRepository.setDoPar(uid);
+      if (estaNoParBloqueado(bloqueados, atividade.autorId)) {
+        res.status(403).json({erro: ERRO_COMENTAR_BLOQUEADO});
+        return;
+      }
     }
 
     if (atividade.tipo === "foto") {

@@ -13,6 +13,7 @@ import { validarQueryRoles } from "../lib/roles-query";
 import { resolverIntervaloQuando } from "../lib/quando";
 import {
   atividadeRepository,
+  bloqueioRepository,
   eventoRepository,
   localRepository,
   roleRepository,
@@ -92,8 +93,14 @@ feedRouter.get("/contagens", async (req: Request, res: Response) => {
   }
 });
 
-const lotesDoToken = async (uid: string): Promise<string[][]> =>
-  lotesDeAutores(uid, await seguirRepository.listarSeguidosRecentes(uid, MAX_AUTORES_FEED - 1));
+const lotesDoToken = async (uid: string): Promise<string[][]> => {
+  const [seguidos, bloqueados] = await Promise.all([
+    seguirRepository.listarSeguidosRecentes(uid, MAX_AUTORES_FEED - 1),
+    bloqueioRepository.setDoPar(uid),
+  ]);
+  const filtrados = seguidos.filter((seguido) => !bloqueados.has(seguido));
+  return lotesDeAutores(uid, filtrados);
+};
 
 const textoDaQuery = (valor: unknown): string | null =>
   typeof valor === "string" && valor.trim() ? valor.trim() : null;

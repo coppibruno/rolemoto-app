@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { MenuModeracao } from "@/app/(app)/moderacao/components/MenuModeracao";
 import { useAuth } from "@/hooks/useAuth";
 import { useCompartilharPerfil } from "../hooks/useCompartilharPerfil";
 import styles from "../perfil-publico.module.css";
@@ -15,6 +16,7 @@ export const CabecalhoVisaoComunitaria = ({ uid, apelido }: Props) => {
   const router = useRouter();
   const { usuario } = useAuth();
   const { compartilhar, feedback } = useCompartilharPerfil(uid, apelido);
+  const proprio = usuario?.uid === uid;
 
   const voltar = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
@@ -47,6 +49,14 @@ export const CabecalhoVisaoComunitaria = ({ uid, apelido }: Props) => {
           >
             <span className="material-symbols-outlined">share</span>
           </button>
+          {!proprio ? (
+            <MenuModeracao
+              contexto="perfil"
+              alvoId={uid}
+              autorUid={uid}
+              autorApelido={apelido}
+            />
+          ) : null}
           <Link
             href="/perfil"
             className={styles.avatarVisitanteLink}

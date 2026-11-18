@@ -17,10 +17,16 @@ import {
   textoMensagem,
   trechoMensagem,
 } from "../lib/conversa";
+import {
+  ERRO_MENSAGEM_BLOQUEADO,
+  estaNoParBloqueado,
+  omitirBloqueados,
+} from "../lib/moderacao";
 import {erroDe, log} from "../lib/log";
 import {notificarMensagem} from "../lib/notificacoes";
 import {param} from "../lib/params";
 import {
+  bloqueioRepository,
   conversaRepository,
   storyLocalRepository,
   usuarioRepository,
@@ -94,17 +100,25 @@ conversasRouter.get("/", async (req: Request, res: Response) => {
       res.status(401).json({erro: "Não autenticado"});
       return;
     }
-    const pagina = await conversaRepository.listarDoUsuario(uid, cursorDaQuery(req));
+    const [pagina, bloqueados] = await Promise.all([
+      conversaRepository.listarDoUsuario(uid, cursorDaQuery(req)),
+      bloqueioRepository.setDoPar(uid),
+    ]);
     if (!pagina.ok) {
       res.status(400).json({erro: "cursor inválido"});
       return;
     }
-    const outros = pagina.itens.map((conversa) =>
+    const conversas = omitirBloqueados(
+      pagina.itens,
+      bloqueados,
+      (conversa) => conversa.participantes.find((p) => p !== uid) ?? "",
+    );
+    const outros = conversas.map((conversa) =>
       conversa.participantes.find((p) => p !== uid) ?? "",
     );
     const usuarios = await usuarioRepository.buscarPorIds(outros);
     const porUid = new Map(usuarios.map((u) => [u.uid, u]));
-    const itens: ConversaItem[] = pagina.itens.map((conversa, i) => ({
+    const itens: ConversaItem[] = conversas.map((conversa, i) => ({
       id: conversa.id,
       outro: paraPessoa(outros[i], porUid.get(outros[i])),
       ultimaMensagemTexto: trechoMensagem(conversa.ultimaMensagemTexto),
@@ -217,6 +231,11 @@ conversasRouter.post("/", async (req: Request, res: Response) => {
     }
     if (destinatarioId === uid) {
       res.status(400).json({erro: ERRO_PARA_SI});
+      return;
+    }
+    const bloqueados = await bloqueioRepository.setDoPar(uid);
+    if (estaNoParBloqueado(bloqueados, destinatarioId)) {
+      res.status(403).json({erro: ERRO_MENSAGEM_BLOQUEADO});
       return;
     }
     const temReacao = body.reacao !== undefined && body.reacao !== null;

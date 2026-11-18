@@ -20,6 +20,13 @@ import {
   marcarVistoPerfil,
 } from "../lib/story-local";
 import {
+  ERRO_PERFIL_INDISPONIVEL,
+  ERRO_SEGUE_BLOQUEADO,
+  estaNoParBloqueado,
+  omitirBloqueados,
+} from "../lib/moderacao";
+import {
+  bloqueioRepository,
   postFotoRepository,
   roleTelemetriaRepository,
   seguirRepository,
@@ -29,6 +36,7 @@ import {
 import type {LinhaPiloto, VinculoEntre} from "../types/seguir";
 import {LIMITE_BUSCA_PILOTOS} from "../types/seguir";
 import type {PerfilPublico, Usuario} from "../types/usuario";
+import {bloquearUsuario, desbloquearUsuario} from "./moderacao";
 
 /**
  * Perfil público de qualquer piloto autenticado.
@@ -44,6 +52,7 @@ import type {PerfilPublico, Usuario} from "../types/usuario";
  * GET /usuarios/:uid/seguindo
  * GET /usuarios/:uid/seguidores
  * POST|DELETE /usuarios/:uid/seguir
+ * POST|DELETE /usuarios/:uid/bloqueio
  */
 export const usuariosRouter = Router();
 
@@ -154,8 +163,13 @@ usuariosRouter.get("/busca", async (req: Request, res: Response) => {
       return;
     }
 
-    const pessoas = (await usuarioRepository.buscarPorPrefixo(termo))
-      .filter((pessoa) => pessoa.uid !== token);
+    const bloqueados = await bloqueioRepository.setDoPar(token);
+    const pessoas = omitirBloqueados(
+      (await usuarioRepository.buscarPorPrefixo(termo))
+        .filter((pessoa) => pessoa.uid !== token),
+      bloqueados,
+      (pessoa) => pessoa.uid,
+    );
     const mapa = await seguirRepository.vinculosCom(
       token,
       pessoas.map((pessoa) => pessoa.uid),
@@ -460,6 +474,9 @@ usuariosRouter.get("/:uid/seguidores", async (req: Request, res: Response) => {
   }
 });
 
+usuariosRouter.post("/:uid/bloqueio", bloquearUsuario);
+usuariosRouter.delete("/:uid/bloqueio", desbloquearUsuario);
+
 usuariosRouter.post("/:uid/seguir", async (req: Request, res: Response) => {
   try {
     const token = req.usuario?.uid;
@@ -470,6 +487,12 @@ usuariosRouter.post("/:uid/seguir", async (req: Request, res: Response) => {
     const uid = lerUid(req);
     if (!uid || uid === token) {
       res.status(400).json({erro: "não dá para seguir a si mesmo"});
+      return;
+    }
+
+    const bloqueados = await bloqueioRepository.setDoPar(token);
+    if (estaNoParBloqueado(bloqueados, uid)) {
+      res.status(403).json({erro: ERRO_SEGUE_BLOQUEADO});
       return;
     }
 
@@ -529,6 +552,14 @@ usuariosRouter.get("/:uid", async (req: Request, res: Response) => {
     if (!uid) {
       res.status(400).json({erro: "uid inválido"});
       return;
+    }
+
+    if (uid !== token) {
+      const bloqueados = await bloqueioRepository.setDoPar(token);
+      if (estaNoParBloqueado(bloqueados, uid)) {
+        res.status(404).json({erro: ERRO_PERFIL_INDISPONIVEL});
+        return;
+      }
     }
 
     const perfil = await usuarioRepository.buscarPorId(uid);

@@ -4,6 +4,7 @@ import { LinhaTema } from "@/components/tema/BotaoTema";
 import type { Usuario } from "@/types/user";
 import { CartaoPiloto } from "../[uid]/components/CartaoPiloto";
 import { AbasConteudoPerfil } from "./AbasConteudoPerfil";
+import { LinkBloqueados } from "@/app/(app)/moderacao/components/LinkBloqueados";
 import { BotaoCriarSenha } from "./BotaoCriarSenha";
 import { BotaoExcluirConta } from "./BotaoExcluirConta";
 import { BotaoInstalarApp } from "./BotaoInstalarApp";
@@ -43,6 +44,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
         {usuario.admin ? <LinhaAfiliados /> : null}
         <BotaoInstalarApp />
         <BotaoCriarSenha />
+        <LinkBloqueados />
         <BotaoSair />
         <BotaoExcluirConta />
       </div>

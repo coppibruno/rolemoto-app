@@ -2,15 +2,23 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { MenuModeracao } from "@/app/(app)/moderacao/components/MenuModeracao";
 import type { AutorPost as Autor } from "@/types/post-foto";
 import styles from "../post-foto.module.css";
 
 type Props = {
   autorUid: string;
+  postId?: string;
   autor?: Autor | null;
+  meu?: boolean;
 };
 
-export const CabecalhoPost = ({ autorUid, autor }: Props) => {
+export const CabecalhoPost = ({
+  autorUid,
+  postId,
+  autor,
+  meu = false,
+}: Props) => {
   const router = useRouter();
 
   const voltar = () => {
@@ -50,7 +58,16 @@ export const CabecalhoPost = ({ autorUid, autor }: Props) => {
       ) : (
         <span className={styles.espaco} aria-hidden />
       )}
-      <span className={styles.espaco} aria-hidden />
+      {!meu && autor && postId ? (
+        <MenuModeracao
+          contexto="post"
+          alvoId={postId}
+          autorUid={autor.uid}
+          autorApelido={autor.apelido}
+        />
+      ) : (
+        <span className={styles.espaco} aria-hidden />
+      )}
     </header>
   );
 };

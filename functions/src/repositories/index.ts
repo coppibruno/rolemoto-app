@@ -111,6 +111,10 @@ import type {NotificacaoInboxRepository} from "./interfaces/notificacao-inbox.re
 import {
   FirestoreNotificacaoInboxRepository,
 } from "./firestore/firestore-notificacao-inbox.repository";
+import type {BloqueioRepository} from "./interfaces/bloqueio.repository";
+import {FirestoreBloqueioRepository} from "./firestore/firestore-bloqueio.repository";
+import type {DenunciaRepository} from "./interfaces/denuncia.repository";
+import {FirestoreDenunciaRepository} from "./firestore/firestore-denuncia.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -206,3 +210,9 @@ export const sugestaoRepository: SugestaoRepository =
 
 export const notificacaoInboxRepository: NotificacaoInboxRepository =
   new FirestoreNotificacaoInboxRepository();
+
+export const bloqueioRepository: BloqueioRepository =
+  new FirestoreBloqueioRepository();
+
+export const denunciaRepository: DenunciaRepository =
+  new FirestoreDenunciaRepository();

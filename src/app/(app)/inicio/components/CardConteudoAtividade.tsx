@@ -48,6 +48,7 @@ export const CardConteudoAtividade = ({
         verbo={verboConteudo(item)}
         createdAt={item.createdAt}
         tokenUid={tokenUid}
+        atividadeId={item.id}
       />
       {item.alvo.tipo === "post" ? (
         <CorpoFoto

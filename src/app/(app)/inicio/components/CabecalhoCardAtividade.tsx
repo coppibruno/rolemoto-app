@@ -1,3 +1,4 @@
+import { MenuModeracao } from "@/app/(app)/moderacao/components/MenuModeracao";
 import type { AutorPost } from "@/types/post-foto";
 import { hrefPerfil, tempoRelativo } from "../atividade-texto";
 import { AvatarAtividade } from "./AvatarAtividade";
@@ -8,9 +9,16 @@ type Props = {
   verbo: string;
   createdAt: string;
   tokenUid: string | undefined;
+  atividadeId?: string;
 };
 
-export const CabecalhoCardAtividade = ({ autor, verbo, createdAt, tokenUid }: Props) => (
+export const CabecalhoCardAtividade = ({
+  autor,
+  verbo,
+  createdAt,
+  tokenUid,
+  atividadeId,
+}: Props) => (
   <header className={styles.cabecalhoCard}>
     <AvatarAtividade
       uid={autor.uid}
@@ -24,5 +32,13 @@ export const CabecalhoCardAtividade = ({ autor, verbo, createdAt, tokenUid }: Pr
       </p>
       <p className={styles.tempo}>{tempoRelativo(createdAt)}</p>
     </div>
+    {atividadeId && autor.uid !== tokenUid ? (
+      <MenuModeracao
+        contexto="atividade"
+        alvoId={atividadeId}
+        autorUid={autor.uid}
+        autorApelido={autor.apelido}
+      />
+    ) : null}
   </header>
 );

@@ -70,6 +70,9 @@ export const FolhaComentarios = ({ item, onFechar, onTotalMudou }: Props) => {
               key={c.id}
               comentario={c}
               onApagar={(id) => void comentarios.apagar(id)}
+              alvoDenuncia={
+                item.tipo === "foto" ? "comentario_post" : "comentario_atividade"
+              }
             />
           ))}
         </ul>

@@ -37,7 +37,9 @@ import {
   enriquecerParticipantesRoles,
   listarParticipantesRole,
 } from "../lib/participantes";
+import {omitirBloqueados} from "../lib/moderacao";
 import {
+  bloqueioRepository,
   roleRepository,
   seguirRepository,
   usuarioRepository,
@@ -307,12 +309,17 @@ rolesRouter.get("/", async (req: Request, res: Response) => {
 
     const origem = {lat: query.lat, lng: query.lng, raioKm: query.raioKm};
     const vinculos = roleIdsComVinculoUsuario(pedidosUsuario);
-    const filtrados = filtrarRolesFeedDescoberta(
-      listados,
-      origem,
-      uid,
-      vinculos,
-      query.q,
+    const bloqueados = await bloqueioRepository.setDoPar(uid);
+    const filtrados = omitirBloqueados(
+      filtrarRolesFeedDescoberta(
+        listados,
+        origem,
+        uid,
+        vinculos,
+        query.q,
+      ),
+      bloqueados,
+      (role) => role.criadorId,
     );
 
     filtrados.sort((a, b) => a.dataHoraSaida.localeCompare(b.dataHoraSaida));

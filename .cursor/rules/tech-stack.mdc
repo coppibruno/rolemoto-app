@@ -56,14 +56,43 @@ Perfil público (autenticado): `GET /usuarios/:uid`, `GET /usuarios/:uid/histori
 ### Coleção `usersseguir` (seguir piloto — um sentido, na hora)
 ```
 {
-  id: string, // `{seguidorId}_{seguidoId}`
-  seguidorId: string, // quem apertou Seguir
-  seguidoId: string,
-  createdAt: timestamp
+ id: string, // `{seguidorId}_{seguidoId}`
+ seguidorId: string, // quem apertou Seguir
+ seguidoId: string,
+ createdAt: timestamp
 }
 ```
 
 `POST /usuarios/:uid/seguir` cria na hora e soma os contadores na mesma transação. Repetir não soma e não manda outro push. `DELETE` reduz com `max(0, atual - 1)`. Listas `GET /usuarios/:uid/seguindo` e `/seguidores` (30, `createdAt` desc). Busca `GET /usuarios/busca?q=` (prefixo, máx. 20), registrada antes de `/:uid`. Push `novo_seguidor` só no vínculo novo. `DELETE /perfil` apaga os vínculos dos dois lados e corrige o contador de quem ficou.
+
+### Coleção `usersbloqueio` (bloquear piloto — um sentido; SPEC 069)
+```
+{
+ id: string, // `{bloqueadorId}_{bloqueadoId}`
+ bloqueadorId: string, // uid do token
+ bloqueadoId: string,
+ createdAt: timestamp
+}
+```
+
+`POST /usuarios/:uid/bloqueio` cria e corta seguir dos dois lados. Repetir devolve `novo: false`. `DELETE` desbloqueia (não recria seguir). Lista `GET /bloqueios` (30). Par bloqueado: perfil 404 neutro, seguir/DM/comentar 403, omitir no feed amigos, stories/pessoas, busca e Explorar (`criadorId`). `DELETE /perfil` limpa os dois lados.
+
+### Coleção `usersdenuncia` (reportar UGC — SPEC 069)
+```
+{
+ id: string, // autoId
+ denuncianteId: string,
+ alvoTipo: "perfil" | "post" | "comentario_post" | "story" | "atividade" | "comentario_atividade",
+ alvoId: string,
+ acusadoId: string, // autor do alvo; denormalizado
+ motivo: "spam" | "assedio" | "odio" | "nudez" | "violencia" | "outro",
+ detalhes: string, // "" ok; máx 280; obrigatório se outro
+ status: "aberta" | "resolvida", // resolvida só no console nesta leva
+ createdAt: timestamp
+}
+```
+
+`POST /denuncias` — qualquer autenticado exceto o autor do alvo. Dedupe 24 h no trio `(denuncianteId, alvoTipo, alvoId)` → `{ novo: false }`. Sem push. Moderação humana via Firestore + `contato@rolemoto.com.br`. `DELETE /perfil` limpa onde o uid é denunciante ou acusado.
 
 ### Coleção `usersconviteevento` (convite para uma data de evento)
 ```

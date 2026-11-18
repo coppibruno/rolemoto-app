@@ -7,6 +7,7 @@ import type { DirecaoPessoaStory } from "@/app/(app)/stories/pessoas-story";
 import type { AlvoPlayer, MencaoStory, StoryPublica } from "@/types/story-local";
 import { tempoRelativoStory } from "@/app/(app)/stories/formatar-tempo-story";
 import { useReelStories } from "@/app/(app)/stories/hooks/useReelStories";
+import { MenuModeracao } from "@/app/(app)/moderacao/components/MenuModeracao";
 import { EsqueletoFotoStory } from "./EsqueletoFotoStory";
 import { PalcoFotoStory } from "./PalcoFotoStory";
 import { RespostaStory } from "./RespostaStory";
@@ -127,7 +128,16 @@ export const PlayerStories = ({
                 <button type="button" className={styles.apagar} onClick={() => reel.setConfirmando(true)}>
                   Apagar
                 </button>
-              ) : null}
+              ) : (
+                <MenuModeracao
+                  contexto="story"
+                  alvoId={story.id}
+                  autorUid={story.autor.uid}
+                  autorApelido={story.autor.apelido}
+                  variante="escuro"
+                  onBloqueado={onFechar}
+                />
+              )}
             </>
           ) : null}
         </div>

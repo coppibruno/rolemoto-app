@@ -14,7 +14,9 @@ import {apelidoExibicao} from "../lib/apelido";
 import {apagarLocal} from "../lib/apagar-catalogo";
 import {ofertasVigentesPorLocal} from "../lib/dono-local";
 import {ofertaDoCard, resumoVigente} from "../lib/oferta-local";
+import {omitirBloqueados} from "../lib/moderacao";
 import {
+  bloqueioRepository,
   localRepository,
   ofertaLocalRepository,
   usuarioLocalFavoritoRepository,
@@ -109,17 +111,29 @@ locaisRouter.get("/", async (req: Request, res: Response) => {
       return;
     }
 
-    const locais = await localRepository.listar();
+    const [locais, bloqueados] = await Promise.all([
+      localRepository.listar(),
+      bloqueioRepository.setDoPar(uid),
+    ]);
     if (!query) {
-      const enriquecidos = await marcarAvaliadosEFavoritos(locais, uid);
+      const filtrados = omitirBloqueados(
+        locais,
+        bloqueados,
+        (local) => local.criadorId,
+      );
+      const enriquecidos = await marcarAvaliadosEFavoritos(filtrados, uid);
       res.json(enriquecidos);
       return;
     }
 
-    const itens = filtrarLocaisFeed(
-      locais,
-      {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
-      query.q,
+    const itens = omitirBloqueados(
+      filtrarLocaisFeed(
+        locais,
+        {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
+        query.q,
+      ),
+      bloqueados,
+      (local) => local.criadorId,
     );
     const enriquecidos = await marcarAvaliadosEFavoritos(itens, uid);
     res.json(enriquecidos);

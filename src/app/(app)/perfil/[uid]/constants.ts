@@ -77,7 +77,7 @@ export const STATUS_CARD_PUBLICO: Partial<Record<StatusItemHistorico, string>> =
 
 export const ERRO_PERFIL_PUBLICO = "Não foi possível carregar o perfil";
 export const ERRO_HISTORICO_PUBLICO = "Não foi possível carregar o histórico";
-export const PILOTO_NAO_ENCONTRADO = "Piloto não encontrado";
+export const PILOTO_NAO_ENCONTRADO = "Perfil indisponível";
 
 export const ariaBadgeAba = (label: string, n: number): string =>
   `${label}, ${n} itens`;

@@ -31,8 +31,11 @@
  * - /usuarios/:uid/historico → GET
  * - /usuarios/:uid/telemetria → GET
  * - /usuarios/:uid/seguir → POST, DELETE
+ * - /usuarios/:uid/bloqueio → POST, DELETE
  * - /usuarios/:uid/seguindo → GET
  * - /usuarios/:uid/seguidores → GET
+ * - /bloqueios → GET
+ * - /denuncias → POST
  * - /eventos → GET, POST, PATCH, DELETE (DELETE só admin)
  * - /eventos/:id/inscricao → GET, POST, DELETE
  * - /eventos/:id/convites/situacao → POST
@@ -129,6 +132,7 @@ import {afiliadosRouter} from "./routes/afiliados";
 import {afiliadosPublicoRouter} from "./routes/afiliados-publico";
 import {atividadesRouter} from "./routes/atividades";
 import {notificacoesRouter} from "./routes/notificacoes";
+import {bloqueiosRouter, denunciasRouter} from "./routes/moderacao";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -216,6 +220,8 @@ app.get("/", (_req: Request, res: Response) => {
       "/afiliados",
       "/afiliados/:codigo",
       "/publico/afiliados/:codigo/clique",
+      "/bloqueios",
+      "/denuncias",
       "/feed/amigos",
       "/feed/amigos/novidades",
       "/atividades/:id",
@@ -261,6 +267,8 @@ app.use("/afiliados", afiliadosRouter);
 app.use("/publico/afiliados", afiliadosPublicoRouter);
 app.use("/atividades", atividadesRouter);
 app.use("/notificacoes", notificacoesRouter);
+app.use("/bloqueios", bloqueiosRouter);
+app.use("/denuncias", denunciasRouter);
 
 export const api = onRequest({
   cors: corsOrigins(),

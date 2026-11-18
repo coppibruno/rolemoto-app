@@ -26,7 +26,12 @@ export const TelaPostFoto = ({ autorUid, postId }: Props) => {
 
   return (
     <div className={styles.tela}>
-      <CabecalhoPost autorUid={autorUid} autor={post?.autor} />
+      <CabecalhoPost
+        autorUid={autorUid}
+        postId={postId}
+        autor={post?.autor}
+        meu={detalhe.meu}
+      />
       <div className={styles.rolagem}>
         {detalhe.carregando ? <div className={styles.fotoEsqueleto} aria-busy="true" /> : null}
         {detalhe.naoEncontrado ? <p className={styles.estado}>Esta foto não existe mais.</p> : null}

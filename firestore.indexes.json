@@ -253,6 +253,40 @@
       ]
     },
     {
+      "collectionGroup": "usersbloqueio",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "bloqueadorId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersbloqueio",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "bloqueadoId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersdenuncia",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "denuncianteId", "order": "ASCENDING" },
+        { "fieldPath": "alvoTipo", "order": "ASCENDING" },
+        { "fieldPath": "alvoId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "usersdenuncia",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "roles",
       "queryScope": "COLLECTION",
       "fields": [

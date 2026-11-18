@@ -18,8 +18,16 @@ import {
   paraComentarios,
   paraDetalhe,
 } from "../lib/post-foto-publico";
+import {
+  ERRO_COMENTAR_BLOQUEADO,
+  estaNoParBloqueado,
+} from "../lib/moderacao";
 import {encaminharPostParaStory, validarFotoStory} from "../lib/story-local";
-import {postFotoRepository, usuarioRepository} from "../repositories";
+import {
+  bloqueioRepository,
+  postFotoRepository,
+  usuarioRepository,
+} from "../repositories";
 import type {PostFoto} from "../types/post-foto";
 
 /**
@@ -216,6 +224,13 @@ postsRouter.post("/:id/comentarios", async (req: Request, res: Response) => {
     if (!texto.ok) {
       res.status(400).json({erro: texto.erro});
       return;
+    }
+    if (uid !== post.usuarioId) {
+      const bloqueados = await bloqueioRepository.setDoPar(uid);
+      if (estaNoParBloqueado(bloqueados, post.usuarioId)) {
+        res.status(403).json({erro: ERRO_COMENTAR_BLOQUEADO});
+        return;
+      }
     }
     const resultado = await postFotoRepository.comentar({
       postId: post.id,

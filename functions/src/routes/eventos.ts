@@ -24,7 +24,9 @@ import {
   listarParticipantesEvento,
 } from "../lib/participantes";
 import {resolverIntervaloQuando} from "../lib/quando";
+import {omitirBloqueados} from "../lib/moderacao";
 import {
+  bloqueioRepository,
   eventoRepository,
   localRepository,
   usuarioEventoFeedbackRepository,
@@ -176,9 +178,14 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
     }
 
     if (!query) {
-      const eventos = escolherUmaPorSerie(
-        await eventoRepository.listarFuturos(),
-        new Date(),
+      const bloqueados = await bloqueioRepository.setDoPar(uid);
+      const eventos = omitirBloqueados(
+        escolherUmaPorSerie(
+          await eventoRepository.listarFuturos(),
+          new Date(),
+        ),
+        bloqueados,
+        (evento) => evento.criadorId,
       ).sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));
       const [comInscrito, participantesPorEvento] = await Promise.all([
         marcarInscritos(eventos, uid),
@@ -197,17 +204,24 @@ eventosRouter.get("/", async (req: Request, res: Response) => {
     }
 
     const intervalo = resolverIntervaloQuando(query.quando, query.data);
-    const listados = await eventoRepository.listarFuturos({
-      dataInicioIso: intervalo.dataInicioIso,
-      dataFimIso: intervalo.dataFimIso,
-    });
-    const itens = escolherUmaPorSerie(
-      filtrarEventosFeed(
-        listados,
-        {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
-        query.q,
+    const [listados, bloqueados] = await Promise.all([
+      eventoRepository.listarFuturos({
+        dataInicioIso: intervalo.dataInicioIso,
+        dataFimIso: intervalo.dataFimIso,
+      }),
+      bloqueioRepository.setDoPar(uid),
+    ]);
+    const itens = omitirBloqueados(
+      escolherUmaPorSerie(
+        filtrarEventosFeed(
+          listados,
+          {lat: query.lat, lng: query.lng, raioKm: query.raioKm},
+          query.q,
+        ),
+        new Date(),
       ),
-      new Date(),
+      bloqueados,
+      (evento) => evento.criadorId,
     ).sort((a, b) => a.dataHoraAbertura.localeCompare(b.dataHoraAbertura));
     const [comInscrito, participantesPorEvento] = await Promise.all([
       marcarInscritos(itens, uid),
