@@ -1,0 +1,2266 @@
+{
+  "rotas": [
+    {
+      "rota": "/login",
+      "proposito": "Login Google e e-mail/senha; recuperar senha; CTA instalar"
+    },
+    {
+      "rota": "/primeiro-acesso",
+      "proposito": "Onboarding: nome, moto, ritmo; foto opcional"
+    },
+    {
+      "rota": "/definir-senha",
+      "proposito": "Criar senha em conta Google"
+    },
+    {
+      "rota": "/redefinir-senha",
+      "proposito": "Nova senha via link de e-mail"
+    },
+    {
+      "rota": "/",
+      "proposito": "Início: feed amigos, stories, conhecer, feedback pendente, banner líder"
+    },
+    {
+      "rota": "/explorar",
+      "proposito": "Explorar por raio: abas Rolês, Eventos e Locais"
+    },
+    {
+      "rota": "/atividades/[id]",
+      "proposito": "Item único do feed (deep link/push)"
+    },
+    {
+      "rota": "/criar-role",
+      "proposito": "Criar, editar ou clonar rolê"
+    },
+    {
+      "rota": "/roles/[id]/participar",
+      "proposito": "Detalhe e participação no rolê"
+    },
+    {
+      "rota": "/roles/[id]/gerenciar",
+      "proposito": "Fila de aprovações do líder no rolê"
+    },
+    {
+      "rota": "/roles/[id]/feedback",
+      "proposito": "Avaliar comboio pós-rolê"
+    },
+    {
+      "rota": "/roles/[id]/mapa",
+      "proposito": "Mapa de viagem / pacote offline"
+    },
+    {
+      "rota": "/aprovacoes",
+      "proposito": "Fila global de solicitações do líder"
+    },
+    {
+      "rota": "/criar-evento",
+      "proposito": "Admin cria evento (ou série)"
+    },
+    {
+      "rota": "/eventos/[id]",
+      "proposito": "Detalhe do evento: inscrição, stories, álbum"
+    },
+    {
+      "rota": "/eventos/[id]/convidar",
+      "proposito": "Convidar amigos para o evento"
+    },
+    {
+      "rota": "/eventos/[id]/avaliar",
+      "proposito": "Avaliar evento após encerramento"
+    },
+    {
+      "rota": "/eventos/[id]/avaliacoes",
+      "proposito": "Lista de avaliações do evento"
+    },
+    {
+      "rota": "/eventos/[id]/fotografo",
+      "proposito": "Autorizar ou remover fotógrafo"
+    },
+    {
+      "rota": "/eventos-passados",
+      "proposito": "Admin: eventos passados"
+    },
+    {
+      "rota": "/series-evento",
+      "proposito": "Admin: lista de séries"
+    },
+    {
+      "rota": "/series-evento/[id]",
+      "proposito": "Detalhe da série: pausar, retomar, encerrar"
+    },
+    {
+      "rota": "/series-evento/[id]/editar",
+      "proposito": "Editar série de eventos"
+    },
+    {
+      "rota": "/criar-local",
+      "proposito": "Admin cria local oficial"
+    },
+    {
+      "rota": "/locais",
+      "proposito": "Catálogo de locais"
+    },
+    {
+      "rota": "/locais/[id]",
+      "proposito": "Detalhe: check-in, ofertas, stories, dono"
+    },
+    {
+      "rota": "/locais/[id]/avaliar",
+      "proposito": "Avaliar local"
+    },
+    {
+      "rota": "/locais/[id]/avaliacoes",
+      "proposito": "Lista de avaliações do local"
+    },
+    {
+      "rota": "/locais/[id]/balcao",
+      "proposito": "Dono/admin: ofertas e semana do balcão"
+    },
+    {
+      "rota": "/locais/[id]/ofertas/nova",
+      "proposito": "Criar oferta do local"
+    },
+    {
+      "rota": "/locais/[id]/ofertas/[ofertaId]",
+      "proposito": "Editar oferta do local"
+    },
+    {
+      "rota": "/sugestoes-locais",
+      "proposito": "Admin homologa sugestões Places"
+    },
+    {
+      "rota": "/sugestoes-eventos",
+      "proposito": "Admin homologa sugestões Instagram"
+    },
+    {
+      "rota": "/meus-roles",
+      "proposito": "Garagem: Rolês, Eventos e Locais"
+    },
+    {
+      "rota": "/perfil",
+      "proposito": "Perfil próprio: editar, fotos, histórico, conta"
+    },
+    {
+      "rota": "/perfil/fotos/nova",
+      "proposito": "Nova foto permanente (+ story opcional)"
+    },
+    {
+      "rota": "/perfil/[uid]",
+      "proposito": "Perfil público de outro piloto"
+    },
+    {
+      "rota": "/perfil/[uid]/fotos/[postId]",
+      "proposito": "Detalhe da foto com comentários"
+    },
+    {
+      "rota": "/perfil/[uid]/seguindo",
+      "proposito": "Listas seguindo e seguidores"
+    },
+    {
+      "rota": "/pilotos",
+      "proposito": "Busca e sugestões de pilotos"
+    },
+    {
+      "rota": "/gravar-role",
+      "proposito": "Gravação GPS de telemetria"
+    },
+    {
+      "rota": "/telemetria/[id]",
+      "proposito": "Dashboard do passeio gravado"
+    },
+    {
+      "rota": "/conquistas",
+      "proposito": "Admin CRUD de conquistas"
+    },
+    {
+      "rota": "/ranking",
+      "proposito": "Meus carimbos / pontos"
+    },
+    {
+      "rota": "/ranking/[id]",
+      "proposito": "Placar por conquista"
+    },
+    {
+      "rota": "/mensagens",
+      "proposito": "Caixa de conversas"
+    },
+    {
+      "rota": "/mensagens/[conversaId]",
+      "proposito": "Thread de mensagens"
+    },
+    {
+      "rota": "/afiliados",
+      "proposito": "Admin gerencia códigos de afiliado"
+    },
+    {
+      "rota": "/r/[id]",
+      "proposito": "Convite público de rolê"
+    },
+    {
+      "rota": "/e/[id]",
+      "proposito": "Convite público de evento"
+    },
+    {
+      "rota": "/l/[id]",
+      "proposito": "Convite público de local"
+    },
+    {
+      "rota": "/i/[codigo]",
+      "proposito": "Landing de afiliado com clique"
+    },
+    {
+      "rota": "/privacidade",
+      "proposito": "Política de privacidade"
+    },
+    {
+      "rota": "/excluir-conta",
+      "proposito": "Instruções de exclusão (store/compliance)"
+    },
+    {
+      "rota": "/offline",
+      "proposito": "Página offline do PWA"
+    }
+  ],
+  "casos": [
+    {
+      "id": "E2E-001",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "anonimo",
+      "prioridade": "P0",
+      "cenario": "Login Google happy path",
+      "passos": "Abrir /login; tocar Entrar com Google; concluir OAuth; aguardar redirect",
+      "resultado_esperado": "Se perfil incompleto vai a /primeiro-acesso; senão vai a / autenticado",
+      "precondicoes": "Conta Google válida; Firebase Auth configurado",
+      "spec_ref": "SPEC 040"
+    },
+    {
+      "id": "E2E-002",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "anonimo",
+      "prioridade": "P0",
+      "cenario": "Login e-mail/senha válido",
+      "passos": "Informar e-mail ou apelido; Continuar; digitar senha; Entrar",
+      "resultado_esperado": "Autentica via POST /auth/resolver + Firebase; redireciona ao app",
+      "precondicoes": "Usuário e-mail/senha existente",
+      "spec_ref": "SPEC 016"
+    },
+    {
+      "id": "E2E-003",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "anonimo",
+      "prioridade": "P0",
+      "cenario": "Senha inválida mostra erro",
+      "passos": "Identificador válido; senha errada; Entrar",
+      "resultado_esperado": "Mensagem de erro amigável; permanece em /login",
+      "precondicoes": "Conta existente",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-004",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Recuperar senha envia e-mail",
+      "passos": "Abrir Esqueci minha senha; informar e-mail; confirmar; abrir e-mail",
+      "resultado_esperado": "POST /auth/recuperar-senha; e-mail com link para /redefinir-senha",
+      "precondicoes": "Conta e-mail/senha",
+      "spec_ref": "SPEC 016"
+    },
+    {
+      "id": "E2E-005",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/redefinir-senha",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Redefinir senha com link válido",
+      "passos": "Abrir link do e-mail; digitar nova senha e confirmação; salvar; ir a /login",
+      "resultado_esperado": "Senha atualizada; login com nova senha funciona",
+      "precondicoes": "Link oobCode válido",
+      "spec_ref": "SPEC 016"
+    },
+    {
+      "id": "E2E-006",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/redefinir-senha",
+      "papel": "anonimo",
+      "prioridade": "P2",
+      "cenario": "Link inválido ou expirado",
+      "passos": "Abrir /redefinir-senha sem oobCode ou com código expirado",
+      "resultado_esperado": "Estado de link inválido com CTA voltar ao login",
+      "precondicoes": "Nenhuma",
+      "spec_ref": "SPEC 016"
+    },
+    {
+      "id": "E2E-007",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/primeiro-acesso",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Completar primeiro acesso mínimo",
+      "passos": "Após 1º login: preencher nome; moto; escolher ritmo; concluir sem foto",
+      "resultado_esperado": "POST /perfil; redireciona ao Início; apelido vazio usa primeiro nome",
+      "precondicoes": "Usuário novo sem perfil",
+      "spec_ref": "SPEC 011"
+    },
+    {
+      "id": "E2E-008",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/primeiro-acesso",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Validação campos obrigatórios",
+      "passos": "Deixar nome/moto/ritmo vazios; tentar concluir",
+      "resultado_esperado": "Bloqueia envio; destaca campos obrigatórios",
+      "precondicoes": "Usuário em onboarding",
+      "spec_ref": "SPEC 011"
+    },
+    {
+      "id": "E2E-009",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/primeiro-acesso",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Upload foto opcional no onboarding",
+      "passos": "Adicionar foto; preencher dados; concluir; abrir /perfil",
+      "resultado_esperado": "fotoUrl aparece no cartão e no avatar do header",
+      "precondicoes": "Permissão câmera/galeria",
+      "spec_ref": "SPEC 011"
+    },
+    {
+      "id": "E2E-010",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/definir-senha",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Definir senha em conta Google",
+      "passos": "Em /perfil tocar criar senha; em /definir-senha informar senha e confirmação; salvar; sair; entrar com e-mail e senha",
+      "resultado_esperado": "Login e-mail/senha funciona na mesma conta",
+      "precondicoes": "Conta só Google",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-011",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Usuário autenticado não fica preso no login",
+      "passos": "Com sessão ativa abrir /login",
+      "resultado_esperado": "Redirect automático para / ou fluxo já autenticado",
+      "precondicoes": "Sessão Firebase válida",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-012",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Feed carrega atividades de quem sigo e próprias",
+      "passos": "Seguir 1 piloto com atividade recente; abrir Início; rolar lista",
+      "resultado_esperado": "GET /feed/amigos; cards de foto/telemetria/role_criado; infinite scroll via cursor",
+      "precondicoes": "Seguindo >=1 com atividades",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-013",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Empty state sem seguir ninguém",
+      "passos": "Conta nova sem seguir; abrir /",
+      "resultado_esperado": "Estado vazio com CTA Encontrar pilotos (/pilotos) e Explorar",
+      "precondicoes": "seguindo=0 e sem atividades próprias",
+      "spec_ref": "SPEC 063, SPEC 064"
+    },
+    {
+      "id": "E2E-014",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Curtir e descurtir atividade",
+      "passos": "No card tocar coração; confirmar contador sobe; tocar de novo",
+      "resultado_esperado": "POST/DELETE /atividades/:id/curtida; UI atualiza totalCurtidas e curtidoPorMim",
+      "precondicoes": "Feed com item curtível",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-015",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Comentar atividade na folha",
+      "passos": "Tocar comentar; digitar texto 1-280; enviar",
+      "resultado_esperado": "POST /atividades/:id/comentarios; totalComentarios sobe; push comentario_atividade se autor for outro",
+      "precondicoes": "Atividade de outro piloto",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-016",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/atividades/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Abrir item único via deep link",
+      "passos": "Abrir /atividades/{id}; curtir",
+      "resultado_esperado": "GET /atividades/:id; mesma interação do feed",
+      "precondicoes": "Atividade existente",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-017",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Pílula de novidades",
+      "passos": "Manter feed aberto; gerar nova atividade em conta seguida; aguardar polling; tocar pílula",
+      "resultado_esperado": "GET /feed/amigos/novidades; toque recarrega topo e zera contador",
+      "precondicoes": "Duas contas; seguir",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-018",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Banner cockpit líder com pedidos pendentes",
+      "passos": "Como líder com pedido pendente abrir /; tocar banner",
+      "resultado_esperado": "BannerCockpitLider visível; navega a /aprovacoes ou gerenciar; some se fila vazia",
+      "precondicoes": "Pedido de vaga pendente",
+      "spec_ref": "SPEC 007, SPEC 038, SPEC 063"
+    },
+    {
+      "id": "E2E-019",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Card feedback pendente pós-rolê",
+      "passos": "Participar de rolê já realizado sem feedback; abrir /; tocar Avaliar",
+      "resultado_esperado": "Card via GET /feedback/pendente; CTA leva a /roles/{id}/feedback",
+      "precondicoes": "Rolê passado + vínculo aceito sem feedback",
+      "spec_ref": "SPEC 010, SPEC 063"
+    },
+    {
+      "id": "E2E-020",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Carrossel stories pessoas",
+      "passos": "Abrir /; ver anéis; tocar bolinha de pessoa; assistir; marcar visto",
+      "resultado_esperado": "GET /stories/pessoas; player abre; visto não reaparece como não lido",
+      "precondicoes": "Stories ativas <24h",
+      "spec_ref": "SPEC 049, SPEC 045"
+    },
+    {
+      "id": "E2E-021",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Publicar story de perfil sem marca",
+      "passos": "No avatar próprio iniciar story; capturar foto; publicar sem @",
+      "resultado_esperado": "POST /stories álbum perfil; aparece em /stories/pessoas; sem push story_local",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 049, SPEC 047"
+    },
+    {
+      "id": "E2E-022",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Story com @local ou @evento",
+      "passos": "Publicar story marcando local ou evento; abrir álbum do alvo",
+      "resultado_esperado": "Foto entra no álbum marcado; selo @ abre detalhe",
+      "precondicoes": "Local ou evento existentes",
+      "spec_ref": "SPEC 047"
+    },
+    {
+      "id": "E2E-023",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Faixa Conhecer pilotos",
+      "passos": "Ver FaixaConhecer; tocar Ver mais; tocar avatar",
+      "resultado_esperado": "Sugestões via GET /usuarios/sugestoes; Ver mais vai a /pilotos; avatar abre perfil",
+      "precondicoes": "Há sugestões disponíveis",
+      "spec_ref": "SPEC 064"
+    },
+    {
+      "id": "E2E-024",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Erro de rede no feed",
+      "passos": "Desligar rede; abrir /; tocar Tentar de novo após religar",
+      "resultado_esperado": "Bloco de erro; retry recarrega lista",
+      "precondicoes": "Simular offline",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-025",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Abas Rolês/Eventos/Locais com contagens",
+      "passos": "Abrir Explorar; conceder geolocalização; alternar 3 abas; observar badges",
+      "resultado_esperado": "GET /feed/contagens; listas via /roles /eventos /locais; empty states por aba",
+      "precondicoes": "GPS disponível",
+      "spec_ref": "SPEC 003, SPEC 024"
+    },
+    {
+      "id": "E2E-026",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Pill de raio 25/50/100/sem limite",
+      "passos": "Ciclar pills de raio; comparar itens listados",
+      "resultado_esperado": "Lista filtra por distância; sem limite mostra mais itens",
+      "precondicoes": "Itens em distâncias variadas",
+      "spec_ref": "SPEC 024"
+    },
+    {
+      "id": "E2E-027",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Filtros quando e ritmo na aba Rolês",
+      "passos": "Aba Rolês; filtrar quando; filtrar ritmo; limpar tocando ritmo ativo",
+      "resultado_esperado": "Lista reflete filtros; query params montados no service",
+      "precondicoes": "Rolês com ritmos e datas diferentes",
+      "spec_ref": "SPEC 024"
+    },
+    {
+      "id": "E2E-028",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Busca unificada",
+      "passos": "Digitar título/nome conhecido na barra; aguardar debounce; limpar",
+      "resultado_esperado": "Resultados filtrados por texto na aba ativa",
+      "precondicoes": "Item com título distinto",
+      "spec_ref": "SPEC 024, SPEC 061"
+    },
+    {
+      "id": "E2E-029",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Sem GPS: painel localização",
+      "passos": "Negar permissão; abrir Explorar; usar seletor se existir",
+      "resultado_esperado": "PainelLocalizacao/SeletorLocalizacao; tela não quebra",
+      "precondicoes": "Permissão negada",
+      "spec_ref": "SPEC 003"
+    },
+    {
+      "id": "E2E-030",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Card rolê abre participar",
+      "passos": "Aba Rolês; tocar card; verificar ficha",
+      "resultado_esperado": "Navega a /roles/{id}/participar",
+      "precondicoes": "Rolê futuro no raio",
+      "spec_ref": "SPEC 003, SPEC 005"
+    },
+    {
+      "id": "E2E-031",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Inscrição evento grátis pelo card",
+      "passos": "Aba Eventos; evento gratis; Inscrever; confirmar",
+      "resultado_esperado": "POST /eventos/:id/inscricao; card mostra inscrito",
+      "precondicoes": "Evento acesso=gratis futuro",
+      "spec_ref": "SPEC 026"
+    },
+    {
+      "id": "E2E-032",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Evento pago exige confirmação de ingresso",
+      "passos": "Evento acesso=ingresso; tocar inscrição; abrir link; confirmar Já comprei",
+      "resultado_esperado": "Só após confirmação POST inscrição; sem webhook Sympla",
+      "precondicoes": "Evento com linkIngresso",
+      "spec_ref": "SPEC 026"
+    },
+    {
+      "id": "E2E-033",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Favoritar local no card",
+      "passos": "Aba Locais; tocar coração; abrir Meus Rolês aba Locais",
+      "resultado_esperado": "POST /locais/:id/favorito; aparece em GET /meus-roles/locais",
+      "precondicoes": "Local no feed",
+      "spec_ref": "SPEC 028"
+    },
+    {
+      "id": "E2E-034",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Links admin na aba Eventos",
+      "passos": "Como admin abrir Explorar aba Eventos; tocar Sugestões e Passados",
+      "resultado_esperado": "Links para /sugestoes-eventos e /eventos-passados; piloto comum não vê",
+      "precondicoes": "users.admin=true",
+      "spec_ref": "SPEC 050, SPEC 055"
+    },
+    {
+      "id": "E2E-035",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Restaurar estado de filtros ao voltar",
+      "passos": "Definir aba/raio/busca; abrir detalhe; voltar",
+      "resultado_esperado": "useEstadoRetorno restaura aba e filtros",
+      "precondicoes": "Navegação interna",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-036",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/criar-role",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Criar rolê completo",
+      "passos": "Dock + → Rolê; preencher título, data/hora, saída, destino, ritmo; capa opcional; publicar",
+      "resultado_esperado": "POST /roles; aparece no Explorar e Meus Rolês; atividade role_criado no feed",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 004, SPEC 033, SPEC 051"
+    },
+    {
+      "id": "E2E-037",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/criar-role",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Validação formulário criar rolê",
+      "passos": "Tentar publicar sem título/data/pontos",
+      "resultado_esperado": "Erros de validação; sem POST",
+      "precondicoes": "Nenhuma",
+      "spec_ref": "SPEC 004"
+    },
+    {
+      "id": "E2E-038",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/criar-role",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Mapa Google na criação",
+      "passos": "Buscar endereço no mapa; selecionar saída e destino; confirmar pins",
+      "resultado_esperado": "lat/lng/endereco/nome gravados corretamente",
+      "precondicoes": "Maps API ok",
+      "spec_ref": "SPEC 051, SPEC 019"
+    },
+    {
+      "id": "E2E-039",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/criar-role",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Clonar rolê",
+      "passos": "No histórico/card usar Clonar; ajustar data; publicar",
+      "resultado_esperado": "GET /roles/:id/modelo pré-preenche; nova data obrigatória; novo id",
+      "precondicoes": "Rolê anterior próprio ou clonável",
+      "spec_ref": "SPEC 009"
+    },
+    {
+      "id": "E2E-040",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Solicitar participação",
+      "passos": "Abrir detalhe; Solicitar vaga; confirmar checklist se houver",
+      "resultado_esperado": "POST /roles/:id/participacao; status aguardando; push pedido_vaga ao líder",
+      "precondicoes": "Rolê futuro de outro; não inscrito",
+      "spec_ref": "SPEC 005, SPEC 013"
+    },
+    {
+      "id": "E2E-041",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Cancelar pedido pendente",
+      "passos": "Com status aguardando; Cancelar pedido",
+      "resultado_esperado": "DELETE participacao; some da fila do líder",
+      "precondicoes": "Pedido pendente",
+      "spec_ref": "SPEC 005"
+    },
+    {
+      "id": "E2E-042",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/aprovacoes",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Aceitar piloto na fila",
+      "passos": "Abrir /aprovacoes; Aceitar solicitação",
+      "resultado_esperado": "PATCH /aprovacoes/:id; push aceite_vaga; participante vira confirmado",
+      "precondicoes": "Pedido pendente",
+      "spec_ref": "SPEC 007, SPEC 013"
+    },
+    {
+      "id": "E2E-043",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/aprovacoes",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Recusar piloto sem push",
+      "passos": "Recusar na fila",
+      "resultado_esperado": "Status recusado; sem push ao piloto; some de pendentes",
+      "precondicoes": "Pedido pendente",
+      "spec_ref": "SPEC 007, SPEC 048"
+    },
+    {
+      "id": "E2E-044",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/gerenciar",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Gerenciar no detalhe do rolê",
+      "passos": "Como líder abrir participar (redirect gerenciar); aceitar/recusar nas seções",
+      "resultado_esperado": "Seções aguardando e confirmados; mesmas APIs de aprovação",
+      "precondicoes": "É criadorId",
+      "spec_ref": "SPEC 035"
+    },
+    {
+      "id": "E2E-045",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Cancelar rolê futuro",
+      "passos": "Cancelar rolê; confirmar diálogo",
+      "resultado_esperado": "DELETE /roles/:id; push cancelamento_role aos confirmados; some do Explorar",
+      "precondicoes": "Rolê futuro com >=1 confirmado",
+      "spec_ref": "SPEC 034"
+    },
+    {
+      "id": "E2E-046",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/criar-role",
+      "papel": "lider",
+      "prioridade": "P1",
+      "cenario": "Editar rolê futuro",
+      "passos": "De Meus Rolês editar; alterar título/horário; salvar",
+      "resultado_esperado": "PUT /roles/:id; dados atualizados no detalhe",
+      "precondicoes": "Rolê futuro próprio",
+      "spec_ref": "SPEC 004"
+    },
+    {
+      "id": "E2E-047",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/meus-roles",
+      "papel": "lider",
+      "prioridade": "P2",
+      "cenario": "Fixar rolê",
+      "passos": "Alternar fixado no card ou gerenciar",
+      "resultado_esperado": "PATCH /roles/:id/fixado; destaque visual",
+      "precondicoes": "Rolê próprio",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-048",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/feedback",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Enviar feedback do rolê",
+      "passos": "Abrir feedback; nota; tags; relato; enviar",
+      "resultado_esperado": "POST /roles/:id/feedback; estado enviado; some do pendente",
+      "precondicoes": "Rolê realizado e aceito",
+      "spec_ref": "SPEC 010"
+    },
+    {
+      "id": "E2E-049",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/mapa",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Abrir mapa de viagem / pacote offline",
+      "passos": "Do detalhe abrir mapa; baixar ou carregar pacote; ver rota/paradas",
+      "resultado_esperado": "POST /mapas/carga quando necessário; mapa renderiza; falha mostra LimiteFalhaMapa",
+      "precondicoes": "Participante ou líder; Maps/pacote",
+      "spec_ref": "SPEC 060, SPEC 062"
+    },
+    {
+      "id": "E2E-050",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Toggle notificar lembretes",
+      "passos": "Após aceite; desligar e ligar notificações do rolê",
+      "resultado_esperado": "PATCH participacao notificar; afeta lembrete_role",
+      "precondicoes": "Participação aceita",
+      "spec_ref": "SPEC 020, SPEC 048"
+    },
+    {
+      "id": "E2E-051",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/r/[id]",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Share público do rolê",
+      "passos": "Compartilhar link /r/{id}; abrir logado e anônimo; CTA participar",
+      "resultado_esperado": "GET /publico/roles/:id; anônimo vê ficha; autenticado vai a participar",
+      "precondicoes": "Rolê futuro",
+      "spec_ref": "SPEC 015"
+    },
+    {
+      "id": "E2E-052",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Rolê encerrado não aceita pedido",
+      "passos": "Abrir rolê passado; tentar solicitar",
+      "resultado_esperado": "CTA bloqueado ou erro; estado encerrado",
+      "precondicoes": "dataHoraSaida no passado",
+      "spec_ref": "SPEC 005"
+    },
+    {
+      "id": "E2E-053",
+      "modulo": "Eventos",
+      "tela_rota": "/criar-evento",
+      "papel": "admin",
+      "prioridade": "P0",
+      "cenario": "Admin cria evento grátis",
+      "passos": "+ → Evento; preencher título, tipo, local, abertura/encerramento <=7d, atracoes, capa; salvar",
+      "resultado_esperado": "POST /eventos; aparece Explorar aba Eventos",
+      "precondicoes": "admin=true",
+      "spec_ref": "SPEC 022"
+    },
+    {
+      "id": "E2E-054",
+      "modulo": "Eventos",
+      "tela_rota": "/criar-evento",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Piloto comum não cria evento",
+      "passos": "Abrir +; verificar ausência Evento; tentar /criar-evento direto",
+      "resultado_esperado": "Item + oculto; rota recusa ou redirect 403",
+      "precondicoes": "admin=false",
+      "spec_ref": "SPEC 022"
+    },
+    {
+      "id": "E2E-055",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Inscrever e cancelar inscrição",
+      "passos": "Detalhe; Inscrever; depois Cancelar inscrição",
+      "resultado_esperado": "POST/DELETE /eventos/:id/inscricao; flag inscrito atualiza",
+      "precondicoes": "Evento futuro grátis",
+      "spec_ref": "SPEC 026"
+    },
+    {
+      "id": "E2E-056",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/convidar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Convidar amigos para evento",
+      "passos": "Abrir Convidar; selecionar até 20; enviar; repetir mesmos",
+      "resultado_esperado": "POST convites; push convite_evento só novos; jaConvidados/jaInscritos sem novo push",
+      "precondicoes": "Amigos com conta",
+      "spec_ref": "SPEC 054"
+    },
+    {
+      "id": "E2E-057",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/avaliar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Avaliar evento após encerrar",
+      "passos": "Como inscrito após encerramento; nota, relato, fotos, recomendo; enviar",
+      "resultado_esperado": "POST /eventos/:id/avaliacoes; média atualiza; CTA Ver relato",
+      "precondicoes": "Inscrito; evento encerrado; sem avaliação",
+      "spec_ref": "SPEC 027"
+    },
+    {
+      "id": "E2E-058",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/avaliar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Não inscrito não avalia evento",
+      "passos": "Abrir /avaliar sem inscrição",
+      "resultado_esperado": "Bloqueio ou erro; sem POST",
+      "precondicoes": "Evento encerrado; sem usersevento",
+      "spec_ref": "SPEC 027"
+    },
+    {
+      "id": "E2E-059",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/fotografo",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Autorizar fotógrafo",
+      "passos": "No detalhe admin → Fotógrafo; buscar/selecionar uid; autorizar",
+      "resultado_esperado": "POST /eventos/:id/fotografo; bloco mostra fotógrafo",
+      "precondicoes": "Admin; evento existente",
+      "spec_ref": "SPEC 065"
+    },
+    {
+      "id": "E2E-060",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]",
+      "papel": "fotografo",
+      "prioridade": "P1",
+      "cenario": "Fotógrafo publica álbum externo",
+      "passos": "Como fotógrafo autorizado; adicionar URL álbum; salvar",
+      "resultado_esperado": "POST albuns; push album_evento aos inscritos; lista Abrir álbum",
+      "precondicoes": "fotografoId = uid",
+      "spec_ref": "SPEC 065"
+    },
+    {
+      "id": "E2E-061",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/fotografo",
+      "papel": "admin",
+      "prioridade": "P2",
+      "cenario": "Remover fotógrafo",
+      "passos": "Remover autorização",
+      "resultado_esperado": "DELETE fotografo; bloco atualiza",
+      "precondicoes": "Fotógrafo vinculado",
+      "spec_ref": "SPEC 065"
+    },
+    {
+      "id": "E2E-062",
+      "modulo": "Eventos",
+      "tela_rota": "/series-evento",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Criar e gerenciar série semanal",
+      "passos": "Criar evento como série ou em /series-evento; pausar; retomar; encerrar; editar",
+      "resultado_esperado": "POST/PUT series-evento + pausar/retomar/encerrar; próximas datas geradas pelo job interno",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 052"
+    },
+    {
+      "id": "E2E-063",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Apagar evento",
+      "passos": "DELETE no detalhe; confirmar",
+      "resultado_esperado": "Evento some; inscricoes/avaliacoes/convites/stories limpos; série pode marcar exceção",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 022, SPEC 046"
+    },
+    {
+      "id": "E2E-064",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Story ao vivo no evento",
+      "passos": "Durante evento; no raio; postar story; abrir ?stories=1",
+      "resultado_esperado": "POST /eventos/:id/stories; 1ª do dia dispara story_local; GPS <=400m/<=80m",
+      "precondicoes": "Evento ao vivo; GPS ok",
+      "spec_ref": "SPEC 045, SPEC 048"
+    },
+    {
+      "id": "E2E-065",
+      "modulo": "Eventos",
+      "tela_rota": "/e/[id]",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Link público evento",
+      "passos": "Abrir /e/{id}; CTA entrar/inscrever",
+      "resultado_esperado": "GET /publico/eventos/:id; conversão para login ou detalhe",
+      "precondicoes": "Evento existente",
+      "spec_ref": "SPEC 046"
+    },
+    {
+      "id": "E2E-066",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos/[id]/avaliacoes",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Listar avaliações do evento",
+      "passos": "Tocar estrela média; rolar lista",
+      "resultado_esperado": "GET avaliacoes; relatos e fotos",
+      "precondicoes": ">=1 avaliação",
+      "spec_ref": "SPEC 027, SPEC 037"
+    },
+    {
+      "id": "E2E-067",
+      "modulo": "Locais",
+      "tela_rota": "/criar-local",
+      "papel": "admin",
+      "prioridade": "P0",
+      "cenario": "Admin cria local oficial",
+      "passos": "+ → Local; nome, categoria, mapa, facilidades, horários ou 24h, fotos; salvar",
+      "resultado_esperado": "POST /locais; aparece /locais e Explorar Locais",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 023"
+    },
+    {
+      "id": "E2E-068",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Detalhe local: favoritar, avaliar, share",
+      "passos": "Abrir detalhe; favoritar; Avaliar; compartilhar /l/{id}",
+      "resultado_esperado": "Favorito, formulário avaliação e link público funcionam",
+      "precondicoes": "Local existente",
+      "spec_ref": "SPEC 031, SPEC 027, SPEC 028"
+    },
+    {
+      "id": "E2E-069",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/avaliar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Avaliar local (qualquer autenticado)",
+      "passos": "Nota 1-5; comentário; até 4 fotos; recomendo comboio; enviar",
+      "resultado_esperado": "POST /locais/:id/avaliacoes; média denormalizada; sem PATCH/DELETE",
+      "precondicoes": "Autenticado; ainda não avaliou",
+      "spec_ref": "SPEC 027"
+    },
+    {
+      "id": "E2E-070",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Check-in GPS com selo",
+      "passos": "No raio do local; Check-in; ver selo no perfil",
+      "resultado_esperado": "POST checkin; valida 400m/80m; cooldown 24h; selo em users",
+      "precondicoes": "GPS próximo; sem check-in 24h",
+      "spec_ref": "SPEC 044"
+    },
+    {
+      "id": "E2E-071",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Check-in fora do raio falha",
+      "passos": "Longe do ponto; tentar check-in",
+      "resultado_esperado": "Erro de distância/precisão; sem selo",
+      "precondicoes": "GPS longe",
+      "spec_ref": "SPEC 044"
+    },
+    {
+      "id": "E2E-072",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Story no local ao vivo",
+      "passos": "No raio; postar story; favoritos recebem push na 1ª do dia",
+      "resultado_esperado": "POST /locais/:id/stories; push story_local a favoritos (teto 100)",
+      "precondicoes": "Favoritos com FCM; GPS ok",
+      "spec_ref": "SPEC 045, SPEC 048"
+    },
+    {
+      "id": "E2E-073",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "admin",
+      "prioridade": "P0",
+      "cenario": "Vincular dono do local",
+      "passos": "Bloco dono; buscar piloto; vincular; soltar",
+      "resultado_esperado": "PUT /locais/:id/dono; soltar pausa ofertas; trocar não pausa",
+      "precondicoes": "admin; piloto alvo",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-074",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/balcao",
+      "papel": "dono",
+      "prioridade": "P0",
+      "cenario": "Dono cria oferta no balcão",
+      "passos": "Perfil → Meus pontos → balcão; Nova oferta; tipo preço/%/brinde; código; regra; dias/horas; salvar",
+      "resultado_esperado": "POST ofertas; aparece no detalhe para pilotos; máx 5",
+      "precondicoes": "donoId=uid",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-075",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/ofertas/[ofertaId]",
+      "papel": "dono",
+      "prioridade": "P1",
+      "cenario": "Editar, pausar e apagar oferta",
+      "passos": "Editar campos; pausar; apagar",
+      "resultado_esperado": "PUT/PATCH/DELETE; status No ar/Pausada; piloto não-dono 403→redirect",
+      "precondicoes": "Oferta existente",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-076",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Abrir cupom vigente",
+      "passos": "Na vigência; tocar oferta; abrir cupom",
+      "resultado_esperado": "POST cupom; mostra código; reabrir mesmo dia novo:false; fora da janela codigo null",
+      "precondicoes": "Oferta vigente ativa",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-077",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/balcao",
+      "papel": "dono",
+      "prioridade": "P2",
+      "cenario": "Semana do balcão (check-ins/cupons)",
+      "passos": "Abrir balcão; ver contadores desde segunda SP",
+      "resultado_esperado": "GET balcao com semana; cupons abertos e check-ins",
+      "precondicoes": "Atividade na semana",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-078",
+      "modulo": "Locais",
+      "tela_rota": "/locais",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Apagar local",
+      "passos": "No detalhe admin apagar; confirmar",
+      "resultado_esperado": "DELETE /locais/:id; limpa favoritos/avaliações/checkins/ofertas/stories; eventos com localId nulo",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 023"
+    },
+    {
+      "id": "E2E-079",
+      "modulo": "Locais",
+      "tela_rota": "/l/[id]",
+      "papel": "anonimo",
+      "prioridade": "P2",
+      "cenario": "Link público local",
+      "passos": "Abrir /l/{id}",
+      "resultado_esperado": "GET /publico/locais/:id; CTA instalação/login",
+      "precondicoes": "Local existe",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-080",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Abas Rolês/Eventos/Locais com contagens",
+      "passos": "Abrir Meus Rolês; alternar abas; ver badges",
+      "resultado_esperado": "GET /meus-roles + subrotas lazy; contagensTipo corretas",
+      "precondicoes": "Dados em cada tipo",
+      "spec_ref": "SPEC 017, SPEC 028"
+    },
+    {
+      "id": "E2E-081",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "lider",
+      "prioridade": "P0",
+      "cenario": "Cancelar/editar rolê pela garagem",
+      "passos": "Aba Rolês; cancelar futuro; editar outro",
+      "resultado_esperado": "Ações de líder; DELETE/PUT; participantes notificados no cancelamento",
+      "precondicoes": "Rolês próprios futuros",
+      "spec_ref": "SPEC 017, SPEC 034"
+    },
+    {
+      "id": "E2E-082",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Desistir de participação",
+      "passos": "Em rolê aceito futuro; Desistir",
+      "resultado_esperado": "DELETE participacao; some da lista confirmados",
+      "precondicoes": "Vínculo aceito",
+      "spec_ref": "SPEC 017"
+    },
+    {
+      "id": "E2E-083",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "CTA Avaliar evento/local na garagem",
+      "passos": "Aba Eventos/Locais; filtro aguardando avaliação; Avaliar",
+      "resultado_esperado": "Navega a /eventos|locais/{id}/avaliar; após avaliar pill Avaliados",
+      "precondicoes": "Itens avaliáveis",
+      "spec_ref": "SPEC 027, SPEC 028"
+    },
+    {
+      "id": "E2E-084",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Locais favoritos vs visitados",
+      "passos": "Aba Locais; pill Favoritos; pill Visitados",
+      "resultado_esperado": "GET locais default vs ?recorte=visitados; empty states distintos",
+      "precondicoes": "Favoritos e check-ins",
+      "spec_ref": "SPEC 028, SPEC 044"
+    },
+    {
+      "id": "E2E-085",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Empty states por aba/filtro",
+      "passos": "Conta sem dados; abrir cada aba e pills",
+      "resultado_esperado": "Copy de vazio adequada; CTAs para criar/explorar",
+      "precondicoes": "Conta limpa",
+      "spec_ref": "SPEC 017"
+    },
+    {
+      "id": "E2E-086",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Editar perfil",
+      "passos": "Editar perfil; alterar apelido, moto, tipo, ritmo, cidade, garupa, foto; salvar",
+      "resultado_esperado": "PUT /perfil; cartão atualiza; sem apelido exibe primeiro nome",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 002"
+    },
+    {
+      "id": "E2E-087",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Card completar perfil",
+      "passos": "Perfil sem tipoMoto/cidade; ver card; completar",
+      "resultado_esperado": "Lista faltantes; some após completar",
+      "precondicoes": "Campos opcionais vazios",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-088",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Seguir e deixar de seguir",
+      "passos": "Abrir perfil público; Seguir; conferir contadores; Deixar de seguir",
+      "resultado_esperado": "POST/DELETE seguir; push novo_seguidor só no 1º vínculo; contadores sincronizados",
+      "precondicoes": "Dois uids distintos",
+      "spec_ref": "SPEC 053"
+    },
+    {
+      "id": "E2E-089",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]/seguindo",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Listas seguindo/seguidores",
+      "passos": "Tocar números no cartão; alternar abas; abrir perfil de item",
+      "resultado_esperado": "GET seguindo/seguidores; empty com CTA /pilotos",
+      "precondicoes": "Contadores >0",
+      "spec_ref": "SPEC 053"
+    },
+    {
+      "id": "E2E-090",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/pilotos",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Buscar e seguir piloto",
+      "passos": "Header Encontrar pilotos; buscar q; seguir; dispensar sugestão",
+      "resultado_esperado": "GET /usuarios/busca; seguir; POST dispensa sugestão",
+      "precondicoes": "Outros usuários",
+      "spec_ref": "SPEC 064, SPEC 053"
+    },
+    {
+      "id": "E2E-091",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/fotos/nova",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Publicar foto permanente",
+      "passos": "Nova foto; legenda; marca local/evento opcional; publicar; opcional encaminhar story",
+      "resultado_esperado": "POST /posts; grade atualiza; atividade foto no feed; teto 10/24h",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 057"
+    },
+    {
+      "id": "E2E-092",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]/fotos/[postId]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Comentar e apagar foto",
+      "passos": "Abrir post de outro; comentar; autor recebe push; autor apaga post",
+      "resultado_esperado": "comentarios API; push comentario_foto; DELETE remove post e comentários",
+      "precondicoes": "Post alheio e próprio",
+      "spec_ref": "SPEC 057"
+    },
+    {
+      "id": "E2E-093",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]/fotos/[postId]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Encaminhar post para story depois",
+      "passos": "POST story a partir do post",
+      "resultado_esperado": "POST /posts/:id/story; conta no teto stories; Ver publicação no player",
+      "precondicoes": "Post próprio",
+      "spec_ref": "SPEC 057"
+    },
+    {
+      "id": "E2E-094",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Histórico de pistas com filtros",
+      "passos": "Aba histórico; filtrar roles/eventos/telemetria; ocultar item; abrir cards",
+      "resultado_esperado": "GET /perfil/historico; ocultar via POST; links corretos",
+      "precondicoes": "Histórico populado",
+      "spec_ref": "SPEC 008"
+    },
+    {
+      "id": "E2E-095",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Perfil público somente leitura",
+      "passos": "Abrir outro perfil; ver histórico público; telemetria só públicas; share",
+      "resultado_esperado": "GET /usuarios/:uid + historico; sem edição; compartilhável",
+      "precondicoes": "Uid alheio",
+      "spec_ref": "SPEC 025, SPEC 036"
+    },
+    {
+      "id": "E2E-096",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Botão Mensagem no perfil",
+      "passos": "Tocar Mensagem; chega em /mensagens/{conversaId}",
+      "resultado_esperado": "hrefConversa abre thread (cria sob demanda no envio)",
+      "precondicoes": "Outro piloto",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-097",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Sair da conta",
+      "passos": "Tocar Sair; confirmar",
+      "resultado_esperado": "Sessão limpa; redirect /login",
+      "precondicoes": "Logado",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-098",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Excluir conta",
+      "passos": "Excluir conta; confirmar; tentar login",
+      "resultado_esperado": "DELETE /perfil; Auth removido; vínculos limpos; login falha",
+      "precondicoes": "Conta descartável",
+      "spec_ref": "SPEC 006, SPEC 039"
+    },
+    {
+      "id": "E2E-099",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Alternar tema claro/escuro",
+      "passos": "LinhaTema; alternar; recarregar",
+      "resultado_esperado": "Tema persiste; UI coerente",
+      "precondicoes": "Nenhuma",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-100",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/gravar-role",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Gravar e salvar passeio",
+      "passos": "+ → Gravar; iniciar GPS; mover; encerrar; título; escolher publica true/false; salvar",
+      "resultado_esperado": "POST /telemetria; redirect /telemetria/{id}; medalhas se passar conquistas",
+      "precondicoes": "GPS/Capacitor ou browser; permissão",
+      "spec_ref": "SPEC 029, SPEC 030, SPEC 058"
+    },
+    {
+      "id": "E2E-101",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/telemetria/[id]",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Dashboard métricas e mapa",
+      "passos": "Abrir detalhe; ver max/média, km, tempos, traçado, medalhas",
+      "resultado_esperado": "GET /telemetria/:id; visitante sem velocidadeMax em medalhas alheias",
+      "precondicoes": "Passeio salvo",
+      "spec_ref": "SPEC 030, SPEC 058"
+    },
+    {
+      "id": "E2E-102",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/telemetria/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Alternar privacidade",
+      "passos": "PATCH publica false; abrir como outro uid; true novamente",
+      "resultado_esperado": "Privada → 404 para outro; pública aparece no perfil",
+      "precondicoes": "Dono do passeio",
+      "spec_ref": "SPEC 030"
+    },
+    {
+      "id": "E2E-103",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/telemetria/[id]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Apagar telemetria",
+      "passos": "DELETE no detalhe",
+      "resultado_esperado": "Some da lista e histórico",
+      "precondicoes": "Dono",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-104",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/gravar-role",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Sync offline da telemetria",
+      "passos": "Gravar offline/sem rede; restaurar rede; sincronizar pendente",
+      "resultado_esperado": "Fila local sincroniza; abre detalhe",
+      "precondicoes": "Capacitor/nativo preferível",
+      "spec_ref": "SPEC 043, SPEC 041"
+    },
+    {
+      "id": "E2E-105",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/conquistas",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "CRUD conquista",
+      "passos": "+ → Conquistas; criar pin+raio; editar; arquivar",
+      "resultado_esperado": "POST/PATCH /conquistas; lista /conquistas/admin",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 056"
+    },
+    {
+      "id": "E2E-106",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/ranking",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Ver minhas conquistas e placar",
+      "passos": "Perfil faixa conquistas → /ranking; abrir /ranking/{id}",
+      "resultado_esperado": "GET /conquistas/minhas e /:id/ranking (token+seguidos)",
+      "precondicoes": "Carimbo existente",
+      "spec_ref": "SPEC 058"
+    },
+    {
+      "id": "E2E-107",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/conquistas",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Piloto comum não acessa admin conquistas",
+      "passos": "Abrir /conquistas sem admin; verificar + menu",
+      "resultado_esperado": "Item + oculto; rota protegida",
+      "precondicoes": "admin=false",
+      "spec_ref": "SPEC 056"
+    },
+    {
+      "id": "E2E-108",
+      "modulo": "Mensagens / chat",
+      "tela_rota": "/mensagens",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Caixa de entrada e badge não lidas",
+      "passos": "Receber mensagem; ver badge no header; abrir /mensagens",
+      "resultado_esperado": "GET /conversas e /nao-lidas; badge atualiza",
+      "precondicoes": "Outra conta enviou msg",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-109",
+      "modulo": "Mensagens / chat",
+      "tela_rota": "/mensagens/[conversaId]",
+      "papel": "multi",
+      "prioridade": "P0",
+      "cenario": "Enviar mensagem texto",
+      "passos": "Abrir conversa; enviar texto; outra conta vê; push mensagem",
+      "resultado_esperado": "POST /conversas; thread atualiza; push abre conversa",
+      "precondicoes": "Duas contas",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-110",
+      "modulo": "Mensagens / chat",
+      "tela_rota": "/mensagens/[conversaId]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Curtir mensagem",
+      "passos": "Curtir mensagem; descurtir",
+      "resultado_esperado": "PUT/DELETE curtida",
+      "precondicoes": "Mensagem existente",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-111",
+      "modulo": "Mensagens / chat",
+      "tela_rota": "/mensagens/[conversaId]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Responder story via chat",
+      "passos": "No player de story responder; mensagem com selo story",
+      "resultado_esperado": "Mensagem com storyId; SeloStory na UI",
+      "precondicoes": "Story ativa",
+      "spec_ref": "SPEC 061, SPEC 049"
+    },
+    {
+      "id": "E2E-112",
+      "modulo": "Sugestões locais/eventos",
+      "tela_rota": "/sugestoes-locais",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Listar/buscar/aprovar/recusar locais Places",
+      "passos": "De /locais → Sugestões; Buscar; Aprovar uma; Recusar outra",
+      "resultado_esperado": "GET/POST buscar; aprovar cria local com googlePlaceId; recusar remove fila",
+      "precondicoes": "admin; Places configurada",
+      "spec_ref": "SPEC 050"
+    },
+    {
+      "id": "E2E-113",
+      "modulo": "Sugestões locais/eventos",
+      "tela_rota": "/sugestoes-eventos",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Homologar sugestão Instagram",
+      "passos": "Explorar → Sugestões; ajustar tipo/acesso; aprovar; ver evento criado",
+      "resultado_esperado": "POST aprovar cria evento; recusar limpa item",
+      "precondicoes": "admin; sugestões na fila",
+      "spec_ref": "SPEC 055"
+    },
+    {
+      "id": "E2E-114",
+      "modulo": "Sugestões locais/eventos",
+      "tela_rota": "/sugestoes-locais",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Piloto sem acesso a sugestões",
+      "passos": "Abrir /sugestoes-locais e /sugestoes-eventos",
+      "resultado_esperado": "Bloqueio/redirect; links admin ausentes",
+      "precondicoes": "admin=false",
+      "spec_ref": "SPEC 050, SPEC 055"
+    },
+    {
+      "id": "E2E-115",
+      "modulo": "Afiliados",
+      "tela_rota": "/afiliados",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Criar e editar código afiliado",
+      "passos": "Perfil → Links afiliado; criar código; PATCH status; copiar /i/{codigo}",
+      "resultado_esperado": "GET/POST/PATCH /afiliados",
+      "precondicoes": "admin",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-116",
+      "modulo": "Afiliados",
+      "tela_rota": "/i/[codigo]",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Landing afiliado registra clique",
+      "passos": "Abrir /i/{codigo}; ver landing; CTA app",
+      "resultado_esperado": "POST /publico/afiliados/:codigo/clique; página renderiza",
+      "precondicoes": "Código ativo",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-117",
+      "modulo": "Afiliados",
+      "tela_rota": "/afiliados",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Piloto não vê afiliados",
+      "passos": "Abrir /perfil; verificar ausência LinhaAfiliados; /afiliados direto",
+      "resultado_esperado": "Linha só admin; rota protegida",
+      "precondicoes": "admin=false",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-118",
+      "modulo": "Links públicos",
+      "tela_rota": "/r/[id]",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Convite rolê encerrado",
+      "passos": "Abrir /r de rolê passado",
+      "resultado_esperado": "EstadoRoleEncerrado; sem CTA participação ativa",
+      "precondicoes": "Rolê passado",
+      "spec_ref": "SPEC 015"
+    },
+    {
+      "id": "E2E-119",
+      "modulo": "Links públicos",
+      "tela_rota": "/r/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "CTA autenticado no convite",
+      "passos": "Logado abrir /r/{id}; Participar",
+      "resultado_esperado": "Vai a /roles/{id}/participar",
+      "precondicoes": "Rolê futuro",
+      "spec_ref": "SPEC 015"
+    },
+    {
+      "id": "E2E-120",
+      "modulo": "Links públicos",
+      "tela_rota": "/e/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Convite evento logado",
+      "passos": "Abrir /e/{id}; seguir CTA inscrição",
+      "resultado_esperado": "Fluxo inscrição normal do detalhe autenticado",
+      "precondicoes": "Evento futuro; sessão ativa",
+      "spec_ref": "SPEC 046"
+    },
+    {
+      "id": "E2E-121",
+      "modulo": "Links públicos",
+      "tela_rota": "/l/[id]",
+      "papel": "anonimo",
+      "prioridade": "P2",
+      "cenario": "Convite local inexistente",
+      "passos": "Abrir /l/id-invalido",
+      "resultado_esperado": "not-found; sem crash",
+      "precondicoes": "Nenhuma",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-122",
+      "modulo": "Links públicos",
+      "tela_rota": "/r/[id]",
+      "papel": "anonimo",
+      "prioridade": "P2",
+      "cenario": "Share nativo do convite",
+      "passos": "Em /r/{id} tocar compartilhar; cancelar e confirmar Web Share se disponível",
+      "resultado_esperado": "Sheet do sistema ou fallback copiar link",
+      "precondicoes": "Rolê público válido",
+      "spec_ref": "SPEC 015"
+    },
+    {
+      "id": "E2E-123",
+      "modulo": "Notificações push",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Registrar dispositivo FCM",
+      "passos": "Login; aceitar permissão de notificação; permanecer no app",
+      "resultado_esperado": "POST /dispositivos com token; toast/foreground funciona",
+      "precondicoes": "PWA ou Capacitor; permissão concedida",
+      "spec_ref": "SPEC 013, SPEC 042"
+    },
+    {
+      "id": "E2E-124",
+      "modulo": "Notificações push",
+      "tela_rota": "/aprovacoes",
+      "papel": "multi",
+      "prioridade": "P0",
+      "cenario": "Push pedido_vaga → aceite_vaga",
+      "passos": "Piloto solicita vaga; líder recebe push; aceita; piloto recebe aceite_vaga; toca push",
+      "resultado_esperado": "pedido_vaga abre /aprovacoes; aceite_vaga abre /roles/{id}/participar",
+      "precondicoes": "Dois devices/contas com FCM",
+      "spec_ref": "SPEC 013, SPEC 048"
+    },
+    {
+      "id": "E2E-125",
+      "modulo": "Notificações push",
+      "tela_rota": "/meus-roles",
+      "papel": "multi",
+      "prioridade": "P0",
+      "cenario": "Push cancelamento_role",
+      "passos": "Líder cancela rolê com confirmados; confirmado recebe push; toca",
+      "resultado_esperado": "Tipo cancelamento_role; abre /meus-roles; líder não recebe",
+      "precondicoes": "≥1 confirmado com notificar≠false",
+      "spec_ref": "SPEC 034, SPEC 048"
+    },
+    {
+      "id": "E2E-126",
+      "modulo": "Notificações push",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Lembretes rolê 24h e 2h",
+      "passos": "Criar rolê com saída em ~25h; aguardar/disparar tasks; repetir cenário 3h",
+      "resultado_esperado": "lembrete_role 24h título amanhã; 2h título em 2 horas; abre participar; notificar=false não recebe",
+      "precondicoes": "Cloud Tasks/emulador; tokens FCM",
+      "spec_ref": "SPEC 020, SPEC 048"
+    },
+    {
+      "id": "E2E-127",
+      "modulo": "Notificações push",
+      "tela_rota": "/eventos/[id]",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Lembretes evento 24h (broadcast) e 2h (inscritos)",
+      "passos": "Evento com abertura futura; validar audiência 24h vs 2h",
+      "resultado_esperado": "lembrete_evento 24h para tokens da base; 2h só criador+inscritos; abre /eventos/{id}",
+      "precondicoes": "Scheduler/tasks",
+      "spec_ref": "SPEC 048"
+    },
+    {
+      "id": "E2E-128",
+      "modulo": "Notificações push",
+      "tela_rota": "/locais/[id]",
+      "papel": "multi",
+      "prioridade": "P1",
+      "cenario": "Push story_local (local vs evento)",
+      "passos": "1ª story do dia no local favoritado; 1ª story ao vivo no evento; 2ª no mesmo dia",
+      "resultado_esperado": "1ª dispara; 2ª não; deep link ?stories=1; story só perfil sem push",
+      "precondicoes": "Favoritos/FCM; GPS no raio",
+      "spec_ref": "SPEC 045, SPEC 048"
+    },
+    {
+      "id": "E2E-129",
+      "modulo": "Notificações push",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "multi",
+      "prioridade": "P1",
+      "cenario": "Push novo_seguidor",
+      "passos": "A segue B; B recebe push; toca; seguir de novo",
+      "resultado_esperado": "Abre perfil de quem seguiu; 2º seguir não reenvia push",
+      "precondicoes": "Duas contas",
+      "spec_ref": "SPEC 053"
+    },
+    {
+      "id": "E2E-130",
+      "modulo": "Notificações push",
+      "tela_rota": "/eventos/[id]/convidar",
+      "papel": "multi",
+      "prioridade": "P1",
+      "cenario": "Push convite_evento",
+      "passos": "Convidar amigo com conta; ele toca push; repetir trio",
+      "resultado_esperado": "Push só no doc novo; jaConvidados sem novo push; abre fluxo inscrição",
+      "precondicoes": "Evento futuro",
+      "spec_ref": "SPEC 054, SPEC 048"
+    },
+    {
+      "id": "E2E-131",
+      "modulo": "Notificações push",
+      "tela_rota": "/eventos/[id]",
+      "papel": "multi",
+      "prioridade": "P2",
+      "cenario": "Push album_evento",
+      "passos": "Fotógrafo publica álbum; inscritos recebem; tocam",
+      "resultado_esperado": "Tipo album_evento; deep link detalhe/?album=1",
+      "precondicoes": "Fotógrafo autorizado; inscritos com FCM",
+      "spec_ref": "SPEC 065"
+    },
+    {
+      "id": "E2E-132",
+      "modulo": "Notificações push",
+      "tela_rota": "/perfil/[uid]/fotos/[postId]",
+      "papel": "multi",
+      "prioridade": "P1",
+      "cenario": "Push comentario_foto",
+      "passos": "Comentar foto de outro; autor recebe; toca",
+      "resultado_esperado": "Abre post; comentário próprio não notifica a si",
+      "precondicoes": "Post alheio",
+      "spec_ref": "SPEC 057"
+    },
+    {
+      "id": "E2E-133",
+      "modulo": "Notificações push",
+      "tela_rota": "/atividades/[id]",
+      "papel": "multi",
+      "prioridade": "P1",
+      "cenario": "Push comentario_atividade",
+      "passos": "Comentar atividade de outro no Início; autor recebe",
+      "resultado_esperado": "Abre /atividades/{id}; tipo comentario_atividade",
+      "precondicoes": "Feed com item alheio",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-134",
+      "modulo": "Notificações push",
+      "tela_rota": "/mensagens/[conversaId]",
+      "papel": "multi",
+      "prioridade": "P0",
+      "cenario": "Push mensagem",
+      "passos": "Enviar DM; destinatário recebe push em background; toca; app em foreground vê toast",
+      "resultado_esperado": "Tipo mensagem; abre conversa; badge não-lidas",
+      "precondicoes": "FCM nos dois lados",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-135",
+      "modulo": "Notificações push",
+      "tela_rota": "/roles/[id]/participar",
+      "papel": "multi",
+      "prioridade": "P2",
+      "cenario": "Push entrada_role (se aplicável ao fluxo atual)",
+      "passos": "Cenário em que outro piloto entra/é confirmado no rolê do líder; verificar se líder recebe entrada_role",
+      "resultado_esperado": "Conforme copy em notificacoes.ts; deep link coerente; ou documentar se não disparado no fluxo atual",
+      "precondicoes": "Dois participantes + líder",
+      "spec_ref": "SPEC 013"
+    },
+    {
+      "id": "E2E-136",
+      "modulo": "Notificações push",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Revogar permissão / logout remove token",
+      "passos": "Negar notificação ou Sair; verificar DELETE /dispositivos (rede) e ausência de pushes",
+      "resultado_esperado": "Token removido ou inválido; sem spam após logout",
+      "precondicoes": "Token previamente registrado",
+      "spec_ref": "SPEC 042"
+    },
+    {
+      "id": "E2E-137",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/privacidade",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Política de privacidade acessível",
+      "passos": "Abrir /privacidade; rolar seções",
+      "resultado_esperado": "Página pública renderiza sem auth",
+      "precondicoes": "Nenhuma",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-138",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/excluir-conta",
+      "papel": "anonimo",
+      "prioridade": "P1",
+      "cenario": "Página store de exclusão de conta",
+      "passos": "Abrir /excluir-conta; seguir instruções descritas",
+      "resultado_esperado": "Orienta exclusão in-app; compliance store",
+      "precondicoes": "Nenhuma",
+      "spec_ref": "SPEC 006, SPEC 039"
+    },
+    {
+      "id": "E2E-139",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/offline",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Página offline PWA",
+      "passos": "Instalar PWA; ficar offline; navegar rota sem cache; ver /offline",
+      "resultado_esperado": "SW serve /offline; voltar online recupera app",
+      "precondicoes": "PWA instalável; SW ativo",
+      "spec_ref": "SPEC 012"
+    },
+    {
+      "id": "E2E-140",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Banner / botão instalar app",
+      "passos": "Em browser suportado; tocar Instalar; confirmar beforeinstallprompt ou sheet iOS",
+      "resultado_esperado": "Fluxo de instalação; botão some se já instalado",
+      "precondicoes": "Chrome/Safari elegível",
+      "spec_ref": "SPEC 012"
+    },
+    {
+      "id": "E2E-141",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/perfil",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Exclusão remove vínculos sociais e dono",
+      "passos": "Conta com follows, posts, local como dono, ofertas; excluir; inspecionar APIs com outra conta",
+      "resultado_esperado": "DELETE /perfil limpa posts/comentários/seguir/convites; solta locais e pausa ofertas",
+      "precondicoes": "Conta descartável rica",
+      "spec_ref": "SPEC 006, SPEC 059"
+    },
+    {
+      "id": "E2E-142",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Push em foreground (toast)",
+      "passos": "App aberto; receber push; ver toast com title; tocar",
+      "resultado_esperado": "usePushForeground; navegação pela url do payload",
+      "precondicoes": "FCM foreground",
+      "spec_ref": "SPEC 042, SPEC 048"
+    },
+    {
+      "id": "E2E-143",
+      "modulo": "Dock / menu +",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Dock 5 itens e navegação",
+      "passos": "Tocar Início, Explorar, Meus Rolês, Perfil; verificar ativo",
+      "resultado_esperado": "Rotas / /explorar /meus-roles /perfil; highlight correto",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 001"
+    },
+    {
+      "id": "E2E-144",
+      "modulo": "Dock / menu +",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Menu + piloto: só Rolê e Gravar",
+      "passos": "Abrir +; listar itens; Escape fecha; foco trap",
+      "resultado_esperado": "Rolê + Gravar meu rolê; sem Evento/Local/Conquistas",
+      "precondicoes": "admin=false",
+      "spec_ref": "SPEC 001"
+    },
+    {
+      "id": "E2E-145",
+      "modulo": "Dock / menu +",
+      "tela_rota": "/",
+      "papel": "admin",
+      "prioridade": "P0",
+      "cenario": "Menu + admin completo",
+      "passos": "Abrir +; verificar 5 itens; navegar cada um",
+      "resultado_esperado": "Rolê, Gravar, Evento, Local, Cadastrar Conquistas",
+      "precondicoes": "admin=true",
+      "spec_ref": "SPEC 001"
+    },
+    {
+      "id": "E2E-146",
+      "modulo": "Dock / menu +",
+      "tela_rota": "/criar-role",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Highlight FAB em rotas de inclusão",
+      "passos": "Abrir /criar-role, /gravar-role (e admin: criar-evento/local)",
+      "resultado_esperado": "Item + marcado ativo via useItemMenuAtivo",
+      "precondicoes": "Autenticado",
+      "spec_ref": "SPEC 001"
+    },
+    {
+      "id": "E2E-147",
+      "modulo": "Eventos",
+      "tela_rota": "/eventos-passados",
+      "papel": "admin",
+      "prioridade": "P2",
+      "cenario": "Lista eventos passados admin",
+      "passos": "Explorar → Passados; abrir item; voltar",
+      "resultado_esperado": "GET /eventos/admin/passados; lista carrega",
+      "precondicoes": "admin; eventos encerrados",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-148",
+      "modulo": "Eventos",
+      "tela_rota": "/criar-evento",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Evento com localId do catálogo",
+      "passos": "Criar evento vinculando local oficial; postar story ao vivo",
+      "resultado_esperado": "Stories vão ao álbum do local; localId persistido",
+      "precondicoes": "Local no catálogo",
+      "spec_ref": "SPEC 022, SPEC 045"
+    },
+    {
+      "id": "E2E-149",
+      "modulo": "Eventos",
+      "tela_rota": "/criar-evento",
+      "papel": "admin",
+      "prioridade": "P1",
+      "cenario": "Validação duração máx 7 dias",
+      "passos": "Definir encerramento >7 dias após abertura; salvar",
+      "resultado_esperado": "Erro de validação; sem POST",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 022"
+    },
+    {
+      "id": "E2E-150",
+      "modulo": "Eventos",
+      "tela_rota": "/series-evento/[id]/editar",
+      "papel": "admin",
+      "prioridade": "P2",
+      "cenario": "Editar série e exceções",
+      "passos": "Editar campos; adicionar exceção de data; salvar",
+      "resultado_esperado": "PUT + POST excecoes; datas canceladas não regeneram",
+      "precondicoes": "Série ativa",
+      "spec_ref": "SPEC 052"
+    },
+    {
+      "id": "E2E-151",
+      "modulo": "Locais",
+      "tela_rota": "/criar-local",
+      "papel": "admin",
+      "prioridade": "P2",
+      "cenario": "Horários vs aberto24h",
+      "passos": "Criar com 24h (horarios []); outro com faixa que vira a noite",
+      "resultado_esperado": "Persistência correta; UI detalhe mostra status coerente",
+      "precondicoes": "admin",
+      "spec_ref": "SPEC 023"
+    },
+    {
+      "id": "E2E-152",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/ofertas/nova",
+      "papel": "dono",
+      "prioridade": "P1",
+      "cenario": "Validação oferta (código, tipo, teto 5)",
+      "passos": "Código curto; % fora 1–100; brinde com valor; criar 6ª oferta",
+      "resultado_esperado": "Erros de validação; 6ª rejeitada pelo backend",
+      "precondicoes": "Dono; já 5 ofertas ou criar até o teto",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-153",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]/balcao",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Não-dono não acessa balcão",
+      "passos": "Abrir /locais/{id}/balcao sem ser dono/admin",
+      "resultado_esperado": "Redirect ao detalhe; 403 tratado",
+      "precondicoes": "piloto comum",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-154",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "CTA chips por tipo de atividade",
+      "passos": "Tocar CTAs em foto→post, telemetria→dashboard, role→participar, avaliação→local/evento",
+      "resultado_esperado": "Navegação correta por tipo (atividade-texto/cta)",
+      "precondicoes": "Feed com tipos variados",
+      "spec_ref": "SPEC 063"
+    },
+    {
+      "id": "E2E-155",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/aprovacoes",
+      "papel": "lider",
+      "prioridade": "P2",
+      "cenario": "Alerta ritmo diferente na aprovação",
+      "passos": "Pedido de piloto com ritmo ≠ do rolê; ver AlertaRitmo; decidir",
+      "resultado_esperado": "UI destaca diferença; decisão ainda funciona",
+      "precondicoes": "Ritmos divergentes",
+      "spec_ref": "SPEC 007"
+    },
+    {
+      "id": "E2E-156",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/gerenciar",
+      "papel": "piloto",
+      "prioridade": "P0",
+      "cenario": "Não-líder não gerencia",
+      "passos": "Abrir /roles/{id}/gerenciar sem ser criador",
+      "resultado_esperado": "Redirect para participar ou erro; sem ações de aprovação",
+      "precondicoes": "Rolê de outro",
+      "spec_ref": "SPEC 035"
+    },
+    {
+      "id": "E2E-157",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Selos de check-in no perfil",
+      "passos": "Após check-ins; ver FaixaSelos; tocar selo → local",
+      "resultado_esperado": "Selos {id,label}; link /locais/{localId}",
+      "precondicoes": "≥1 check-in único",
+      "spec_ref": "SPEC 044"
+    },
+    {
+      "id": "E2E-158",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/fotos/nova",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Teto 10 posts / 24h",
+      "passos": "Publicar até o limite; tentar a 11ª",
+      "resultado_esperado": "Backend recusa; mensagem clara",
+      "precondicoes": "Conta de teste",
+      "spec_ref": "SPEC 057"
+    },
+    {
+      "id": "E2E-159",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/telemetria/[id]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Share imagem da telemetria",
+      "passos": "No detalhe compartilhar; gerar imagem; cancelar/confirmar share",
+      "resultado_esperado": "Imagem gerada; Web Share ou download fallback",
+      "precondicoes": "Passeio com métricas",
+      "spec_ref": "SPEC 030"
+    },
+    {
+      "id": "E2E-160",
+      "modulo": "Gravar rolê / telemetria / conquistas",
+      "tela_rota": "/ranking/[id]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Placar só com seguidos + eu",
+      "passos": "Abrir placar; comparar com piloto não seguido que também carimbou",
+      "resultado_esperado": "Lista limitada a token + até 100 seguidos recentes com carimbo",
+      "precondicoes": "Conquista com vários carimbos",
+      "spec_ref": "SPEC 058"
+    },
+    {
+      "id": "E2E-161",
+      "modulo": "Mensagens / chat",
+      "tela_rota": "/mensagens",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Empty state caixa vazia",
+      "passos": "Conta sem conversas; abrir /mensagens",
+      "resultado_esperado": "Empty state; sem erro",
+      "precondicoes": "Sem DMs",
+      "spec_ref": "SPEC 061"
+    },
+    {
+      "id": "E2E-162",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Stories ao vivo na aba Locais/Eventos",
+      "passos": "Aba Locais/Eventos; ver anéis ao vivo; abrir player",
+      "resultado_esperado": "GET /stories/ao-vivo?aba=; player e visto",
+      "precondicoes": "Stories recentes no raio",
+      "spec_ref": "SPEC 045"
+    },
+    {
+      "id": "E2E-163",
+      "modulo": "Explorar (rolês, eventos, locais)",
+      "tela_rota": "/explorar",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Card evento Convidar amigo",
+      "passos": "No card Eventos tocar Convidar; completar fluxo",
+      "resultado_esperado": "Abre /eventos/{id}/convidar",
+      "precondicoes": "Evento futuro",
+      "spec_ref": "SPEC 054"
+    },
+    {
+      "id": "E2E-164",
+      "modulo": "Auth / primeiro acesso",
+      "tela_rota": "/login",
+      "papel": "anonimo",
+      "prioridade": "P2",
+      "cenario": "Resolver identificador por apelido",
+      "passos": "Digitar apelido existente; Continuar; senha; Entrar",
+      "resultado_esperado": "POST /auth/resolver devolve e-mail; login ok",
+      "precondicoes": "Apelido cadastrado",
+      "spec_ref": null
+    },
+    {
+      "id": "E2E-165",
+      "modulo": "Meus Rolês / garagem",
+      "tela_rota": "/meus-roles",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Persistência de filtros da garagem na URL/estado",
+      "passos": "Definir abaTipo + pills; abrir detalhe; voltar",
+      "resultado_esperado": "Estado restaurado (aba roles/eventos/locais e pills)",
+      "precondicoes": "Dados nas abas",
+      "spec_ref": "SPEC 017"
+    },
+    {
+      "id": "E2E-166",
+      "modulo": "Criar/editar/cancelar rolê + participação",
+      "tela_rota": "/roles/[id]/feedback",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Ver relatos do comboio após enviar",
+      "passos": "Enviar feedback; ver lista de relatos de outros",
+      "resultado_esperado": "GET /roles/:id/feedbacks; cards de relatos",
+      "precondicoes": "≥2 feedbacks no rolê",
+      "spec_ref": "SPEC 010"
+    },
+    {
+      "id": "E2E-167",
+      "modulo": "Locais",
+      "tela_rota": "/locais/[id]",
+      "papel": "admin",
+      "prioridade": "P2",
+      "cenario": "ofertaVigente no card/detalhe sem código",
+      "passos": "Com oferta vigente; abrir Explorar Locais e detalhe como piloto",
+      "resultado_esperado": "ofertaVigente exibida; código só após abrir cupom",
+      "precondicoes": "Oferta no ar",
+      "spec_ref": "SPEC 059"
+    },
+    {
+      "id": "E2E-168",
+      "modulo": "Início (feed amigos) + stories",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Apagar própria story",
+      "passos": "Abrir própria story; apagar",
+      "resultado_esperado": "DELETE story; some do carrossel; só autor apaga",
+      "precondicoes": "Story própria ativa",
+      "spec_ref": "SPEC 049"
+    },
+    {
+      "id": "E2E-169",
+      "modulo": "Perfil próprio e público",
+      "tela_rota": "/perfil/[uid]",
+      "papel": "piloto",
+      "prioridade": "P2",
+      "cenario": "Telemetria privada não aparece no perfil público",
+      "passos": "Salvar passeio publica=false; abrir próprio perfil em aba; abrir como visitante",
+      "resultado_esperado": "Dono vê; visitante não lista (GET telemetria pública)",
+      "precondicoes": "Passeio privado",
+      "spec_ref": "SPEC 030, SPEC 025"
+    },
+    {
+      "id": "E2E-170",
+      "modulo": "Conta (excluir, privacidade, offline, PWA)",
+      "tela_rota": "/",
+      "papel": "piloto",
+      "prioridade": "P1",
+      "cenario": "Sessão expirada força reauth",
+      "passos": "Invalidar token (logout em outro device / limpar IndexedDB); tentar ação autenticada",
+      "resultado_esperado": "Redirect /login ou erro auth tratado; sem tela quebrada",
+      "precondicoes": "Sessão manipulável em QA",
+      "spec_ref": null
+    }
+  ]
+}

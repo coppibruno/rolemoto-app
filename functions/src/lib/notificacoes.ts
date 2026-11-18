@@ -1,6 +1,10 @@
 import type {BatchResponse, MulticastMessage} from "firebase-admin/messaging";
 import { adminMessaging } from "./firebase-admin";
-import { dispositivoRepository } from "../repositories";
+import {
+  dispositivoRepository,
+  notificacaoInboxRepository,
+} from "../repositories";
+import {payloadParaInbox} from "./notificacao-inbox";
 import { origemApp } from "./origem";
 import { erroDe, log } from "./log";
 import type { PlataformaDispositivo } from "../types/dispositivo";
@@ -33,6 +37,8 @@ type PayloadPush = {
   roleId: string;
   localId: string;
   eventoId: string;
+  /** Quem gerou a ação; avatar na inbox. */
+  atorUid?: string | null;
 };
 
 const COPY = {
@@ -206,6 +212,22 @@ const mensagemNativa = (
   },
 });
 
+const registrarInbox = async (uid: string, payload: PayloadPush): Promise<void> => {
+  const dados = payloadParaInbox(uid, payload);
+  if (!dados) {
+    return;
+  }
+  try {
+    await notificacaoInboxRepository.criar(dados);
+  } catch (error) {
+    log.warn("Push", "Falha ao gravar inbox", {
+      uid,
+      tipo: payload.tipo,
+      ...erroDe(error),
+    });
+  }
+};
+
 const enviar = async (
   uid: string,
   payload: PayloadPush,
@@ -215,6 +237,8 @@ const enviar = async (
     tipo: payload.tipo,
     roleId: payload.roleId,
   };
+
+  await registrarInbox(uid, payload);
 
   try {
     const dispositivos = await dispositivoRepository.listarPorUid(uid);
@@ -302,6 +326,7 @@ export const notificarPedidoVaga = async (
   criadorId: string,
   roleId: string,
   titulo: string,
+  atorUid?: string,
 ): Promise<ResultadoPush> => {
   return enviar(criadorId, {
     tipo: "pedido_vaga",
@@ -311,6 +336,7 @@ export const notificarPedidoVaga = async (
     roleId,
     localId: "",
     eventoId: "",
+    atorUid: atorUid ?? null,
   });
 };
 
@@ -319,6 +345,7 @@ export const notificarEntradaRole = async (
   criadorId: string,
   roleId: string,
   titulo: string,
+  atorUid?: string,
 ): Promise<ResultadoPush> => {
   return enviar(criadorId, {
     tipo: "entrada_role",
@@ -328,6 +355,7 @@ export const notificarEntradaRole = async (
     roleId,
     localId: "",
     eventoId: "",
+    atorUid: atorUid ?? null,
   });
 };
 
@@ -417,6 +445,7 @@ export const notificarNovoSeguidor = async (
     roleId: "",
     localId: "",
     eventoId: "",
+    atorUid: seguidorId,
   });
 };
 
@@ -425,6 +454,7 @@ export const notificarComentarioFoto = async (
   autorFotoUid: string,
   postId: string,
   nome: string,
+  atorUid?: string,
 ): Promise<ResultadoPush> => {
   const frase = `${nome} comentou na sua foto`;
   return enviar(autorFotoUid, {
@@ -435,6 +465,7 @@ export const notificarComentarioFoto = async (
     roleId: "",
     localId: "",
     eventoId: "",
+    atorUid: atorUid ?? null,
   });
 };
 
@@ -453,6 +484,7 @@ export const notificarComentarioAtividade = async (
   tipo: string,
   nome: string,
   texto: string,
+  atorUid?: string,
 ): Promise<ResultadoPush> => {
   const rotulo = ROTULO_COMENTARIO_ATIVIDADE[tipo] ?? "no seu post";
   return enviar(autorAtividadeUid, {
@@ -463,6 +495,7 @@ export const notificarComentarioAtividade = async (
     roleId: "",
     localId: "",
     eventoId: "",
+    atorUid: atorUid ?? null,
   });
 };
 
@@ -490,6 +523,7 @@ export const notificarConvitesEvento = async (
   eventoId: string,
   title: string,
   body: string,
+  atorUid?: string,
 ): Promise<void> => {
   const url = `/eventos/${eventoId}`;
   await emLote(uids, LOTE_PUSH, async (uid) => {
@@ -501,6 +535,7 @@ export const notificarConvitesEvento = async (
       roleId: "",
       localId: "",
       eventoId,
+      atorUid: atorUid ?? null,
     });
   });
 };

@@ -6,6 +6,7 @@ import { AvatarStories } from "@/app/(app)/components/AvatarStories";
 import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
 import { BotaoTema } from "@/components/tema/BotaoTema";
 import { BotaoMensagens } from "./BotaoMensagens";
+import { BotaoNotificacoes } from "./BotaoNotificacoes";
 import styles from "../feed.module.css";
 
 export const CabecalhoFeed = () => {
@@ -31,6 +32,7 @@ export const CabecalhoFeed = () => {
               search
             </span>
           </Link>
+          <BotaoNotificacoes habilitado={Boolean(usuario)} />
           <BotaoMensagens habilitado={Boolean(usuario)} />
           {usuario ? (
             <AvatarStories

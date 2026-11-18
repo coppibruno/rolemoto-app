@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { codigoAfiliadoValido, limparCodigoAfiliado } from "@/lib/afiliado";
+import {
+  codigoAfiliadoValido,
+  limparCodigoAfiliado,
+  normalizarCodigoAfiliado,
+} from "@/lib/afiliado";
 import { ApiError } from "@/lib/api";
 import { destinoSeguro, urlLoginComNext } from "@/lib/destino-pos-auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,10 +19,12 @@ const validar = (campos: {
   nome: string;
   moto: string;
   pilotagem: Pilotagem | null;
+  codigoAfiliado: string;
 }): ErrosPrimeiroAcesso => {
   const erros: ErrosPrimeiroAcesso = {};
   const nome = campos.nome.trim();
   const moto = campos.moto.trim();
+  const codigo = campos.codigoAfiliado.trim();
 
   if (!nome) erros.nome = "Informe o nome";
   else if (nome.length < 2) erros.nome = "Mínimo 2 caracteres";
@@ -28,6 +34,10 @@ const validar = (campos: {
 
   if (!campos.pilotagem) {
     erros.pilotagem = "Selecione o ritmo de pilotagem";
+  }
+
+  if (codigo && !normalizarCodigoAfiliado(codigo)) {
+    erros.codigoAfiliado = COPY.codigoErroFormato;
   }
 
   return erros;
@@ -40,12 +50,15 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
 
   const [nome, setNome] = useState(firebaseUser?.displayName ?? "");
   const [moto, setMoto] = useState("");
+  const [codigoAfiliado, setCodigoAfiliado] = useState("");
+  const [codigoVeioDoLink, setCodigoVeioDoLink] = useState(false);
   const [pilotagem, setPilotagem] = useState<Pilotagem | null>(null);
   const [erros, setErros] = useState<ErrosPrimeiroAcesso>({});
   const [salvando, setSalvando] = useState(false);
   const [concluido, setConcluido] = useState(false);
   const [erroGeral, setErroGeral] = useState<string | null>(null);
   const nomeHidratado = useRef(Boolean(firebaseUser?.displayName));
+  const codigoHidratado = useRef(false);
 
   useEffect(() => {
     if (nomeHidratado.current || !firebaseUser) return;
@@ -55,17 +68,31 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
     }
   }, [firebaseUser]);
 
+  useEffect(() => {
+    if (codigoHidratado.current) return;
+    codigoHidratado.current = true;
+    const guardado = codigoAfiliadoValido();
+    if (guardado) {
+      setCodigoAfiliado(guardado);
+      setCodigoVeioDoLink(true);
+    }
+  }, []);
+
+  const codigoTrim = codigoAfiliado.trim();
+  const codigoInvalido = Boolean(codigoTrim && !normalizarCodigoAfiliado(codigoTrim));
+
   const valido =
     nome.trim().length >= 2 &&
     moto.trim().length >= 2 &&
     pilotagem !== null &&
-    !foto.erro;
+    !foto.erro &&
+    !codigoInvalido;
 
   const salvar = async (e: FormEvent) => {
     e.preventDefault();
     setErroGeral(null);
 
-    const errosAtuais = validar({ nome, moto, pilotagem });
+    const errosAtuais = validar({ nome, moto, pilotagem, codigoAfiliado });
     if (foto.erro) errosAtuais.foto = foto.erro;
     setErros(errosAtuais);
 
@@ -81,13 +108,13 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
         firebaseUser.photoURL ?? "",
       );
 
-      const codigoAfiliado = codigoAfiliadoValido();
+      const digitado = codigoTrim ? normalizarCodigoAfiliado(codigoTrim) : null;
       await perfilPrimeiroAcessoService.criar({
         nome: nome.trim(),
         moto: moto.trim(),
         pilotagem,
         fotoUrl,
-        ...(codigoAfiliado ? { codigoAfiliado } : {}),
+        ...(digitado ? { codigoAfiliado: digitado } : {}),
       });
       limparCodigoAfiliado();
 
@@ -116,10 +143,16 @@ export const useFormularioPrimeiroAcesso = (next: string | null) => {
     setNome,
     moto,
     setMoto,
+    codigoAfiliado,
+    setCodigoAfiliado,
+    codigoVeioDoLink,
     pilotagem,
     setPilotagem,
     foto,
-    erros,
+    erros: {
+      ...erros,
+      codigoAfiliado: codigoInvalido ? COPY.codigoErroFormato : erros.codigoAfiliado,
+    },
     salvando,
     concluido,
     erroGeral,

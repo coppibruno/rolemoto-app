@@ -28,10 +28,14 @@ export const FormularioPrimeiroAcesso = ({ next }: { next: string | null }) => {
         <SecaoDadosPiloto
           nome={form.nome}
           moto={form.moto}
+          codigoAfiliado={form.codigoAfiliado}
+          codigoVeioDoLink={form.codigoVeioDoLink}
           onNome={form.setNome}
           onMoto={form.setMoto}
+          onCodigoAfiliado={form.setCodigoAfiliado}
           erroNome={form.erros.nome}
           erroMoto={form.erros.moto}
+          erroCodigo={form.erros.codigoAfiliado}
           desabilitado={ocupado}
         />
         <SeletorRitmoHabitual

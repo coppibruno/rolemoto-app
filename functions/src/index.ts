@@ -84,6 +84,10 @@
  * - /atividades/:id/curtida → POST, DELETE
  * - /atividades/:id/comentarios → GET, POST
  * - /atividades/:id/comentarios/:comentarioId → DELETE
+ * - /notificacoes → GET
+ * - /notificacoes/nao-lidas → GET
+ * - /notificacoes/lidas → POST
+ * - /notificacoes/:id/lida → POST
  * - /interno/feed/roles-realizados → POST (Scheduler, sem Bearer)
  * - /interno/feed/carga → POST (uma vez no deploy, sem Bearer)
  *
@@ -124,6 +128,7 @@ import {conversasRouter} from "./routes/conversas";
 import {afiliadosRouter} from "./routes/afiliados";
 import {afiliadosPublicoRouter} from "./routes/afiliados-publico";
 import {atividadesRouter} from "./routes/atividades";
+import {notificacoesRouter} from "./routes/notificacoes";
 import {corsOrigins} from "./lib/cors-origins";
 
 setGlobalOptions({maxInstances: 10});
@@ -217,6 +222,10 @@ app.get("/", (_req: Request, res: Response) => {
       "/atividades/:id/curtida",
       "/atividades/:id/comentarios",
       "/atividades/:id/comentarios/:comentarioId",
+      "/notificacoes",
+      "/notificacoes/nao-lidas",
+      "/notificacoes/lidas",
+      "/notificacoes/:id/lida",
       "/interno/feed/roles-realizados",
       "/interno/feed/carga",
     ],
@@ -251,6 +260,7 @@ app.use("/conversas", conversasRouter);
 app.use("/afiliados", afiliadosRouter);
 app.use("/publico/afiliados", afiliadosPublicoRouter);
 app.use("/atividades", atividadesRouter);
+app.use("/notificacoes", notificacoesRouter);
 
 export const api = onRequest({
   cors: corsOrigins(),

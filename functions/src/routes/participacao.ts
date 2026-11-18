@@ -126,7 +126,7 @@ participacaoRouter.post(
           {roleId: role.id, userId: uid, titulo: role.titulo},
           role.dataHoraSaida,
         );
-        await notificarEntradaRole(role.criadorId, role.id, role.titulo)
+        await notificarEntradaRole(role.criadorId, role.id, role.titulo, uid)
           .catch((error) => {
             log.warn("Participacao", "Push de entrada falhou", {
               roleId,
@@ -135,7 +135,7 @@ participacaoRouter.post(
             });
           });
       } else {
-        await notificarPedidoVaga(role.criadorId, role.id, role.titulo);
+        await notificarPedidoVaga(role.criadorId, role.id, role.titulo, uid);
       }
       res.status(201).json(criado);
     } catch (error) {

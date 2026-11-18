@@ -20,6 +20,7 @@ import {
   conviteEventoRepository,
   dispositivoRepository,
   localRepository,
+  notificacaoInboxRepository,
   postFotoRepository,
   seguirRepository,
   sugestaoRepository,
@@ -445,6 +446,15 @@ perfilRouter.delete("/", async (req: Request, res: Response) => {
       await conversaRepository.limparPorUsuario(uid);
     } catch (error) {
       log.warn("Perfil", "Falha ao remover conversas", {
+        uid,
+        ...erroDe(error),
+      });
+    }
+
+    try {
+      await notificacaoInboxRepository.limparPorUsuario(uid);
+    } catch (error) {
+      log.warn("Perfil", "Falha ao remover notificações da inbox", {
         uid,
         ...erroDe(error),
       });

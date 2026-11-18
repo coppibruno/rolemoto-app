@@ -210,7 +210,7 @@ atividadesRouter.post("/:id/comentarios", async (req: Request, res: Response) =>
       if (uid !== post.usuarioId) {
         await pushSemDerrubar({uid, postId: post.id}, async () => {
           const eu = await usuarioRepository.buscarPorId(uid);
-          await notificarComentarioFoto(post.usuarioId, post.id, apelidoExibicao(eu));
+          await notificarComentarioFoto(post.usuarioId, post.id, apelidoExibicao(eu), uid);
         });
       }
       const [publico] = await paraComentariosPublicos([resultado.comentario], post.usuarioId, uid);
@@ -236,6 +236,7 @@ atividadesRouter.post("/:id/comentarios", async (req: Request, res: Response) =>
           atividade.tipo,
           apelidoExibicao(eu),
           texto.valor,
+          uid,
         );
       });
     }

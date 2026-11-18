@@ -1,5 +1,6 @@
 "use client";
 
+import type { InputHTMLAttributes } from "react";
 import styles from "../primeiro-acesso.module.css";
 
 type Props = {
@@ -10,8 +11,12 @@ type Props = {
   valor: string;
   onChange: (valor: string) => void;
   erro?: string;
+  hint?: string;
   desabilitado?: boolean;
   autoComplete?: string;
+  autoCapitalize?: "off" | "none" | "sentences" | "words" | "characters";
+  spellCheck?: boolean;
+  inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
 };
 
 export const CampoTexto = ({
@@ -22,10 +27,18 @@ export const CampoTexto = ({
   valor,
   onChange,
   erro,
+  hint,
   desabilitado,
   autoComplete,
+  autoCapitalize,
+  spellCheck,
+  inputMode,
 }: Props) => {
   const erroId = `${id}-erro`;
+  const hintId = `${id}-hint`;
+  const describedBy = [erro ? erroId : null, hint ? hintId : null]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div className={styles.campo}>
@@ -47,13 +60,21 @@ export const CampoTexto = ({
           placeholder={placeholder}
           disabled={desabilitado}
           autoComplete={autoComplete}
+          autoCapitalize={autoCapitalize}
+          spellCheck={spellCheck}
+          inputMode={inputMode}
           aria-invalid={Boolean(erro)}
-          aria-describedby={erro ? erroId : undefined}
+          aria-describedby={describedBy || undefined}
         />
       </div>
       {erro ? (
         <p id={erroId} className={styles.erroCampo} role="alert">
           {erro}
+        </p>
+      ) : null}
+      {hint && !erro ? (
+        <p id={hintId} className={styles.hintCampo}>
+          {hint}
         </p>
       ) : null}
     </div>

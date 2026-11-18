@@ -193,6 +193,12 @@
   color: var(--error);
 }
 
+.hintCampo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--outline);
+}
+
 .ritmoBloco {
   display: flex;
   flex-direction: column;

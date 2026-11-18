@@ -229,7 +229,7 @@ postsRouter.post("/:id/comentarios", async (req: Request, res: Response) => {
     if (uid !== post.usuarioId) {
       try {
         const eu = await usuarioRepository.buscarPorId(uid);
-        await notificarComentarioFoto(post.usuarioId, post.id, apelidoExibicao(eu));
+        await notificarComentarioFoto(post.usuarioId, post.id, apelidoExibicao(eu), uid);
       } catch (error) {
         log.warn("PostFoto", "Falha no push de comentário", {
           uid,

@@ -50,6 +50,7 @@ export type ErrosPrimeiroAcesso = {
   moto?: string;
   foto?: string;
   pilotagem?: string;
+  codigoAfiliado?: string;
 };
 
 /** Body do POST /perfil — apelido, tipo, garupa e cidade completam depois no perfil. */

@@ -187,6 +187,7 @@ const avisarEnviados = async (
       evento.id,
       fraseConvite(apelidoExibicao(eu), evento.titulo),
       quandoConvite(evento.dataHoraAbertura, evento.dataHoraEncerramento),
+      token,
     );
   } catch (error) {
     log.warn("ConviteEvento", "Falha no push", {

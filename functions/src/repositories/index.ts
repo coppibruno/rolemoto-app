@@ -107,6 +107,10 @@ import type {AtividadeRepository} from "./interfaces/atividade.repository";
 import {FirestoreAtividadeRepository} from "./firestore/firestore-atividade.repository";
 import type {SugestaoRepository} from "./interfaces/sugestao.repository";
 import {FirestoreSugestaoRepository} from "./firestore/firestore-sugestao.repository";
+import type {NotificacaoInboxRepository} from "./interfaces/notificacao-inbox.repository";
+import {
+  FirestoreNotificacaoInboxRepository,
+} from "./firestore/firestore-notificacao-inbox.repository";
 
 export const usuarioRepository: UsuarioRepository =
   new FirestoreUsuarioRepository();
@@ -199,3 +203,6 @@ export const atividadeRepository: AtividadeRepository =
 
 export const sugestaoRepository: SugestaoRepository =
   new FirestoreSugestaoRepository();
+
+export const notificacaoInboxRepository: NotificacaoInboxRepository =
+  new FirestoreNotificacaoInboxRepository();
