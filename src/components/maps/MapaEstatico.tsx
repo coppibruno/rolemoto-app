@@ -19,6 +19,8 @@ export type MarcadorMapa = PontoLatLng & {
   icone?: string;
   nomeAcessivel?: string;
   onToque?: () => void;
+  /** Aparece/some sem reenquadrar o mapa (ex.: pin de inspeção de velocidade). */
+  efemero?: boolean;
 };
 
 export const marcadorComIcone = (m: MarcadorMapa): boolean => Boolean(m.icone);
@@ -32,6 +34,11 @@ export type PropsMapaEstatico = {
   ligarMarcadores?: boolean;
   /** Caminho percorrido; com 2+ pontos substitui a linha reta e entra no enquadramento. */
   trajeto?: PontoLatLng[];
+  /**
+   * Cor de cada segmento do trajeto (length = trajeto.length - 1).
+   * Só o mapa Google interativo usa; OSM/estático ignora e segue laranja.
+   */
+  trajetoCores?: string[];
   /** Toque no caminho (ponto clicado; o pai resolve o vértice). */
   onTocarTrajeto?: (ponto: PontoLatLng) => void;
   "aria-label"?: string;

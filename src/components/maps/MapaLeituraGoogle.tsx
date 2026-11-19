@@ -10,6 +10,7 @@ export const MapaLeituraGoogle = ({
   className,
   ligarMarcadores = false,
   trajeto,
+  trajetoCores,
   onTocarTrajeto,
   "aria-label": ariaLabel = "Mapa",
 }: PropsMapaEstatico) => {
@@ -18,6 +19,7 @@ export const MapaLeituraGoogle = ({
     zoom,
     ligarMarcadores,
     trajeto,
+    trajetoCores,
     onTocarTrajeto,
   });
 

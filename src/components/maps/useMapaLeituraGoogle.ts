@@ -23,6 +23,8 @@ type Args = {
   zoom?: number;
   ligarMarcadores?: boolean;
   trajeto?: PontoLatLng[];
+  /** Cor por segmento (length = trajeto.length - 1); sem isso, laranja único. */
+  trajetoCores?: string[];
   onTocarTrajeto?: (ponto: PontoLatLng) => void;
 };
 
@@ -62,7 +64,7 @@ const desenhar = (
   dados.marcadores.forEach((marcador, indice) => {
     const posicao = { lat: marcador.lat, lng: marcador.lng };
     pontos.push(posicao);
-    limites.extend(posicao);
+    if (!marcador.efemero) limites.extend(posicao);
     if (marcador.icone) {
       const cor = resolverCor(marcador.cor);
       const clicavel = Boolean(marcador.onToque);
@@ -106,35 +108,66 @@ const desenhar = (
   const tracejado = !(dados.trajeto && dados.trajeto.length >= 2);
   const trajetoClicavel =
     Boolean(dados.onTocarTrajeto) && Boolean(dados.trajeto && dados.trajeto.length >= 2);
+  const cores =
+    dados.trajetoCores &&
+    dados.trajeto &&
+    dados.trajetoCores.length === dados.trajeto.length - 1
+      ? dados.trajetoCores
+      : null;
   if (caminho.length >= 2) {
     caminho.forEach((ponto) => limites.extend(ponto));
-    overlays.push(
-      new maps.Polyline({
-        map,
-        path: caminho,
-        geodesic: true,
-        strokeColor: "#f97316",
-        strokeOpacity: tracejado ? 0 : 0.95,
-        strokeWeight: 4,
-        clickable: false,
-        ...(tracejado
-          ? {
-              icons: [
-                {
-                  icon: {
-                    path: "M 0,-1 0,1",
-                    strokeOpacity: 1,
-                    strokeColor: "#f97316",
-                    scale: 3,
+    if (!tracejado && cores) {
+      let i = 0;
+      while (i < cores.length) {
+        const cor = cores[i];
+        const path: LatLng[] = [caminho[i]];
+        let j = i;
+        while (j < cores.length && cores[j] === cor) {
+          path.push(caminho[j + 1]);
+          j += 1;
+        }
+        overlays.push(
+          new maps.Polyline({
+            map,
+            path,
+            geodesic: true,
+            strokeColor: cor,
+            strokeOpacity: 0.95,
+            strokeWeight: 4,
+            clickable: false,
+          }),
+        );
+        i = j;
+      }
+    } else {
+      overlays.push(
+        new maps.Polyline({
+          map,
+          path: caminho,
+          geodesic: true,
+          strokeColor: "#f97316",
+          strokeOpacity: tracejado ? 0 : 0.95,
+          strokeWeight: 4,
+          clickable: false,
+          ...(tracejado
+            ? {
+                icons: [
+                  {
+                    icon: {
+                      path: "M 0,-1 0,1",
+                      strokeOpacity: 1,
+                      strokeColor: "#f97316",
+                      scale: 3,
+                    },
+                    offset: "0",
+                    repeat: "12px",
                   },
-                  offset: "0",
-                  repeat: "12px",
-                },
-              ],
-            }
-          : {}),
-      }),
-    );
+                ],
+              }
+            : {}),
+        }),
+      );
+    }
     if (trajetoClicavel) {
       const alvo = new maps.Polyline({
         map,
@@ -156,15 +189,15 @@ const desenhar = (
   }
 
   const enquadrar = () => {
-    if (pontos.length === 0) return;
-    if (dados.zoom != null || pontos.length === 1) {
-      map.setCenter(pontos[0]);
+    const fixos = pontos.filter((_, i) => !dados.marcadores[i]?.efemero);
+    if (fixos.length === 0) return;
+    if (dados.zoom != null || fixos.length === 1) {
+      map.setCenter(fixos[0]);
       map.setZoom(dados.zoom ?? ZOOM_PONTO);
       return;
     }
     map.fitBounds(limites, 40);
   };
-  enquadrar();
 
   return { overlays, enquadrar };
 };
@@ -174,6 +207,7 @@ export const useMapaLeituraGoogle = ({
   zoom,
   ligarMarcadores,
   trajeto,
+  trajetoCores,
   onTocarTrajeto,
 }: Args) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -186,12 +220,42 @@ export const useMapaLeituraGoogle = ({
     zoom,
     ligarMarcadores,
     trajeto,
+    trajetoCores,
     onTocarTrajeto,
   });
   const [pronto, setPronto] = useState(false);
   const [falhou, setFalhou] = useState(false);
+  const vistaRef = useRef<string>("");
 
-  dadosRef.current = { marcadores, zoom, ligarMarcadores, trajeto, onTocarTrajeto };
+  dadosRef.current = {
+    marcadores,
+    zoom,
+    ligarMarcadores,
+    trajeto,
+    trajetoCores,
+    onTocarTrajeto,
+  };
+
+  const assinaturaVista = useMemo(
+    () =>
+      JSON.stringify({
+        m: marcadores
+          .filter((p) => !p.efemero)
+          .map((p) => [
+            p.lat,
+            p.lng,
+            p.cor,
+            p.rotulo ?? "",
+            p.icone ?? "",
+            Boolean(p.onToque),
+          ]),
+        z: zoom ?? null,
+        l: Boolean(ligarMarcadores),
+        t: (trajeto ?? []).map((p) => [p.lat, p.lng]),
+        tc: trajetoCores ?? null,
+      }),
+    [ligarMarcadores, marcadores, trajeto, trajetoCores, zoom],
+  );
 
   const assinatura = useMemo(
     () =>
@@ -204,13 +268,15 @@ export const useMapaLeituraGoogle = ({
           p.icone ?? "",
           p.nomeAcessivel ?? "",
           Boolean(p.onToque),
+          Boolean(p.efemero),
         ]),
         z: zoom ?? null,
         l: Boolean(ligarMarcadores),
         t: (trajeto ?? []).map((p) => [p.lat, p.lng]),
+        tc: trajetoCores ?? null,
         c: Boolean(onTocarTrajeto),
       }),
-    [ligarMarcadores, marcadores, onTocarTrajeto, trajeto, zoom],
+    [ligarMarcadores, marcadores, onTocarTrajeto, trajeto, trajetoCores, zoom],
   );
 
   useEffect(() => {
@@ -283,7 +349,11 @@ export const useMapaLeituraGoogle = ({
     );
     overlaysRef.current = desenho.overlays;
     enquadrarRef.current = desenho.enquadrar;
-  }, [assinatura, pronto]);
+    if (vistaRef.current !== assinaturaVista) {
+      vistaRef.current = assinaturaVista;
+      desenho.enquadrar();
+    }
+  }, [assinatura, assinaturaVista, pronto]);
 
   return { containerRef, pronto, falhou };
 };

@@ -6,6 +6,7 @@ import type { MarcadorMapa } from "@/components/maps/MapaEstatico";
 import { medalhaEmDestaque } from "@/lib/conquistas";
 import type { PontoLatLng } from "@/lib/mapa-tiles";
 import { urlRotaMaps } from "@/lib/maps";
+import { escalaVelocidadeTracado } from "@/lib/telemetria/escala-velocidade-tracado";
 import {
   formatarDistancia,
   formatarVelocidade,
@@ -35,6 +36,9 @@ const SEM_MEDALHAS: MedalhaTelemetria[] = [];
 const corMedalha = (medalha: MedalhaTelemetria): string =>
   medalhaEmDestaque(medalha.novidade) ? "var(--primary-container)" : "var(--outline)";
 
+const formatarAncoraLegenda = (kmh: number): string =>
+  Math.round(kmh).toLocaleString("pt-BR");
+
 export const MapaPontosAB = ({
   pontoInicio,
   pontoFim,
@@ -51,13 +55,17 @@ export const MapaPontosAB = ({
   );
   const inspecionavel =
     trajeto.length >= 2 && velocidades.length === trajeto.length;
+  const escala = useMemo(
+    () => (inspecionavel ? escalaVelocidadeTracado(velocidades) : null),
+    [inspecionavel, velocidades],
+  );
   const [inspecao, setInspecao] = useState<{
     indice: number;
     velocidadeKmh: number;
   } | null>(null);
 
-  const marcadores = useMemo<MarcadorMapa[]>(
-    () => [
+  const marcadores = useMemo<MarcadorMapa[]>(() => {
+    const base: MarcadorMapa[] = [
       {
         lat: pontoInicio.lat,
         lng: pontoInicio.lng,
@@ -78,16 +86,27 @@ export const MapaPontosAB = ({
         nomeAcessivel: `Medalha ${medalha.nome}`,
         onToque: onTocarMedalha ? () => onTocarMedalha(indice) : undefined,
       })),
-    ],
-    [
-      medalhas,
-      onTocarMedalha,
-      pontoFim.lat,
-      pontoFim.lng,
-      pontoInicio.lat,
-      pontoInicio.lng,
-    ],
-  );
+    ];
+    if (inspecao && trajeto[inspecao.indice]) {
+      base.push({
+        lat: trajeto[inspecao.indice].lat,
+        lng: trajeto[inspecao.indice].lng,
+        cor: "#00daf3",
+        nomeAcessivel: `Velocidade ${formatarVelocidade(inspecao.velocidadeKmh)}`,
+        efemero: true,
+      });
+    }
+    return base;
+  }, [
+    inspecao,
+    medalhas,
+    onTocarMedalha,
+    pontoFim.lat,
+    pontoFim.lng,
+    pontoInicio.lat,
+    pontoInicio.lng,
+    trajeto,
+  ]);
 
   const hrefMaps = urlRotaMaps(
     {
@@ -125,7 +144,7 @@ export const MapaPontosAB = ({
         <span className={styles.mapaLabel}>
           <span className={styles.ping} aria-hidden />
           {inspecionavel
-            ? `Toque o caminho · ${formatarDistancia(distanciaKm)}`
+            ? `Toque para ver km/h · ${formatarDistancia(distanciaKm)}`
             : `Traçado GPS · ${formatarDistancia(distanciaKm)}`}
         </span>
         <a
@@ -143,16 +162,33 @@ export const MapaPontosAB = ({
           marcadores={marcadores}
           ligarMarcadores
           trajeto={trajeto}
+          trajetoCores={escala?.coresSegmentos}
           onTocarTrajeto={aoTocarTrajeto}
           aria-label={
             trajeto.length >= 2
               ? inspecionavel
-                ? "Mapa com o caminho percorrido; toque para ver a velocidade"
+                ? escala
+                  ? "Mapa com o caminho colorido por velocidade; toque para ver o km/h do ponto"
+                  : "Mapa com o caminho percorrido; toque para ver a velocidade"
                 : "Mapa com o caminho percorrido"
               : "Mapa com partida e destino"
           }
           className={styles.mapaImg}
         />
+        {escala ? (
+          <div
+            className={styles.legendaVelocidade}
+            aria-label={`Legenda de velocidade: de ${formatarVelocidade(escala.minKmh)} a ${formatarVelocidade(escala.maxKmh)}`}
+          >
+            <span className={styles.legendaAncora}>
+              {formatarAncoraLegenda(escala.minKmh)}
+            </span>
+            <span className={styles.legendaFaixa} aria-hidden />
+            <span className={styles.legendaAncora}>
+              {formatarAncoraLegenda(escala.maxKmh)} km/h
+            </span>
+          </div>
+        ) : null}
         {inspecao ? (
           <button
             type="button"
