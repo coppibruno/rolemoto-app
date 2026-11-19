@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import type { PontoGps } from "./calcular-metricas";
+import {
+  processarPontos,
+  type PontoGps,
+} from "./calcular-metricas";
+import { indiceVelocidadeMaxima } from "./escala-velocidade-tracado";
 import {
   MAX_PONTOS_TRACADO,
   codificarPolyline,
@@ -13,6 +17,8 @@ import {
 } from "./tracado";
 
 const t0 = Date.parse("2026-10-02T12:00:00.000Z");
+const graus = (metros: number) =>
+  metros / 1000 / ((2 * Math.PI * 6371) / 360);
 
 /** ~11 m por passo em latitude a cada 2 s (~20 km/h). */
 const reta = (n: number, inicio = 0): PontoGps[] =>
@@ -23,6 +29,22 @@ const reta = (n: number, inicio = 0): PontoGps[] =>
     speed: 5.5,
     accuracy: 8,
   }));
+
+/** Reta: posição implica ~kmhHaversine; chip reporta kmhChip. */
+const retaComChip = (
+  n: number,
+  kmhHav: number,
+  kmhChip: number,
+): PontoGps[] => {
+  const metrosPorFix = (kmhHav / 3.6) * 2;
+  return Array.from({ length: n }, (_, i) => ({
+    lat: graus(i * metrosPorFix),
+    lng: 0,
+    t: t0 + i * 2000,
+    speed: kmhChip / 3.6,
+    accuracy: 8,
+  }));
+};
 
 describe("codificarPolyline / decodificarPolyline", () => {
   it("bate com o exemplo da documentação do Google", () => {
@@ -89,6 +111,17 @@ describe("simplificarTracado", () => {
     expect(simples).toHaveLength(3);
     expect(simples[1]).toEqual(ida[19]);
   });
+
+  it("preserva índice forçado no meio de uma reta", () => {
+    const pontos = reta(50).map(({ lat, lng }, i) => ({
+      lat,
+      lng,
+      velocidadeKmh: i === 25 ? 200 : 40,
+    }));
+    const simples = simplificarTracado(pontos, 8, [25]);
+    expect(simples).toHaveLength(3);
+    expect(simples[1]).toEqual(pontos[25]);
+  });
 });
 
 describe("pontosDoTracado", () => {
@@ -150,6 +183,48 @@ describe("gerarTracado", () => {
     expect(velocidades).toHaveLength(pontos.length);
     expect(gerado.polyline.length).toBeLessThanOrEqual(20_000);
     expect(gerado.velocidades.length).toBeLessThanOrEqual(20_000);
+  });
+
+  it("alinha o pico do traçado à máxima da sessão quando o chip discorda da haversine", () => {
+    // Mesmo padrão do sintoma 207 vs ~149: chip fora da margem do trecho.
+    const pontos = retaComChip(16, 149, 207);
+    const metrica = processarPontos(pontos).velocidadeMaxKmh;
+    expect(metrica).toBeGreaterThan(180);
+
+    const gerado = gerarTracado(pontos);
+    const velocidades = decodificarVelocidades(gerado.velocidades);
+    const maxTracado = Math.max(...velocidades);
+    const picoArredondado = Math.round(metrica * 10) / 10;
+
+    expect(maxTracado).toBeCloseTo(picoArredondado, 1);
+    expect(velocidades[indiceVelocidadeMaxima(velocidades)]).toBeCloseTo(
+      picoArredondado,
+      1,
+    );
+  });
+
+  it("mantém o pico da máxima no meio de uma reta após o simplify", () => {
+    let acum = 0;
+    const pontos: PontoGps[] = Array.from({ length: 30 }, (_, i) => {
+      const kmh = i >= 12 && i <= 14 ? 120 : 80;
+      const metros = i === 0 ? 0 : (kmh / 3.6) * 2;
+      acum += metros;
+      return {
+        lat: graus(acum),
+        lng: 0,
+        t: t0 + i * 2000,
+        speed: kmh / 3.6,
+        accuracy: 5,
+      };
+    });
+    const metrica = processarPontos(pontos).velocidadeMaxKmh;
+    expect(metrica).toBeGreaterThan(100);
+
+    const gerado = gerarTracado(pontos);
+    const trajeto = decodificarPolyline(gerado.polyline);
+    const velocidades = decodificarVelocidades(gerado.velocidades);
+    expect(trajeto.length).toBeGreaterThanOrEqual(3);
+    expect(Math.max(...velocidades)).toBeCloseTo(Math.round(metrica * 10) / 10, 1);
   });
 });
 

@@ -29,11 +29,23 @@ export type TracadoGerado = {
   velocidades: string;
 };
 
-/** Pontos aceitos pelo mesmo filtro de saltos das métricas, em ordem de tempo. */
-export const pontosDoTracado = (pontos: PontoGps[]): PontoTracado[] => {
+type ColetaTracado = {
+  pontos: PontoTracado[];
+  /** Índice em `pontos` que elevou a máxima da sessão; −1 se nenhuma. */
+  indicePico: number;
+  velocidadeMaxKmh: number;
+};
+
+/**
+ * Pontos aceitos pelo mesmo filtro de saltos das métricas, em ordem de tempo.
+ * Guarda o índice em que a máxima confirmada (Doppler) subiu — pode divergir
+ * de `velocidadeAtualKmh` gravada no vértice.
+ */
+const coletarPontosDoTracado = (pontos: PontoGps[]): ColetaTracado => {
   const ordenados = descartarRedeComGps(pontos);
   const aceitos: PontoTracado[] = [];
   let estado = estadoCalculoInicial();
+  let indicePico = -1;
   for (const ponto of ordenados) {
     if (ponto.accuracy != null && ponto.accuracy > ACCURACY_TRACADO_M) continue;
     const proximo = aplicarPonto(estado, ponto);
@@ -43,11 +55,22 @@ export const pontosDoTracado = (pontos: PontoGps[]): PontoTracado[] => {
         lng: proximo.ultimo.lng,
         velocidadeKmh: proximo.velocidadeAtualKmh,
       });
+      if (proximo.velocidadeMaxKmh > estado.velocidadeMaxKmh) {
+        indicePico = aceitos.length - 1;
+      }
     }
     estado = proximo;
   }
-  return aceitos;
+  return {
+    pontos: aceitos,
+    indicePico,
+    velocidadeMaxKmh: estado.velocidadeMaxKmh,
+  };
 };
+
+/** Pontos aceitos pelo mesmo filtro de saltos das métricas, em ordem de tempo. */
+export const pontosDoTracado = (pontos: PontoGps[]): PontoTracado[] =>
+  coletarPontosDoTracado(pontos).pontos;
 
 const distanciaAoSegmento = (p: Xy, a: Xy, b: Xy): number => {
   const dx = b.x - a.x;
@@ -64,6 +87,8 @@ const distanciaAoSegmento = (p: Xy, a: Xy, b: Xy): number => {
 export const simplificarTracado = <T extends PontoLatLng>(
   pontos: T[],
   toleranciaM: number,
+  /** Índices que nunca saem (ex.: pico da velocidade máxima da sessão). */
+  indicesPreservar: readonly number[] = [],
 ): T[] => {
   const n = pontos.length;
   if (n <= 2) return pontos;
@@ -78,7 +103,21 @@ export const simplificarTracado = <T extends PontoLatLng>(
   const manter = new Uint8Array(n);
   manter[0] = 1;
   manter[n - 1] = 1;
-  const pilha: Array<[number, number]> = [[0, n - 1]];
+  const obrigatorios = [0];
+  for (const indice of indicesPreservar) {
+    if (indice > 0 && indice < n - 1) {
+      manter[indice] = 1;
+      obrigatorios.push(indice);
+    }
+  }
+  obrigatorios.push(n - 1);
+  obrigatorios.sort((a, b) => a - b);
+  const pilha: Array<[number, number]> = [];
+  for (let s = 0; s < obrigatorios.length - 1; s += 1) {
+    if (obrigatorios[s] !== obrigatorios[s + 1]) {
+      pilha.push([obrigatorios[s], obrigatorios[s + 1]]);
+    }
+  }
   while (pilha.length > 0) {
     const [i, j] = pilha.pop() as [number, number];
     let maior = 0;
@@ -193,15 +232,50 @@ export const decodificarVelocidades = (texto: string): number[] => {
 
 const TRACADO_VAZIO: TracadoGerado = { polyline: "", velocidades: "" };
 
+/**
+ * Alinha o pico do traçado à máxima da sessão (card).
+ * A métrica usa Doppler confirmado; o vértice guarda `velocidadeAtual` (haversine
+ * quando o chip discorda) — sem o pin, card e mapa divergem. Vértices com
+ * `atual` acima da máxima oficial (pico não confirmado) são limitados ao card.
+ */
+const comPicoDaMaxima = (
+  pontos: PontoTracado[],
+  indicePico: number,
+  velocidadeMaxKmh: number,
+): { pontos: PontoTracado[]; indicesPreservar: number[] } => {
+  if (pontos.length === 0 || velocidadeMaxKmh <= 0) {
+    return { pontos, indicesPreservar: [] };
+  }
+  const pico =
+    Math.round(velocidadeMaxKmh * PRECISAO_VELOCIDADE) / PRECISAO_VELOCIDADE;
+  let indice = indicePico;
+  if (indice < 0 || indice >= pontos.length) {
+    indice = 0;
+    for (let i = 1; i < pontos.length; i += 1) {
+      if (pontos[i].velocidadeKmh > pontos[indice].velocidadeKmh) indice = i;
+    }
+  }
+  const pontosComPico = pontos.map((p, i) => ({
+    ...p,
+    velocidadeKmh: i === indice ? pico : Math.min(p.velocidadeKmh, pico),
+  }));
+  return { pontos: pontosComPico, indicesPreservar: [indice] };
+};
+
 /** Traçado + velocidades prontos para o POST; vazio se não houver caminho. */
 export const gerarTracado = (pontos: PontoGps[]): TracadoGerado => {
-  const aceitos = pontosDoTracado(pontos);
-  if (aceitos.length < 2) return TRACADO_VAZIO;
+  const coleta = coletarPontosDoTracado(pontos);
+  if (coleta.pontos.length < 2) return TRACADO_VAZIO;
+  const { pontos: aceitos, indicesPreservar } = comPicoDaMaxima(
+    coleta.pontos,
+    coleta.indicePico,
+    coleta.velocidadeMaxKmh,
+  );
   let tolerancia = TOLERANCIA_INICIAL_M;
-  let simplificado = simplificarTracado(aceitos, tolerancia);
+  let simplificado = simplificarTracado(aceitos, tolerancia, indicesPreservar);
   while (simplificado.length > MAX_PONTOS_TRACADO) {
     tolerancia *= 2;
-    simplificado = simplificarTracado(aceitos, tolerancia);
+    simplificado = simplificarTracado(aceitos, tolerancia, indicesPreservar);
   }
   return {
     polyline: codificarPolyline(simplificado),
