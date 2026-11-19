@@ -7,9 +7,11 @@ type Props = {
   totalCurtidas: number;
   totalComentarios: number | null;
   podeComentar: boolean;
+  podeCompartilhar: boolean;
   cta: CtaAtividade | null;
   onCurtir: () => void;
   onComentar: () => void;
+  onCompartilhar: () => void;
 };
 
 export const BarraAcoesAtividade = ({
@@ -17,9 +19,11 @@ export const BarraAcoesAtividade = ({
   totalCurtidas,
   totalComentarios,
   podeComentar,
+  podeCompartilhar,
   cta,
   onCurtir,
   onComentar,
+  onCompartilhar,
 }: Props) => (
   <>
     <div className={styles.barraAcoes}>
@@ -46,6 +50,21 @@ export const BarraAcoesAtividade = ({
             chat_bubble
           </span>
           {totalComentarios && totalComentarios > 0 ? totalComentarios : null}
+        </button>
+      ) : null}
+      {podeCompartilhar ? (
+        <button
+          type="button"
+          className={styles.acao}
+          aria-label="Compartilhar"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCompartilhar();
+          }}
+        >
+          <span className="material-symbols-outlined" aria-hidden>
+            send
+          </span>
         </button>
       ) : null}
       {cta ? (

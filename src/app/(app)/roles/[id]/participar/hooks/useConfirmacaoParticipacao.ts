@@ -109,7 +109,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
   }, [admin, loading, roleId, uid, router]);
 
   const voltarAoFeed = useCallback(() => {
-    router.push("/");
+    router.push("/explorar");
   }, [router]);
 
   const cancelarPedido = useCallback(async () => {
@@ -123,7 +123,7 @@ export const useConfirmacaoParticipacao = (roleId: string) => {
     setErroAcao(null);
     try {
       await participacaoService.cancelar(roleId);
-      router.push("/");
+      router.push("/explorar");
     } catch (erro) {
       console.error(erro);
       setErroAcao(ERRO_CANCELAR);

@@ -23,14 +23,28 @@
   outline-offset: -2px;
 }
 
-.foto {
+.abrirFoto {
   display: block;
   flex: 0 0 100%;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
   scroll-snap-align: center;
   scroll-snap-stop: always;
+}
+
+.abrirFoto:focus-visible {
+  outline: 2px solid var(--primary-container);
+  outline-offset: -2px;
+}
+
+.foto {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
 }
 
 .contador {

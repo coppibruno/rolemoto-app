@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { MapaEstatico } from "@/components/maps/MapaEstatico";
 import {
   formatarDistancia,
@@ -11,15 +12,15 @@ import { decodificarPolyline } from "@/lib/telemetria/tracado";
 import type { AlvoTelemetria } from "@/types/atividade";
 import styles from "../inicio.module.css";
 
-type Props = { alvo: AlvoTelemetria };
+type Props = { alvo: AlvoTelemetria; href: string };
 
-export const CorpoTelemetria = ({ alvo }: Props) => {
+export const CorpoTelemetria = ({ alvo, href }: Props) => {
   const trajeto = useMemo(() => decodificarPolyline(alvo.tracadoResumo || ""), [alvo.tracadoResumo]);
   const inicio = trajeto[0];
   const fim = trajeto.length > 1 ? trajeto[trajeto.length - 1] : inicio;
 
   return (
-    <>
+    <Link href={href} className={styles.linkCorpo} aria-label={`Ver traçado de ${alvo.titulo}`}>
       <div className={styles.mapa}>
         {inicio && fim ? (
           <MapaEstatico
@@ -63,6 +64,6 @@ export const CorpoTelemetria = ({ alvo }: Props) => {
           ))}
         </div>
       ) : null}
-    </>
+    </Link>
   );
 };

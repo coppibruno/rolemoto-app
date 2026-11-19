@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { CampoComentario } from "@/components/comentarios/CampoComentario";
 import { ItemComentario } from "@/components/comentarios/ItemComentario";
 import type { ItemAtividade } from "@/types/atividade";
@@ -16,9 +17,14 @@ type Props = {
 
 export const FolhaComentarios = ({ item, onFechar, onTotalMudou }: Props) => {
   useCamadaCheia(true);
+  const [montado, setMontado] = useState(false);
   const comentarios = useComentariosAtividade(item.id, (delta) =>
     onTotalMudou(item.id, delta),
   );
+
+  useEffect(() => {
+    setMontado(true);
+  }, []);
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
@@ -33,7 +39,9 @@ export const FolhaComentarios = ({ item, onFechar, onTotalMudou }: Props) => {
     };
   }, [onFechar]);
 
-  return (
+  if (!montado) return null;
+
+  return createPortal(
     <>
       <button
         type="button"
@@ -85,6 +93,7 @@ export const FolhaComentarios = ({ item, onFechar, onTotalMudou }: Props) => {
           autoFoco={comentarios.itens.length === 0 && !comentarios.carregando}
         />
       </div>
-    </>
+    </>,
+    document.body,
   );
 };

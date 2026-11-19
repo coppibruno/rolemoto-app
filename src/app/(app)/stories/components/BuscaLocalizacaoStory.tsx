@@ -8,8 +8,11 @@ type Props = {
   onTermo: (valor: string) => void;
   lugarEncontro: PontoMencao | null;
   lista: MencaoOpcao[];
+  listaGeo: PontoMencao[];
+  buscandoGeo?: boolean;
   semResultado: boolean;
   onEscolher: (ponto: PontoMencao) => void;
+  onEscolherGeo: (ponto: PontoMencao) => void;
   onUsarTextoLivre?: (nome: string) => void;
   ocupadoLivre?: boolean;
 };
@@ -19,20 +22,23 @@ export const BuscaLocalizacaoStory = ({
   onTermo,
   lugarEncontro,
   lista,
+  listaGeo,
+  buscandoGeo = false,
   semResultado,
   onEscolher,
+  onEscolherGeo,
   onUsarTextoLivre,
   ocupadoLivre = false,
 }: Props) => {
   const nomeLivre = termo.trim().slice(0, 80);
-  const mostrarLivre = Boolean(onUsarTextoLivre && nomeLivre.length > 0);
+  const mostrarLivre = Boolean(onUsarTextoLivre && nomeLivre.length >= 3);
 
   return (
     <div className={styles.busca}>
       <input
         className={styles.campo}
         value={termo}
-        placeholder="Local (ex.: Urubici, Serra do Corvo Branco)"
+        placeholder="Buscar lugar (ex.: Urubici, Serra do Corvo Branco)"
         onChange={(evento) => onTermo(evento.target.value)}
         autoFocus
       />
@@ -45,7 +51,7 @@ export const BuscaLocalizacaoStory = ({
               disabled={ocupadoLivre}
               onClick={() => onUsarTextoLivre?.(nomeLivre)}
             >
-              {ocupadoLivre ? "Obtendo GPS…" : `Usar «${nomeLivre}»`}
+              {ocupadoLivre ? "Buscando…" : `Usar «${nomeLivre}»`}
             </button>
           </li>
         ) : null}
@@ -56,20 +62,28 @@ export const BuscaLocalizacaoStory = ({
             </button>
           </li>
         ) : null}
+        {listaGeo.map((ponto) => (
+          <li key={`geo-${ponto.lat}-${ponto.lng}-${ponto.nome}`}>
+            <button type="button" className={styles.item} onClick={() => onEscolherGeo(ponto)}>
+              {ponto.nome}
+            </button>
+          </li>
+        ))}
         {lista.map((item) => {
           const ponto = item.ponto;
           if (!ponto) return null;
           return (
             <li key={item.id}>
               <button type="button" className={styles.item} onClick={() => onEscolher(ponto)}>
-                {item.nome}
+                No Rolemoto · {item.nome}
               </button>
             </li>
           );
         })}
       </ul>
-      {semResultado && !mostrarLivre ? (
-        <p className={styles.vazioBusca}>Nenhum local com esse nome</p>
+      {buscandoGeo ? <p className={styles.vazioBusca}>Buscando lugares…</p> : null}
+      {semResultado && !mostrarLivre && !buscandoGeo ? (
+        <p className={styles.vazioBusca}>Nenhum lugar com esse nome</p>
       ) : null}
     </div>
   );

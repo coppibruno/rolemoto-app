@@ -1078,6 +1078,7 @@
   align-items: flex-end;
   justify-content: center;
   background: rgba(0, 0, 0, 0.55);
+  pointer-events: auto;
 }
 
 .sheet {
@@ -1088,6 +1089,7 @@
   background: var(--surface-container-high);
   border: 1px solid rgba(255, 107, 0, 0.22);
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
 }
 
 .sheetCabecalho {

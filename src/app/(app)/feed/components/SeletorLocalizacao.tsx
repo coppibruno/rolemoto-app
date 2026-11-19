@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useBuscaEndereco } from "../hooks/useBuscaEndereco";
 import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useFocoModal } from "@/hooks/useFocoModal";
@@ -13,10 +15,17 @@ type Props = {
 
 export const SeletorLocalizacao = ({ onFechar, onUsarGps, onEscolher }: Props) => {
   useCamadaCheia(true);
+  const [montado, setMontado] = useState(false);
   const sheetRef = useFocoModal(onFechar);
   const { texto, setTexto, sugestoes, buscando } = useBuscaEndereco();
 
-  return (
+  useEffect(() => {
+    setMontado(true);
+  }, []);
+
+  if (!montado) return null;
+
+  return createPortal(
     <div className={styles.overlay} onClick={onFechar}>
       <div
         ref={sheetRef}
@@ -81,6 +90,7 @@ export const SeletorLocalizacao = ({ onFechar, onUsarGps, onEscolher }: Props) =
           <p className={styles.sugestaoVazia}>Nenhum endereço encontrado</p>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

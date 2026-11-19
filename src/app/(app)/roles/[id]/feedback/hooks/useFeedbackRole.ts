@@ -107,7 +107,7 @@ export const useFeedbackRole = (roleId: string) => {
   const recarregar = useCallback(() => setTicket((n) => n + 1), []);
 
   const voltarAoFeed = useCallback(() => {
-    router.push("/");
+    router.push("/explorar");
   }, [router]);
 
   const pular = useCallback(() => {

@@ -42,6 +42,20 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
+.menuPortal {
+  position: fixed;
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  min-width: 196px;
+  padding: 6px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-high);
+  border: 1px solid color-mix(in srgb, var(--outline) 35%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+}
+
 .itemMenu {
   display: flex;
   align-items: center;

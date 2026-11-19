@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { geocodeService, type SugestaoEndereco } from "@/lib/geocode";
 import type { StoryPublica } from "@/types/story-local";
 import {
   POSICAO_LOCAL_PADRAO,
@@ -16,6 +17,8 @@ import {
   type MencaoOpcao,
   type PontoMencao,
 } from "./usePublicarStoryPerfil";
+
+const DEBOUNCE_GEO_MS = 400;
 
 type Params = {
   arquivo: File;
@@ -35,7 +38,9 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
   const [buscaLocal, setBuscaLocal] = useState(false);
   const [termo, setTermo] = useState("");
   const [termoLocal, setTermoLocal] = useState("");
-  const [obtendoGpsLocal, setObtendoGpsLocal] = useState(false);
+  const [sugestoesGeo, setSugestoesGeo] = useState<SugestaoEndereco[]>([]);
+  const [buscandoGeo, setBuscandoGeo] = useState(false);
+  const [resolvendoLivre, setResolvendoLivre] = useState(false);
   const [erroLocal, setErroLocal] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -60,6 +65,24 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     setPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [arquivo]);
+
+  useEffect(() => {
+    if (!buscaLocal || termoLocal.trim().length < 3) {
+      setSugestoesGeo([]);
+      setBuscandoGeo(false);
+      return;
+    }
+    const id = window.setTimeout(async () => {
+      setBuscandoGeo(true);
+      const itens = await geocodeService.buscar(termoLocal, {
+        estiloLabel: "curto",
+        restritoSul: false,
+      });
+      setSugestoesGeo(itens);
+      setBuscandoGeo(false);
+    }, DEBOUNCE_GEO_MS);
+    return () => window.clearTimeout(id);
+  }, [buscaLocal, termoLocal]);
 
   const consulta = termo.trim().toLocaleLowerCase();
   const pertoVisivel = Boolean(
@@ -114,37 +137,34 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     setTermoLocal("");
   };
 
+  const escolherSugestaoGeo = (ponto: PontoMencao) => {
+    escolherLocalizacao(ponto);
+  };
+
   const escolherLocalizacaoLivre = async (nome: string) => {
     const limpo = nome.trim().slice(0, 80);
-    if (!limpo || enviando || obtendoGpsLocal) return;
+    if (!limpo || enviando || resolvendoLivre) return;
     setErroLocal(null);
-    setObtendoGpsLocal(true);
+    setResolvendoLivre(true);
     try {
-      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(Object.assign(new Error("gps"), { code: 2 }));
-          return;
-        }
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 15000,
-        });
+      const itens = await geocodeService.buscar(limpo, {
+        estiloLabel: "curto",
+        restritoSul: false,
       });
-      escolherLocalizacao({
-        nome: limpo,
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-      });
-    } catch (e) {
-      const code = (e as GeolocationPositionError).code;
-      if (code === 1) {
-        setErroLocal("Precisamos da localização na hora para marcar esse lugar.");
-      } else {
-        setErroLocal("GPS impreciso. Tente ao ar livre.");
+      const primeiro = itens[0];
+      if (!primeiro) {
+        setErroLocal("Não achamos esse lugar. Tente outro nome.");
+        return;
       }
+      escolherLocalizacao({
+        nome: (primeiro.label || limpo).slice(0, 80),
+        lat: primeiro.lat,
+        lng: primeiro.lng,
+      });
+    } catch {
+      setErroLocal("Não foi possível buscar o lugar. Tente de novo.");
     } finally {
-      setObtendoGpsLocal(false);
+      setResolvendoLivre(false);
     }
   };
 
@@ -216,8 +236,17 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
   const listaLocal = useMemo(
     () => locais
       .filter((item) => !consultaLocal || item.nome.toLocaleLowerCase().includes(consultaLocal))
-      .slice(0, 8),
+      .slice(0, 4),
     [consultaLocal, locais],
+  );
+  const listaGeo: PontoMencao[] = useMemo(
+    () =>
+      sugestoesGeo.map((item) => ({
+        nome: item.label.slice(0, 80),
+        lat: item.lat,
+        lng: item.lng,
+      })),
+    [sugestoesGeo],
   );
   const lugarEncontro = useMemo(() => {
     if (escolhida?.tipo !== "evento") return null;
@@ -259,6 +288,7 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     setTermoLocal,
     lista,
     listaLocal,
+    listaGeo,
     lugarEncontro: lugarVisivel,
     perto: pertoVisivel ? perto : null,
     escolher,
@@ -267,8 +297,10 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     abrirBusca,
     abrirLocalizacao,
     escolherLocalizacao,
+    escolherSugestaoGeo,
     escolherLocalizacaoLivre,
-    obtendoGpsLocal,
+    buscandoGeo,
+    resolvendoLivre,
     tirarMarca,
     tirarLocalizacao,
     aoSegurar,
@@ -278,6 +310,12 @@ export const useComposerStory = ({ arquivo, marcaInicial, onPublicada }: Params)
     enviando,
     erro: erroLocal ?? erro,
     semResultado: buscaAberta && !pertoVisivel && lista.length === 0 && termo.trim().length > 0,
-    semLocal: buscaLocal && listaLocal.length === 0 && termoLocal.trim().length > 0 && !lugarVisivel,
+    semLocal:
+      buscaLocal &&
+      !buscandoGeo &&
+      listaGeo.length === 0 &&
+      listaLocal.length === 0 &&
+      termoLocal.trim().length > 0 &&
+      !lugarVisivel,
   };
 };
