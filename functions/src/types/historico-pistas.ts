@@ -19,6 +19,11 @@ export type ItemHistoricoRole = {
   status: StatusItemHistorico;
   /** Só tem efeito para o criador, que fixa e desfixa no histórico. */
   fixado: boolean;
+  fotoCapaUrl: string;
+  localSaidaNome: string;
+  localSaidaEndereco: string;
+  destinoFinalNome: string;
+  destinoFinalEndereco: string;
 };
 
 export type ItemHistoricoEvento = {

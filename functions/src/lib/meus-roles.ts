@@ -110,21 +110,35 @@ export const montarTelemetria = (
   rolesFeitos: number,
   eventosParticipados: number,
   locaisFavoritos: number,
+  gravados: number,
 ): TelemetriaMeusRoles => ({
   rolesFeitos,
   eventosParticipados,
   locaisFavoritos,
+  gravados,
 });
 
 export const montarContagensTipo = (
   contagens: ContagensMeusRoles,
   eventosParticipados: number,
   locaisFavoritos: number,
+  gravados: number,
 ): ContagensTipoGaragem => ({
   roles: contagens.confirmados + contagens.aguardando + contagens.concluidos,
   eventos: eventosParticipados,
   locais: locaisFavoritos,
+  gravados,
 });
+
+/** Soft-hide do histórico: some da lista só quando já passou (concluído). */
+export const filtrarRolesOcultosGaragem = (
+  itens: ItemClassificado[],
+  rolesOcultos: Set<string>,
+): ItemClassificado[] =>
+  itens.filter(
+    (item) =>
+      !(item.status === "concluido" && rolesOcultos.has(item.role.id)),
+  );
 
 export const montarContagens = (
   itens: ItemClassificado[],
@@ -205,6 +219,8 @@ export const paraMeuRoleItem = (
     dataHoraSaida: role.dataHoraSaida,
     localSaidaEndereco: role.localSaida.endereco,
     localSaidaNome: role.localSaida.nome ?? "",
+    destinoFinalEndereco: role.destinoFinal.endereco,
+    destinoFinalNome: role.destinoFinal.nome ?? "",
     distanciaRotaKm: distanciaViagemKm(role),
     pontosHash: hashPontosViagem(
       cadeiaViagem(role.localSaida, role.paradas, role.destinoFinal),

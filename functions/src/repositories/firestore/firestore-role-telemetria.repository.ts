@@ -25,6 +25,11 @@ const toPonto = (valor: unknown): PontoTelemetria => {
   };
 };
 
+const toFotos = (valor: unknown): string[] =>
+  Array.isArray(valor) ?
+    valor.filter((item): item is string => typeof item === "string" && item.length > 0) :
+    [];
+
 /** Sem o traçado: listas não precisam dos KB do polyline por item. */
 const toResumo = (snap: DocumentSnapshot): RoleTelemetria => {
   const data = snap.data() ?? {};
@@ -42,6 +47,7 @@ const toResumo = (snap: DocumentSnapshot): RoleTelemetria => {
     pontoInicio: toPonto(data.pontoInicio),
     pontoFim: toPonto(data.pontoFim),
     publica: data.publica === undefined ? true : Boolean(data.publica),
+    fotosUrls: toFotos(data.fotosUrls),
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt),
   };
@@ -68,11 +74,6 @@ const toMedalha = (valor: unknown): MedalhaTelemetria | null => {
 const toMedalhas = (valor: unknown): MedalhaTelemetria[] =>
   Array.isArray(valor) ?
     valor.map(toMedalha).filter((m): m is MedalhaTelemetria => m !== null) :
-    [];
-
-const toFotos = (valor: unknown): string[] =>
-  Array.isArray(valor) ?
-    valor.filter((item): item is string => typeof item === "string" && item.length > 0) :
     [];
 
 const toDoc = (snap: DocumentSnapshot): RoleTelemetria => ({
@@ -133,6 +134,15 @@ implements RoleTelemetriaRepository {
       .limit(limite)
       .get();
     return snap.docs.map(toResumo);
+  }
+
+  async contarPorUsuario(usuarioId: string): Promise<number> {
+    const snap = await firestore
+      .collection(COLECAO)
+      .where("usuarioId", "==", usuarioId)
+      .count()
+      .get();
+    return snap.data().count;
   }
 
   async atualizar(

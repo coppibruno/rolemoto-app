@@ -6,7 +6,7 @@ export type StatusMeuRole = "pendente" | "confirmado" | "lider" | "concluido" | 
 
 export type AbaMeusRoles = "proximos" | "confirmados" | "aguardando" | "concluidos" | "recusados";
 
-export type AbaTipoGaragem = "roles" | "eventos" | "locais";
+export type AbaTipoGaragem = "roles" | "eventos" | "locais" | "gravados";
 
 export type PillAvaliacaoGaragem = "todos" | "aguardando_avaliacao" | "avaliados";
 
@@ -39,6 +39,8 @@ export type MeuRoleItem = {
   dataHoraSaida: string;
   localSaidaEndereco: string;
   localSaidaNome: string;
+  destinoFinalEndereco: string;
+  destinoFinalNome: string;
   distanciaRotaKm: number;
   /** Hash da saída, paradas e destino — compara com o pacote no celular. */
   pontosHash: string;
@@ -57,12 +59,14 @@ export type TelemetriaMeusRoles = {
   rolesFeitos: number;
   eventosParticipados: number;
   locaisFavoritos: number;
+  gravados: number;
 };
 
 export type ContagensTipoGaragem = {
   roles: number;
   eventos: number;
   locais: number;
+  gravados: number;
 };
 
 export type ContagensMeusRoles = {

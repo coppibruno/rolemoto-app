@@ -44,10 +44,17 @@ export const montarItensEventosGaragem = (
   eventos: Evento[],
   feedbacksPorEventoId: Map<string, UsuarioEventoFeedbackDoc>,
   inscritosPorEventoId: Map<string, number>,
+  eventosOcultos: Set<string> = new Set(),
 ): MeusEventosGaragemPayload => {
-  const itens: MeuEventoGaragemItem[] = eventos.map((evento) => {
+  const itens: MeuEventoGaragemItem[] = [];
+  for (const evento of eventos) {
+    const status = statusDoEvento(evento);
+    const passado = status === "concluido" || status === "cancelado";
+    if (passado && eventosOcultos.has(evento.id)) {
+      continue;
+    }
     const feedback = feedbacksPorEventoId.get(evento.id) ?? null;
-    return {
+    itens.push({
       eventoId: evento.id,
       titulo: evento.titulo,
       tipo: evento.tipo,
@@ -56,7 +63,7 @@ export const montarItensEventosGaragem = (
       dataHoraEncerramento: evento.dataHoraEncerramento,
       localNome: evento.local.nome ?? "",
       localEndereco: evento.local.endereco,
-      status: statusDoEvento(evento),
+      status,
       inscritosTotal: inscritosPorEventoId.get(evento.id) ?? 0,
       avaliado: feedback !== null,
       minhaAvaliacao: feedback ?
@@ -69,8 +76,8 @@ export const montarItensEventosGaragem = (
       notaMedia: evento.notaMedia,
       totalAvaliacoes: evento.totalAvaliacoes,
       temAlbum: evento.albuns.length > 0,
-    };
-  });
+    });
+  }
 
   return {
     itens: ordenarEventosGaragem(itens).slice(0, TETO_MEUS_EVENTOS_GARAGEM),

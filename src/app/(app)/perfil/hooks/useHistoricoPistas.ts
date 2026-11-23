@@ -25,6 +25,8 @@ const filtrarPorTipo = (
   return itens;
 };
 
+const pontoVazio = { lat: 0, lng: 0, nome: "", endereco: "" };
+
 const paraCard = (doc: {
   id: string;
   titulo: string;
@@ -32,6 +34,9 @@ const paraCard = (doc: {
   tempoSegundos: number;
   encerradoEm: string;
   publica?: boolean;
+  fotosUrls?: string[];
+  pontoInicio?: { lat: number; lng: number; nome: string; endereco: string };
+  pontoFim?: { lat: number; lng: number; nome: string; endereco: string };
 }): ItemHistoricoTelemetria => ({
   id: doc.id,
   tipo: "telemetria",
@@ -40,6 +45,9 @@ const paraCard = (doc: {
   tempoSegundos: doc.tempoSegundos,
   encerradoEm: doc.encerradoEm,
   publica: doc.publica !== false,
+  fotoUrl: doc.fotosUrls?.[0] ?? "",
+  pontoInicio: doc.pontoInicio ?? pontoVazio,
+  pontoFim: doc.pontoFim ?? pontoVazio,
 });
 
 export const useHistoricoPistas = () => {

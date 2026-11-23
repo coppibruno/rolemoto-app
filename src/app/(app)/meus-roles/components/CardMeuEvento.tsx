@@ -2,18 +2,22 @@ import Link from "next/link";
 import type { MeuEventoGaragemItem } from "@/types/meus-roles";
 import { BlocoCtaAvaliar } from "./BlocoCtaAvaliar";
 import { BlocoPreviewAvaliacao } from "./BlocoPreviewAvaliacao";
+import { BotaoRemoverDaLista } from "./BotaoRemoverDaLista";
 import {
   formatarAvaliadoRelativo,
   formatarDataEventoCapa,
 } from "../formatar-meus-roles";
 import { hrefAlbumEvento, hrefAvaliarEvento, hrefDetalheEvento } from "../constants";
+import type { AlvoArquivoGaragem } from "../hooks/useArquivoGaragem";
 import styles from "../meus-roles.module.css";
 
 type Props = {
   item: MeuEventoGaragemItem;
+  ocupadoRemover?: boolean;
+  onRemover?: (alvo: AlvoArquivoGaragem) => void;
 };
 
-export const CardMeuEvento = ({ item }: Props) => {
+export const CardMeuEvento = ({ item, ocupadoRemover, onRemover }: Props) => {
   const enderecoCurto =
     item.localNome.trim() ||
     item.localEndereco.split(",")[0]?.trim() ||
@@ -101,6 +105,17 @@ export const CardMeuEvento = ({ item }: Props) => {
           quando={formatarAvaliadoRelativo(item.minhaAvaliacao.createdAt)}
           hrefVerRelato={hrefAvaliarEvento(item.eventoId)}
         />
+      ) : null}
+
+      {onRemover &&
+      (item.status === "concluido" || item.status === "cancelado") ? (
+        <div className={styles.cardAcoesArquivo}>
+          <BotaoRemoverDaLista
+            alvo={{ tipo: "evento", id: item.eventoId, titulo: item.titulo }}
+            ocupado={Boolean(ocupadoRemover)}
+            onRemover={onRemover}
+          />
+        </div>
       ) : null}
     </article>
   );

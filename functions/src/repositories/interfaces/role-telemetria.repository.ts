@@ -12,6 +12,7 @@ export interface RoleTelemetriaRepository {
     usuarioId: string,
     opcoes?: {limite?: number},
   ): Promise<RoleTelemetria[]>;
+  contarPorUsuario(usuarioId: string): Promise<number>;
   atualizar(id: string, dados: RoleTelemetriaPatch): Promise<RoleTelemetria | null>;
   /** Grava a lista inteira; `criar` já deixa `[]`. */
   atualizarMedalhas(id: string, medalhas: MedalhaTelemetria[]): Promise<void>;

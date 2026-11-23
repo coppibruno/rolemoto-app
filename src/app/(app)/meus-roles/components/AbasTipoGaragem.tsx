@@ -36,7 +36,7 @@ export const AbasTipoGaragem = ({ aba, contagens, onSelecionar }: Props) => {
     >
       {ABAS_TIPO_GARAGEM.map((item) => {
         const selecionada = aba === item.id;
-        const n = contagens[item.id];
+        const n = contagens[item.id] ?? 0;
         return (
           <button
             key={item.id}

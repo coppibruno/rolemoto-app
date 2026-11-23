@@ -31,6 +31,8 @@ export type MeuRoleItem = {
   dataHoraSaida: string;
   localSaidaEndereco: string;
   localSaidaNome: string;
+  destinoFinalEndereco: string;
+  destinoFinalNome: string;
   distanciaRotaKm: number;
   /** Compara com o `meta.json` do pacote no celular, sem mandar o array. */
   pontosHash: string;
@@ -49,12 +51,14 @@ export type TelemetriaMeusRoles = {
   rolesFeitos: number;
   eventosParticipados: number;
   locaisFavoritos: number;
+  gravados: number;
 };
 
 export type ContagensTipoGaragem = {
   roles: number;
   eventos: number;
   locais: number;
+  gravados: number;
 };
 
 export type ContagensMeusRoles = {

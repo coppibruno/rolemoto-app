@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useEstadoRetorno } from "@/hooks/useEstadoRetorno";
 import type {
   AbaMeusRoles,
@@ -20,22 +20,32 @@ import { useCancelarRole } from "../hooks/useCancelarRole";
 import { useAbaTipoGaragem } from "../hooks/useAbaTipoGaragem";
 import { useMeusEventosGaragem } from "../hooks/useMeusEventosGaragem";
 import { useMeusLocaisGaragem } from "../hooks/useMeusLocaisGaragem";
+import { useMeusGravadosGaragem } from "../hooks/useMeusGravadosGaragem";
 import { useFiltroAvaliacaoGaragem } from "../hooks/useFiltroAvaliacaoGaragem";
+import {
+  useArquivoGaragem,
+  type AlvoArquivoGaragem,
+} from "../hooks/useArquivoGaragem";
 import { AbasMeusRoles } from "./AbasMeusRoles";
 import { AbasTipoGaragem } from "./AbasTipoGaragem";
 import { CabecalhoFeed } from "@/app/(app)/feed/components/CabecalhoFeed";
 import { EstadoCarregandoMeusRoles } from "./EstadoCarregandoMeusRoles";
 import { EstadoErroMeusRoles } from "./EstadoErroMeusRoles";
 import { EstadoVazioGaragem } from "./EstadoVazioGaragem";
+import { EstadoVazioGravados } from "./EstadoVazioGravados";
 import { EstadoVazioMeusRoles } from "./EstadoVazioMeusRoles";
 import { IntroGaragem } from "./IntroGaragem";
 import { ListaMeusEventos } from "./ListaMeusEventos";
+import { ListaMeusGravados } from "./ListaMeusGravados";
 import { ListaMeusLocais } from "./ListaMeusLocais";
 import { ListaMeusRoles } from "./ListaMeusRoles";
 import { PillsAvaliacaoGaragem } from "./PillsAvaliacaoGaragem";
 import { PillsRecorteLocais } from "./PillsRecorteLocais";
 import { SheetFiltrosMeusRoles } from "./SheetFiltrosMeusRoles";
-import { TelemetriaGaragem } from "./TelemetriaGaragem";
+import {
+  TelemetriaGaragem,
+  type DestinoStripGaragem,
+} from "./TelemetriaGaragem";
 import { ToastMeusRoles } from "./ToastMeusRoles";
 import styles from "../meus-roles.module.css";
 
@@ -43,6 +53,7 @@ const TELEMETRIA_ZERO: TelemetriaMeusRoles = {
   rolesFeitos: 0,
   eventosParticipados: 0,
   locaisFavoritos: 0,
+  gravados: 0,
 };
 
 const CONTAGENS_ZERO: ContagensMeusRoles = {
@@ -56,6 +67,7 @@ const CONTAGENS_TIPO_ZERO: ContagensTipoGaragem = {
   roles: 0,
   eventos: 0,
   locais: 0,
+  gravados: 0,
 };
 
 type EstadoGaragem = {
@@ -74,7 +86,9 @@ const umDe = <T extends string>(valor: unknown, opcoes: readonly T[]): valor is 
 const lerEstadoGaragem = (valor: unknown): EstadoGaragem | null => {
   if (!valor || typeof valor !== "object") return null;
   const bruto = valor as Partial<EstadoGaragem>;
-  if (!umDe(bruto.abaTipo, ["roles", "eventos", "locais"] as const)) return null;
+  if (!umDe(bruto.abaTipo, ["roles", "eventos", "locais", "gravados"] as const)) {
+    return null;
+  }
   if (
     !umDe(bruto.aba, [
       "proximos",
@@ -119,8 +133,28 @@ export const TelaMeusRoles = () => {
     useState<RecorteLocaisGaragem>("favoritos");
   const eventos = useMeusEventosGaragem(abaTipo === "eventos");
   const locais = useMeusLocaisGaragem(abaTipo === "locais", recorteLocais);
+  const gravados = useMeusGravadosGaragem(abaTipo === "gravados");
   const filtroEventos = useFiltroAvaliacaoGaragem(eventos.itens, "eventos");
   const filtroLocais = useFiltroAvaliacaoGaragem(locais.itens, "locais");
+
+  const onArquivoRemovido = useCallback(
+    (alvo: AlvoArquivoGaragem) => {
+      if (alvo.tipo === "telemetria") {
+        gravados.removerLocal(alvo.id);
+        void recarregar();
+        return;
+      }
+      if (alvo.tipo === "evento") {
+        eventos.recarregar();
+        void recarregar();
+        return;
+      }
+      void recarregar();
+    },
+    [eventos, gravados, recarregar],
+  );
+
+  const arquivo = useArquivoGaragem({ onRemovido: onArquivoRemovido });
 
   useEstadoRetorno(
     "garagem",
@@ -150,6 +184,7 @@ export const TelaMeusRoles = () => {
 
   const processandoId = acao.processandoId ?? cancelarRole.processandoId;
   const erroAcao = acao.erroAcao ?? cancelarRole.erro;
+  const toastArquivo = arquivo.feedback;
 
   const vazioRoles =
     abaTipo === "roles" &&
@@ -169,6 +204,29 @@ export const TelaMeusRoles = () => {
     !locais.erro &&
     filtroLocais.itensFiltrados.length === 0;
 
+  const vazioGravados =
+    abaTipo === "gravados" &&
+    !gravados.carregando &&
+    !gravados.erro &&
+    gravados.itens.length === 0;
+
+  const onStrip = (destino: DestinoStripGaragem) => {
+    if (destino === "rolesFeitos") {
+      setAbaTipo("roles");
+      filtros.selecionarAba("concluidos");
+      return;
+    }
+    if (destino === "eventos") {
+      setAbaTipo("eventos");
+      return;
+    }
+    if (destino === "gravados") {
+      setAbaTipo("gravados");
+      return;
+    }
+    setAbaTipo("locais");
+  };
+
   return (
     <div className={styles.tela}>
       <CabecalhoFeed />
@@ -179,7 +237,10 @@ export const TelaMeusRoles = () => {
           sheetAberto={filtros.sheetAberto}
           onTune={() => filtros.setSheetAberto(true)}
         />
-        <TelemetriaGaragem telemetria={payload?.telemetria ?? TELEMETRIA_ZERO} />
+        <TelemetriaGaragem
+          telemetria={payload?.telemetria ?? TELEMETRIA_ZERO}
+          onSelecionar={onStrip}
+        />
 
         <div className={styles.stickyTipo}>
           <AbasTipoGaragem
@@ -245,8 +306,10 @@ export const TelaMeusRoles = () => {
               <ListaMeusRoles
                 itens={filtros.itensVisiveis}
                 processandoId={processandoId}
+                ocupadoArquivoId={arquivo.ocupadoId}
                 onAcao={acao.executar}
                 onCancelarRole={cancelarRole.executar}
+                onRemover={(alvo) => void arquivo.executar(alvo)}
               />
             ) : null}
           </>
@@ -267,7 +330,11 @@ export const TelaMeusRoles = () => {
               />
             ) : null}
             {!eventos.erro && filtroEventos.itensFiltrados.length > 0 ? (
-              <ListaMeusEventos itens={filtroEventos.itensFiltrados} />
+              <ListaMeusEventos
+                itens={filtroEventos.itensFiltrados}
+                ocupadoArquivoId={arquivo.ocupadoId}
+                onRemover={(alvo) => void arquivo.executar(alvo)}
+              />
             ) : null}
           </>
         ) : null}
@@ -292,6 +359,25 @@ export const TelaMeusRoles = () => {
             ) : null}
           </>
         ) : null}
+
+        {abaTipo === "gravados" ? (
+          <>
+            {gravados.erro ? (
+              <EstadoErroMeusRoles onTentar={gravados.recarregar} />
+            ) : null}
+            {gravados.carregando && gravados.itens.length === 0 ? (
+              <EstadoCarregandoMeusRoles />
+            ) : null}
+            {vazioGravados ? <EstadoVazioGravados /> : null}
+            {!gravados.erro && gravados.itens.length > 0 ? (
+              <ListaMeusGravados
+                itens={gravados.itens}
+                ocupadoId={arquivo.ocupadoId}
+                onApagar={(alvo) => void arquivo.executar(alvo)}
+              />
+            ) : null}
+          </>
+        ) : null}
       </div>
 
       {filtros.sheetAberto ? (
@@ -305,10 +391,13 @@ export const TelaMeusRoles = () => {
         />
       ) : null}
       <ToastMeusRoles
-        visivel={cancelarRole.toast}
-        mensagem={cancelarRole.toastMensagem}
+        visivel={cancelarRole.toast || Boolean(toastArquivo)}
+        mensagem={toastArquivo ?? cancelarRole.toastMensagem}
         duracaoMs={cancelarRole.toastMs}
-        onFechar={cancelarRole.fecharToast}
+        onFechar={() => {
+          cancelarRole.fecharToast();
+          arquivo.limparFeedback();
+        }}
       />
     </div>
   );

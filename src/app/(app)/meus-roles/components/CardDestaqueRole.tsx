@@ -5,6 +5,7 @@ import { formatarHorarioSaida } from "@/app/(app)/feed/formatar-horario";
 import { hrefMeuRole, LABELS_RITMO, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
+import { BotaoFixarGaragem } from "./BotaoFixarGaragem";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -75,6 +76,13 @@ export const CardDestaqueRole = ({
           <Link href={destino} className={styles.ctaHero}>
             Acessar
           </Link>
+          {lider ? (
+            <BotaoFixarGaragem
+              roleId={item.roleId}
+              titulo={item.titulo}
+              fixado={item.fixado}
+            />
+          ) : null}
           <BotaoCompartilharRole dados={dadosConviteDe(item)} />
         </div>
         {item.papel === "participante" ? (

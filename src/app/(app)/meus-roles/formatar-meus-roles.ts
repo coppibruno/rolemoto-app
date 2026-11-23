@@ -87,3 +87,9 @@ export const tituloSaidaMeuRole = (item: MeuRoleItem): string =>
     nome: item.localSaidaNome ?? "",
     endereco: item.localSaidaEndereco,
   });
+
+export const tituloDestinoMeuRole = (item: MeuRoleItem): string =>
+  tituloLocal({
+    nome: item.destinoFinalNome ?? "",
+    endereco: item.destinoFinalEndereco,
+  });

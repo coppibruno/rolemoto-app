@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ItemHistoricoEvento, ItemHistoricoRole } from "@/types/historico-pistas";
 import type { ItemHistoricoTelemetria } from "@/types/role-telemetria";
+import { ThumbMapaArquivo } from "@/components/maps/ThumbMapaArquivo";
+import { tituloLocal } from "@/lib/localizacao";
 import { formatarDistancia, formatarDuracao } from "@/lib/telemetria/formatar-telemetria";
 import { formatarDataMeta } from "../../formatar-data-historico";
 import {
@@ -19,6 +21,15 @@ export const CardHistoricoPublicoRole = ({ item }: PropsRole) => {
   const eLider = item.status === "lider";
   const statusLabel = STATUS_CARD_PUBLICO[item.status];
   const papel = eLider ? PAPEL_CARD.lider : PAPEL_CARD.participante;
+  const saida = tituloLocal({
+    nome: item.localSaidaNome ?? "",
+    endereco: item.localSaidaEndereco ?? "",
+  });
+  const chegada = tituloLocal({
+    nome: item.destinoFinalNome ?? "",
+    endereco: item.destinoFinalEndereco ?? "",
+  });
+  const foto = (item.fotoCapaUrl ?? "").trim();
 
   return (
     <Link
@@ -27,10 +38,28 @@ export const CardHistoricoPublicoRole = ({ item }: PropsRole) => {
       aria-label={`Ver detalhes de ${item.titulo}`}
     >
       <div className={styles.cardHistoricoTopo}>
-        <div>
-          <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
-          <div className={styles.cardHistoricoData}>
-            {formatarDataMeta(item.dataHoraSaida)}
+        <div className={styles.cardHistoricoArquivo}>
+          <span className={styles.cardHistoricoThumb}>
+            {foto ? (
+              <img src={foto} alt="" />
+            ) : (
+              <span className="material-symbols-outlined" aria-hidden>
+                two_wheeler
+              </span>
+            )}
+          </span>
+          <div className={styles.cardHistoricoInfo}>
+            <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
+            <div className={styles.cardHistoricoData}>
+              {formatarDataMeta(item.dataHoraSaida)}
+            </div>
+            {saida || chegada ? (
+              <p className={styles.cardHistoricoRota}>
+                <span>{saida}</span>
+                <span aria-hidden> → </span>
+                <span>{chegada}</span>
+              </p>
+            ) : null}
           </div>
         </div>
         {statusLabel ? (
@@ -122,6 +151,13 @@ type PropsTelemetria = {
 };
 
 export const CardHistoricoPublicoTelemetria = ({ item }: PropsTelemetria) => {
+  const saida = tituloLocal(
+    item.pontoInicio ?? { nome: "", endereco: "" },
+  );
+  const chegada = tituloLocal(
+    item.pontoFim ?? { nome: "", endereco: "" },
+  );
+
   return (
     <Link
       href={`/telemetria/${item.id}`}
@@ -129,10 +165,27 @@ export const CardHistoricoPublicoTelemetria = ({ item }: PropsTelemetria) => {
       aria-label={`Abrir telemetria ${item.titulo}`}
     >
       <div className={styles.cardHistoricoTopo}>
-        <div>
-          <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
-          <div className={styles.cardHistoricoData}>
-            {formatarDataMeta(item.encerradoEm)}
+        <div className={styles.cardHistoricoArquivo}>
+          <ThumbMapaArquivo
+            fotoUrl={item.fotoUrl}
+            pontoA={item.pontoInicio}
+            pontoB={item.pontoFim}
+            iconeFallback="speed"
+            ariaLabel={`Mapa de ${item.titulo}`}
+            className={styles.cardHistoricoThumbMapa}
+          />
+          <div className={styles.cardHistoricoInfo}>
+            <div className={styles.cardHistoricoTitulo}>{item.titulo}</div>
+            <div className={styles.cardHistoricoData}>
+              {formatarDataMeta(item.encerradoEm)}
+            </div>
+            {saida || chegada ? (
+              <p className={styles.cardHistoricoRota}>
+                <span>{saida}</span>
+                <span aria-hidden> → </span>
+                <span>{chegada}</span>
+              </p>
+            ) : null}
           </div>
         </div>
         <span className={styles.badgeStatus}>GPS</span>

@@ -1,9 +1,12 @@
+import { Suspense } from "react";
 import { TelaMeusRoles } from "./components/TelaMeusRoles";
 
 const MeusRolesPage = () => {
   return (
     <main>
-      <TelaMeusRoles />
+      <Suspense>
+        <TelaMeusRoles />
+      </Suspense>
     </main>
   );
 };

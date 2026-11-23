@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CabecalhoTelemetria } from "@/components/telemetria/CabecalhoTelemetria";
@@ -7,6 +8,7 @@ import { DashboardTelemetria } from "@/components/telemetria/DashboardTelemetria
 import { FaixaFotosTelemetria } from "@/components/telemetria/FaixaFotosTelemetria";
 import { SeletorVisibilidade } from "@/components/telemetria/SeletorVisibilidade";
 import styles from "@/components/telemetria/telemetria.module.css";
+import { HREF_GRAVADOS } from "@/app/(app)/meus-roles/constants";
 import { BotaoCompartilharTelemetria } from "./BotaoCompartilharTelemetria";
 import { EditorFotosTelemetria } from "./EditorFotosTelemetria";
 import { FolhaMedalha } from "./FolhaMedalha";
@@ -113,6 +115,17 @@ export const TelaTelemetriaDetalhe = ({ id }: Props) => {
                 mostrarVelocidade={eDono}
                 onFechar={() => setMedalhaAberta(null)}
               />
+            ) : null}
+            {eDono ? (
+              <Link
+                href={HREF_GRAVADOS}
+                className={`${styles.ctaSecundario} ${styles.ctaNeutro}`}
+              >
+                <span className="material-symbols-outlined" aria-hidden>
+                  garage
+                </span>
+                Ver em Meus Rolês · Gravados
+              </Link>
             ) : null}
             {eDono ? (
               <SeletorVisibilidade

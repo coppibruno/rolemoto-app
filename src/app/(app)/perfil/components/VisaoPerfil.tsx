@@ -12,7 +12,6 @@ import { BotaoSair } from "./BotaoSair";
 import { CardCompletarPerfil } from "./CardCompletarPerfil";
 import { FaixaMeusPontos } from "./FaixaMeusPontos";
 import { GradeFotos } from "./GradeFotos";
-import { HistoricoPistas } from "./HistoricoPistas";
 import { LinhaAfiliados } from "./LinhaAfiliados";
 import styles from "../perfil.module.css";
 
@@ -33,10 +32,7 @@ export const VisaoPerfil = ({ usuario, onEditar }: Props) => {
         </span>
         Editar perfil
       </button>
-      <AbasConteudoPerfil
-        fotos={<GradeFotos uid={usuario.uid} propria />}
-        historico={<HistoricoPistas />}
-      />
+      <AbasConteudoPerfil fotos={<GradeFotos uid={usuario.uid} propria />} />
       <div className={styles.acoes}>
         <LinhaTema />
         <CardCompletarPerfil usuario={usuario} onCompletar={onEditar} />

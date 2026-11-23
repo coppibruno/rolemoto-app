@@ -8,6 +8,7 @@ import { formatarHora, formatarHorarioSaida } from "@/app/(app)/feed/formatar-ho
 import { hrefMeuRole, saidaFutura } from "../constants";
 import { dadosConviteDe, tituloSaidaMeuRole } from "../formatar-meus-roles";
 import { AcoesOrganizadorRole } from "./AcoesOrganizadorRole";
+import { BotaoFixarGaragem } from "./BotaoFixarGaragem";
 import styles from "../meus-roles.module.css";
 
 type Props = {
@@ -56,6 +57,13 @@ export const CardConfirmadoRole = ({ item, cancelando, onCancelarRole }: Props) 
             Acessar
             <span className="material-symbols-outlined">chevron_right</span>
           </Link>
+          {item.papel === "organizador" ? (
+            <BotaoFixarGaragem
+              roleId={item.roleId}
+              titulo={item.titulo}
+              fixado={item.fixado}
+            />
+          ) : null}
           <BotaoCompartilharRole dados={dadosConviteDe(item)} />
         </div>
       </div>

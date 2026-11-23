@@ -23,6 +23,11 @@ export type ItemHistoricoRole = {
   status: StatusItemHistorico;
   /** Na faixa Rotas do criador. */
   fixado: boolean;
+  fotoCapaUrl: string;
+  localSaidaNome: string;
+  localSaidaEndereco: string;
+  destinoFinalNome: string;
+  destinoFinalEndereco: string;
 };
 
 export type ItemHistoricoEvento = {

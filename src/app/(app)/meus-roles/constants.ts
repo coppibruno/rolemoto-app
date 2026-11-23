@@ -11,7 +11,22 @@ import type { RitmoRole } from "@/types/role";
 export const ERRO_MEUS_ROLES = "Não foi possível carregar seus rolês";
 export const ERRO_MEUS_EVENTOS = "Não foi possível carregar seus eventos";
 export const ERRO_MEUS_LOCAIS = "Não foi possível carregar seus locais";
+export const ERRO_MEUS_GRAVADOS = "Não foi possível carregar seus passeios gravados";
 export const ERRO_ACAO = "Não foi possível atualizar a participação.";
+export const ERRO_ARQUIVO_GARAGEM = "Não foi possível remover";
+
+export const VAZIO_GRAVADOS = {
+  titulo: "Nenhum passeio gravado",
+  corpo: "Toque no + e escolha Gravar meu rolê para registrar um trajeto com GPS.",
+} as const;
+
+export const confirmaRemoverDaLista = (titulo: string): string =>
+  `Remover “${titulo}” da sua lista? O rolê/evento continua existindo.`;
+
+export const confirmaApagarGravado = (titulo: string): string =>
+  `Apagar o passeio “${titulo}”? Essa ação não pode ser desfeita.`;
+
+export const HREF_GRAVADOS = "/meus-roles?tipo=gravados";
 
 export const LABELS_RITMO: Record<RitmoRole, string> = {
   tranquila: "Tranquila (abaixo de 90 km/h)",
@@ -35,7 +50,10 @@ export const ABAS_TIPO_GARAGEM: {
   { id: "roles", label: "Rolês", icone: "two_wheeler" },
   { id: "eventos", label: "Eventos", icone: "local_activity" },
   { id: "locais", label: "Locais", icone: "local_gas_station" },
+  { id: "gravados", label: "Gravados", icone: "speed" },
 ];
+
+export const TIPOS_GARAGEM = ABAS_TIPO_GARAGEM.map((item) => item.id);
 
 export const PILLS_RECORTE_LOCAIS: {
   id: RecorteLocaisGaragem;
@@ -151,6 +169,7 @@ export const LABELS_TELEMETRIA = {
   rolesFeitos: "Rolês feitos",
   eventosParticipados: "Eventos",
   locaisFavoritos: "Locais favoritos",
+  gravados: "Gravados",
 } as const;
 
 export const hrefMeuRole = (item: MeuRoleItem): string => {

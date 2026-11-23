@@ -280,6 +280,9 @@ export const paraItemHistoricoTelemetria = (
   tempoSegundos: doc.tempoSegundos,
   encerradoEm: doc.encerradoEm,
   publica: doc.publica,
+  fotoUrl: doc.fotosUrls?.[0] ?? "",
+  pontoInicio: doc.pontoInicio,
+  pontoFim: doc.pontoFim,
 });
 
 export const MAX_AMOSTRAS_CONQUISTA = 6;

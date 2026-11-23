@@ -76,6 +76,11 @@ const paraItemRole = (
   ritmo: role.ritmo,
   status,
   fixado: role.fixado,
+  fotoCapaUrl: role.fotoCapaUrl,
+  localSaidaNome: role.localSaida.nome ?? "",
+  localSaidaEndereco: role.localSaida.endereco,
+  destinoFinalNome: role.destinoFinal.nome ?? "",
+  destinoFinalEndereco: role.destinoFinal.endereco,
 });
 
 export const paraItemEvento = (

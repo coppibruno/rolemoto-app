@@ -1,4 +1,5 @@
 import type { MeuRoleItem } from "@/types/meus-roles";
+import type { AlvoArquivoGaragem } from "../hooks/useArquivoGaragem";
 import { CardAguardandoRole } from "./CardAguardandoRole";
 import { CardConfirmadoRole } from "./CardConfirmadoRole";
 import { CardConcluidoRole } from "./CardConcluidoRole";
@@ -8,15 +9,19 @@ import styles from "../meus-roles.module.css";
 type Props = {
   itens: MeuRoleItem[];
   processandoId: string | null;
+  ocupadoArquivoId: string | null;
   onAcao: (item: MeuRoleItem, tipo: "desistir" | "cancelar") => void;
   onCancelarRole: (item: MeuRoleItem) => void;
+  onRemover: (alvo: AlvoArquivoGaragem) => void;
 };
 
 export const ListaMeusRoles = ({
   itens,
   processandoId,
+  ocupadoArquivoId,
   onAcao,
   onCancelarRole,
+  onRemover,
 }: Props) => {
   const primeiro = itens[0];
   const usaHero =
@@ -45,7 +50,14 @@ export const ListaMeusRoles = ({
           );
         }
         if (item.status === "concluido") {
-          return <CardConcluidoRole key={item.roleId} item={item} />;
+          return (
+            <CardConcluidoRole
+              key={item.roleId}
+              item={item}
+              ocupadoRemover={ocupadoArquivoId === `role-${item.roleId}`}
+              onRemover={onRemover}
+            />
+          );
         }
         return (
           <CardConfirmadoRole

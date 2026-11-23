@@ -73,4 +73,7 @@ export type ItemHistoricoTelemetria = {
   tempoSegundos: number;
   encerradoEm: string;
   publica: boolean;
+  fotoUrl: string;
+  pontoInicio: PontoTelemetria;
+  pontoFim: PontoTelemetria;
 };

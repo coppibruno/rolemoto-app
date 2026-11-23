@@ -16,6 +16,7 @@ import {
   classificarMeusRoles,
   contarRolesFeitos,
   destaquesDe,
+  filtrarRolesOcultosGaragem,
   montarContagens,
   montarContagensTipo,
   montarPayloadMeusRoles,
@@ -27,8 +28,10 @@ import {
 } from "../lib/meus-roles";
 import {
   eventoRepository,
+  historicoOcultoRepository,
   localRepository,
   roleRepository,
+  roleTelemetriaRepository,
   usuarioEventoFeedbackRepository,
   usuarioEventoRepository,
   usuarioLocalCheckinRepository,
@@ -68,13 +71,28 @@ meusRolesRouter.get("/", async (req: Request, res: Response) => {
       return;
     }
 
-    const [pedidos, criados, eventosParticipados, locaisFavoritos] =
-      await Promise.all([
-        usuarioRoleRepository.listarPorUsuario(uid),
-        roleRepository.listarPorCriador(uid),
-        usuarioEventoRepository.contarPorUsuario(uid),
-        usuarioLocalFavoritoRepository.contarPorUsuario(uid),
-      ]);
+    const [
+      pedidos,
+      criados,
+      eventosParticipados,
+      locaisFavoritos,
+      gravados,
+      ocultos,
+    ] = await Promise.all([
+      usuarioRoleRepository.listarPorUsuario(uid),
+      roleRepository.listarPorCriador(uid),
+      usuarioEventoRepository.contarPorUsuario(uid),
+      usuarioLocalFavoritoRepository.contarPorUsuario(uid),
+      roleTelemetriaRepository.contarPorUsuario(uid),
+      historicoOcultoRepository.listarPorUsuario(uid),
+    ]);
+
+    const rolesOcultos = new Set(
+      ocultos.filter((item) => item.tipo === "role").map((item) => item.alvoId),
+    );
+    const eventosOcultos = ocultos.filter((item) => item.tipo === "evento")
+      .length;
+    const eventosVisiveis = Math.max(0, eventosParticipados - eventosOcultos);
 
     const idsPedidos = [...new Set(pedidos.map((pedido) => pedido.roleId))];
     const rolesPedidos = await roleRepository.buscarPorIds(idsPedidos);
@@ -87,20 +105,25 @@ meusRolesRouter.get("/", async (req: Request, res: Response) => {
       rolesPorId.set(criado.id, criado);
     }
 
-    const classificados = unirComCriados(
-      classificarMeusRoles(uid, pedidos, rolesPorId),
-      criados,
+    const classificados = filtrarRolesOcultosGaragem(
+      unirComCriados(
+        classificarMeusRoles(uid, pedidos, rolesPorId),
+        criados,
+      ),
+      rolesOcultos,
     );
     const contagens = montarContagens(classificados);
     const telemetria = montarTelemetria(
       contarRolesFeitos(classificados),
-      eventosParticipados,
+      eventosVisiveis,
       locaisFavoritos,
+      gravados,
     );
     const contagensTipo = montarContagensTipo(
       contagens,
-      eventosParticipados,
+      eventosVisiveis,
       locaisFavoritos,
+      gravados,
     );
     const recorte = ordenarPayload(classificados).slice(0, TETO_MEUS_ROLES);
 
@@ -161,13 +184,20 @@ meusRolesRouter.get("/eventos", async (req: Request, res: Response) => {
       return;
     }
 
-    const [eventos, feedbacks, inscritosPorEvento] = await Promise.all([
+    const [eventos, feedbacks, inscritosPorEvento, ocultos] = await Promise.all([
       eventoRepository.buscarPorIds(eventoIds),
       usuarioEventoFeedbackRepository.buscarPorIds(
         idsFeedbackEvento(uid, eventoIds),
       ),
       usuarioEventoRepository.contarPorEventos(eventoIds),
+      historicoOcultoRepository.listarPorUsuario(uid),
     ]);
+
+    const eventosOcultos = new Set(
+      ocultos
+        .filter((item) => item.tipo === "evento")
+        .map((item) => item.alvoId),
+    );
 
     const feedbacksPorEventoId = new Map<string, UsuarioEventoFeedbackDoc>();
     for (const feedback of feedbacks) {
@@ -186,6 +216,7 @@ meusRolesRouter.get("/eventos", async (req: Request, res: Response) => {
         eventosOrdenados,
         feedbacksPorEventoId,
         inscritosPorEvento,
+        eventosOcultos,
       ),
     );
   } catch (error) {

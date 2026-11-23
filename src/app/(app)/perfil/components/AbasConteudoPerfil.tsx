@@ -5,25 +5,31 @@ import styles from "../fotos-perfil.module.css";
 
 type Aba = "fotos" | "historico";
 
-const ABAS: { id: Aba; icone: string; rotulo: string }[] = [
+const ABAS_COM_HISTORICO: { id: Aba; icone: string; rotulo: string }[] = [
   { id: "fotos", icone: "grid_view", rotulo: "Fotos" },
   { id: "historico", icone: "history", rotulo: "Histórico" },
 ];
 
 type Props = {
   fotos: ReactNode;
-  historico: ReactNode;
+  /** Omitido no perfil próprio — histórico vive em Meus Rolês. */
+  historico?: ReactNode;
 };
 
 export const AbasConteudoPerfil = ({ fotos, historico }: Props) => {
   const [aba, setAba] = useState<Aba>("fotos");
   const base = useId();
-  const paineis: Record<Aba, ReactNode> = { fotos, historico };
+  const abas = historico ? ABAS_COM_HISTORICO : ABAS_COM_HISTORICO.filter((a) => a.id === "fotos");
+  const paineis: Record<Aba, ReactNode> = { fotos, historico: historico ?? null };
+
+  if (!historico) {
+    return <section className={styles.conteudo}>{fotos}</section>;
+  }
 
   return (
     <section className={styles.conteudo}>
       <div className={styles.abas} role="tablist" aria-label="Perfil">
-        {ABAS.map((item) => (
+        {abas.map((item) => (
           <button
             key={item.id}
             type="button"
@@ -41,7 +47,7 @@ export const AbasConteudoPerfil = ({ fotos, historico }: Props) => {
           </button>
         ))}
       </div>
-      {ABAS.map((item) => (
+      {abas.map((item) => (
         <div
           key={item.id}
           role="tabpanel"
