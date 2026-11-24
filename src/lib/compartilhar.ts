@@ -19,12 +19,26 @@ type Payload = {
   url: string;
 };
 
+/** Garante que o link direto do conteúdo vá no texto (alguns WebViews trocam `url` pela página atual). */
+const textoComLinkDireto = (payload: Payload): string => {
+  const url = payload.url.trim();
+  const texto = payload.text.trim();
+  if (!url) return texto;
+  if (texto.includes(url)) return texto;
+  return texto ? `${texto}\n\n${url}` : url;
+};
+
 export const compartilharConteudo = async (
   payload: Payload,
 ): Promise<ResultadoCompartilhar> => {
+  const texto = textoComLinkDireto(payload);
+  const url = payload.url.trim();
+
   try {
     if (typeof navigator !== "undefined" && navigator.share) {
-      await navigator.share(payload);
+      // Sem `url` solto: no iOS/WebView o "Copiar" do sheet às vezes pega a página do feed.
+      // O deep link (foto, traçado, convite) fica no texto — estilo Instagram.
+      await navigator.share({ title: payload.title, text: texto });
       return "compartilhado";
     }
   } catch (erro) {
@@ -32,10 +46,9 @@ export const compartilharConteudo = async (
   }
 
   try {
-    await navigator.clipboard.writeText(payload.url);
+    await navigator.clipboard.writeText(url || texto);
     return "copiado";
   } catch {
-    const texto = `${payload.text} ${payload.url}`.trim();
     const wa = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
     const janela = window.open(wa, "_blank", "noopener,noreferrer");
     return janela ? "compartilhado" : "erro";

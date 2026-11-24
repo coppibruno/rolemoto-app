@@ -27,4 +27,12 @@ describe("texto do motivo na linha", () => {
     ).toBe("Publicou em Bar");
     expect(textoMotivoLinha(pessoa())).toBe("Segue você");
   });
+
+  it("telemetria traz a pessoa sem frase no card", () => {
+    expect(
+      textoMotivoLinha(
+        pessoa({ motivo: { tipo: "telemetria", texto: "" } }),
+      ),
+    ).toBeNull();
+  });
 });

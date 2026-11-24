@@ -159,7 +159,7 @@ describe("faixa, frase e jitter", () => {
     expect(trocou).toBe(true);
   });
 
-  it("corta título de 41 caracteres e monta telemetria sem nome", () => {
+  it("corta título e telemetria entra sem texto no card", () => {
     const titulo = "a".repeat(41);
     expect(cortarRotulo(titulo)).toBe(`${"a".repeat(39)}…`);
     expect(fraseDoRasto({
@@ -171,15 +171,15 @@ describe("faixa, frase e jitter", () => {
     expect(fraseDoRasto({
       uid: "u",
       tipo: "telemetria",
-      nome: "   ",
+      nome: "Posto",
       distanciaKm: 12,
-    })).toBe("Telemetria pública · 12 km");
+    })).toBe("");
     expect(fraseDoRasto({
       uid: "u",
       tipo: "telemetria",
-      nome: "Posto",
-      distanciaKm: 12,
-    })).toBe("Telemetria pública saindo de Posto");
+      nome: "Blumenau, SC",
+      distanciaKm: 8,
+    })).toBe("");
   });
 
   it("story sem ponto não entra", () => {

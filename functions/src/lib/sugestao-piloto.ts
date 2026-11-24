@@ -121,12 +121,9 @@ export const fraseDoRasto = (rasto: RastoBruto): string => {
   if (rasto.tipo === "organizou_role") {
     return `Organizou ${cortarRotulo(rasto.titulo ?? "")} · ${rasto.distanciaKm ?? 0} km`;
   }
+  // Telemetria só puxa a pessoa pro Conhecer; o texto no card não ajuda.
   if (rasto.tipo === "telemetria") {
-    const nome = (rasto.nome ?? "").trim();
-    if (nome) {
-      return `Telemetria pública saindo de ${cortarRotulo(nome)}`;
-    }
-    return `Telemetria pública · ${rasto.distanciaKm ?? 0} km`;
+    return "";
   }
   return `Publicou em ${cortarRotulo(rasto.nome ?? "")}`;
 };

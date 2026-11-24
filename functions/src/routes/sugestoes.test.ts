@@ -492,8 +492,9 @@ describe("lista — CG3", () => {
     expect(porUid.has("longe")).toBe(false);
     expect(porUid.has("secreta")).toBe(false);
     expect(porUid.has("semmarca")).toBe(false);
-    expect(porUid.get("antiga")?.motivo.texto).toBe(`Telemetria pública · ${km40} km`);
-    expect(porUid.get("tela")?.motivo.texto).toBe("Telemetria pública saindo de Mirante");
+    // Telemetria continua sugerindo a pessoa, sem frase no card.
+    expect(porUid.get("antiga")?.motivo).toEqual({tipo: "telemetria", texto: ""});
+    expect(porUid.get("tela")?.motivo).toEqual({tipo: "telemetria", texto: ""});
     expect(porUid.get("story")?.motivo).toEqual({
       tipo: "publicou",
       texto: "Publicou em Bar do Moto",
@@ -503,6 +504,7 @@ describe("lista — CG3", () => {
     expect(itens.every((item) => item.seguidoPorMim === false)).toBe(true);
     const tipos = new Set(itens.map((item) => item.motivo.tipo));
     expect(tipos.has("organizou_role")).toBe(true);
+    expect(tipos.has("telemetria")).toBe(true);
     expect([...tipos].every((tipo) =>
       ["segue_voce", "seguido_por", "organizou_role", "telemetria", "publicou"]
         .includes(tipo),

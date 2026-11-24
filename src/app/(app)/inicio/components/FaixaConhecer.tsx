@@ -54,7 +54,9 @@ export const FaixaConhecer = () => {
                 </span>
               )}
               <span className={styles.nome}>{pessoa.nome}</span>
-              <span className={styles.motivo}>{pessoa.motivo.texto}</span>
+              {pessoa.motivo.texto.trim() && pessoa.motivo.tipo !== "telemetria" ? (
+                <span className={styles.motivo}>{pessoa.motivo.texto}</span>
+              ) : null}
             </Link>
             <div className={styles.acao}>
               <BotaoSeguir

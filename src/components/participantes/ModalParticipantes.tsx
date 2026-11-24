@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { useCamadaCheia } from "@/app/(app)/stories/camada-cheia";
 import { useFocoModal } from "@/hooks/useFocoModal";
 import type { TipoAlvoParticipantes } from "@/types/participante";
 import {
@@ -18,10 +21,26 @@ type Props = {
 };
 
 export const ModalParticipantes = ({ tipo, id, onFechar }: Props) => {
+  useCamadaCheia(true);
+  const [montado, setMontado] = useState(false);
   const cartaoRef = useFocoModal(onFechar);
   const { itens, total, carregando, erro } = useParticipantes(tipo, id, true);
 
-  return (
+  useEffect(() => {
+    setMontado(true);
+  }, []);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
+  if (!montado) return null;
+
+  return createPortal(
     <div className={styles.overlay} onClick={onFechar}>
       <div
         ref={cartaoRef}
@@ -67,6 +86,7 @@ export const ModalParticipantes = ({ tipo, id, onFechar }: Props) => {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
