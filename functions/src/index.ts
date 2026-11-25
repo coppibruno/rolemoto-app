@@ -273,4 +273,6 @@ app.use("/denuncias", denunciasRouter);
 export const api = onRequest({
   cors: corsOrigins(),
   timeoutSeconds: 300,
+  // Evita cold start no 1º acesso (instância sempre aquecida; custo ocioso ~US$5–6/mês).
+  minInstances: 1,
 }, app);
