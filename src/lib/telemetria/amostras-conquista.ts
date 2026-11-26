@@ -8,7 +8,25 @@ const ACCURACY_MAX_M = 100;
 /** Mesmo buraco que quebra o trecho no servidor. */
 const BURACO_TRECHO_MS = 10_000;
 
-type Candidata = { amostra: AmostraConquista; distanciaKm: number };
+/** Mesmo mínimo do servidor: abaixo disso a sequência não vale como passagem. */
+const DISTANCIA_MIN_SEQUENCIA_KM = 0.05;
+
+type Candidata = {
+  amostra: AmostraConquista;
+  distanciaKm: number;
+  velocidadeMaxKmh: number;
+  valida: boolean;
+};
+
+/** Válida primeiro, depois a mais rápida; a distância só desempata. */
+const melhorQue = (a: Candidata, b: Candidata | null): boolean => {
+  if (!b) return true;
+  if (a.valida !== b.valida) return a.valida;
+  if (a.velocidadeMaxKmh !== b.velocidadeMaxKmh) {
+    return a.velocidadeMaxKmh > b.velocidadeMaxKmh;
+  }
+  return a.distanciaKm > b.distanciaKm;
+};
 
 const dentroDoCirculo = (pino: ConquistaCatalogo, ponto: PontoGps): boolean =>
   haversineKm(pino.lat, pino.lng, ponto.lat, ponto.lng) * 1000 <= pino.raioMetros;
@@ -68,8 +86,9 @@ const paraBody = (ponto: PontoGps): PontoGps => ({
 
 /**
  * Escolhe os pontos que vão no `POST /telemetria`. Não concede: o servidor
- * refaz a conta. Por pino, a sequência com mais distância aceita; no
- * máximo 6 pinos, os de maior distância.
+ * refaz a conta. Por pino, a sequência mais rápida (passou duas vezes: vale
+ * a de maior velocidade, não a mais longa); no máximo 6 pinos, os de maior
+ * distância.
  */
 export const montarAmostrasConquista = (
   pontos: PontoGps[],
@@ -84,12 +103,15 @@ export const montarAmostrasConquista = (
   for (const pino of catalogo) {
     let melhor: Candidata | null = null;
     for (const sequencia of sequenciasDentro(pino, validos)) {
-      const { distanciaKm } = processarPontos(sequencia);
-      if (distanciaKm <= 0 || (melhor && melhor.distanciaKm >= distanciaKm)) continue;
-      melhor = {
+      const { distanciaKm, velocidadeMaxKmh } = processarPontos(sequencia);
+      if (distanciaKm <= 0) continue;
+      const candidata: Candidata = {
         distanciaKm,
+        velocidadeMaxKmh,
+        valida: distanciaKm >= DISTANCIA_MIN_SEQUENCIA_KM,
         amostra: { conquistaId: pino.id, pontos: reduzirAmostra(sequencia).map(paraBody) },
       };
+      if (melhorQue(candidata, melhor)) melhor = candidata;
     }
     if (melhor) candidatas.push(melhor);
   }

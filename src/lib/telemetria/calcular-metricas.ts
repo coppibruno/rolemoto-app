@@ -148,6 +148,31 @@ const candidataMaximaKmh = (
   return fixFino(ponto, ACCURACY_MAX_ESTIMADA_M) ? estimadaKmh : null;
 };
 
+/**
+ * Pico plausível de uma só amostra: o chip bate com a velocidade da posição
+ * no trecho e a rampa desde a amostra anterior cabe na aceleração máxima.
+ * Cobre o pico curto de quem acelera e freia rápido; o glitch isolado tem a
+ * posição e a vizinha contra.
+ */
+const picoPlausivelKmh = (
+  ponto: PontoGps,
+  estimadaKmh: number,
+  tetoKmh: number,
+  recentesAntes: number[],
+  deltaSegundos: number,
+): number => {
+  const sensorKmh = velocidadeDoSensorKmh(ponto);
+  if (sensorKmh === null || sensorKmh > tetoKmh) return 0;
+  if (recentesAntes.length === 0 || !fixFino(ponto, ACCURACY_MAX_VELOCIDADE_M)) {
+    return 0;
+  }
+  const margemKmh = Math.max(MARGEM_SENSOR_KMH, estimadaKmh * MARGEM_SENSOR_RATIO);
+  if (Math.abs(sensorKmh - estimadaKmh) > margemKmh) return 0;
+  const vizinhaKmh = recentesAntes[recentesAntes.length - 1];
+  const rampaKmh = Math.abs(sensorKmh - vizinhaKmh);
+  return rampaKmh <= ACEL_MAX_KMH_POR_S * deltaSegundos ? sensorKmh : 0;
+};
+
 /** Sem candidata a sequência quebra: a confirmação exige amostras seguidas. */
 const comCandidata = (
   recentes: number[],
@@ -244,6 +269,7 @@ export const aplicarPonto = (
   const velocidadeMaxKmh = Math.max(
     estado.velocidadeMaxKmh,
     velocidadeConfirmadaKmh(velocidadesRecentesKmh),
+    picoPlausivelKmh(ponto, estimadaKmh, tetoKmh, recentesAntes, deltaSegundos),
   );
   const parado =
     estimadaKmh < PARADO_KMH ? (estado.paradoDesde ?? estado.ultimo.t) : null;

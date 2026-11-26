@@ -88,6 +88,15 @@ describe("montarAmostrasConquista", () => {
     expect(amostra.pontos).toHaveLength(6);
   });
 
+  it("passou duas vezes no pino: fica a sequência mais rápida, mesmo a mais curta", () => {
+    const alvo = pino("a", -28.4, 500);
+    const rapida = andar(-28.4, 8, { passoM: 50 });
+    const lenta = andar(-28.4, 30, { inicioMs: t0 + 600_000, passoM: 10 });
+    const [amostra] = montarAmostrasConquista([...rapida, ...lenta], [alvo]);
+    expect(amostra.pontos).toHaveLength(8);
+    expect(amostra.pontos[0].t).toBe(t0);
+  });
+
   it("cache vazio gera lista vazia", () => {
     expect(montarAmostrasConquista(andar(-28.4, 10), [])).toEqual([]);
   });

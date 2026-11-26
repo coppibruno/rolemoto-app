@@ -170,6 +170,30 @@ describe("processarPontos", () => {
     expect(estado.velocidadeMaxKmh).toBeCloseTo(60, 0);
   });
 
+  const pontos60 = (metrosPorPonto: number[], speedKmh: number[]) => {
+    let acumulado = 0;
+    return metrosPorPonto
+      .map((metros, i) => {
+        acumulado += metros;
+        return ponto({
+          t: t0 + i * 1000,
+          lat: graus(acumulado),
+          lng: 0,
+          speed: speedKmh[i] / 3.6,
+        });
+      })
+      .reduce(aplicarPonto, { ...estadoCalculoInicial(), velocidadeAtualKmh: 100 });
+  };
+
+  it("grava o pico de uma só amostra quando acelera e freia rápido", () => {
+    const velocidades = [100, 140, 170, 211, 175, 140, 100];
+    const metros = velocidades.map((v, i) =>
+      i === 0 ? 0 : (((velocidades[i - 1] + v) / 2) / 3.6),
+    );
+    const estado = pontos60(metros, velocidades);
+    expect(estado.velocidadeMaxKmh).toBeCloseTo(211, 0);
+  });
+
   it("usa o chip quando a posição salta 20 m a 60 km/h", () => {
     const estado = processarRodando(
       rodando60(
