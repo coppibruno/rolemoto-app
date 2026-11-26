@@ -11,6 +11,11 @@
 
 # testing
 /coverage
+/e2e-report/
+/e2e-results/
+/e2e/.env.e2e
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -59,3 +64,4 @@ public/swe-worker*
 
 # Sentry Config File
 .env.sentry-build-plugin
+.vercel

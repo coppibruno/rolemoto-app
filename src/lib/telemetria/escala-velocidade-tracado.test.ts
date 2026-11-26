@@ -4,6 +4,7 @@ import {
   LIMIAR_VARIACAO_KMH,
   corVelocidadeRelativa,
   escalaVelocidadeTracado,
+  indiceVelocidadeMaxima,
 } from "./escala-velocidade-tracado";
 
 describe("corVelocidadeRelativa", () => {
@@ -53,5 +54,19 @@ describe("escalaVelocidadeTracado", () => {
     expect(escala).not.toBeNull();
     expect(escala!.coresSegmentos[0]).toBe(corVelocidadeRelativa(0));
     expect(escala!.coresSegmentos[2]).toBe(corVelocidadeRelativa(1));
+  });
+});
+
+describe("indiceVelocidadeMaxima", () => {
+  it("devolve -1 sem pontos", () => {
+    expect(indiceVelocidadeMaxima([])).toBe(-1);
+  });
+
+  it("aponta o primeiro pico em empate", () => {
+    expect(indiceVelocidadeMaxima([40, 90, 90, 10])).toBe(1);
+  });
+
+  it("aponta o maior valor", () => {
+    expect(indiceVelocidadeMaxima([12, 40, 150, 80])).toBe(2);
   });
 });

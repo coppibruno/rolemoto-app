@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e:iphone": "playwright test --project=iphone-chromium",
+    "test:e2e:iphone:webkit": "PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 playwright test --project=iphone-webkit",
+    "test:e2e:iphone:chromium": "playwright test --project=iphone-chromium",
     "emulators": "mkdir -p .emulator-data && npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,storage --import=.emulator-data --export-on-exit=.emulator-data",
     "emulators:all": "npm --prefix functions run build && npx -y firebase-tools@latest emulators:start --only functions,firestore,auth,storage",
     "storage:cors": "gcloud storage buckets update gs://rolemoto-bc47f.firebasestorage.app --cors-file=cors.json --project=rolemoto-bc47f"
@@ -38,6 +41,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.2",
+    "@playwright/test": "^1.65.1",
     "@types/leaflet": "^1.9.22",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",

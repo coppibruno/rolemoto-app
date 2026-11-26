@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { LogoRolemoto } from "@/components/marca/LogoRolemoto";
+import { normalizarCodigoAfiliado } from "@/lib/afiliado";
 import {
+  COPY_CODIGO_HINT,
   COPY_LINK_INEXISTENTE,
   PONTOS_AFILIADO,
   URL_APP_STORE,
@@ -17,6 +20,19 @@ type Props = {
 
 export const TelaAfiliado = ({ codigo }: Props) => {
   const estado = useCliqueAfiliado(codigo);
+  const codigoExibicao = normalizarCodigoAfiliado(codigo) ?? codigo.trim().toLowerCase();
+  const [copiado, setCopiado] = useState(false);
+
+  const copiarCodigo = async () => {
+    if (!codigoExibicao) return;
+    try {
+      await navigator.clipboard.writeText(codigoExibicao);
+      setCopiado(true);
+      window.setTimeout(() => setCopiado(false), 1600);
+    } catch {
+      setCopiado(false);
+    }
+  };
 
   return (
     <div className={styles.tela}>
@@ -42,6 +58,25 @@ export const TelaAfiliado = ({ codigo }: Props) => {
           <p className={styles.texto}>
             O Rolê Moto é o app gratuito para quem quer companhia no rolê de moto.
           </p>
+
+          <div className={styles.blocoCodigo}>
+            <p className={styles.codigoRotulo}>Código de indicação</p>
+            <p className={styles.codigoValor} aria-label={`Código ${codigoExibicao}`}>
+              {codigoExibicao}
+            </p>
+            <button
+              type="button"
+              className={styles.botaoCopiar}
+              onClick={() => void copiarCodigo()}
+            >
+              <span className="material-symbols-outlined" aria-hidden>
+                {copiado ? "check" : "content_copy"}
+              </span>
+              {copiado ? "Copiado" : "Copiar código"}
+            </button>
+            <p className={styles.codigoHint}>{COPY_CODIGO_HINT}</p>
+          </div>
+
           <ul className={styles.pontos}>
             {PONTOS_AFILIADO.map((ponto) => (
               <li key={ponto.icone} className={styles.ponto}>
@@ -56,14 +91,12 @@ export const TelaAfiliado = ({ codigo }: Props) => {
             Entrar no site
           </Link>
           <div className={styles.lojas}>
-            {URL_APP_STORE ? (
-              <a href={URL_APP_STORE} className={styles.botaoLoja} rel="noopener">
-                <span className="material-symbols-outlined" aria-hidden>
-                  phone_iphone
-                </span>
-                App Store
-              </a>
-            ) : null}
+            <a href={URL_APP_STORE} className={styles.botaoLoja} rel="noopener">
+              <span className="material-symbols-outlined" aria-hidden>
+                phone_iphone
+              </span>
+              App Store
+            </a>
             <a href={URL_PLAY_STORE} className={styles.botaoLoja} rel="noopener">
               <span className="material-symbols-outlined" aria-hidden>
                 android

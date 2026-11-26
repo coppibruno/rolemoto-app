@@ -64,3 +64,13 @@ export const escalaVelocidadeTracado = (
 
   return { minKmh, maxKmh, coresSegmentos };
 };
+
+/** Índice do pico de velocidade no traçado (−1 se vazio). */
+export const indiceVelocidadeMaxima = (velocidades: number[]): number => {
+  if (velocidades.length === 0) return -1;
+  let melhor = 0;
+  for (let i = 1; i < velocidades.length; i += 1) {
+    if (velocidades[i] > velocidades[melhor]) melhor = i;
+  }
+  return melhor;
+};

@@ -21,6 +21,8 @@ export type MarcadorMapa = PontoLatLng & {
   onToque?: () => void;
   /** Aparece/some sem reenquadrar o mapa (ex.: pin de inspeção de velocidade). */
   efemero?: boolean;
+  /** Empilha o marcador acima dos demais no Google Maps. */
+  zIndex?: number;
 };
 
 export const marcadorComIcone = (m: MarcadorMapa): boolean => Boolean(m.icone);

@@ -73,7 +73,7 @@ const desenhar = (
         position: posicao,
         clickable: clicavel,
         title: marcador.nomeAcessivel,
-        zIndex: 10,
+        zIndex: marcador.zIndex ?? 10,
         icon: { ...iconeCirculo("#121316"), scale: 15, strokeColor: cor },
         label: {
           text: marcador.icone,
@@ -90,7 +90,9 @@ const desenhar = (
     const marker = new maps.Marker({
       map,
       position: posicao,
-      clickable: false,
+      clickable: Boolean(marcador.onToque),
+      title: marcador.nomeAcessivel,
+      zIndex: marcador.zIndex,
       icon: marcador.rotulo ? iconeCirculo(marcador.cor) : iconePin(maps),
       label: marcador.rotulo
         ? {
@@ -101,6 +103,9 @@ const desenhar = (
           }
         : undefined,
     });
+    if (marcador.onToque) {
+      maps.event.addListener(marker, "click", () => tocar(indice));
+    }
     overlays.push(marker);
   });
 
@@ -248,6 +253,7 @@ export const useMapaLeituraGoogle = ({
             p.rotulo ?? "",
             p.icone ?? "",
             Boolean(p.onToque),
+            p.zIndex ?? null,
           ]),
         z: zoom ?? null,
         l: Boolean(ligarMarcadores),
@@ -269,6 +275,7 @@ export const useMapaLeituraGoogle = ({
           p.nomeAcessivel ?? "",
           Boolean(p.onToque),
           Boolean(p.efemero),
+          p.zIndex ?? null,
         ]),
         z: zoom ?? null,
         l: Boolean(ligarMarcadores),

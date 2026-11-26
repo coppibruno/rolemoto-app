@@ -52,6 +52,71 @@
   line-height: 22px;
 }
 
+.blocoCodigo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 16px;
+  border-radius: 0.75rem;
+  background: var(--surface-container-lowest);
+  text-align: center;
+}
+
+.codigoRotulo {
+  margin: 0;
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.codigoValor {
+  margin: 0;
+  color: var(--primary-container);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(40px, 12vw, 56px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  word-break: break-all;
+}
+
+.botaoCopiar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  padding: 0 16px;
+  border: 1.5px solid var(--outline);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--on-surface);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoCopiar .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.codigoHint {
+  margin: 0;
+  max-width: 28ch;
+  color: var(--on-surface-variant);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
 .pontos {
   display: flex;
   flex-direction: column;
@@ -117,7 +182,8 @@
 }
 
 .botaoPrincipal:focus-visible,
-.botaoLoja:focus-visible {
+.botaoLoja:focus-visible,
+.botaoCopiar:focus-visible {
   outline: 2px solid var(--primary-container);
   outline-offset: 2px;
 }

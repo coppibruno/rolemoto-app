@@ -6,7 +6,10 @@ import type { MarcadorMapa } from "@/components/maps/MapaEstatico";
 import { medalhaEmDestaque } from "@/lib/conquistas";
 import type { PontoLatLng } from "@/lib/mapa-tiles";
 import { urlRotaMaps } from "@/lib/maps";
-import { escalaVelocidadeTracado } from "@/lib/telemetria/escala-velocidade-tracado";
+import {
+  escalaVelocidadeTracado,
+  indiceVelocidadeMaxima,
+} from "@/lib/telemetria/escala-velocidade-tracado";
 import {
   formatarDistancia,
   formatarVelocidade,
@@ -59,10 +62,24 @@ export const MapaPontosAB = ({
     () => (inspecionavel ? escalaVelocidadeTracado(velocidades) : null),
     [inspecionavel, velocidades],
   );
+  const indiceMax = useMemo(
+    () => (inspecionavel ? indiceVelocidadeMaxima(velocidades) : -1),
+    [inspecionavel, velocidades],
+  );
   const [inspecao, setInspecao] = useState<{
     indice: number;
     velocidadeKmh: number;
   } | null>(null);
+
+  const abrirInspecao = (indice: number) => {
+    if (indice < 0) return;
+    setInspecao((atual) => {
+      if (atual?.indice === indice) return null;
+      const kmh = velocidades[indice];
+      if (kmh == null) return atual;
+      return { indice, velocidadeKmh: kmh };
+    });
+  };
 
   const marcadores = useMemo<MarcadorMapa[]>(() => {
     const base: MarcadorMapa[] = [
@@ -87,7 +104,23 @@ export const MapaPontosAB = ({
         onToque: onTocarMedalha ? () => onTocarMedalha(indice) : undefined,
       })),
     ];
-    if (inspecao && trajeto[inspecao.indice]) {
+    if (indiceMax >= 0 && trajeto[indiceMax]) {
+      const kmh = velocidades[indiceMax];
+      base.push({
+        lat: trajeto[indiceMax].lat,
+        lng: trajeto[indiceMax].lng,
+        cor: "var(--primary-container)",
+        icone: "speed",
+        nomeAcessivel: `Velocidade máxima no traçado ${formatarVelocidade(kmh)}`,
+        zIndex: 20,
+        onToque: () => abrirInspecao(indiceMax),
+      });
+    }
+    if (
+      inspecao &&
+      trajeto[inspecao.indice] &&
+      inspecao.indice !== indiceMax
+    ) {
       base.push({
         lat: trajeto[inspecao.indice].lat,
         lng: trajeto[inspecao.indice].lng,
@@ -98,6 +131,7 @@ export const MapaPontosAB = ({
     }
     return base;
   }, [
+    indiceMax,
     inspecao,
     medalhas,
     onTocarMedalha,
@@ -106,6 +140,7 @@ export const MapaPontosAB = ({
     pontoInicio.lat,
     pontoInicio.lng,
     trajeto,
+    velocidades,
   ]);
 
   const hrefMaps = urlRotaMaps(
@@ -125,16 +160,7 @@ export const MapaPontosAB = ({
 
   const aoTocarTrajeto = inspecionavel
     ? (ponto: PontoLatLng) => {
-        const indice = indiceVerticeMaisProximo(trajeto, ponto);
-        if (indice < 0) return;
-        if (inspecao?.indice === indice) {
-          setInspecao(null);
-          return;
-        }
-        setInspecao({
-          indice,
-          velocidadeKmh: velocidades[indice],
-        });
+        abrirInspecao(indiceVerticeMaisProximo(trajeto, ponto));
       }
     : undefined;
 
