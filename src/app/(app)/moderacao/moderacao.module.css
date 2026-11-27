@@ -44,7 +44,7 @@
 
 .menuPortal {
   position: fixed;
-  z-index: 120;
+  z-index: 220;
   display: flex;
   flex-direction: column;
   min-width: 196px;
@@ -94,7 +94,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 210;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -266,7 +266,7 @@
   position: fixed;
   left: 50%;
   bottom: calc(88px + env(safe-area-inset-bottom));
-  z-index: 100;
+  z-index: 230;
   transform: translateX(-50%);
   max-width: calc(100vw - 32px);
   padding: 10px 16px;
